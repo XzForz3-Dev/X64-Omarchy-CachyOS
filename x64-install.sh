@@ -73,6 +73,10 @@ sudo mkdir -p /usr/share/omarchy
 sudo cp -r bin config default shell themes /usr/share/omarchy/ 2>/dev/null || true
 sudo chmod -R 755 /usr/share/omarchy
 
+# Registrar sesión oficial en el gestor de inicio (SDDM)
+sudo mkdir -p /usr/share/wayland-sessions
+sudo cp default/wayland-sessions/omarchy.desktop /usr/share/wayland-sessions/ 2>/dev/null || true
+
 # Copiamos los dotfiles al directorio del usuario para permitir personalización
 cp -r config/* ~/.config/ 2>/dev/null || true
 cp -r bin/* ~/.local/bin/ 2>/dev/null || true
