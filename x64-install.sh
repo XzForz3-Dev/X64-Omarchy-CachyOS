@@ -77,6 +77,10 @@ sudo chmod -R 755 /usr/share/omarchy
 sudo mkdir -p /usr/share/wayland-sessions
 sudo cp default/wayland-sessions/omarchy.desktop /usr/share/wayland-sessions/ 2>/dev/null || true
 
+# Exportar OMARCHY_PATH globalmente para que funcionen los scripts del sistema
+sudo bash -c 'echo "export OMARCHY_PATH=/usr/share/omarchy" > /etc/profile.d/omarchy.sh'
+sudo chmod +x /etc/profile.d/omarchy.sh
+
 # Copiamos los dotfiles al directorio del usuario para permitir personalización
 cp -r config/* ~/.config/ 2>/dev/null || true
 cp -r bin/* ~/.local/bin/ 2>/dev/null || true
@@ -85,15 +89,16 @@ cp -r themes/* ~/.local/share/themes/ 2>/dev/null || true
 # Hacemos que todos los binarios locales sean ejecutables
 chmod +x ~/.local/bin/* 2>/dev/null || true
 
-echo -e "${GREEN}[5/5] Activando Servicios Críticos (Display Manager, Red, Bluetooth)...${NC}"
-# Habilitamos SDDM forzando por si acaso había otro
-sudo systemctl enable sddm.service --force
-sudo systemctl enable NetworkManager.service 2>/dev/null || true
+echo -e "${GREEN}[5/5] Activando Servicios Críticos...${NC}"
+sudo systemctl enable sddm.service --now 2>/dev/null || true
 sudo systemctl enable bluetooth.service 2>/dev/null || true
 
-echo -e "${BLUE}"
-echo "=========================================================="
-echo "      ¡Instalación de X64-Omarchy completada con éxito!   "
+echo -e "${GREEN}[6/6] Inicializando Tema y Entorno (Tokyo Night)...${NC}"
+export OMARCHY_PATH=/usr/share/omarchy
+/usr/share/omarchy/bin/omarchy-theme-set "Tokyo Night" 2>/dev/null || true
+
+echo -e "======================================================="
+echo -e "${GREEN}¡Instalación de Omarchy Completada con Éxito!${NC}"
 echo "      Tu sistema CachyOS ahora tiene el escudo Omarchy.   "
 echo "=========================================================="
 echo -e "${NC}"
