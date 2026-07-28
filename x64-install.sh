@@ -37,7 +37,14 @@ if ! grep -q "omarchy" /etc/pacman.conf; then
 fi
 
 echo -e "${GREEN}[2/5] Sincronizando repositorios...${NC}"
-sudo pacman -Syu --noconfirm
+if ! sudo pacman -Syu --noconfirm; then
+  echo -e "${RED}⚠️ Detectado problema con las firmas de CachyOS. Reparando llavero automáticamente...${NC}"
+  sudo rm -rf /etc/pacman.d/gnupg/
+  sudo pacman-key --init
+  sudo pacman-key --populate archlinux cachyos
+  echo -e "${GREEN}Llavero reparado. Reintentando sincronización...${NC}"
+  sudo pacman -Syu --noconfirm
+fi
 
 echo -e "${GREEN}[2/5] Recopilando dependencias mapeadas...${NC}"
 # Combinamos nuestros dos archivos purificados de dependencias
