@@ -52,6 +52,7 @@ gvfs-nfs
 gvfs-smb
 hyprland
 hyprland-guiutils
+hyprland-preview-share-picker
 hyprpicker
 hyprsunset
 imagemagick
@@ -90,6 +91,9 @@ nss-mdns
 nvim
 obs-studio
 obsidian
+omacut
+omawrite
+omarchy-nvim
 pacman-contrib
 pamixer
 pinta
@@ -106,6 +110,7 @@ quickshell-git
 ripgrep
 ruby
 rust
+tensaku
 sddm
 slurp
 socat
@@ -117,7 +122,9 @@ tesseract-data-eng
 tldr
 tree-sitter-cli
 tmux
-ttf-jetbrains-mono-nerd
+tobi-try
+ttf-ia-writer
+ttf-jetbrains-mono-nerd-basic
 tzupdate
 udiskie
 ufw
@@ -136,5 +143,6 @@ xdg-desktop-portal-hyprland
 xdg-terminal-exec
 xournalpp
 yaru-icon-theme
+yay
 yt-dlp
 zoxide
