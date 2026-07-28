@@ -77,6 +77,10 @@ sudo chmod -R 755 /usr/share/omarchy
 sudo mkdir -p /usr/share/wayland-sessions
 sudo cp default/wayland-sessions/omarchy.desktop /usr/share/wayland-sessions/ 2>/dev/null || true
 
+# Registrar terminal por defecto (Foot) para xdg-terminal-exec
+sudo mkdir -p /usr/share/xdg-terminal-exec
+sudo cp default/xdg-terminal-exec/hyprland-xdg-terminals.list /usr/share/xdg-terminal-exec/ 2>/dev/null || true
+
 # Exportar OMARCHY_PATH globalmente para que funcionen los scripts del sistema
 sudo bash -c 'echo "export OMARCHY_PATH=/usr/share/omarchy" > /etc/profile.d/omarchy.sh'
 sudo chmod +x /etc/profile.d/omarchy.sh
