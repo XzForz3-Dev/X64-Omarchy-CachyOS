@@ -42,7 +42,7 @@ cat << "EOF"
 EOF
 echo -e "${NC}"
 echo -e "${BLUE}==========================================================${NC}"
-echo -e "${GREEN}      Bienvenido al Instalador de X64-Omarchy OS          ${NC}"
+echo -e "${GREEN}  Bienvenido al Instalador de X64-Omarchy para CachyOS    ${NC}"
 echo -e "${BLUE}==========================================================${NC}\n"
 
 # Pre-flight check: No ejecutar como root
