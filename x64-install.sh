@@ -41,10 +41,21 @@ sudo pacman -Syu --noconfirm
 
 echo -e "${GREEN}[2/5] Recopilando dependencias mapeadas...${NC}"
 # Combinamos nuestros dos archivos purificados de dependencias
-PACKAGES=$(cat install/omarchy-base.packages install/omarchy-other.packages | grep -v '^#' | grep -v '^$' | tr '\n' ' ')
+ALL_PACKAGES=$(cat install/omarchy-base.packages install/omarchy-other.packages | grep -v '^#' | grep -v '^$' | tr '\n' ' ')
+
+# Filtramos solo los paquetes que faltan por instalar para evitar la lista enorme de "advertencias"
+MISSING_PACKAGES=$(pacman -T $ALL_PACKAGES || true)
 
 echo -e "${GREEN}[3/5] Instalando el núcleo de Omarchy (Wayland, Hyprland, Firefox, UI)...${NC}"
-sudo pacman -S --needed --noconfirm $PACKAGES
+if [ -n "$MISSING_PACKAGES" ]; then
+  # Removemos jack2 si existe, porque entra en conflicto directo con pipewire-jack
+  sudo pacman -Rdd --noconfirm jack2 2>/dev/null || true
+  
+  # Instalamos silenciosamente los que faltan
+  sudo pacman -S --noconfirm $MISSING_PACKAGES
+else
+  echo "Todos los paquetes ya están instalados."
+fi
 
 echo -e "${GREEN}[4/5] Aplicando El Escudo (Copiando Dotfiles y Configuraciones)...${NC}"
 # Nos aseguramos que las carpetas existan
