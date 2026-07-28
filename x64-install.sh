@@ -39,7 +39,7 @@ echo -e "${GREEN}[2/5] Recopilando dependencias mapeadas...${NC}"
 PACKAGES=$(cat install/omarchy-base.packages install/omarchy-other.packages | grep -v '^#' | grep -v '^$' | tr '\n' ' ')
 
 echo -e "${GREEN}[3/5] Instalando el núcleo de Omarchy (Wayland, Hyprland, Firefox, UI)...${NC}"
-sudo pacman -S --needed --noconfirm $PACKAGES
+paru -S --needed --noconfirm $PACKAGES
 
 echo -e "${GREEN}[4/5] Aplicando El Escudo (Copiando Dotfiles y Configuraciones)...${NC}"
 # Nos aseguramos que las carpetas existan
