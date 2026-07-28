@@ -67,8 +67,13 @@ fi
 echo -e "${GREEN}[4/5] Aplicando El Escudo (Copiando Dotfiles y Configuraciones)...${NC}"
 # Nos aseguramos que las carpetas existan
 mkdir -p ~/.config ~/.local/bin ~/.local/share/themes
+sudo mkdir -p /usr/share/omarchy
 
-# Copiamos todo lo que da vida al escritorio (silenciamos errores de carpetas que falten)
+# Instalamos el núcleo de Omarchy en el sistema global (Requerido por Hyprland/Lua)
+sudo cp -r bin config default shell themes /usr/share/omarchy/ 2>/dev/null || true
+sudo chmod -R 755 /usr/share/omarchy
+
+# Copiamos los dotfiles al directorio del usuario para permitir personalización
 cp -r config/* ~/.config/ 2>/dev/null || true
 cp -r bin/* ~/.local/bin/ 2>/dev/null || true
 cp -r themes/* ~/.local/share/themes/ 2>/dev/null || true
