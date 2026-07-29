@@ -59,17 +59,21 @@ error_response = None
 
 # --- Unified Menu State ---
 menu_items = [
-    {"label": "Tema: Tokyo Night", "type": "toggle", "selected": True, "pkg": []},
-    {"label": "Drivers: NVIDIA (Privativo)", "type": "toggle", "selected": False, "pkg": ["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings"]},
-    {"label": "Navegador: Firefox", "type": "toggle", "selected": True, "pkg": ["firefox"]},
-    {"label": "Navegador: Chromium", "type": "toggle", "selected": False, "pkg": ["chromium"]},
-    {"label": "Navegador: Brave", "type": "toggle", "selected": False, "pkg": ["brave-bin"]},
-    {"label": "Gaming: Paquete Jugador (Steam, Lutris, MangoHud)", "type": "toggle", "selected": False, "pkg": ["steam", "lutris", "mangohud", "gamemode"]},
-    {"label": "Desarrollo: Paquete Creador (Docker, Git, VSCode)", "type": "toggle", "selected": False, "pkg": ["docker", "git", "code", "base-devel"]},
+    {"label": "[ SISTEMA BASE & ENTORNO ]", "type": "header"},
+    {"label": "Tema: Tokyo Night", "type": "toggle", "selected": True, "pkg": [], "desc": "Aplica el tema oscuro 'Tokyo Night' para Hyprland, alacritty y neovim."},
+    {"label": "Controladores Gráficos (Drivers)", "type": "header"},
+    {"label": "Drivers: NVIDIA (Privativo)", "type": "toggle", "selected": False, "pkg": ["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings"], "desc": "Instala el módulo DKMS de Nvidia y herramientas. Recomendado para RTX."},
+    {"label": "Navegadores Web", "type": "header"},
+    {"label": "Mozilla Firefox", "type": "toggle", "selected": True, "pkg": ["firefox"], "desc": "El navegador libre por excelencia. Privado y rápido."},
+    {"label": "Chromium", "type": "toggle", "selected": False, "pkg": ["chromium"], "desc": "Navegador base de Chrome, código abierto."},
+    {"label": "Brave Browser", "type": "toggle", "selected": False, "pkg": ["brave-bin"], "desc": "Navegador enfocado en privacidad con bloqueador de anuncios integrado."},
+    {"label": "Herramientas de Software", "type": "header"},
+    {"label": "Gaming: Paquete Jugador (Steam, Lutris, MangoHud)", "type": "toggle", "selected": False, "pkg": ["steam", "lutris", "mangohud", "gamemode"], "desc": "Configura tu PC para máximo rendimiento en videojuegos y herramientas de Wine."},
+    {"label": "Desarrollo: Paquete Creador (Docker, Git, VSCode)", "type": "toggle", "selected": False, "pkg": ["docker", "git", "code", "base-devel"], "desc": "Entorno completo de programación: virtualización, control de versiones y el IDE VSCode."},
     {"label": "", "type": "separator"},
-    {"label": "[ INICIAR METAMORFOSIS ]", "type": "action"}
+    {"label": "[ INICIAR METAMORFOSIS ]", "type": "action", "desc": "Aplicar configuración y comenzar la instalación del sistema X64."}
 ]
-current_menu_index = 0
+current_menu_index = 1
 user_choices = {"theme": "Tokyo Night", "drivers": "Mesa (AMD/Intel)", "packages": []}
 transition_text = ""
 
@@ -265,19 +269,34 @@ def update_ui():
     if current_state == "menu":
         text = "\n[bold cyan]Usa las FLECHAS para moverte. Presiona ESPACIO o ENTER para cambiar.[/bold cyan]\n\n"
         for i, item in enumerate(menu_items):
-            cursor = "[bold yellow]➤[/bold yellow] " if i == current_menu_index else "  "
             if item["type"] == "separator":
                 text += "\n"
+            elif item["type"] == "header":
+                text += f"  [bold blue]── {item['label']} ──[/bold blue]\n"
             elif item["type"] == "action":
+                cursor = "[bold yellow]➤[/bold yellow] " if i == current_menu_index else "  "
                 style = "bold green reverse" if i == current_menu_index else "bold green"
                 text += f"{cursor}[{style}]{item['label']}[/{style}]\n"
             else:
+                cursor = "[bold yellow]➤[/bold yellow] " if i == current_menu_index else "  "
                 if item["selected"]:
-                    chk_box = "[bold green on black] ◉ ACTIVADO   [/bold green on black]"
+                    chk_box = "[bold green][████] ON [/bold green]"
                 else:
-                    chk_box = "[bold red on black] ◯ Desactivado[/bold red on black]"
-                style = "bold white" if i == current_menu_index else "white"
+                    chk_box = "[bold bright_black][░░░░] OFF[/bold bright_black]"
+                
+                if i == current_menu_index:
+                    style = "bold white"
+                else:
+                    style = "dim white"
+                    chk_box = chk_box.replace("bold", "dim")
+
                 text += f"{cursor}{chk_box} [{style}]{item['label']}[/{style}]\n"
+                
+        # HUD Dinámico
+        desc = menu_items[current_menu_index].get("desc", "")
+        # Usamos Text para truncar correctamente o rellenar si es necesario
+        hud = f"\n\n[bold magenta]┌{'─'*65}┐\n│[/bold magenta] [bold cyan]INFO:[/bold cyan] {desc.ljust(58)[:58]} [bold magenta]│\n└{'─'*65}┘[/bold magenta]"
+        text += hud
                 
         layout["right"].update(Panel(Text.from_markup(text), title="[bold magenta]Configuración Pre-Vuelo[/bold magenta]", border_style=border_color))
     elif current_state == "transition":
@@ -311,13 +330,16 @@ def keyboard_worker():
                 
                 if ch == '\x1b[A': # Arriba
                     current_menu_index = max(0, current_menu_index - 1)
-                    # Saltar separadores
-                    if menu_items[current_menu_index]["type"] == "separator":
-                        current_menu_index = max(0, current_menu_index - 1)
+                    while menu_items[current_menu_index]["type"] in ["separator", "header"] and current_menu_index > 0:
+                        current_menu_index -= 1
+                    # Recuperar si llegamos a 0 y es header
+                    if menu_items[current_menu_index]["type"] in ["separator", "header"]:
+                        while menu_items[current_menu_index]["type"] in ["separator", "header"]:
+                            current_menu_index += 1
                 elif ch == '\x1b[B': # Abajo
                     current_menu_index = min(len(menu_items) - 1, current_menu_index + 1)
-                    if menu_items[current_menu_index]["type"] == "separator":
-                        current_menu_index = min(len(menu_items) - 1, current_menu_index + 1)
+                    while menu_items[current_menu_index]["type"] in ["separator", "header"] and current_menu_index < len(menu_items) - 1:
+                        current_menu_index += 1
                 elif ch == ' ':
                     if menu_items[current_menu_index]["type"] != "action":
                         menu_items[current_menu_index]["selected"] = not menu_items[current_menu_index]["selected"]
