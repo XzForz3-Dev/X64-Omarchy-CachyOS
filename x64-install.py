@@ -399,31 +399,34 @@ with open(LOG_FILE, "w") as f:
 k_worker = threading.Thread(target=keyboard_worker, daemon=True)
 k_worker.start()
 
-with Live(update_ui(), refresh_per_second=10, screen=True) as live:
-    while not install_done:
-        time.sleep(0.1)
-        
-        if current_state == "error" and error_prompt:
-            live.stop()
-            os.system("clear")
-            print(f"\n\033[1;41m[ ATENCIÓN - ERROR CRÍTICO ]\033[0m")
-            print(f"\033[1;33m{error_prompt['msg']}\033[0m\n")
-            ans = gum_choose("¿Cómo deseas proceder?", ["Reintentar", "Ignorar", "Abortar"])
-            error_response = ans[0] if ans else "Abortar"
-            error_prompt = None
-            os.system("clear")
-            live.start()
-        elif current_state == "working" and not start_time:
-            # Transición del menú a la instalación
-            start_time = time.time()
-            worker = threading.Thread(target=installer_worker, daemon=True)
-            worker.start()
+try:
+    with Live(update_ui(), refresh_per_second=10, screen=True) as live:
+        while not install_done:
+            time.sleep(0.1)
             
+            if current_state == "error" and error_prompt:
+                live.stop()
+                os.system("clear")
+                print(f"\n\033[1;41m[ ATENCIÓN - ERROR CRÍTICO ]\033[0m")
+                print(f"\033[1;33m{error_prompt['msg']}\033[0m\n")
+                ans = gum_choose("¿Cómo deseas proceder?", ["Reintentar", "Ignorar", "Abortar"])
+                error_response = ans[0] if ans else "Abortar"
+                error_prompt = None
+                os.system("clear")
+                live.start()
+            elif current_state == "working" and not start_time:
+                start_time = time.time()
+                worker = threading.Thread(target=installer_worker, daemon=True)
+                worker.start()
+                
+            live.update(update_ui())
+                
+        end_time = time.time()
         live.update(update_ui())
-            
-    end_time = time.time()
-    live.update(update_ui())
-    time.sleep(2)
+        time.sleep(2)
+except KeyboardInterrupt:
+    install_error = "Instalación abortada por el usuario (Ctrl+C)."
+    install_done = True
 
 print("\n")
 if not install_error:
