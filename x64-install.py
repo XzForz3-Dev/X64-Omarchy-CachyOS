@@ -69,6 +69,7 @@ menu_items = [
 ]
 current_menu_index = 0
 user_choices = {"theme": "Tokyo Night", "drivers": "Mesa (AMD/Intel)", "packages": []}
+transition_text = ""
 
 def log(msg):
     time_str = datetime.now().strftime('%H:%M:%S')
@@ -203,12 +204,14 @@ def update_ui():
         border_color = "green"
     elif current_state == "menu":
         border_color = "magenta"
+    elif current_state == "transition":
+        border_color = "yellow"
 
     layout["left"]["logo"].update(Panel(Align.center(f"[bold {border_color}]{logo_text}[/bold {border_color}]"), border_style=border_color))
     layout["left"]["sysinfo"].update(Panel(get_sys_info(), title="[bold blue]Hardware & Setup (Fastfetch)[/bold blue]", border_style="blue"))
     
     if current_state == "menu":
-        text = "\n[bold cyan]Usa las FLECHAS para moverte. Presiona ESPACIO o ENTER para marcar opciones.[/bold cyan]\n\n"
+        text = "\n[bold cyan]Usa las FLECHAS para moverte. Presiona ESPACIO o ENTER para cambiar.[/bold cyan]\n\n"
         for i, item in enumerate(menu_items):
             cursor = "[bold yellow]➤[/bold yellow] " if i == current_menu_index else "  "
             if item["type"] == "separator":
@@ -217,11 +220,16 @@ def update_ui():
                 style = "bold green reverse" if i == current_menu_index else "bold green"
                 text += f"{cursor}[{style}]{item['label']}[/{style}]\n"
             else:
-                box = "[bold cyan][x][/bold cyan]" if item["selected"] else "[dim white][ ][/dim white]"
+                if item["selected"]:
+                    box = "[bold green on black] ◉ ACTIVADO   [/bold green on black]"
+                else:
+                    box = "[bold red on black] ◯ Desactivado[/bold red on black]"
                 style = "bold white" if i == current_menu_index else "white"
                 text += f"{cursor}{box} [{style}]{item['label']}[/{style}]\n"
                 
         layout["right"].update(Panel(Text.from_markup(text), title="[bold magenta]Configuración Pre-Vuelo[/bold magenta]", border_style=border_color))
+    elif current_state == "transition":
+        layout["right"].update(Panel(Align.center(f"\n\n\n\n\n\n[bold yellow]{transition_text}[/bold yellow]"), title="[bold yellow]Inicializando Sistema...[/bold yellow]", border_style="yellow"))
     else:
         if not ui_transitioned:
             layout["right"].split_column(
@@ -271,7 +279,8 @@ def keyboard_worker():
                                     user_choices["drivers"] = "NVIDIA (Privativo)"
                         if "NVIDIA" not in user_choices["drivers"]:
                             user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon"])
-                        current_state = "working"
+                        
+                        current_state = "transition"
                         break
                     else:
                         menu_items[current_menu_index]["selected"] = not menu_items[current_menu_index]["selected"]
@@ -279,6 +288,16 @@ def keyboard_worker():
                     sys.exit(0)
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        
+    if current_state == "transition":
+        global transition_text
+        transition_text = "Cargando Secuencia de Lanzamiento..."
+        time.sleep(0.7)
+        transition_text = "Verificando Sistemas Vitales..."
+        time.sleep(0.7)
+        transition_text = "Desplegando Motor X64-Omarchy..."
+        time.sleep(0.8)
+        current_state = "working"
 
 def installer_worker():
     global install_error, install_done, current_state
