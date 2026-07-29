@@ -558,8 +558,11 @@ def setup_plymouth_bootloader():
     log_lines.append("[yellow]Instalando plymouth...[/yellow]")
     run_cmd_live("sudo pacman -S --noconfirm --needed plymouth", check=False)
     
-    log_lines.append("[yellow]Configurando mkinitcpio (Fallback)...[/yellow]")
-    run_cmd_live("sudo sed -i 's/^HOOKS=(base udev/HOOKS=(base udev plymouth/g' /etc/mkinitcpio.conf 2>/dev/null", check=False)
+    log_lines.append("[yellow]Configurando mkinitcpio (HOOKS)...[/yellow]")
+    # Soporte para mkinitcpio clásico (udev) y moderno (systemd)
+    run_cmd_live("sudo bash -c 'grep -q \" plymouth\" /etc/mkinitcpio.conf || sed -i -E \"s/^(HOOKS=\\([^)]*\\b)(udev|systemd)(\\b)/\\1\\2 plymouth/\" /etc/mkinitcpio.conf' 2>/dev/null", check=False)
+    # Regenerar initramfs explícitamente para asegurar que tome los cambios
+    run_cmd_live("sudo mkinitcpio -P", check=False)
     
     log_lines.append("[yellow]Configurando Dracut (Fallback)...[/yellow]")
     run_cmd_live("sudo mkdir -p /etc/dracut.conf.d", check=False)
