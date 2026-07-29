@@ -23,7 +23,7 @@ try:
     from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
     from rich.layout import Layout
     from rich.align import Align
-    from rich.console import Console
+    from rich.console import Console, Group
     from rich.text import Text
     from rich.table import Table
     from rich.markup import escape
@@ -58,36 +58,52 @@ error_prompt = None
 error_response = None
 
 # --- Unified Menu State ---
-menu_items = [
-    {"label": "[ ENTORNO Y NÚCLEO ]", "type": "header"},
-    {"label": "Tema: Tokyo Night", "type": "toggle", "selected": True, "pkg": [], "desc": "Aplica el tema oscuro 'Tokyo Night' para Hyprland, alacritty y neovim."},
-    {"label": "Kernel: CachyOS BORE", "type": "toggle", "selected": True, "pkg": ["linux-cachyos", "linux-cachyos-headers"], "desc": "Núcleo de CachyOS optimizado con BORE scheduler para máxima respuesta en escritorio."},
-    
-    {"label": "Rendimiento y Tweaks", "type": "header"},
-    {"label": "Tweak: Ananicy-cpp", "type": "toggle", "selected": True, "pkg": ["ananicy-cpp"], "desc": "Demonio auto-nice. Asigna prioridades a procesos dinámicamente para menor latencia."},
-    {"label": "Tweak: ZRAM (Swap en RAM)", "type": "toggle", "selected": True, "pkg": ["zram-generator"], "desc": "Comprime la memoria RAM en lugar de usar el disco para Swap. Mejora fluidez en cargas pesadas."},
-    {"label": "Tweak: UKSMD (Deduplicación)", "type": "toggle", "selected": False, "pkg": ["uksmd"], "desc": "Ultra KSM Daemon. Fusiona páginas de memoria idénticas para liberar RAM (Ideal para VMs)."},
-    {"label": "Tweak: Irqbalance", "type": "toggle", "selected": True, "pkg": ["irqbalance"], "desc": "Distribuye las interrupciones de hardware entre todos los núcleos del CPU."},
-    
-    {"label": "Controladores Gráficos (Drivers)", "type": "header"},
-    {"label": "Drivers: NVIDIA (Privativo)", "type": "toggle", "selected": False, "pkg": ["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings"], "desc": "Instala el módulo DKMS de Nvidia y herramientas. Recomendado para RTX."},
-    
-    {"label": "Servicios del Sistema", "type": "header"},
-    {"label": "Audio: Servidor PipeWire", "type": "toggle", "selected": True, "pkg": ["pipewire", "pipewire-pulse", "pipewire-alsa", "pipewire-jack", "wireplumber"], "desc": "Servidor de audio moderno de baja latencia. Reemplaza a PulseAudio y JACK."},
-    {"label": "Red: Soporte Bluetooth", "type": "toggle", "selected": True, "pkg": ["bluez", "bluez-utils", "blueman"], "desc": "Instala y habilita la pila Bluetooth y el gestor gráfico Blueman."},
-    {"label": "Impresión: Sistema CUPS", "type": "toggle", "selected": False, "pkg": ["cups", "cups-pdf"], "desc": "Habilita el soporte para impresoras físicas y en red."},
-    
-    {"label": "Software & Internet", "type": "header"},
-    {"label": "Navegador: Mozilla Firefox", "type": "toggle", "selected": True, "pkg": ["firefox"], "desc": "El navegador libre por excelencia. Privado y rápido."},
-    {"label": "Navegador: Brave Browser", "type": "toggle", "selected": False, "pkg": ["brave-bin"], "desc": "Navegador enfocado en privacidad con bloqueador de anuncios integrado."},
-    {"label": "Gaming: Paquete Jugador", "type": "toggle", "selected": False, "pkg": ["steam", "lutris", "mangohud", "gamemode", "gamescope"], "desc": "Steam, Lutris y herramientas de rendimiento (MangoHud, Gamescope, GameMode)."},
-    {"label": "Desarrollo: Paquete Creador", "type": "toggle", "selected": False, "pkg": ["docker", "git", "code", "base-devel"], "desc": "Virtualización (Docker), control de versiones (Git) y el IDE VSCode."},
-    {"label": "Multimedia & Social", "type": "toggle", "selected": False, "pkg": ["obs-studio", "krita", "vlc", "discord", "telegram-desktop"], "desc": "Herramientas de creación de contenido, streaming y mensajería."},
-    
-    {"label": "", "type": "separator"},
-    {"label": "[ INICIAR METAMORFOSIS ]", "type": "action", "desc": "Aplicar configuración y comenzar la instalación del sistema X64."}
+menu_data = [
+    {
+        "cat": "1. Entorno y Núcleo",
+        "items": [
+            {"label": "Tema: Tokyo Night", "type": "toggle", "selected": True, "pkg": [], "desc": "Aplica el tema oscuro 'Tokyo Night' para Hyprland, Alacritty y Neovim. Proporciona una estética cyberpunk unificada y reduce la fatiga visual en entornos de baja luminosidad."},
+            {"label": "Kernel: CachyOS BORE", "type": "toggle", "selected": True, "pkg": ["linux-cachyos", "linux-cachyos-headers"], "desc": "Instala el núcleo hiper-optimizado de CachyOS equipado con el planificador BORE (Burst-Oriented Response Enhancer). Garantiza latencia casi nula y máxima responsividad bajo carga extrema."}
+        ]
+    },
+    {
+        "cat": "2. Tweaks Avanzados",
+        "items": [
+            {"label": "Tweak: Ananicy-cpp", "type": "toggle", "selected": True, "pkg": ["ananicy-cpp"], "desc": "Demonio auto-nice. Asigna prioridades a procesos dinámicamente usando reglas comunitarias para garantizar que tu escritorio y juegos tengan prioridad absoluta sobre tareas de fondo."},
+            {"label": "Tweak: ZRAM (Swap en RAM)", "type": "toggle", "selected": True, "pkg": ["zram-generator"], "desc": "Configura un bloque de compresión rápida en la RAM (algoritmo zstd). Evita la paginación a disco, extendiendo la vida útil de tu SSD y manteniendo el sistema ultra fluido al agotar la RAM."},
+            {"label": "Tweak: UKSMD (Deduplicación)", "type": "toggle", "selected": False, "pkg": ["uksmd"], "desc": "Ultra KSM Daemon. Escanea la memoria en segundo plano y fusiona páginas idénticas. Libera RAM masivamente, ideal si ejecutas muchas máquinas virtuales o decenas de contenedores Docker."},
+            {"label": "Tweak: Irqbalance", "type": "toggle", "selected": True, "pkg": ["irqbalance"], "desc": "Distribuye de manera inteligente las interrupciones de hardware a través de todos los núcleos y p-cores/e-cores del CPU, mejorando drásticamente el rendimiento I/O (discos, red) y ahorro de energía."}
+        ]
+    },
+    {
+        "cat": "3. Drivers y Hardware",
+        "items": [
+            {"label": "Gráficos: NVIDIA (Privativo)", "type": "toggle", "selected": False, "pkg": ["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings"], "desc": "Instala el módulo DKMS de Nvidia, bibliotecas de 32 bits y herramientas de configuración. Esencial para exprimir el rendimiento de las tarjetas gráficas RTX y GTX, soporta Wayland de forma nativa."},
+            {"label": "Audio: Servidor PipeWire", "type": "toggle", "selected": True, "pkg": ["pipewire", "pipewire-pulse", "pipewire-alsa", "pipewire-jack", "wireplumber"], "desc": "El futuro del audio en Linux. Un servidor multimedia de bajísima latencia que reemplaza a PulseAudio y JACK. Ideal para producción musical y gaming competitivo sin retardo de sonido."},
+            {"label": "Red: Pila Bluetooth", "type": "toggle", "selected": True, "pkg": ["bluez", "bluez-utils", "blueman"], "desc": "Instala los demonios base de Bluez y el gestor gráfico Blueman para que puedas conectar auriculares inalámbricos, mandos de consola (DualSense, Xbox) y dispositivos IoT sin ningún problema."},
+            {"label": "Sistema: Impresión (CUPS)", "type": "toggle", "selected": False, "pkg": ["cups", "cups-pdf"], "desc": "Habilita el servidor Common UNIX Printing System. Desactivado por defecto para ahorrar recursos de sistema, actívalo si planeas conectar impresoras físicas o imprimir documentos a PDF localmente."}
+        ]
+    },
+    {
+        "cat": "4. Software y Apps",
+        "items": [
+            {"label": "Navegador: Firefox", "type": "toggle", "selected": True, "pkg": ["firefox"], "desc": "El navegador libre respaldado por Mozilla. Optimizado para privacidad estricta y velocidad de renderizado de texto. Viene preconfigurado con aceleración por hardware en entornos Wayland."},
+            {"label": "Navegador: Brave", "type": "toggle", "selected": False, "pkg": ["brave-bin"], "desc": "Navegador basado en Chromium enfocado en privacidad extrema y Web3. Incluye un potente bloqueador de rastreadores y anuncios integrado directamente en el núcleo de renderizado."},
+            {"label": "Paquete Gaming (Steam/Lutris)", "type": "toggle", "selected": False, "pkg": ["steam", "lutris", "mangohud", "gamemode", "gamescope"], "desc": "Convierte tu PC en una consola. Incluye Steam, Lutris (Wine), MangoHud (telemetría FPS), Feral GameMode (optimización de CPU) y Gamescope (micro-compositor de la Steam Deck)."},
+            {"label": "Paquete Desarrollo (IDE/Git)", "type": "toggle", "selected": False, "pkg": ["docker", "git", "code", "base-devel"], "desc": "Toolkit de ingeniería de software para profesionales. Instala Docker (virtualización nativa), Git, herramientas de compilación C/C++ y Visual Studio Code (OSS). Empieza a codificar al instante."},
+            {"label": "Paquete Multimedia (OBS/Krita)", "type": "toggle", "selected": False, "pkg": ["obs-studio", "krita", "vlc", "discord", "telegram-desktop"], "desc": "Estudio de creación y comunicación online. OBS Studio para hacer streaming profesional, Krita para ilustración digital, reproductor VLC, y las aplicaciones de chat de Discord y Telegram."}
+        ]
+    },
+    {
+        "cat": "5. Acción Final",
+        "items": [
+            {"label": "[ INICIAR METAMORFOSIS ]", "type": "action", "selected": False, "pkg": [], "desc": "Aplica todos los paquetes y configuraciones seleccionadas. Esto iniciará el motor de instalación automática, configurará servicios de systemd y desplegará el sistema base de X64 Studios."}
+        ]
+    }
 ]
-current_menu_index = 1
+active_pane = "left"
+cat_idx = 0
+item_idx = 0
 user_choices = {"theme": "Tokyo Night", "drivers": "Mesa (AMD/Intel)", "packages": []}
 transition_text = ""
 
@@ -281,38 +297,57 @@ def update_ui():
     )
     
     if current_state == "menu":
-        text = "\n[bold cyan]Usa las FLECHAS para moverte. Presiona ESPACIO o ENTER para cambiar.[/bold cyan]\n\n"
-        for i, item in enumerate(menu_items):
-            if item["type"] == "separator":
-                text += "\n"
-            elif item["type"] == "header":
-                text += f"  [bold blue]── {item['label']} ──[/bold blue]\n"
-            elif item["type"] == "action":
-                cursor = "[bold yellow]➤[/bold yellow] " if i == current_menu_index else "  "
-                style = "bold green reverse" if i == current_menu_index else "bold green"
-                text += f"{cursor}[{style}]{item['label']}[/{style}]\n"
+        menu_table = Table(box=None, expand=True, show_header=False, padding=(0, 1))
+        menu_table.add_column("Categorías", ratio=30)
+        menu_table.add_column("Opciones", ratio=70)
+        
+        cat_text = ""
+        for i, c in enumerate(menu_data):
+            if i == cat_idx:
+                style = "bold cyan reverse" if active_pane == "left" else "bold cyan"
+                prefix = "▶ " if active_pane == "left" else "  "
+                cat_text += f"{prefix}[{style}]{c['cat']}[/{style}]\n\n"
             else:
-                cursor = "[bold yellow]➤[/bold yellow] " if i == current_menu_index else "  "
-                if item["selected"]:
-                    chk_box = "[bold green][████] ON [/bold green]"
-                else:
-                    chk_box = "[bold bright_black][░░░░] OFF[/bold bright_black]"
+                style = "dim white" if active_pane == "right" else "white"
+                cat_text += f"  [{style}]{c['cat']}[/{style}]\n\n"
                 
-                if i == current_menu_index:
+        item_text = ""
+        items = menu_data[cat_idx]["items"]
+        for i, item in enumerate(items):
+            is_active = (i == item_idx and active_pane == "right")
+            cursor = "[bold yellow]➤[/bold yellow] " if is_active else "  "
+            
+            if item["type"] == "action":
+                style = "bold green reverse" if is_active else "bold green"
+                item_text += f"\n{cursor}[{style}]{item['label']}[/{style}]\n"
+            else:
+                chk_box = "[bold green][████] ON [/bold green]" if item.get("selected", False) else "[bold bright_black][░░░░] OFF[/bold bright_black]"
+                if is_active:
                     style = "bold white"
                 else:
                     style = "dim white"
                     chk_box = chk_box.replace("bold", "dim")
-
-                text += f"{cursor}{chk_box} [{style}]{item['label']}[/{style}]\n"
+                    
+                item_text += f"{cursor}{chk_box} [{style}]{item['label']}[/{style}]\n"
                 
-        # HUD Dinámico
-        desc = menu_items[current_menu_index].get("desc", "")
-        # Usamos Text para truncar correctamente o rellenar si es necesario
-        hud = f"\n\n[bold magenta]┌{'─'*65}┐\n│[/bold magenta] [bold cyan]INFO:[/bold cyan] {desc.ljust(58)[:58]} [bold magenta]│\n└{'─'*65}┘[/bold magenta]"
-        text += hud
-                
-        layout["right"].update(Panel(Text.from_markup(text), title="[bold magenta]Configuración Pre-Vuelo[/bold magenta]", border_style=border_color))
+        menu_table.add_row(cat_text, item_text)
+        
+        panel_content = Group(
+            Text.from_markup("\n[bold cyan]NAVEGACIÓN 2D:[/bold cyan] Flechas [bold yellow]⬅️ ➡️[/bold yellow] cambian panel. Flechas [bold yellow]⬆️ ⬇️[/bold yellow] mueven selector. [bold yellow]ESPACIO[/bold yellow] alterna.\n"),
+            menu_table
+        )
+        
+        current_item = items[item_idx] if active_pane == "right" else menu_data[cat_idx]["items"][0]
+        desc = current_item.get("desc", "")
+        desc_text = Text(desc, style="white", justify="left")
+        hud_panel = Panel(desc_text, title="[bold cyan]INFORMACIÓN DETALLADA[/bold cyan]", border_style="magenta", height=7, box=box.ROUNDED)
+        
+        main_layout = Layout()
+        main_layout.split_column(
+            Layout(Panel(panel_content, title="[bold magenta]Configuración Pre-Vuelo[/bold magenta]", border_style=border_color), ratio=1),
+            Layout(hud_panel, size=7)
+        )
+        layout["right"].update(main_layout)
     elif current_state == "transition":
         layout["right"].update(Panel(Align.center(f"\n\n\n\n\n\n[bold yellow]{transition_text}[/bold yellow]"), title="[bold yellow]Inicializando Sistema...[/bold yellow]", border_style="yellow"))
     else:
