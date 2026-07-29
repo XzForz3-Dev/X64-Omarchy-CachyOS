@@ -1,0 +1,64 @@
+name: "Auto-Sync Upstream (CI/CD Shield)"
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # 3:00 AM UTC todos los días
+  workflow_dispatch: # Botón manual en la interfaz web
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  sync_and_test:
+    name: Sincronizar y Probar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar Repositorio (quattro)
+        uses: actions/checkout@v4
+        with:
+          ref: quattro
+          fetch-depth: 0
+
+      - name: Configurar Git Bot
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Conectar con Upstream (basecamp/omarchy)
+        run: |
+          git remote add upstream https://github.com/basecamp/omarchy.git
+          git fetch upstream main
+
+      - name: Fusión Inteligente (Priorizar Nuestro Código)
+        run: |
+          # Hacemos merge. Si hay conflicto, la estrategia 'ours' mantiene nuestras 
+          # optimizaciones intactas e ignora la versión de upstream para esos archivos.
+          git merge upstream/main --strategy-option ours -m "chore: Auto-sync from upstream"
+
+      - name: Ejecutar Pruebas de Integridad (CI)
+        id: run_tests
+        run: |
+          # 1. Validar que la estructura principal de Python esté intacta
+          python -m py_compile x64-install.py
+          
+          # 2. Validar sintaxis de Bash en los binarios críticos
+          bash -n bin/omarchy-update
+          bash -n x64-install.sh
+
+      - name: Guardar y Subir Cambios (Push)
+        if: success()
+        run: |
+          git push origin quattro
+
+      - name: Escudo de Emergencia (Abrir Issue si Falla)
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: "🚨 Escudo CI/CD: Actualización Oficial Rechazada",
+              body: "El robot intentó descargar las últimas actualizaciones de `basecamp/omarchy` y fusionarlas en la rama `quattro`.\n\nSin embargo, las pruebas automáticas fallaron. Esto significa que los creadores originales cambiaron algo que es incompatible con nuestras optimizaciones extremas.\n\nLa actualización se ha **abortado completamente** para proteger tu proyecto.\n\n**Instrucciones:** Muestra este problema a tu asistente IA (Antigravity) en el IDE para que pueda adaptar nuestra arquitectura al nuevo código oficial."
+            })
