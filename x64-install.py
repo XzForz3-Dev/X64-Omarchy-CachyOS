@@ -554,6 +554,22 @@ def keyboard_worker():
         time.sleep(0.8)
         current_state = "working"
 
+def setup_plymouth_bootloader():
+    log_lines.append("[yellow]Instalando plymouth...[/yellow]")
+    run_cmd_live("sudo pacman -S --noconfirm --needed plymouth", check=False)
+    
+    log_lines.append("[yellow]Configurando mkinitcpio.conf...[/yellow]")
+    run_cmd_live("sudo sed -i 's/^HOOKS=(base udev/HOOKS=(base udev plymouth/g' /etc/mkinitcpio.conf", check=False)
+    
+    log_lines.append("[yellow]Configurando Bootloader (GRUB/systemd-boot)...[/yellow]")
+    run_cmd_live("sudo find /boot/loader/entries -type f -name '*.conf' -exec bash -c 'grep -q splash \"$1\" || sudo sed -i \"/^options / s/$/ splash/\" \"$1\"' _ {} \\; 2>/dev/null", check=False)
+    run_cmd_live("sudo bash -c 'if [ -f /etc/default/grub ]; then grep -q splash /etc/default/grub || sed -i \"s/GRUB_CMDLINE_LINUX_DEFAULT=\\\\\"\\(.*\\)\\\\\"/GRUB_CMDLINE_LINUX_DEFAULT=\\\\\"\\1 splash\\\\\"/\" /etc/default/grub; grub-mkconfig -o /boot/grub/grub.cfg; fi' 2>/dev/null", check=False)
+    
+    log_lines.append("[yellow]Aplicando tema de Plymouth...[/yellow]")
+    run_cmd_live("sudo mkdir -p /usr/share/plymouth/themes/omarchy", check=False)
+    run_cmd_live("sudo cp -r default/plymouth/* /usr/share/plymouth/themes/omarchy/ 2>/dev/null", check=False)
+    run_cmd_live("sudo plymouth-set-default-theme -R omarchy", check=False)
+
 def installer_worker():
     global install_error, install_done, current_state
     try:
@@ -632,9 +648,7 @@ def installer_worker():
         run_cmd_live("chmod +x ~/.local/bin/*", check=False)
         
         progress.update(t_config, description="[yellow]Configurando Pantalla de Arranque (Plymouth)...", advance=5)
-        run_cmd_live("sudo mkdir -p /usr/share/plymouth/themes/omarchy", check=False)
-        run_cmd_live("sudo cp -r default/plymouth/* /usr/share/plymouth/themes/omarchy/ 2>/dev/null", check=False)
-        run_cmd_live("sudo plymouth-set-default-theme -R omarchy", check=False)
+        setup_plymouth_bootloader()
         
         progress.update(t_config, description="[yellow]Configurando Tema SDDM...", advance=5)
         run_cmd_live("sudo mkdir -p /usr/share/sddm/themes/omarchy", check=False)
