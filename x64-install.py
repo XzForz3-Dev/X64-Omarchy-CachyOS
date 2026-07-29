@@ -208,8 +208,8 @@ menu_data = [
     {
         "cat": "13. Drivers Gráficos",
         "items": [
-            {"label": "Mesa (AMD / Intel)", "type": "toggle", "selected": True, "pkg": ["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"], "desc": "[AGRUPADO] Drivers de código abierto para gráficas Radeon e Intel. Rendimiento nativo sobresaliente en Wayland para gaming."},
-            {"label": "NVIDIA (Privativo DKMS)", "type": "toggle", "selected": False, "pkg": ["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings"], "desc": "[AGRUPADO] Módulo DKMS y bibliotecas propietarias de NVIDIA. Esencial para extraer el 100% del rendimiento en tarjetas RTX y GTX."}
+            {"label": "Mesa (AMD / Intel)", "type": "toggle", "selected": True, "pkg": ["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel", "intel-media-driver", "libva-mesa-driver", "lib32-libva-mesa-driver", "libva-utils"], "desc": "[AGRUPADO] Drivers de código abierto para gráficas Radeon e Intel, con aceleración de video por hardware (VA-API)."},
+            {"label": "NVIDIA (Privativo DKMS)", "type": "toggle", "selected": False, "pkg": ["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings", "nvidia-vaapi-driver", "libva-utils"], "desc": "[AGRUPADO] Módulo DKMS, bibliotecas propietarias y aceleración VA-API para NVIDIA. Esencial para extraer el 100% del rendimiento."}
         ]
     },
     {

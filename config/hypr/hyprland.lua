@@ -27,3 +27,8 @@ require("default.hypr.toggles")
 
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
+
+-- Hardware Video Acceleration (VA-API) Environment Variables
+hl.env("MOZ_ENABLE_WAYLAND", "1")
+hl.env("MOZ_DISABLE_RDD_SANDBOX", "1")
+hl.env("NVD_BACKEND", "direct") -- Para compatibilidad de hardware NVIDIA
