@@ -86,8 +86,14 @@ menu_data = [
             {"label": "Steam & Proton", "type": "toggle", "selected": False, "pkg": ["steam", "protonup-qt"], "desc": "La plataforma de Valve. Incluye ProtonUp-Qt para instalar versiones personalizadas de Proton-GE."},
             {"label": "Lutris", "type": "toggle", "selected": False, "pkg": ["lutris"], "desc": "Centraliza y gestiona juegos de GOG, emuladores y scripts de Wine en una sola interfaz gráfica."},
             {"label": "Heroic Games Launcher", "type": "toggle", "selected": False, "pkg": ["heroic-games-launcher-bin"], "desc": "Cliente nativo y de código abierto para gestionar tu biblioteca de Epic Games Store y GOG en Linux."},
-            {"label": "Gaming Toolkit", "type": "toggle", "selected": False, "pkg": ["mangohud", "goverlay", "gamemode", "gamescope"], "desc": "Vital para gamers: MangoHud (Telemetría en pantalla), GOverlay (GUI), GameMode (CPU) y Gamescope."},
-            {"label": "Emuladores (Consolas)", "type": "toggle", "selected": False, "pkg": ["retroarch", "rpcs3-bin", "pcsx2", "dolphin-emu", "prismlauncher"], "desc": "Multi-emuladores (RetroArch), PS3 (RPCS3), PS2 (PCSX2), GameCube/Wii (Dolphin) y Minecraft (Prism)."}
+            {"label": "MangoHud", "type": "toggle", "selected": False, "pkg": ["mangohud"], "desc": "Telemetría OSD en pantalla para monitorear FPS, CPU, GPU y RAM mientras juegas."},
+            {"label": "GOverlay", "type": "toggle", "selected": False, "pkg": ["goverlay"], "desc": "Interfaz gráfica (GUI) para configurar MangoHud fácilmente sin tocar archivos de texto."},
+            {"label": "GameMode (Feral)", "type": "toggle", "selected": False, "pkg": ["gamemode"], "desc": "Demonio que optimiza agresivamente tu CPU y GPU en el momento en que abres un juego pesado."},
+            {"label": "Gamescope", "type": "toggle", "selected": False, "pkg": ["gamescope"], "desc": "Microcompositor de SteamOS para forzar resoluciones, limitar FPS o aplicar upscaling (FSR) a juegos."},
+            {"label": "RetroArch", "type": "toggle", "selected": False, "pkg": ["retroarch"], "desc": "El frontend definitivo para emulación clásica (NES, SNES, N64, GBA, etc)."},
+            {"label": "RPCS3 (PS3)", "type": "toggle", "selected": False, "pkg": ["rpcs3-bin"], "desc": "Emulador experimental y de código abierto de PlayStation 3."},
+            {"label": "PCSX2 (PS2)", "type": "toggle", "selected": False, "pkg": ["pcsx2"], "desc": "Emulador altamente compatible para jugar todo el catálogo de PlayStation 2."},
+            {"label": "Dolphin (Wii/GC)", "type": "toggle", "selected": False, "pkg": ["dolphin-emu"], "desc": "Emulador líder mundial para Nintendo GameCube y Nintendo Wii."}
         ]
     },
     {
@@ -102,76 +108,108 @@ menu_data = [
     {
         "cat": "5. Multimedia y Gráficos",
         "items": [
-            {"label": "Reproductores (VLC / MPV)", "type": "toggle", "selected": False, "pkg": ["vlc", "mpv"], "desc": "Reproductores universales. VLC para todo formato, y MPV para reproducción ultraligera acelerada por hardware."},
+            {"label": "VLC Media Player", "type": "toggle", "selected": False, "pkg": ["vlc"], "desc": "Reproductor universal capaz de reproducir literalmente cualquier formato de audio o video."},
+            {"label": "MPV", "type": "toggle", "selected": False, "pkg": ["mpv"], "desc": "Reproductor de video purista, operado por teclado, ultraligero y con potente aceleración por hardware."},
             {"label": "Spotify", "type": "toggle", "selected": False, "pkg": ["spotify"], "desc": "Cliente oficial para streaming de música y podcasts."},
-            {"label": "Producción A/V (OBS / Kdenlive)", "type": "toggle", "selected": False, "pkg": ["obs-studio", "kdenlive", "audacity"], "desc": "OBS para streaming, Kdenlive para edición de video profesional, y Audacity para pistas de audio."},
-            {"label": "Diseño y CGI (Krita / Blender)", "type": "toggle", "selected": False, "pkg": ["krita", "gimp", "blender", "inkscape"], "desc": "Krita (Pintura), GIMP (Retoque fotográfico), Blender (Modelado 3D) e Inkscape (Vectores)."}
+            {"label": "OBS Studio", "type": "toggle", "selected": False, "pkg": ["obs-studio"], "desc": "Software profesional para transmisión en vivo (Streaming) y grabación de pantalla con aceleración por GPU."},
+            {"label": "Kdenlive", "type": "toggle", "selected": False, "pkg": ["kdenlive"], "desc": "Editor de video profesional no-lineal desarrollado por la comunidad KDE."},
+            {"label": "Audacity", "type": "toggle", "selected": False, "pkg": ["audacity"], "desc": "El mítico editor y grabador de audio multipista de código abierto."},
+            {"label": "Krita", "type": "toggle", "selected": False, "pkg": ["krita"], "desc": "Herramienta profesional gratuita de pintura digital e ilustración rasterizada en 2D."},
+            {"label": "GIMP", "type": "toggle", "selected": False, "pkg": ["gimp"], "desc": "Editor avanzado de imágenes. La alternativa libre por excelencia a Adobe Photoshop."},
+            {"label": "Blender", "type": "toggle", "selected": False, "pkg": ["blender"], "desc": "La suite de creación 3D de código abierto líder en el mundo. Modelado, animación y renderizado CGI."},
+            {"label": "Inkscape", "type": "toggle", "selected": False, "pkg": ["inkscape"], "desc": "Editor profesional de gráficos vectoriales (SVG). Alternativa libre a Illustrator."}
         ]
     },
     {
         "cat": "6. Desarrollo (Dev)",
         "items": [
-            {"label": "IDEs (VSCode / VSCodium)", "type": "toggle", "selected": False, "pkg": ["code", "vscodium-bin"], "desc": "El entorno de desarrollo de Microsoft (OSS) y su versión Codium totalmente libre de telemetría."},
-            {"label": "Editores Ligeros (Neovim / Zed)", "type": "toggle", "selected": False, "pkg": ["neovim", "zed", "sublime-text-4"], "desc": "Neovim para los maestros del terminal, Zed para máxima velocidad (Rust), y Sublime Text 4."},
-            {"label": "Contenedores (Docker)", "type": "toggle", "selected": False, "pkg": ["docker", "docker-compose", "podman"], "desc": "Plataformas de virtualización a nivel de sistema operativo para desplegar microservicios."},
-            {"label": "Git & GitHub CLI", "type": "toggle", "selected": True, "pkg": ["git", "github-cli"], "desc": "Control de versiones esencial para clonar repositorios y compilar paquetes AUR."}
+            {"label": "Visual Studio Code", "type": "toggle", "selected": False, "pkg": ["code"], "desc": "El entorno de desarrollo de Microsoft (OSS). Soporte inmenso de plugins y telemetría deshabilitada por defecto."},
+            {"label": "VSCodium", "type": "toggle", "selected": False, "pkg": ["vscodium-bin"], "desc": "Versión 100% libre de telemetría e infraestructura de Microsoft de VSCode."},
+            {"label": "Neovim", "type": "toggle", "selected": False, "pkg": ["neovim"], "desc": "El editor de texto hiperextensible, rápido y purista basado en Vim. Ideal para ninjas de la terminal."},
+            {"label": "Zed", "type": "toggle", "selected": False, "pkg": ["zed"], "desc": "Nuevo editor ultrarrápido programado en Rust con integración nativa de IA e interfaces a 120 FPS."},
+            {"label": "Sublime Text 4", "type": "toggle", "selected": False, "pkg": ["sublime-text-4"], "desc": "Editor de texto ligero, propietario y extremadamente fluido."},
+            {"label": "Docker & Compose", "type": "toggle", "selected": False, "pkg": ["docker", "docker-compose"], "desc": "Plataforma de virtualización por contenedores estándar en la industria para despliegue de microservicios."},
+            {"label": "Podman", "type": "toggle", "selected": False, "pkg": ["podman"], "desc": "Alternativa de RedHat a Docker, diseñada para ejecutar contenedores sin necesidad de demonios root."},
+            {"label": "Git & GitHub CLI", "type": "toggle", "selected": True, "pkg": ["git", "github-cli"], "desc": "Control de versiones esencial para programar, clonar repositorios y compilar paquetes AUR."}
         ]
     },
     {
         "cat": "7. Ofimática",
         "items": [
-            {"label": "LibreOffice", "type": "toggle", "selected": False, "pkg": ["libreoffice-fresh"], "desc": "La suite libre más potente. Alternativa completa a Microsoft Office con excelente compatibilidad."},
-            {"label": "OnlyOffice / WPS Office", "type": "toggle", "selected": False, "pkg": ["onlyoffice-bin", "wps-office"], "desc": "Suites alternativas con una interfaz 'Ribbon' que clona casi perfectamente el formato DOCX/XLSX."},
-            {"label": "Productividad (Obsidian / Mail)", "type": "toggle", "selected": False, "pkg": ["obsidian", "thunderbird", "okular"], "desc": "Gestión de conocimiento con Obsidian, correo con Thunderbird y el potente lector de PDF Okular."}
+            {"label": "LibreOffice", "type": "toggle", "selected": False, "pkg": ["libreoffice-fresh"], "desc": "La suite libre más potente. Alternativa completa a Microsoft Office con excelente compatibilidad de formatos clásicos."},
+            {"label": "OnlyOffice", "type": "toggle", "selected": False, "pkg": ["onlyoffice-bin"], "desc": "Suite de oficina colaborativa que ofrece la mayor fidelidad y compatibilidad con formatos nativos de Microsoft (.docx, .xlsx)."},
+            {"label": "WPS Office", "type": "toggle", "selected": False, "pkg": ["wps-office"], "desc": "Suite privada con una interfaz idéntica a MS Office y compatibilidad excepcional (código cerrado)."},
+            {"label": "Obsidian", "type": "toggle", "selected": False, "pkg": ["obsidian"], "desc": "Potente base de conocimiento que almacena tus notas localmente en formato Markdown puro."},
+            {"label": "Thunderbird", "type": "toggle", "selected": False, "pkg": ["thunderbird"], "desc": "Gestor avanzado de correo electrónico desarrollado por la Fundación Mozilla."},
+            {"label": "Okular", "type": "toggle", "selected": False, "pkg": ["okular"], "desc": "El lector de documentos universal de KDE (PDF, EPUB, CBR), rápido y rico en funciones."}
         ]
     },
     {
         "cat": "8. Sistema y Compresión",
         "items": [
-            {"label": "Utilidades Base (Vital)", "type": "toggle", "selected": True, "pkg": ["base-devel", "p7zip", "unrar", "unzip", "ntfs-3g"], "desc": "[CRÍTICO] Instala compiladores básicos, soporte para ZIP/RAR/7Z y drivers para montar USBs formateados en Windows (NTFS)."},
-            {"label": "Respaldo (Timeshift)", "type": "toggle", "selected": True, "pkg": ["timeshift"], "desc": "Permite crear 'Snapshots' del sistema. Si algo se rompe tras una actualización, puedes restaurar tu PC en 2 segundos."},
-            {"label": "Monitoreo (Btop / Fastfetch)", "type": "toggle", "selected": True, "pkg": ["btop", "fastfetch", "stacer"], "desc": "Visualiza el consumo de CPU/RAM (Btop), tu hardware (Fastfetch) y optimiza el sistema gráfico (Stacer)."},
-            {"label": "Discos (GParted)", "type": "toggle", "selected": False, "pkg": ["gparted", "partitionmanager"], "desc": "Gestores gráficos de particiones y unidades de almacenamiento. Formatea o redimensiona discos fácilmente."}
+            {"label": "Base de Sistema y Compresión", "type": "toggle", "selected": True, "pkg": ["base-devel", "p7zip", "unrar", "unzip", "ntfs-3g"], "desc": "[AGRUPADO - CRÍTICO] Instala compiladores, soporte para ZIP/RAR/7Z y drivers NTFS para montar USBs formateados en Windows."},
+            {"label": "Timeshift", "type": "toggle", "selected": True, "pkg": ["timeshift"], "desc": "Herramienta de respaldo del sistema (Snapshots). Te permite revertir tu PC a un estado anterior si una actualización rompe algo."},
+            {"label": "Btop", "type": "toggle", "selected": False, "pkg": ["btop"], "desc": "Impresionante monitor de sistema interactivo en terminal para observar CPU, Memoria, Red y Discos."},
+            {"label": "Fastfetch", "type": "toggle", "selected": False, "pkg": ["fastfetch"], "desc": "Utilidad CLI ultrarrápida que muestra el logo de tu distribución y las specs completas de tu hardware (escrito en C)."},
+            {"label": "Stacer", "type": "toggle", "selected": False, "pkg": ["stacer"], "desc": "Optimizador y monitor de sistema gráfico que te permite limpiar cachés, basura y gestionar servicios fácilmente."},
+            {"label": "GParted", "type": "toggle", "selected": False, "pkg": ["gparted"], "desc": "El gestor de particiones estándar de GNOME. Formatea, redimensiona y verifica discos duros."},
+            {"label": "KDE Partition Manager", "type": "toggle", "selected": False, "pkg": ["partitionmanager"], "desc": "Alternativa de KDE para el manejo avanzado de particiones de discos duros."}
         ]
     },
     {
         "cat": "9. Archivos y Terminales",
         "items": [
-            {"label": "Terminales Gráficas (Alacritty / Kitty)", "type": "toggle", "selected": True, "pkg": ["alacritty", "kitty", "wezterm", "foot"], "desc": "Terminales aceleradas por GPU para máximo rendimiento sin uso de CPU. Alacritty viene por defecto."},
-            {"label": "Gestores de Archivos Gráficos", "type": "toggle", "selected": False, "pkg": ["thunar", "dolphin", "nautilus"], "desc": "Navegación tradicional de archivos y carpetas usando una interfaz visual intuitiva."},
-            {"label": "Gestores de Archivos CLI (Yazi)", "type": "toggle", "selected": False, "pkg": ["yazi", "ranger", "mc"], "desc": "Navegación de archivos ultrarrápida directamente desde la terminal con previsualización de imágenes."}
+            {"label": "Alacritty", "type": "toggle", "selected": True, "pkg": ["alacritty"], "desc": "Terminal acelerada por GPU, hiper-rápida y configurada por defecto con nuestro tema Tokyo Night."},
+            {"label": "Kitty", "type": "toggle", "selected": False, "pkg": ["kitty"], "desc": "Terminal moderna con aceleración OpenGL, soporte nativo para multiplexación y visualización de imágenes (Kittens)."},
+            {"label": "WezTerm", "type": "toggle", "selected": False, "pkg": ["wezterm"], "desc": "Terminal escrita en Rust, hiper-configurable usando archivos Lua y con excelente soporte para fuentes de ligadura."},
+            {"label": "Foot", "type": "toggle", "selected": False, "pkg": ["foot"], "desc": "Emulador de terminal ultraligero y purista diseñado exclusivamente para Wayland."},
+            {"label": "Thunar", "type": "toggle", "selected": False, "pkg": ["thunar"], "desc": "Gestor de archivos ligero, rápido y predeterminado en entornos XFCE."},
+            {"label": "Dolphin", "type": "toggle", "selected": False, "pkg": ["dolphin"], "desc": "Gestor de archivos de KDE. Extremadamente potente con soporte nativo para terminal integrada y split-view."},
+            {"label": "Nautilus", "type": "toggle", "selected": False, "pkg": ["nautilus"], "desc": "Gestor de archivos de GNOME. Enfoque visual moderno y simplificado."},
+            {"label": "Yazi (CLI)", "type": "toggle", "selected": False, "pkg": ["yazi"], "desc": "Moderno e increíblemente rápido gestor de archivos para la terminal (Rust) con previsualización asíncrona de imágenes."},
+            {"label": "Ranger (CLI)", "type": "toggle", "selected": False, "pkg": ["ranger"], "desc": "El gestor de archivos de terminal clásico, controlado enteramente por atajos tipo Vim."}
         ]
     },
     {
         "cat": "10. Shells, Fuentes e Impresión",
         "items": [
-            {"label": "Intérpretes (Zsh / Fish)", "type": "toggle", "selected": True, "pkg": ["zsh", "fish"], "desc": "Reemplaza al antiguo bash. Ofrecen autocompletado inteligente basado en tu historial y syntax highlighting."},
-            {"label": "Nerd Fonts y Emojis", "type": "toggle", "selected": True, "pkg": ["ttf-fira-code", "ttf-meslo-nerd", "noto-fonts-emoji"], "desc": "[ESENCIAL] Evita que los íconos de la terminal, Waybar o VSCode se vean como cuadrados rotos."},
-            {"label": "Impresión (CUPS)", "type": "toggle", "selected": False, "pkg": ["cups", "cups-pdf", "system-config-printer"], "desc": "Habilita los demonios de impresión para reconocer impresoras físicas y generar archivos PDF."}
+            {"label": "Zsh", "type": "toggle", "selected": False, "pkg": ["zsh"], "desc": "Intérprete de comandos (Shell) súper personalizable (ej. con Oh-My-Zsh) y plugins de autocompletado avanzado."},
+            {"label": "Fish", "type": "toggle", "selected": False, "pkg": ["fish"], "desc": "Shell amistosa que funciona de manera brillante desde el primer minuto con autocompletado nativo asombroso."},
+            {"label": "Fuentes y Emojis (Nerd Fonts)", "type": "toggle", "selected": True, "pkg": ["ttf-fira-code", "ttf-meslo-nerd", "noto-fonts-emoji"], "desc": "[AGRUPADO - ESENCIAL] Instala las fuentes necesarias para que los íconos de la terminal (Waybar, NeoVim, etc) no se rompan."},
+            {"label": "Soporte de Impresión (CUPS)", "type": "toggle", "selected": False, "pkg": ["cups", "cups-pdf", "system-config-printer"], "desc": "[AGRUPADO] Habilita los demonios de impresión para reconocer impresoras físicas en red y generar impresiones virtuales en formato PDF."}
         ]
     },
     {
         "cat": "11. Audio y Redes",
         "items": [
-            {"label": "Audio (PipeWire)", "type": "toggle", "selected": True, "pkg": ["pipewire", "pipewire-pulse", "pipewire-alsa", "pipewire-jack", "wireplumber", "easyeffects"], "desc": "Servidor de audio de baja latencia con el ecualizador avanzado EasyEffects para mejorar tu micrófono y audífonos."},
-            {"label": "Bluetooth (Bluez)", "type": "toggle", "selected": True, "pkg": ["bluez", "bluez-utils", "blueman"], "desc": "Pila oficial de Bluetooth. Necesaria para conectar audífonos inalámbricos y mandos de consola (Xbox/PlayStation)."},
-            {"label": "Red y Seguridad", "type": "toggle", "selected": False, "pkg": ["ufw", "tailscale", "wireguard-tools", "dnscrypt-proxy"], "desc": "Firewall fácil (UFW), redes P2P cifradas (Tailscale/Wireguard) y encriptación de DNS (DNSCrypt)."}
+            {"label": "Soporte Base de Audio (PipeWire)", "type": "toggle", "selected": True, "pkg": ["pipewire", "pipewire-pulse", "pipewire-alsa", "pipewire-jack", "wireplumber"], "desc": "[AGRUPADO - VITAL] El estándar moderno de audio en Linux que reemplaza a PulseAudio y JACK. Baja latencia ideal para gaming y música."},
+            {"label": "EasyEffects", "type": "toggle", "selected": False, "pkg": ["easyeffects"], "desc": "Potente rack de efectos (ecualizador, reductor de ruido, compresor) impulsado por PipeWire para transformar tu audio y micrófono."},
+            {"label": "Bluetooth (Bluez)", "type": "toggle", "selected": True, "pkg": ["bluez", "bluez-utils", "blueman"], "desc": "[AGRUPADO] Pila oficial de Bluetooth. Necesaria para conectar audífonos inalámbricos y mandos de consola (Xbox/PlayStation)."},
+            {"label": "UFW (Firewall)", "type": "toggle", "selected": False, "pkg": ["ufw"], "desc": "Uncomplicated Firewall. Interfaz sencilla para gestionar los puertos y el muro de fuego de tu sistema operativo."},
+            {"label": "Tailscale", "type": "toggle", "selected": False, "pkg": ["tailscale"], "desc": "VPN del tipo Mesh (Zero Trust) para interconectar todos tus dispositivos (PC, Servidor, Celular) de manera privada sin abrir puertos."},
+            {"label": "DNSCrypt-Proxy", "type": "toggle", "selected": False, "pkg": ["dnscrypt-proxy"], "desc": "Servicio que encripta tus consultas DNS para prevenir que tu proveedor de internet (ISP) rastree o censure tu navegación."}
         ]
     },
     {
         "cat": "12. VMs, Nube y Torrents",
         "items": [
-            {"label": "Máquinas Virtuales (QEMU/KVM)", "type": "toggle", "selected": False, "pkg": ["virt-manager", "qemu-desktop", "gnome-boxes", "virtualbox"], "desc": "Instala hipervisores potentes para emular Windows u otras distribuciones con rendimiento casi nativo."},
-            {"label": "Gestores de Contraseñas", "type": "toggle", "selected": False, "pkg": ["bitwarden", "keepassxc"], "desc": "Almacena tus credenciales cifradas con estándares de grado militar y autocompletado en navegadores."},
-            {"label": "Sincronización (Nube)", "type": "toggle", "selected": False, "pkg": ["syncthing", "nextcloud-client"], "desc": "Herramientas de sincronización descentralizada (P2P) para mantener carpetas idénticas entre PC y celular."},
-            {"label": "Descargas P2P (Torrents)", "type": "toggle", "selected": False, "pkg": ["qbittorrent", "jdownloader2", "transmission-gtk"], "desc": "Gestores robustos para descargar archivos torrent de forma segura y automatizar descargas de enlaces directos."}
+            {"label": "Virt-Manager (QEMU/KVM)", "type": "toggle", "selected": False, "pkg": ["virt-manager", "qemu-desktop"], "desc": "Hipervisor nativo del kernel Linux. Permite virtualizar Windows u otras distros con un rendimiento casi nativo (GPU Passthrough)."},
+            {"label": "GNOME Boxes", "type": "toggle", "selected": False, "pkg": ["gnome-boxes"], "desc": "Gestor de máquinas virtuales diseñado específicamente para ser ridículamente fácil de usar por cualquier usuario."},
+            {"label": "VirtualBox", "type": "toggle", "selected": False, "pkg": ["virtualbox"], "desc": "Hipervisor tipo 2 clásico desarrollado por Oracle. Muy fácil de usar pero con menor rendimiento nativo que KVM."},
+            {"label": "Bitwarden", "type": "toggle", "selected": False, "pkg": ["bitwarden"], "desc": "Gestor de contraseñas de código abierto con sincronización en la nube."},
+            {"label": "KeePassXC", "type": "toggle", "selected": False, "pkg": ["keepassxc"], "desc": "Gestor de contraseñas local offline (almacenado en archivo cifrado en tu PC)."},
+            {"label": "Syncthing", "type": "toggle", "selected": False, "pkg": ["syncthing"], "desc": "Herramienta mágica P2P para mantener carpetas idénticas sincronizadas entre tu PC, laptop y celular sin usar servidores centralizados."},
+            {"label": "Nextcloud Client", "type": "toggle", "selected": False, "pkg": ["nextcloud-client"], "desc": "Cliente de sincronización de archivos para servidores Nextcloud (Tu propia nube personal)."},
+            {"label": "qBittorrent", "type": "toggle", "selected": False, "pkg": ["qbittorrent"], "desc": "El cliente BitTorrent libre más popular, confiable y sin publicidad. Similar a uTorrent pero seguro."},
+            {"label": "JDownloader2", "type": "toggle", "selected": False, "pkg": ["jdownloader2"], "desc": "Gestor de descargas masivas capaz de capturar enlaces, sortear captchas y automatizar extracciones de RAR/ZIP."},
+            {"label": "Transmission", "type": "toggle", "selected": False, "pkg": ["transmission-gtk"], "desc": "Cliente BitTorrent ultraligero y purista que utiliza ínfimos recursos de tu PC."}
         ]
     },
     {
         "cat": "13. Drivers Gráficos",
         "items": [
-            {"label": "Mesa (AMD / Intel)", "type": "toggle", "selected": True, "pkg": ["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"], "desc": "Drivers de código abierto para gráficas Radeon e Intel. Rendimiento nativo sobresaliente en Wayland para gaming."},
-            {"label": "NVIDIA (Privativo DKMS)", "type": "toggle", "selected": False, "pkg": ["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings"], "desc": "Módulo DKMS y bibliotecas propietarias de NVIDIA. Esencial para extraer el 100% del rendimiento en tarjetas RTX y GTX."}
+            {"label": "Mesa (AMD / Intel)", "type": "toggle", "selected": True, "pkg": ["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"], "desc": "[AGRUPADO] Drivers de código abierto para gráficas Radeon e Intel. Rendimiento nativo sobresaliente en Wayland para gaming."},
+            {"label": "NVIDIA (Privativo DKMS)", "type": "toggle", "selected": False, "pkg": ["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings"], "desc": "[AGRUPADO] Módulo DKMS y bibliotecas propietarias de NVIDIA. Esencial para extraer el 100% del rendimiento en tarjetas RTX y GTX."}
         ]
     },
     {
