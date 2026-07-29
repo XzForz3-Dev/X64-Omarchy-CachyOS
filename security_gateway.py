@@ -58,8 +58,31 @@ def draw_static_ui():
         sys.stdout.flush()
         time.sleep(0.04)
         
+    text_y = start_y + len(logo_lines) + 2
+    welcome_text = [
+        "\033[1;36m✦ BIENVENIDO A LA COMUNIDAD X64 STUDIOS ✦\033[0m",
+        "",
+        "\033[1;37mSomos una comunidad apasionada de desarrolladores creando software,\033[0m",
+        "\033[1;37mwebs, plugins y herramientas de última generación.\033[0m",
+        "",
+        "\033[1;90mEste instalador ha sido diseñado por X64 Studios para brindarte\033[0m",
+        "\033[1;90mla experiencia definitiva al configurar Omarchy sobre CachyOS.\033[0m",
+        "",
+        "\033[1;33m\"Potenciando ideas, desarrollando el futuro.\"\033[0m"
+    ]
+    
+    if rows >= 30:
+        for i, text_line in enumerate(welcome_text):
+            clean_line = text_line.replace('\033[1;36m', '').replace('\033[1;37m', '').replace('\033[1;90m', '').replace('\033[1;33m', '').replace('\033[0m', '')
+            x = max(2, (cols - len(clean_line)) // 2 + 1)
+            draw_at(text_y + i, x, text_line)
+            sys.stdout.flush()
+            time.sleep(0.02)
+        box_y = text_y + len(welcome_text) + 2
+    else:
+        box_y = start_y + len(logo_lines) + 4
+        
     box_width = 70
-    box_y = start_y + len(logo_lines) + 4
     box_x = max(2, (cols - box_width) // 2 + 1)
     
     draw_at(box_y, box_x, f"\033[1;36m╭{'─'*(box_width-2)}╮\033[0m")
@@ -75,8 +98,14 @@ def update_dynamic_ui(password_len, msg="", scramble_char=None):
     rows, cols = get_term_size()
     logo_height = 6
     start_y = 5
+    
+    if rows >= 30:
+        text_y = start_y + logo_height + 2
+        box_y = text_y + 9 + 2
+    else:
+        box_y = start_y + logo_height + 4
+        
     box_width = 70
-    box_y = start_y + logo_height + 4
     box_x = max(2, (cols - box_width) // 2 + 1)
     
     prompt = "Contraseña de Administrador: "
