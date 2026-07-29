@@ -10,6 +10,9 @@ import subprocess
 import time
 import threading
 import shutil
+import select
+import tty
+import termios
 from datetime import datetime
 from collections import deque
 
@@ -45,22 +48,42 @@ install_error = None
 install_done = False
 start_time = None
 end_time = None
-current_state = "working" # working, error, done
+
+current_state = "menu" # menu, working, error, done
+ui_transitioned = False
 
 error_prompt = None
 error_response = None
 
-user_choices = {
-    "theme": "Tokyo Night",
-    "drivers": "Mesa (AMD/Intel Open Source)",
-    "packages": []
-}
+# --- Unified Menu State ---
+menu_items = [
+    {"label": "Tema: Tokyo Night", "type": "toggle", "selected": True, "pkg": []},
+    {"label": "Drivers: NVIDIA (Privativo)", "type": "toggle", "selected": False, "pkg": ["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings"]},
+    {"label": "Navegador: Firefox", "type": "toggle", "selected": True, "pkg": ["firefox"]},
+    {"label": "Navegador: Chromium", "type": "toggle", "selected": False, "pkg": ["chromium"]},
+    {"label": "Navegador: Brave", "type": "toggle", "selected": False, "pkg": ["brave-bin"]},
+    {"label": "Gaming: Paquete Jugador (Steam, Lutris, MangoHud)", "type": "toggle", "selected": False, "pkg": ["steam", "lutris", "mangohud", "gamemode"]},
+    {"label": "Desarrollo: Paquete Creador (Docker, Git, VSCode)", "type": "toggle", "selected": False, "pkg": ["docker", "git", "code", "base-devel"]},
+    {"label": "", "type": "separator"},
+    {"label": "[ INICIAR METAMORFOSIS ]", "type": "action"}
+]
+current_menu_index = 0
+user_choices = {"theme": "Tokyo Night", "drivers": "Mesa (AMD/Intel)", "packages": []}
 
 def log(msg):
     time_str = datetime.now().strftime('%H:%M:%S')
     with open(LOG_FILE, "a") as f:
         f.write(f"[{time_str}] {msg}\n")
     log_lines.append(f"[bold blue][{time_str}][/bold blue] [bold cyan]{msg}[/bold cyan]")
+
+def gum_choose(title, options):
+    os.system("clear")
+    print(f"\n\033[1;36m=== {title} ===\033[0m\n")
+    print("\033[1;33mInstrucciones:\033[0m Usa las FLECHAS para moverte y ENTER para confirmar.\n")
+    cmd = ["gum", "choose"]
+    cmd.extend(options)
+    res = subprocess.run(cmd, stdout=subprocess.PIPE, text=True)
+    return [x for x in res.stdout.strip().split('\n') if x]
 
 def run_cmd_live(cmd, check=True):
     global error_prompt, error_response, current_state
@@ -102,60 +125,10 @@ def run_cmd_live(cmd, check=True):
                 
         return process.returncode
 
-# --- Interactive Pre-Flight Phase ---
-def gum_choose(title, options, multi=False):
-    os.system("clear")
-    print(f"\n\033[1;36m=== {title} ===\033[0m\n")
-    if multi:
-        print("\033[1;33mInstrucciones:\033[0m Usa ESPACIO para seleccionar varias opciones y ENTER para confirmar.\n")
-    else:
-        print("\033[1;33mInstrucciones:\033[0m Usa las FLECHAS para moverte y ENTER para confirmar.\n")
-        
-    cmd = ["gum", "choose"]
-    if multi:
-        cmd.append("--no-limit")
-    cmd.extend(options)
-    res = subprocess.run(cmd, stdout=subprocess.PIPE, text=True)
-    return [x for x in res.stdout.strip().split('\n') if x]
-
-def interactive_setup():
-    global user_choices
-    
-    theme = gum_choose("Diseño Visual (Tema Base)", ["Tokyo Night", "Por defecto (CachyOS)"])
-    user_choices["theme"] = theme[0] if theme else "Tokyo Night"
-    
-    drivers = gum_choose("Controladores Gráficos (Drivers)", ["NVIDIA (Privativo)", "Mesa (AMD/Intel Open Source)"])
-    user_choices["drivers"] = drivers[0] if drivers else "Mesa (AMD/Intel Open Source)"
-    
-    browsers = gum_choose("Software: Navegadores Web", ["firefox", "chromium", "brave-bin", "vivaldi"], multi=True)
-    gaming = gum_choose("Software: Paquetes Gaming", ["steam", "lutris", "mangohud", "gamemode", "wine"], multi=True)
-    dev = gum_choose("Software: Herramientas de Desarrollo", ["git", "docker", "code", "base-devel", "nodejs"], multi=True)
-    
-    user_choices["packages"] = browsers + gaming + dev
-    
-    if "NVIDIA" in user_choices["drivers"]:
-        user_choices["packages"].extend(["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings"])
-    else:
-        user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon"])
-
-    # Pantalla de confirmación (Punto de No Retorno)
-    os.system("clear")
-    print("\n\033[1;36m[ Resumen de Metamorfosis ]\033[0m")
-    print(f"\033[1;37mTema:\033[0m {user_choices['theme']}")
-    print(f"\033[1;37mDrivers:\033[0m {user_choices['drivers']}")
-    print(f"\033[1;37mPaquetes a instalar:\033[0m {len(user_choices['packages'])} elementos")
-    print("\n")
-    
-    confirm = subprocess.run(["gum", "confirm", "¿Proceder con la Inyección al Sistema?"], stdout=subprocess.PIPE)
-    if confirm.returncode != 0:
-        print("\n\033[1;31mMisión Abortada.\033[0m No se realizaron cambios en tu sistema.")
-        sys.exit(0)
-
 # --- System Info (Panel Izquierdo: Fastfetch + Live) ---
 def get_sys_info():
     table = Table(show_header=False, expand=True, box=None)
     
-    # 1. Fastfetch Output
     ff_text = ""
     try:
         res = subprocess.run(["fastfetch", "--logo", "none"], stdout=subprocess.PIPE, text=True)
@@ -170,21 +143,19 @@ def get_sys_info():
     table.add_row(Text.from_ansi(ff_text))
     table.add_row("")
     
-    # 2. Live CPU/RAM Metrics
     cpu_percent = psutil.cpu_percent() if psutil else 0
     ram = psutil.virtual_memory() if psutil else None
     ram_percent = ram.percent if ram else 0
     
-    # Crear barras ascii simples pero efectivas
-    bar_len = 30
+    bar_len = 25
     cpu_filled = int((cpu_percent / 100) * bar_len)
     cpu_bar = "█" * cpu_filled + "░" * (bar_len - cpu_filled)
     
     ram_filled = int((ram_percent / 100) * bar_len)
     ram_bar = "█" * ram_filled + "░" * (bar_len - ram_filled)
     
-    table.add_row(f"[cyan]CPU Usage:[/cyan] [yellow]{cpu_percent:>5.1f}%[/yellow] [green]{cpu_bar}[/green]")
-    table.add_row(f"[cyan]RAM Usage:[/cyan] [yellow]{ram_percent:>5.1f}%[/yellow] [magenta]{ram_bar}[/magenta]")
+    table.add_row(f"[cyan]CPU Uso:[/cyan] [yellow]{cpu_percent:>5.1f}%[/yellow] [green]{cpu_bar}[/green]")
+    table.add_row(f"[cyan]RAM Uso:[/cyan] [yellow]{ram_percent:>5.1f}%[/yellow] [magenta]{ram_bar}[/magenta]")
     
     return table
 
@@ -193,11 +164,6 @@ layout = Layout()
 layout.split_row(
     Layout(name="left", ratio=1),
     Layout(name="right", ratio=2)
-)
-
-layout["right"].split_column(
-    Layout(name="progress", ratio=1),
-    Layout(name="matrix", ratio=2)
 )
 
 layout["left"].split_column(
@@ -229,21 +195,91 @@ t_backup = progress.add_task("[white]Creando Respaldo...", total=100)
 t_config = progress.add_task("[white]Aplicando Configuración...", total=100)
 
 def update_ui():
+    global ui_transitioned
     border_color = "cyan"
     if current_state == "error":
         border_color = "red"
     elif current_state == "done":
         border_color = "green"
+    elif current_state == "menu":
+        border_color = "magenta"
 
     layout["left"]["logo"].update(Panel(Align.center(f"[bold {border_color}]{logo_text}[/bold {border_color}]"), border_style=border_color))
     layout["left"]["sysinfo"].update(Panel(get_sys_info(), title="[bold blue]Hardware & Setup (Fastfetch)[/bold blue]", border_style="blue"))
-    layout["right"]["progress"].update(Panel(progress, title=f"[bold {border_color}]Progreso de Metamorfosis[/bold {border_color}]", border_style=border_color))
     
-    matrix_text = "\n".join(log_lines)
-    layout["right"]["matrix"].update(Panel(Text.from_markup(matrix_text, markup=False) if False else matrix_text, title="[bold yellow]The Matrix (Live Log)[/bold yellow]", border_style="yellow"))
+    if current_state == "menu":
+        text = "\n[bold cyan]Usa las FLECHAS para moverte. Presiona ESPACIO o ENTER para marcar opciones.[/bold cyan]\n\n"
+        for i, item in enumerate(menu_items):
+            cursor = "[bold yellow]➤[/bold yellow] " if i == current_menu_index else "  "
+            if item["type"] == "separator":
+                text += "\n"
+            elif item["type"] == "action":
+                style = "bold green reverse" if i == current_menu_index else "bold green"
+                text += f"{cursor}[{style}]{item['label']}[/{style}]\n"
+            else:
+                box = "[bold cyan][x][/bold cyan]" if item["selected"] else "[dim white][ ][/dim white]"
+                style = "bold white" if i == current_menu_index else "white"
+                text += f"{cursor}{box} [{style}]{item['label']}[/{style}]\n"
+                
+        layout["right"].update(Panel(Text.from_markup(text), title="[bold magenta]Configuración Pre-Vuelo[/bold magenta]", border_style=border_color))
+    else:
+        if not ui_transitioned:
+            layout["right"].split_column(
+                Layout(name="progress", ratio=1),
+                Layout(name="matrix", ratio=2)
+            )
+            ui_transitioned = True
+            
+        layout["right"]["progress"].update(Panel(progress, title=f"[bold {border_color}]Progreso de Metamorfosis[/bold {border_color}]", border_style=border_color))
+        matrix_text = "\n".join(log_lines)
+        layout["right"]["matrix"].update(Panel(Text.from_markup(matrix_text, markup=False) if False else matrix_text, title="[bold yellow]The Matrix (Live Log)[/bold yellow]", border_style="yellow"))
+        
     return layout
 
-# --- Worker Thread ---
+# --- Threads ---
+def keyboard_worker():
+    global current_menu_index, current_state
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setcbreak(fd)
+        while current_state == "menu":
+            if select.select([sys.stdin], [], [], 0.1)[0]:
+                ch = sys.stdin.read(1)
+                if ch == '\x1b':
+                    ch += sys.stdin.read(2)
+                
+                if ch == '\x1b[A': # Arriba
+                    current_menu_index = max(0, current_menu_index - 1)
+                    # Saltar separadores
+                    if menu_items[current_menu_index]["type"] == "separator":
+                        current_menu_index = max(0, current_menu_index - 1)
+                elif ch == '\x1b[B': # Abajo
+                    current_menu_index = min(len(menu_items) - 1, current_menu_index + 1)
+                    if menu_items[current_menu_index]["type"] == "separator":
+                        current_menu_index = min(len(menu_items) - 1, current_menu_index + 1)
+                elif ch == ' ':
+                    if menu_items[current_menu_index]["type"] != "action":
+                        menu_items[current_menu_index]["selected"] = not menu_items[current_menu_index]["selected"]
+                elif ch == '\r' or ch == '\n':
+                    if menu_items[current_menu_index]["type"] == "action":
+                        # Procesar selecciones
+                        for item in menu_items:
+                            if item.get("selected"):
+                                user_choices["packages"].extend(item.get("pkg", []))
+                                if "NVIDIA" in item["label"]:
+                                    user_choices["drivers"] = "NVIDIA (Privativo)"
+                        if "NVIDIA" not in user_choices["drivers"]:
+                            user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon"])
+                        current_state = "working"
+                        break
+                    else:
+                        menu_items[current_menu_index]["selected"] = not menu_items[current_menu_index]["selected"]
+                elif ch == '\x03': # Ctrl+C
+                    sys.exit(0)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
 def installer_worker():
     global install_error, install_done, current_state
     try:
@@ -335,20 +371,17 @@ def installer_worker():
         current_state = "error" if install_error else "done"
 
 # --- Launch Sequence ---
-interactive_setup()
-
 with open(LOG_FILE, "w") as f:
     f.write("=== Inicio de Instalación X64-Omarchy (Mega Dashboard) ===\n")
 
-start_time = time.time()
-worker = threading.Thread(target=installer_worker, daemon=True)
-worker.start()
+k_worker = threading.Thread(target=keyboard_worker, daemon=True)
+k_worker.start()
 
-with Live(update_ui(), refresh_per_second=4, screen=True) as live:
+with Live(update_ui(), refresh_per_second=10, screen=True) as live:
     while not install_done:
-        time.sleep(0.25)
+        time.sleep(0.1)
         
-        if error_prompt:
+        if current_state == "error" and error_prompt:
             live.stop()
             os.system("clear")
             print(f"\n\033[1;41m[ ATENCIÓN - ERROR CRÍTICO ]\033[0m")
@@ -358,8 +391,13 @@ with Live(update_ui(), refresh_per_second=4, screen=True) as live:
             error_prompt = None
             os.system("clear")
             live.start()
-        else:
-            live.update(update_ui())
+        elif current_state == "working" and not start_time:
+            # Transición del menú a la instalación
+            start_time = time.time()
+            worker = threading.Thread(target=installer_worker, daemon=True)
+            worker.start()
+            
+        live.update(update_ui())
             
     end_time = time.time()
     live.update(update_ui())
@@ -367,7 +405,7 @@ with Live(update_ui(), refresh_per_second=4, screen=True) as live:
 
 print("\n")
 if not install_error:
-    time_taken = end_time - start_time
+    time_taken = end_time - start_time if start_time else 0
     mins, secs = divmod(time_taken, 60)
     
     report = Table(title="[bold cyan]Reporte Final de Metamorfosis X64[/bold cyan]", box=None, expand=True)

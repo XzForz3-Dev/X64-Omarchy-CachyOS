@@ -4,6 +4,11 @@
 # By X64 Studios
 # ==============================================================================
 
+# Solicitar contraseña de sudo una sola vez al principio
+sudo -v
+# Mantener sudo vivo en segundo plano
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
 set -eEuo pipefail
 
 if [ "$EUID" -eq 0 ]; then
