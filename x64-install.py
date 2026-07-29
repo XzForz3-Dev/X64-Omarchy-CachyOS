@@ -214,9 +214,9 @@ menu_data = [
         ]
     },
     {
-        "cat": "14. Instalar Sistema",
+        "cat": "[ PRESIONA ENTER PARA INSTALAR ]",
         "items": [
-            {"label": "[ PRESIONAR 'ENTER' PARA INSTALAR ]", "type": "action", "selected": False, "pkg": [], "desc": "Presiona la tecla ENTER sobre este botón para iniciar la descarga e instalación automática de todos los paquetes seleccionados."}
+            {"label": "[ >> INICIAR METAMORFOSIS << ]", "type": "action", "selected": False, "pkg": [], "desc": "Presiona la tecla ENTER sobre este botón para iniciar la descarga e instalación automática de todos los paquetes seleccionados."}
         ]
     }
 ]
