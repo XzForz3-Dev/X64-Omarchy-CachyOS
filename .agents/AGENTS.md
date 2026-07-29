@@ -22,6 +22,6 @@ CADA VEZ que completes una tarea que involucre crear una nueva función, modific
 
 4. **Sincronización Automática con la Bóveda de IA (Brain Vault):**
    - Tienes terminantemente prohibido pedirle al usuario que copie o suba el archivo manualmente.
-   - Tu deber es copiar automáticamente el archivo de memoria local hacia `C:\Users\XzForz3\.gemini\antigravity-ide\scratch\X64-AI-Brain-Vault\x64_omarchy_memory.md`.
+   - Tu deber es copiar automáticamente el archivo de memoria local hacia `C:\Users\XzForz3\.gemini\antigravity-ide\scratch\X64-AI-Brain-Vault\X64-Omarchy-CachyOS\x64_omarchy_memory.md`.
    - Luego, debes ejecutar comandos de terminal dentro de esa carpeta (`git add .`, `git commit` y `git push origin main`) para sincronizar silenciosamente el cerebro de la IA en la nube.
 </RULE[auto_sync_system]>
