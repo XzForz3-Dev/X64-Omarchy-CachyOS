@@ -9,6 +9,7 @@ import sys
 import subprocess
 import time
 import threading
+import shutil
 from datetime import datetime
 from collections import deque
 
@@ -37,6 +38,13 @@ console = Console()
 log_lines = deque(maxlen=25)
 install_error = None
 install_done = False
+start_time = None
+end_time = None
+user_choices = {
+    "theme": "Tokyo Night",
+    "drivers": "Mesa (AMD/Intel Open Source)",
+    "packages": []
+}
 
 def log(msg):
     time_str = datetime.now().strftime('%H:%M:%S')
@@ -45,7 +53,6 @@ def log(msg):
     log_lines.append(f"[bold blue][{time_str}][/bold blue] [bold cyan]{msg}[/bold cyan]")
 
 def run_cmd_live(cmd, check=True):
-    """Ejecuta un comando, captura la salida línea por línea y la muestra en la Matrix."""
     log(f"Ejecutando: {cmd}")
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
     
@@ -62,6 +69,49 @@ def run_cmd_live(cmd, check=True):
         log(f"ERROR Fatal: El comando falló con código {process.returncode}")
         raise Exception(f"Comando fallido (revisa el log): {cmd}")
     return process.returncode
+
+# --- Interactive Pre-Flight Phase ---
+def gum_choose(title, options, multi=False):
+    os.system("clear")
+    print(f"\n\033[1;36m=== {title} ===\033[0m\n")
+    if multi:
+        print("\033[1;33mInstrucciones:\033[0m Usa ESPACIO para seleccionar varias opciones y ENTER para confirmar.\n")
+    else:
+        print("\033[1;33mInstrucciones:\033[0m Usa las FLECHAS para moverte y ENTER para confirmar.\n")
+        
+    cmd = ["gum", "choose"]
+    if multi:
+        cmd.append("--no-limit")
+    cmd.extend(options)
+    res = subprocess.run(cmd, stdout=subprocess.PIPE, text=True)
+    return [x for x in res.stdout.strip().split('\n') if x]
+
+def interactive_setup():
+    global user_choices
+    # Temas
+    theme = gum_choose("Diseño Visual (Tema Base)", ["Tokyo Night", "Por defecto (CachyOS)"])
+    user_choices["theme"] = theme[0] if theme else "Tokyo Night"
+    
+    # Drivers
+    drivers = gum_choose("Controladores Gráficos (Drivers)", ["NVIDIA (Privativo)", "Mesa (AMD/Intel Open Source)"])
+    user_choices["drivers"] = drivers[0] if drivers else "Mesa (AMD/Intel Open Source)"
+    
+    # Navegadores
+    browsers = gum_choose("Software: Navegadores Web", ["firefox", "chromium", "brave-bin", "vivaldi"], multi=True)
+    
+    # Gaming
+    gaming = gum_choose("Software: Paquetes Gaming", ["steam", "lutris", "mangohud", "gamemode", "wine"], multi=True)
+    
+    # Desarrollo
+    dev = gum_choose("Software: Herramientas de Desarrollo", ["git", "docker", "code", "base-devel", "nodejs"], multi=True)
+    
+    user_choices["packages"] = browsers + gaming + dev
+    
+    # Añadir paquetes de drivers si es necesario
+    if "NVIDIA" in user_choices["drivers"]:
+        user_choices["packages"].extend(["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils"])
+    else:
+        user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon"])
 
 # --- System Info (Panel Izquierdo) ---
 def get_sys_info():
@@ -89,8 +139,8 @@ def get_sys_info():
     table.add_row("[cyan]OS:[/cyan]", "CachyOS / Arch Linux")
     table.add_row("[cyan]CPU:[/cyan]", cpu[:25] + "..." if len(cpu)>25 else cpu)
     table.add_row("[cyan]RAM:[/cyan]", ram)
-    table.add_row("[cyan]Perfil:[/cyan]", "[bold green]X64-Omarchy Pro[/bold green]")
-    table.add_row("[cyan]Modo:[/cyan]", "[bold purple]Dashboard TUI[/bold purple]")
+    table.add_row("[cyan]Tema Elegido:[/cyan]", f"[bold green]{user_choices['theme']}[/bold green]")
+    table.add_row("[cyan]Drivers:[/cyan]", f"[bold purple]{'NVIDIA' if 'NVIDIA' in user_choices['drivers'] else 'Mesa (AMD/Intel)'}[/bold purple]")
     return table
 
 # --- Layout Setup ---
@@ -117,6 +167,7 @@ logo_text = """
  ██╔██╗ ██╔═══██╗╚════██║
 ██╔╝ ██╗╚██████╔╝     ██║
 ╚═╝  ╚═╝ ╚═════╝      ╚═╝
+   [ X64 STUDIOS ]
 """
 
 progress = Progress(
@@ -125,7 +176,7 @@ progress = Progress(
     BarColumn(),
     TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
 )
-t_net = progress.add_task("[white]Verificando Red...", total=100)
+t_health = progress.add_task("[white]Health Check del Sistema...", total=100)
 t_repo = progress.add_task("[white]Preparando Repositorios...", total=100)
 t_sync = progress.add_task("[white]Sincronizando Sistema...", total=100)
 t_pkg = progress.add_task("[white]Instalando X64-Omarchy...", total=100)
@@ -133,23 +184,26 @@ t_backup = progress.add_task("[white]Creando Respaldo...", total=100)
 t_config = progress.add_task("[white]Aplicando Configuración...", total=100)
 
 def update_ui():
-    """Genera la interfaz gráfica actualizada."""
-    layout["left"]["logo"].update(Panel(Align.center(f"[bold cyan]{logo_text}[/bold cyan]\n[bold purple]STUDIOS[/bold purple]"), border_style="cyan"))
-    layout["left"]["sysinfo"].update(Panel(get_sys_info(), title="[bold blue]Hardware Scanner[/bold blue]", border_style="blue"))
+    layout["left"]["logo"].update(Panel(Align.center(f"[bold cyan]{logo_text}[/bold cyan]"), border_style="cyan"))
+    layout["left"]["sysinfo"].update(Panel(get_sys_info(), title="[bold blue]Hardware & Setup[/bold blue]", border_style="blue"))
     layout["right"]["progress"].update(Panel(progress, title="[bold green]Progreso de Metamorfosis[/bold green]", border_style="green"))
     
     matrix_text = "\n".join(log_lines)
-    layout["right"]["matrix"].update(Panel(matrix_text, title="[bold yellow]The Matrix (Live Log)[/bold yellow]", border_style="yellow"))
+    layout["right"]["matrix"].update(Panel(Text.from_markup(matrix_text, markup=False) if False else matrix_text, title="[bold yellow]The Matrix (Live Log)[/bold yellow]", border_style="yellow"))
     return layout
 
 # --- Worker Thread ---
 def installer_worker():
     global install_error, install_done
     try:
-        # 1. Red
-        progress.update(t_net, description="[yellow]Haciendo ping a servidores...", advance=20)
+        # 1. Health Check
+        progress.update(t_health, description="[yellow]Verificando Red...", advance=30)
         run_cmd_live("ping -c 1 archlinux.org")
-        progress.update(t_net, description="[green]Red Verificada", completed=100)
+        progress.update(t_health, description="[yellow]Verificando Espacio en Disco...", advance=30)
+        free_space = shutil.disk_usage("/").free
+        if free_space < 15 * 1024 * 1024 * 1024:
+            raise Exception("Espacio insuficiente. Se requieren al menos 15GB libres en /.")
+        progress.update(t_health, description="[green]Sistema en Óptimas Condiciones", completed=100)
         
         # 2. Repositorios
         progress.update(t_repo, description="[yellow]Desbloqueando Pacman...", advance=30)
@@ -174,9 +228,17 @@ def installer_worker():
         progress.update(t_sync, description="[green]Sistema Sincronizado", completed=100)
 
         # 4. Paquetes
-        progress.update(t_pkg, description="[yellow]Calculando paquetes a descargar...", advance=20)
-        with open("install/omarchy-base.packages") as f1, open("install/omarchy-other.packages") as f2:
-            pkgs = f1.read().splitlines() + f2.read().splitlines()
+        progress.update(t_pkg, description="[yellow]Calculando paquetes base...", advance=20)
+        pkgs = []
+        if os.path.exists("install/omarchy-base.packages"):
+            with open("install/omarchy-base.packages") as f1:
+                pkgs.extend(f1.read().splitlines())
+        if os.path.exists("install/omarchy-other.packages"):
+            with open("install/omarchy-other.packages") as f2:
+                pkgs.extend(f2.read().splitlines())
+        
+        # Inyectar paquetes personalizados por el usuario
+        pkgs.extend(user_choices["packages"])
         
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
         
@@ -218,8 +280,9 @@ def installer_worker():
         run_cmd_live("sudo systemctl enable sddm.service --now", check=False)
         run_cmd_live("sudo systemctl enable bluetooth.service", check=False)
         
-        progress.update(t_config, description="[yellow]Cargando Tema Tokyo Night...", advance=20)
-        run_cmd_live("export OMARCHY_PATH=/usr/share/omarchy && /usr/share/omarchy/bin/omarchy-theme-set 'Tokyo Night'", check=False)
+        progress.update(t_config, description="[yellow]Aplicando Diseño y Tema...", advance=20)
+        if user_choices["theme"] == "Tokyo Night":
+            run_cmd_live("export OMARCHY_PATH=/usr/share/omarchy && /usr/share/omarchy/bin/omarchy-theme-set 'Tokyo Night'", check=False)
         
         progress.update(t_config, description="[green]Sistema Listo", completed=100)
     except Exception as e:
@@ -227,30 +290,52 @@ def installer_worker():
     finally:
         install_done = True
 
-# --- Main Loop ---
+# --- Launch Sequence ---
+# 1. Interactive Setup
+interactive_setup()
+
+# 2. Main Dashboard Loop
 with open(LOG_FILE, "w") as f:
     f.write("=== Inicio de Instalación X64-Omarchy (Mega Dashboard) ===\n")
 
-# Iniciar el hilo de trabajo (Worker Thread) para que la UI no se congele
+start_time = time.time()
 worker = threading.Thread(target=installer_worker)
 worker.start()
 
-# Loop principal de la Interfaz Gráfica
 with Live(update_ui(), refresh_per_second=10, screen=True) as live:
     while not install_done:
         time.sleep(0.1)
         live.update(update_ui())
         
+    end_time = time.time()
+    
     if install_error:
         layout["right"]["progress"].update(Panel(f"[bold red]ERROR CRÍTICO DURANTE LA INSTALACIÓN[/bold red]\n\n{install_error}\n\nRevisa el archivo {LOG_FILE}", border_style="red", title="Fallo del Sistema"))
     else:
-        layout["right"]["progress"].update(Panel(Align.center("\n\n[bold green]¡Metamorfosis Completada con Éxito![/bold green]\n\n[bold cyan]El sistema está listo para ser reiniciado.[/bold cyan]\n"), title="Finalizado", border_style="green"))
+        layout["right"]["progress"].update(Panel(Align.center("\n\n[bold green]¡Metamorfosis Completada con Éxito![/bold green]\n\n[bold cyan]Generando Reporte Final...[/bold cyan]\n"), title="Finalizado", border_style="green"))
     
     live.update(update_ui())
-    time.sleep(5)
+    time.sleep(3)
 
+# 3. Final Report
 print("\n")
 if not install_error:
-    console.print(Panel("[bold green]¡Instalación Exitosa! Puedes reiniciar tu sistema ahora.[/bold green]", expand=False))
+    time_taken = end_time - start_time
+    mins, secs = divmod(time_taken, 60)
+    
+    report = Table(title="[bold cyan]Reporte Final de Metamorfosis X64[/bold cyan]", box=None, expand=True)
+    report.add_column("Métrica", style="cyan")
+    report.add_column("Detalle", style="white")
+    
+    report.add_row("Tiempo de Instalación", f"{int(mins)}m {int(secs)}s")
+    report.add_row("Tema Base", user_choices["theme"])
+    report.add_row("Drivers Instalados", user_choices["drivers"])
+    report.add_row("Software Extra Elegido", f"{len(user_choices['packages'])} paquetes")
+    if len(user_choices["packages"]) > 0:
+        report.add_row("Lista de Software", ", ".join(user_choices["packages"]))
+    report.add_row("Archivo de Log", f"[dim]{LOG_FILE}[/dim]")
+    
+    console.print(Panel(report, border_style="green", title="[bold green]¡Sistema Listo![/bold green]"))
+    print("\n[!] Por favor, reinicia tu computadora para aplicar los cambios.\n")
 else:
     console.print(Panel(f"[bold red]La instalación falló: {install_error}[/bold red]", expand=False))
