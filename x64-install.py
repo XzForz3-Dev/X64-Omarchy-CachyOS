@@ -250,11 +250,11 @@ def update_ui():
                 text += f"{cursor}[{style}]{item['label']}[/{style}]\n"
             else:
                 if item["selected"]:
-                    box = "[bold green on black] ◉ ACTIVADO   [/bold green on black]"
+                    chk_box = "[bold green on black] ◉ ACTIVADO   [/bold green on black]"
                 else:
-                    box = "[bold red on black] ◯ Desactivado[/bold red on black]"
+                    chk_box = "[bold red on black] ◯ Desactivado[/bold red on black]"
                 style = "bold white" if i == current_menu_index else "white"
-                text += f"{cursor}{box} [{style}]{item['label']}[/{style}]\n"
+                text += f"{cursor}{chk_box} [{style}]{item['label']}[/{style}]\n"
                 
         layout["right"].update(Panel(Text.from_markup(text), title="[bold magenta]Configuración Pre-Vuelo[/bold magenta]", border_style=border_color))
     elif current_state == "transition":
