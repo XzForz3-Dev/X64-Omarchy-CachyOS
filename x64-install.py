@@ -452,9 +452,6 @@ def installer_worker():
         run_cmd_live("sudo bash -c 'grep -q \"chaotic-aur\" /etc/pacman.conf || echo -e \"\\n[chaotic-aur]\\nInclude = /etc/pacman.d/chaotic-mirrorlist\\n\" >> /etc/pacman.conf'")
         progress.update(t_repo, description="[green]Repositorios Listos", completed=100)
 
-        progress.update(t_sync, description="[yellow]Optimizando Espejos (rate-mirrors)...", advance=5)
-        run_cmd_live("if command -v rate-mirrors >/dev/null; then sudo rate-mirrors --allow-root --disable-comments --save /etc/pacman.d/mirrorlist arch; fi", check=False)
-        run_cmd_live("if command -v rate-mirrors >/dev/null; then sudo rate-mirrors --allow-root --disable-comments --save /etc/pacman.d/cachyos-v3-mirrorlist cachyos; fi", check=False)
 
         progress.update(t_sync, description="[yellow]Creando Snapshot BTRFS...", advance=5)
         run_cmd_live("sudo snapper create -c root -d 'Pre-Omarchy Installation'", check=False)
