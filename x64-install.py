@@ -191,7 +191,9 @@ def get_animated_logo():
     idx = int(wave * (len(colors) - 1))
     current_color = colors[idx]
     
-    return Text(logo_text.strip('\\n'), style=f"bold {current_color}", justify="center")
+    # Prepend newlines for manual vertical centering
+    centered_text = "\n\n\n\n" + logo_text.strip('\n')
+    return Text(centered_text, style=f"bold {current_color}", justify="center")
 
 progress = Progress(
     SpinnerColumn(),
@@ -221,7 +223,7 @@ def update_ui():
     animated_logo = get_animated_logo()
     layout["left"]["logo"].update(
         Panel(
-            Align.center(animated_logo, vertical="middle"),
+            Align.center(animated_logo),
             title="[bold #BA55D3]CORE ENGINE[/bold #BA55D3]",
             border_style=border_color,
             box=box.HEAVY
