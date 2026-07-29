@@ -1,4 +1,7 @@
-
 # Python bytecode (orchestrator)
 __pycache__/
 *.pyc
+
+# Logs and backups
+*.log
+*.tar.gz
