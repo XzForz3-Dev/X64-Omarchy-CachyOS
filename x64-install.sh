@@ -16,6 +16,10 @@ if [ "$EUID" -eq 0 ]; then
   exit 1
 fi
 
+echo -e "\n🔒 Este instalador requiere permisos de administrador para configurar el sistema."
+sudo -v
+
+
 # Instalación silenciosa de Gum para la interfaz moderna
 if ! command -v gum &> /dev/null; then
     echo "Preparando interfaz gráfica de instalación (instalando gum)..."
