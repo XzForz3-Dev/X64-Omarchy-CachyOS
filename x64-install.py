@@ -109,7 +109,7 @@ def interactive_setup():
     
     # Añadir paquetes de drivers si es necesario
     if "NVIDIA" in user_choices["drivers"]:
-        user_choices["packages"].extend(["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils"])
+        user_choices["packages"].extend(["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings"])
     else:
         user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon"])
 
