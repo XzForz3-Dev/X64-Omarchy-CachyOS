@@ -115,7 +115,9 @@ fi
 gum style --foreground 39 "[5/7] Creando copia de seguridad de tus configuraciones antiguas..."
 BACKUP_NAME="x64-backup-$(date +%Y%m%d_%H%M%S).tar.gz"
 if [ -d "$HOME/.config" ]; then
-    gum spin --spinner line --title "Comprimiendo ~/.config en $BACKUP_NAME..." -- tar -czf "$BACKUP_NAME" -C "$HOME" .config 2>/dev/null
+    set +e
+    gum spin --spinner line --title "Comprimiendo ~/.config en $BACKUP_NAME..." -- bash -c "tar -czf \"$BACKUP_NAME\" -C \"$HOME\" .config 2>/dev/null || true"
+    set -e
     gum style --foreground 76 "✓ Respaldo creado: $BACKUP_NAME"
 fi
 
