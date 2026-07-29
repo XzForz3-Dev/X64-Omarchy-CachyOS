@@ -409,7 +409,8 @@ def setup_plymouth_bootloader():
     # Soporte para mkinitcpio clásico (udev) y moderno (systemd)
     run_cmd_live("sudo bash -c 'grep -q \" plymouth\" /etc/mkinitcpio.conf || sed -i -E \"s/^(HOOKS=\\([^)]*\\b)(udev|systemd)(\\b)/\\1\\2 plymouth/\" /etc/mkinitcpio.conf' 2>/dev/null", check=False)
     # Aceleración multicore para mkinitcpio
-    run_cmd_live("sudo bash -c 'grep -q \"COMPRESSION_OPTIONS=\\\"(-T0)\\\"\" /etc/mkinitcpio.conf || sed -i \"s/^#COMPRESSION_OPTIONS=.*/COMPRESSION_OPTIONS=\\\"(-T0)\\\"/\" /etc/mkinitcpio.conf' 2>/dev/null", check=False)
+    run_cmd_live("sudo sed -i 's/^#COMPRESSION=\"zstd\"/COMPRESSION=\"zstd\"/' /etc/mkinitcpio.conf", check=False)
+    run_cmd_live("sudo sed -i 's/^#COMPRESSION_OPTIONS=.*/COMPRESSION_OPTIONS=(\"-T0\")/' /etc/mkinitcpio.conf", check=False)
     # Regenerar initramfs explícitamente y silenciar advertencias de limine
     run_cmd_live("echo '' | sudo mkinitcpio -P", check=False)
     
