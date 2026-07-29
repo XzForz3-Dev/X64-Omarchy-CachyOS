@@ -149,7 +149,7 @@ menu_data = [
         "cat": "8. Sistema y Compresión",
         "items": [
             {"label": "Base de Sistema y Compresión", "type": "toggle", "selected": True, "pkg": ["base-devel", "p7zip", "unrar", "unzip", "ntfs-3g"], "desc": "[AGRUPADO - CRÍTICO] Instala compiladores, soporte para ZIP/RAR/7Z y drivers NTFS para montar USBs formateados en Windows."},
-            {"label": "Timeshift", "type": "toggle", "selected": True, "pkg": ["timeshift"], "desc": "Herramienta de respaldo del sistema (Snapshots). Te permite revertir tu PC a un estado anterior si una actualización rompe algo."},
+
             {"label": "Btop", "type": "toggle", "selected": False, "pkg": ["btop"], "desc": "Impresionante monitor de sistema interactivo en terminal para observar CPU, Memoria, Red y Discos."},
             {"label": "Fastfetch", "type": "toggle", "selected": False, "pkg": ["fastfetch"], "desc": "Utilidad CLI ultrarrápida que muestra el logo de tu distribución y las specs completas de tu hardware (escrito en C)."},
             {"label": "Stacer", "type": "toggle", "selected": False, "pkg": ["stacer"], "desc": "Optimizador y monitor de sistema gráfico que te permite limpiar cachés, basura y gestionar servicios fácilmente."},
