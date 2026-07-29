@@ -28,13 +28,13 @@ jobs:
       - name: Conectar con Upstream (basecamp/omarchy)
         run: |
           git remote add upstream https://github.com/basecamp/omarchy.git
-          git fetch upstream main
+          git fetch upstream quattro
 
       - name: Fusión Inteligente (Priorizar Nuestro Código)
         run: |
           # Hacemos merge. Si hay conflicto, la estrategia 'ours' mantiene nuestras 
           # optimizaciones intactas e ignora la versión de upstream para esos archivos.
-          git merge upstream/main --strategy-option ours -m "chore: Auto-sync from upstream"
+          git merge upstream/quattro --strategy-option ours -m "chore: Auto-sync from upstream"
 
       - name: Ejecutar Pruebas de Integridad (CI)
         id: run_tests
@@ -51,14 +51,8 @@ jobs:
         run: |
           git push origin quattro
 
-      - name: Escudo de Emergencia (Abrir Issue si Falla)
+      - name: Escudo de Emergencia (Aviso de Fallo)
         if: failure()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: "🚨 Escudo CI/CD: Actualización Oficial Rechazada",
-              body: "El robot intentó descargar las últimas actualizaciones de `basecamp/omarchy` y fusionarlas en la rama `quattro`.\n\nSin embargo, las pruebas automáticas fallaron. Esto significa que los creadores originales cambiaron algo que es incompatible con nuestras optimizaciones extremas.\n\nLa actualización se ha **abortado completamente** para proteger tu proyecto.\n\n**Instrucciones:** Muestra este problema a tu asistente IA (Antigravity) en el IDE para que pueda adaptar nuestra arquitectura al nuevo código oficial."
-            })
+        run: |
+          echo "::error title=🚨 Escudo CI/CD: Actualización Oficial Rechazada::El robot intentó descargar las últimas actualizaciones de basecamp/omarchy y fusionarlas en la rama quattro. Sin embargo, las pruebas automáticas fallaron. Esto significa que los creadores originales cambiaron algo que es incompatible con nuestras optimizaciones extremas. La actualización se ha abortado completamente para proteger tu proyecto. Instrucciones: Muestra este problema a tu asistente IA (Antigravity) en el IDE para que pueda adaptar nuestra arquitectura al nuevo código oficial."
+          exit 1
