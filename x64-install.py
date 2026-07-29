@@ -175,32 +175,19 @@ layout["left"].split_column(
 )
 
 logo_text = """
-      ██╗  ██╗ ██████╗ ██╗  ██╗      
-      ╚██╗██╔╝██╔════╝ ██║  ██║      
-       ╚███╔╝ ███████╗ ███████║      
-       ██╔██╗ ██╔═══██╗╚════██║      
-      ██╔╝ ██╗╚██████╔╝     ██║      
-      ╚═╝  ╚═╝ ╚═════╝      ╚═╝      
-                                     
-   ███████╗████████╗██╗   ██╗██████╗ 
-   ██╔════╝╚══██╔══╝██║   ██║██╔══██╗
-   ███████╗   ██║   ██║   ██║██║  ██║
-   ╚════██║   ██║   ██║   ██║██║  ██║
-   ███████║   ██║   ╚██████╔╝██████╔╝
-   ╚══════╝   ╚═╝    ╚═════╝ ╚═════╝ 
-                                     
-      ██╗ ██████╗ ███████╗           
-      ██║██╔═══██╗██╔════╝           
-      ██║██║   ██║███████╗           
-      ██║██║   ██║╚════██║           
-      ██║╚██████╔╝███████║           
-      ╚═╝ ╚═════╝ ╚══════╝           
+██╗  ██╗ ██████╗ ██╗  ██╗
+╚██╗██╔╝██╔════╝ ██║  ██║
+ ╚███╔╝ ███████╗ ███████║
+ ██╔██╗ ██╔═══██╗╚════██║
+██╔╝ ██╗╚██████╔╝     ██║
+╚═╝  ╚═╝ ╚═════╝      ╚═╝
+   [ X64 STUDIOS ]
 """
 
 def get_static_logo():
-    # Eliminamos la animación, usamos un color morado estático y centrado
+    # Logo estático restaurado al tamaño original, usando Cyan brillante
     centered_text = "\n\n" + logo_text.strip('\n')
-    return Text(centered_text, style="bold #BA55D3", justify="center")
+    return Text(centered_text, style="bold cyan", justify="center")
 
 progress = Progress(
     SpinnerColumn(),
