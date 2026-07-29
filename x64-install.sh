@@ -64,18 +64,6 @@ if ! gum confirm "Iniciar configuración del sistema"; then
 fi
 
 echo ""
-gum style --border normal --border-foreground 39 --padding "0 1" "Selecciona los paquetes extra (Usa ESPACIO para seleccionar, ENTER para confirmar)"
-EXTRA_PROFILE=$(gum choose --no-limit --cursor=">> " "Perfil Gamer (Steam, Lutris, MangoHud, Wine)" "Perfil Developer (VSCode, Docker, GitHub CLI)")
-
-EXTRA_PACKAGES=""
-if [[ $EXTRA_PROFILE == *"Gamer"* ]]; then
-    EXTRA_PACKAGES="$EXTRA_PACKAGES steam lutris mangohud wine"
-fi
-if [[ $EXTRA_PROFILE == *"Developer"* ]]; then
-    EXTRA_PACKAGES="$EXTRA_PACKAGES code docker github-cli"
-fi
-
-echo ""
 gum style --foreground 39 "[1/7] Preparando el terreno (Llaveros y Bloqueos)..."
 if [ -f /var/lib/pacman/db.lck ]; then
     gum style --foreground 214 "⚠️ Candado de Pacman detectado. Eliminando candado para evitar errores..."
@@ -107,7 +95,6 @@ if [ ! -f "install/omarchy-base.packages" ]; then
 fi
 
 ALL_PACKAGES=$(cat install/omarchy-base.packages install/omarchy-other.packages | grep -v '^#' | grep -v '^$' | tr '\n' ' ')
-ALL_PACKAGES="$ALL_PACKAGES $EXTRA_PACKAGES"
 
 set +e
 MISSING_PACKAGES=$(pacman -T $ALL_PACKAGES)
