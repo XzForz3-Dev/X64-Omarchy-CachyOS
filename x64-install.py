@@ -60,44 +60,98 @@ error_response = None
 # --- Unified Menu State ---
 menu_data = [
     {
-        "cat": "1. Entorno y Núcleo",
+        "cat": "1. Kernel y Base",
         "items": [
-            {"label": "Tema: Tokyo Night", "type": "toggle", "selected": True, "pkg": [], "desc": "Aplica el tema oscuro 'Tokyo Night' para Hyprland, Alacritty y Neovim. Proporciona una estética cyberpunk unificada y reduce la fatiga visual en entornos de baja luminosidad."},
-            {"label": "Kernel: CachyOS BORE", "type": "toggle", "selected": True, "pkg": ["linux-cachyos", "linux-cachyos-headers"], "desc": "Instala el núcleo hiper-optimizado de CachyOS equipado con el planificador BORE (Burst-Oriented Response Enhancer). Garantiza latencia casi nula y máxima responsividad bajo carga extrema."}
+            {"label": "Kernel: CachyOS BORE", "type": "toggle", "selected": True, "pkg": ["linux-cachyos", "linux-cachyos-headers"], "desc": "Instala el núcleo de CachyOS optimizado con el planificador BORE. Garantiza máxima responsividad bajo carga pesada en entornos de escritorio."},
+            {"label": "Kernel: CachyOS LTO", "type": "toggle", "selected": False, "pkg": ["linux-cachyos-lto", "linux-cachyos-lto-headers"], "desc": "Núcleo compilado con Link Time Optimization (LTO). Ofrece un mayor rendimiento a expensas de tiempos de compilación de módulos más largos."},
+            {"label": "Kernel: Standard Arch", "type": "toggle", "selected": False, "pkg": ["linux", "linux-headers"], "desc": "El núcleo por defecto de Arch Linux. Seguro, vainilla y sin optimizaciones específicas de latencia."}
         ]
     },
     {
-        "cat": "2. Tweaks Avanzados",
+        "cat": "2. Entornos de Escritorio",
         "items": [
-            {"label": "Tweak: Ananicy-cpp", "type": "toggle", "selected": True, "pkg": ["ananicy-cpp"], "desc": "Demonio auto-nice. Asigna prioridades a procesos dinámicamente usando reglas comunitarias para garantizar que tu escritorio y juegos tengan prioridad absoluta sobre tareas de fondo."},
-            {"label": "Tweak: ZRAM (Swap en RAM)", "type": "toggle", "selected": True, "pkg": ["zram-generator"], "desc": "Configura un bloque de compresión rápida en la RAM (algoritmo zstd). Evita la paginación a disco, extendiendo la vida útil de tu SSD y manteniendo el sistema ultra fluido al agotar la RAM."},
-            {"label": "Tweak: UKSMD (Deduplicación)", "type": "toggle", "selected": False, "pkg": ["uksmd"], "desc": "Ultra KSM Daemon. Escanea la memoria en segundo plano y fusiona páginas idénticas. Libera RAM masivamente, ideal si ejecutas muchas máquinas virtuales o decenas de contenedores Docker."},
-            {"label": "Tweak: Irqbalance", "type": "toggle", "selected": True, "pkg": ["irqbalance"], "desc": "Distribuye de manera inteligente las interrupciones de hardware a través de todos los núcleos y p-cores/e-cores del CPU, mejorando drásticamente el rendimiento I/O (discos, red) y ahorro de energía."}
+            {"label": "Hyprland (Tokyo Night)", "type": "toggle", "selected": True, "pkg": ["hyprland", "waybar", "swaybg", "wofi"], "desc": "Aplica el tema oscuro 'Tokyo Night' para Hyprland. Proporciona una estética hacker/cyberpunk unificada basada en Wayland."},
+            {"label": "KDE Plasma", "type": "toggle", "selected": False, "pkg": ["plasma-meta", "konsole"], "desc": "Un entorno de escritorio familiar, personalizable y moderno que incluye todas las herramientas gráficas de KDE."},
+            {"label": "GNOME", "type": "toggle", "selected": False, "pkg": ["gnome", "gnome-extra"], "desc": "Entorno moderno y minimalista, enfocado en flujos de trabajo basados en teclado y gestos táctiles fluidos."}
         ]
     },
     {
-        "cat": "3. Drivers y Hardware",
+        "cat": "3. Terminales",
         "items": [
-            {"label": "Gráficos: NVIDIA (Privativo)", "type": "toggle", "selected": False, "pkg": ["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings"], "desc": "Instala el módulo DKMS de Nvidia, bibliotecas de 32 bits y herramientas de configuración. Esencial para exprimir el rendimiento de las tarjetas gráficas RTX y GTX, soporta Wayland de forma nativa."},
-            {"label": "Audio: Servidor PipeWire", "type": "toggle", "selected": True, "pkg": ["pipewire", "pipewire-pulse", "pipewire-alsa", "pipewire-jack", "wireplumber"], "desc": "El futuro del audio en Linux. Un servidor multimedia de bajísima latencia que reemplaza a PulseAudio y JACK. Ideal para producción musical y gaming competitivo sin retardo de sonido."},
-            {"label": "Red: Pila Bluetooth", "type": "toggle", "selected": True, "pkg": ["bluez", "bluez-utils", "blueman"], "desc": "Instala los demonios base de Bluez y el gestor gráfico Blueman para que puedas conectar auriculares inalámbricos, mandos de consola (DualSense, Xbox) y dispositivos IoT sin ningún problema."},
-            {"label": "Sistema: Impresión (CUPS)", "type": "toggle", "selected": False, "pkg": ["cups", "cups-pdf"], "desc": "Habilita el servidor Common UNIX Printing System. Desactivado por defecto para ahorrar recursos de sistema, actívalo si planeas conectar impresoras físicas o imprimir documentos a PDF localmente."}
+            {"label": "Alacritty (GPU-Accelerated)", "type": "toggle", "selected": True, "pkg": ["alacritty"], "desc": "Emulador de terminal hiper-rápido, renderizado por GPU mediante OpenGL. Configurado con el tema Tokyo Night por defecto."},
+            {"label": "Kitty", "type": "toggle", "selected": False, "pkg": ["kitty"], "desc": "Terminal acelerada por hardware con soporte nativo para visualización de imágenes (Kitten) y multiplexación integrada."},
+            {"label": "WezTerm", "type": "toggle", "selected": False, "pkg": ["wezterm"], "desc": "Terminal hiper-configurable en Lua, con multiplexador nativo, aceleración de GPU y gran soporte de fuentes con ligaduras."}
         ]
     },
     {
-        "cat": "4. Software y Apps",
+        "cat": "4. Rendimiento y Tweaks",
         "items": [
-            {"label": "Navegador: Firefox", "type": "toggle", "selected": True, "pkg": ["firefox"], "desc": "El navegador libre respaldado por Mozilla. Optimizado para privacidad estricta y velocidad de renderizado de texto. Viene preconfigurado con aceleración por hardware en entornos Wayland."},
-            {"label": "Navegador: Brave", "type": "toggle", "selected": False, "pkg": ["brave-bin"], "desc": "Navegador basado en Chromium enfocado en privacidad extrema y Web3. Incluye un potente bloqueador de rastreadores y anuncios integrado directamente en el núcleo de renderizado."},
-            {"label": "Paquete Gaming (Steam/Lutris)", "type": "toggle", "selected": False, "pkg": ["steam", "lutris", "mangohud", "gamemode", "gamescope"], "desc": "Convierte tu PC en una consola. Incluye Steam, Lutris (Wine), MangoHud (telemetría FPS), Feral GameMode (optimización de CPU) y Gamescope (micro-compositor de la Steam Deck)."},
-            {"label": "Paquete Desarrollo (IDE/Git)", "type": "toggle", "selected": False, "pkg": ["docker", "git", "code", "base-devel"], "desc": "Toolkit de ingeniería de software para profesionales. Instala Docker (virtualización nativa), Git, herramientas de compilación C/C++ y Visual Studio Code (OSS). Empieza a codificar al instante."},
-            {"label": "Paquete Multimedia (OBS/Krita)", "type": "toggle", "selected": False, "pkg": ["obs-studio", "krita", "vlc", "discord", "telegram-desktop"], "desc": "Estudio de creación y comunicación online. OBS Studio para hacer streaming profesional, Krita para ilustración digital, reproductor VLC, y las aplicaciones de chat de Discord y Telegram."}
+            {"label": "Tweak: Ananicy-cpp", "type": "toggle", "selected": True, "pkg": ["ananicy-cpp"], "desc": "Demonio auto-nice. Asigna prioridades a procesos dinámicamente usando reglas comunitarias para garantizar que tu escritorio y juegos tengan máxima prioridad."},
+            {"label": "Tweak: ZRAM (Swap en RAM)", "type": "toggle", "selected": True, "pkg": ["zram-generator"], "desc": "Configura compresión en la RAM (zstd). Evita la paginación a disco, extendiendo la vida útil del SSD y manteniendo el sistema ultra fluido."},
+            {"label": "Tweak: UKSMD (Deduplicación)", "type": "toggle", "selected": False, "pkg": ["uksmd"], "desc": "Ultra KSM Daemon. Escanea la memoria en segundo plano y fusiona páginas idénticas. Libera RAM masivamente para máquinas virtuales o contenedores."},
+            {"label": "Tweak: Irqbalance", "type": "toggle", "selected": True, "pkg": ["irqbalance"], "desc": "Distribuye las interrupciones de hardware a través de todos los núcleos del CPU, mejorando drásticamente el rendimiento I/O (discos, red)."},
+            {"label": "Tweak: CachyOS Settings", "type": "toggle", "selected": True, "pkg": ["cachyos-settings"], "desc": "Aplica los sysctl y reglas udev recomendadas por el equipo de CachyOS para red, memoria y optimización del sistema base."}
         ]
     },
     {
-        "cat": "5. Acción Final",
+        "cat": "5. Drivers Gráficos",
         "items": [
-            {"label": "[ INICIAR METAMORFOSIS ]", "type": "action", "selected": False, "pkg": [], "desc": "Aplica todos los paquetes y configuraciones seleccionadas. Esto iniciará el motor de instalación automática, configurará servicios de systemd y desplegará el sistema base de X64 Studios."}
+            {"label": "Mesa (AMD / Intel)", "type": "toggle", "selected": True, "pkg": ["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"], "desc": "Drivers de código abierto para gráficas AMD Radeon e Intel. Rendimiento nativo sobresaliente en Wayland para gaming."},
+            {"label": "NVIDIA (Privativo DKMS)", "type": "toggle", "selected": False, "pkg": ["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings"], "desc": "Módulo DKMS y bibliotecas propietarias de NVIDIA. Esencial para extraer el 100% del rendimiento en tarjetas RTX y GTX."}
+        ]
+    },
+    {
+        "cat": "6. Navegadores Web",
+        "items": [
+            {"label": "Mozilla Firefox", "type": "toggle", "selected": True, "pkg": ["firefox"], "desc": "El navegador libre por excelencia. Optimizado para privacidad y velocidad de renderizado. Preconfigurado con aceleración en Wayland."},
+            {"label": "Brave Browser", "type": "toggle", "selected": False, "pkg": ["brave-bin"], "desc": "Basado en Chromium, enfocado en extrema privacidad. Incluye un bloqueador de rastreadores muy agresivo a nivel de motor."},
+            {"label": "Zen Browser", "type": "toggle", "selected": False, "pkg": ["zen-browser-bin"], "desc": "Un fork moderno y minimalista de Firefox, diseñado para pestañas verticales y uso intensivo sin saturar la RAM."},
+            {"label": "Chromium", "type": "toggle", "selected": False, "pkg": ["chromium"], "desc": "La base de código abierto detrás de Google Chrome. Rápido, puro y sin telemetría intrusiva directa."}
+        ]
+    },
+    {
+        "cat": "7. Audio y Red",
+        "items": [
+            {"label": "Audio: PipeWire", "type": "toggle", "selected": True, "pkg": ["pipewire", "pipewire-pulse", "pipewire-alsa", "pipewire-jack", "wireplumber"], "desc": "El futuro del audio en Linux. Servidor multimedia de bajísima latencia que reemplaza a PulseAudio. Ideal para gaming sin retardo."},
+            {"label": "Red: Bluetooth (Bluez)", "type": "toggle", "selected": True, "pkg": ["bluez", "bluez-utils", "blueman"], "desc": "Demonios base de Bluez y gestor Blueman. Necesario para conectar auriculares inalámbricos, mandos de consola (Xbox/PS5) e IoT."},
+            {"label": "Red: DNSCrypt-Proxy", "type": "toggle", "selected": False, "pkg": ["dnscrypt-proxy"], "desc": "Herramienta que encripta tus consultas DNS hacia los servidores. Previene el rastreo y censura a nivel de proveedor de internet (ISP)."}
+        ]
+    },
+    {
+        "cat": "8. Gaming",
+        "items": [
+            {"label": "Steam (Runtime y Nativo)", "type": "toggle", "selected": False, "pkg": ["steam"], "desc": "La plataforma de videojuegos líder. Viene con herramientas Proton integradas para ejecutar cualquier juego de Windows en Linux."},
+            {"label": "Lutris & Heroic Launcher", "type": "toggle", "selected": False, "pkg": ["lutris", "heroic-games-launcher-bin", "wine-staging"], "desc": "Lanzadores épicos. Lutris centraliza tus juegos de GOG y emuladores, y Heroic gestiona tu biblioteca de Epic Games Store nativamente."},
+            {"label": "Herramientas (MangoHud/GameMode)", "type": "toggle", "selected": False, "pkg": ["mangohud", "gamemode", "gamescope"], "desc": "Telemetría OSD en pantalla (MangoHud), optimización agresiva del CPU al jugar (GameMode) y microcompositor de aislamiento (Gamescope)."}
+        ]
+    },
+    {
+        "cat": "9. Desarrollo (Dev)",
+        "items": [
+            {"label": "Control de Versiones (Git)", "type": "toggle", "selected": True, "pkg": ["git", "github-cli"], "desc": "Sistemas de control de código fuente estándar de la industria. Indispensable para clonar repositorios y compilar paquetes AUR."},
+            {"label": "Contenedores (Docker)", "type": "toggle", "selected": False, "pkg": ["docker", "docker-compose"], "desc": "Plataforma de virtualización y contenedores nativa. Aísla tus aplicaciones en microservicios listos para producción."},
+            {"label": "IDE: Visual Studio Code", "type": "toggle", "selected": False, "pkg": ["code"], "desc": "Versión Open Source de VSCode. Soporte enorme de extensiones para Python, C++, Rust, Go, y desarrollo web."}
+        ]
+    },
+    {
+        "cat": "10. Multimedia y Diseño",
+        "items": [
+            {"label": "Streaming: OBS Studio", "type": "toggle", "selected": False, "pkg": ["obs-studio"], "desc": "El software estándar para transmisión en vivo y grabación de pantalla. Soporta encoding NVENC y VAAPI acelerado por GPU."},
+            {"label": "Diseño: Krita", "type": "toggle", "selected": False, "pkg": ["krita"], "desc": "Herramienta profesional gratuita de pintura digital e ilustración rasterizada en 2D, con soporte masivo para tabletas gráficas."},
+            {"label": "Video: VLC y MPV", "type": "toggle", "selected": False, "pkg": ["vlc", "mpv"], "desc": "Reproductores universales. VLC para todo tipo de formatos sin codecs externos, y MPV para reproducción ultraligera por hardware."}
+        ]
+    },
+    {
+        "cat": "11. Ofimática e Impresión",
+        "items": [
+            {"label": "Suite: LibreOffice", "type": "toggle", "selected": False, "pkg": ["libreoffice-fresh"], "desc": "La suite libre más potente. Alternativa completa a Word, Excel y PowerPoint con gran compatibilidad de formatos."},
+            {"label": "Impresión (CUPS)", "type": "toggle", "selected": False, "pkg": ["cups", "cups-pdf"], "desc": "Habilita el servidor Common UNIX Printing System. Actívalo si necesitas conectar impresoras físicas o imprimir documentos localmente."}
+        ]
+    },
+    {
+        "cat": "12. Iniciar Metamorfosis",
+        "items": [
+            {"label": "[ APLICAR Y DESPLEGAR SISTEMA ]", "type": "action", "selected": False, "pkg": [], "desc": "Inicia la secuencia de instalación automatizada. Procesará todas las dependencias seleccionadas y configurará los servicios del sistema permanentemente."}
         ]
     }
 ]
@@ -366,7 +420,7 @@ def update_ui():
 
 # --- Threads ---
 def keyboard_worker():
-    global current_menu_index, current_state
+    global current_state, active_pane, cat_idx, item_idx, user_choices, install_error, install_done
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:
@@ -378,37 +432,49 @@ def keyboard_worker():
                     ch += sys.stdin.read(2)
                 
                 if ch == '\x1b[A': # Arriba
-                    current_menu_index = max(0, current_menu_index - 1)
-                    while menu_items[current_menu_index]["type"] in ["separator", "header"] and current_menu_index > 0:
-                        current_menu_index -= 1
-                    # Recuperar si llegamos a 0 y es header
-                    if menu_items[current_menu_index]["type"] in ["separator", "header"]:
-                        while menu_items[current_menu_index]["type"] in ["separator", "header"]:
-                            current_menu_index += 1
-                elif ch == '\x1b[B': # Abajo
-                    current_menu_index = min(len(menu_items) - 1, current_menu_index + 1)
-                    while menu_items[current_menu_index]["type"] in ["separator", "header"] and current_menu_index < len(menu_items) - 1:
-                        current_menu_index += 1
-                elif ch == ' ':
-                    if menu_items[current_menu_index]["type"] != "action":
-                        menu_items[current_menu_index]["selected"] = not menu_items[current_menu_index]["selected"]
-                elif ch == '\r' or ch == '\n':
-                    if menu_items[current_menu_index]["type"] == "action":
-                        # Procesar selecciones
-                        for item in menu_items:
-                            if item.get("selected"):
-                                user_choices["packages"].extend(item.get("pkg", []))
-                                if "NVIDIA" in item["label"]:
-                                    user_choices["drivers"] = "NVIDIA (Privativo)"
-                        if "NVIDIA" not in user_choices["drivers"]:
-                            user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon"])
-                        
-                        current_state = "transition"
-                        break
+                    if active_pane == "left":
+                        cat_idx = max(0, cat_idx - 1)
+                        item_idx = 0
                     else:
-                        menu_items[current_menu_index]["selected"] = not menu_items[current_menu_index]["selected"]
+                        item_idx = max(0, item_idx - 1)
+                elif ch == '\x1b[B': # Abajo
+                    if active_pane == "left":
+                        cat_idx = min(len(menu_data) - 1, cat_idx + 1)
+                        item_idx = 0
+                    else:
+                        item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 1)
+                elif ch == '\x1b[C': # Derecha
+                    active_pane = "right"
+                elif ch == '\x1b[D': # Izquierda
+                    active_pane = "left"
+                elif ch == ' ':
+                    if active_pane == "right":
+                        item = menu_data[cat_idx]["items"][item_idx]
+                        if item["type"] != "action":
+                            item["selected"] = not item.get("selected", False)
+                elif ch == '\r' or ch == '\n':
+                    if active_pane == "right":
+                        item = menu_data[cat_idx]["items"][item_idx]
+                        if item["type"] == "action":
+                            # Procesar selecciones de menu_data
+                            for c in menu_data:
+                                for i in c["items"]:
+                                    if i.get("selected"):
+                                        user_choices["packages"].extend(i.get("pkg", []))
+                                        if "NVIDIA" in i["label"]:
+                                            user_choices["drivers"] = "NVIDIA (Privativo)"
+                                            
+                            if "NVIDIA" not in user_choices["drivers"]:
+                                user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"])
+                            
+                            current_state = "transition"
+                            break
+                        else:
+                            item["selected"] = not item.get("selected", False)
+                    else:
+                        # Si da enter en la izquierda, se pasa a la derecha
+                        active_pane = "right"
                 elif ch == '\x03': # Ctrl+C
-                    global install_error, install_done
                     install_error = "Instalación abortada por el usuario (Ctrl+C)."
                     install_done = True
                     break
