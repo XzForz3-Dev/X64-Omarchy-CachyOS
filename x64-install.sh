@@ -4,8 +4,18 @@
 # By X64 Studios
 # ==============================================================================
 
+clear
+echo -e "\033[1;36m"
+echo "█████████████████████████████████████████████████████"
+echo "█             X64 SECURITY GATEWAY                  █"
+echo "█████████████████████████████████████████████████████"
+echo -e "\033[0m"
+echo -e "\033[1;33m⚠️  Para iniciar la metamorfosis, se requieren privilegios de Superusuario.\033[0m"
+echo -e "\033[1;90m   (Tu contraseña permanecerá invisible mientras la escribes)\033[0m"
+echo ""
+
 # Solicitar contraseña de sudo una sola vez al principio
-sudo -v
+sudo -p "🔑 [X64 STUDIOS] Contraseña maestra: " -v
 # Mantener sudo vivo en segundo plano
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
