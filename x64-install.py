@@ -566,8 +566,8 @@ def setup_plymouth_bootloader():
     log_lines.append("[yellow]Configurando mkinitcpio (HOOKS)...[/yellow]")
     # Soporte para mkinitcpio clásico (udev) y moderno (systemd)
     run_cmd_live("sudo bash -c 'grep -q \" plymouth\" /etc/mkinitcpio.conf || sed -i -E \"s/^(HOOKS=\\([^)]*\\b)(udev|systemd)(\\b)/\\1\\2 plymouth/\" /etc/mkinitcpio.conf' 2>/dev/null", check=False)
-    # Regenerar initramfs explícitamente para asegurar que tome los cambios y el tema
-    run_cmd_live("sudo mkinitcpio -P", check=False)
+    # Regenerar initramfs explícitamente y silenciar advertencias de limine
+    run_cmd_live("yes '' | sudo mkinitcpio -P", check=False)
     
     log_lines.append("[yellow]Configurando Dracut (Fallback)...[/yellow]")
     run_cmd_live("sudo mkdir -p /etc/dracut.conf.d", check=False)
@@ -581,8 +581,8 @@ def setup_plymouth_bootloader():
     run_cmd_live("sudo find /boot /efi -maxdepth 4 \\( -name 'limine.conf' -o -name 'limine.cfg' \\) -exec bash -c 'grep -q \"splash\" \"$1\" || sudo sed -i -E \"/^ *kernel_cmdline/ { /splash/! s/$/ splash/ }\" \"$1\"' _ {} \\; 2>/dev/null", check=False)
     run_cmd_live("sudo find /boot /efi -maxdepth 4 \\( -name 'limine.conf' -o -name 'limine.cfg' \\) -exec bash -c 'grep -q \"splash\" \"$1\" || sudo sed -i -E \"/^ *cmdline/ { /splash/! s/$/ splash/ }\" \"$1\"' _ {} \\; 2>/dev/null", check=False)
     
-    # Actualizar limine si está instalado
-    run_cmd_live("if command -v limine-update >/dev/null; then sudo limine-update; fi", check=False)
+    # Actualizar limine si está instalado (ignorando prompts)
+    run_cmd_live("if command -v limine-update >/dev/null; then yes '' | sudo limine-update; fi", check=False)
 
 def installer_worker():
     global install_error, install_done, current_state

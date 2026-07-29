@@ -234,8 +234,6 @@ fun hide_message_callback(text) {
 Plymouth.SetDisplayMessageFunction(display_message_callback);
 Plymouth.SetHideMessageFunction(hide_message_callback);
 
-# Iniciar animación automáticamente en el arranque
-if (Plymouth.GetMode() == "boot" || Plymouth.GetMode() == "resume") {
-  show_progress_bar();
-  start_fake_progress();
-}
+# Iniciar animación automáticamente sin condiciones
+show_progress_bar();
+start_fake_progress();
