@@ -205,7 +205,8 @@ qr_text = """
 """
 
 def get_static_logo():
-    t1 = Text(logo_text.strip('\n') + "\n", style="bold cyan", justify="center")
+    # Añadimos un par de saltos de línea al principio para separarlo del borde superior
+    t1 = Text("\n\n" + logo_text.strip('\n') + "\n", style="bold cyan", justify="center")
     t2 = Text("GITHUB REPOSITORY\n", style="bold white", justify="center")
     t3 = Text(qr_text.strip('\n'), style="bold white", justify="center")
     
