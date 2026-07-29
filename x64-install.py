@@ -175,30 +175,32 @@ layout["left"].split_column(
 )
 
 logo_text = """
-██╗  ██╗ ██████╗ ██╗  ██╗
-╚██╗██╔╝██╔════╝ ██║  ██║
- ╚███╔╝ ███████╗ ███████║
- ██╔██╗ ██╔═══██╗╚════██║
-██╔╝ ██╗╚██████╔╝     ██║
-╚═╝  ╚═╝ ╚═════╝      ╚═╝
-   [ X64 STUDIOS ]
+      ██╗  ██╗ ██████╗ ██╗  ██╗      
+      ╚██╗██╔╝██╔════╝ ██║  ██║      
+       ╚███╔╝ ███████╗ ███████║      
+       ██╔██╗ ██╔═══██╗╚════██║      
+      ██╔╝ ██╗╚██████╔╝     ██║      
+      ╚═╝  ╚═╝ ╚═════╝      ╚═╝      
+                                     
+   ███████╗████████╗██╗   ██╗██████╗ 
+   ██╔════╝╚══██╔══╝██║   ██║██╔══██╗
+   ███████╗   ██║   ██║   ██║██║  ██║
+   ╚════██║   ██║   ██║   ██║██║  ██║
+   ███████║   ██║   ╚██████╔╝██████╔╝
+   ╚══════╝   ╚═╝    ╚═════╝ ╚═════╝ 
+                                     
+      ██╗ ██████╗ ███████╗           
+      ██║██╔═══██╗██╔════╝           
+      ██║██║   ██║███████╗           
+      ██║██║   ██║╚════██║           
+      ██║╚██████╔╝███████║           
+      ╚═╝ ╚═════╝ ╚══════╝           
 """
 
-def get_animated_logo():
-    t = time.time()
-    # Frecuencia más suave para "respiración"
-    wave = (math.sin(t * 2.5) + 1) / 2
-    
-    # Interpolación RGB fluida (De morado oscuro a magenta neón)
-    r = int(75 + (255 - 75) * wave)
-    g = 0
-    b = int(130 + (255 - 130) * wave)
-    
-    current_color = f"#{r:02x}{g:02x}{b:02x}"
-    
-    # Prepend newlines for manual vertical centering
-    centered_text = "\n\n\n\n" + logo_text.strip('\n')
-    return Text(centered_text, style=f"bold {current_color}", justify="center")
+def get_static_logo():
+    # Eliminamos la animación, usamos un color morado estático y centrado
+    centered_text = "\n\n" + logo_text.strip('\n')
+    return Text(centered_text, style="bold #BA55D3", justify="center")
 
 progress = Progress(
     SpinnerColumn(),
@@ -225,10 +227,10 @@ def update_ui():
     elif current_state == "transition":
         border_color = "yellow"
 
-    animated_logo = get_animated_logo()
+    static_logo = get_static_logo()
     layout["left"]["logo"].update(
         Panel(
-            Align.center(animated_logo),
+            Align.center(static_logo),
             title="[bold white] X64 SYSTEM CORE [/bold white]",
             border_style=border_color,
             box=box.SQUARE
