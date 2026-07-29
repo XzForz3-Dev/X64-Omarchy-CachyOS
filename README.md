@@ -61,7 +61,7 @@ chmod +x x64-install.sh
 ./x64-install.sh
 ```
 
-El script `x64-install.sh` se encargará automáticamente de descargar las dependencias visuales necesarias (como `python-rich`, `gum`, y `fastfetch`) antes de invocar la interfaz principal.
+El script `x64-install.sh` se encargará automáticamente de descargar las dependencias visuales necesarias (como `python-rich` y `fastfetch`) antes de invocar la interfaz principal 100% nativa en Python.
 
 ## 📂 Estructura del Repositorio
 

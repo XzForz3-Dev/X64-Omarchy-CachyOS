@@ -28,6 +28,7 @@ try:
     from rich.table import Table
     from rich.markup import escape
     from rich import box
+    from rich.prompt import Prompt
 except ImportError:
     print("Fatal: python-rich not found. Please run the installer via x64-install.sh")
     sys.exit(1)
@@ -72,14 +73,6 @@ def log(msg):
     with open(LOG_FILE, "a") as f:
         f.write(f"[{time_str}] {msg}\n")
     log_lines.append(f"[bold blue][{time_str}][/bold blue] [bold cyan]{msg}[/bold cyan]")
-
-def gum_choose(title, options):
-    print(f"\n\033[1;36m=== {title} ===\033[0m\n")
-    print("\033[1;33mInstrucciones:\033[0m Usa las FLECHAS para moverte y ENTER para confirmar.\n")
-    cmd = ["gum", "choose"]
-    cmd.extend(options)
-    res = subprocess.run(cmd, stdout=subprocess.PIPE, text=True)
-    return [x for x in res.stdout.strip().split('\n') if x]
 
 def run_cmd_live(cmd, check=True):
     global error_prompt, error_response, current_state
@@ -590,8 +583,8 @@ try:
                 os.system("clear")
                 print(f"\n\033[1;41m[ ATENCIÓN - ERROR CRÍTICO ]\033[0m")
                 print(f"\033[1;33m{error_prompt['msg']}\033[0m\n")
-                ans = gum_choose("¿Cómo deseas proceder?", ["Reintentar", "Ignorar", "Abortar"])
-                error_response = ans[0] if ans else "Abortar"
+                ans = Prompt.ask("¿Cómo deseas proceder?", choices=["Reintentar", "Ignorar", "Abortar"], default="Reintentar")
+                error_response = ans
                 error_prompt = None
                 os.system("clear")
                 live.start()
@@ -628,8 +621,8 @@ if not install_error:
     
     console.print(Panel(report, border_style="green", title="[bold green]¡Sistema Listo![/bold green]"))
     
-    ans = gum_choose("¿Deseas reiniciar el sistema ahora?", ["Sí, reiniciar ahora", "No, salir a la terminal"])
-    if ans and ans[0] == "Sí, reiniciar ahora":
+    ans = Prompt.ask("\n¿Deseas reiniciar el sistema ahora?", choices=["Si", "No"], default="Si")
+    if ans == "Si":
         os.system("sudo reboot")
     else:
         print("\n[!] Puedes reiniciar más tarde ejecutando 'reboot'.\n")

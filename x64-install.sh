@@ -21,18 +21,16 @@ if [ "$EUID" -eq 0 ]; then
 fi
 
 clear
-echo -e "\n🔒 Este instalador requiere permisos de administrador."
-sudo -v
-
 echo -e "\n[+] Verificando motor de interfaz..."
+
 if ! command -v python3 &> /dev/null; then
     echo "Instalando dependencias base (Python)..."
     sudo pacman -Sy --noconfirm python >/dev/null 2>&1
 fi
 
-if ! python3 -c "import rich" &> /dev/null || ! command -v gum &> /dev/null || ! command -v fastfetch &> /dev/null || ! python3 -c "import psutil" &> /dev/null; then
+if ! python3 -c "import rich" &> /dev/null || ! command -v fastfetch &> /dev/null || ! python3 -c "import psutil" &> /dev/null; then
     echo "Descargando motor gráfico de terminal y dependencias..."
-    sudo pacman -Sy --noconfirm python-rich gum fastfetch python-psutil >/dev/null 2>&1
+    sudo pacman -Sy --noconfirm python-rich fastfetch python-psutil >/dev/null 2>&1
 fi
 
 echo -e "\n[+] Iniciando X64-Omarchy TUI Installer..."
