@@ -17,6 +17,22 @@ logo_text = """
 ╚═╝  ╚═╝ ╚═════╝      ╚═╝    ╚══════╝   ╚═╝    ╚═════╝ ╚═════╝ ╚═╝ ╚═════╝ ╚══════╝\033[0m
 """
 
+welcome_text = [
+    "\033[1;36m✦ BIENVENIDO A LA COMUNIDAD X64 STUDIOS ✦\033[0m",
+    "",
+    "\033[1;37mSomos un colectivo élite de desarrolladores, ingenieros y diseñadores dedicados\033[0m",
+    "\033[1;37ma superar los límites del software, desarrollo web y herramientas de última generación.\033[0m",
+    "",
+    "\033[1;37mNuestra filosofía es inquebrantable: construir ecosistemas digitales donde el rendimiento\033[0m",
+    "\033[1;37mabsoluto converja perfectamente con una estética minimalista y superior.\033[0m",
+    "",
+    "\033[1;90mEste instalador exclusivo ha sido forjado desde cero por X64 Studios para brindarte\033[0m",
+    "\033[1;90muna metamorfosis impecable de tu sistema, fusionando el poder de Omarchy y CachyOS.\033[0m",
+    "",
+    "\033[1;33m[ Únete a nuestras filas en Discord para colaborar, aprender y crear con nosotros ]\033[0m",
+    "\033[1;33m\"Potenciando ideas, desarrollando el futuro.\"\033[0m"
+]
+
 def draw_at(y, x, text):
     sys.stdout.write(f"\033[{y};{x}H{text}")
 
@@ -30,10 +46,10 @@ def get_term_size():
 def get_layout(rows):
     logo_lines = logo_text.strip('\n').split('\n')
     logo_height = len(logo_lines)
-    text_height = 9
+    text_height = len(welcome_text)
     box_height = 5
     
-    if rows >= 35:
+    if rows >= (logo_height + 2 + text_height + 2 + box_height + 4):
         total_height = logo_height + 2 + text_height + 2 + box_height
         start_y = max(3, (rows - total_height) // 2)
         text_y = start_y + logo_height + 2
@@ -78,18 +94,6 @@ def draw_static_ui():
         sys.stdout.flush()
         time.sleep(0.04)
         
-    welcome_text = [
-        "\033[1;36m✦ BIENVENIDO A LA COMUNIDAD X64 STUDIOS ✦\033[0m",
-        "",
-        "\033[1;37mSomos una comunidad apasionada de desarrolladores creando software,\033[0m",
-        "\033[1;37mwebs, plugins y herramientas de última generación.\033[0m",
-        "",
-        "\033[1;90mEste instalador ha sido diseñado por X64 Studios para brindarte\033[0m",
-        "\033[1;90mla experiencia definitiva al configurar Omarchy sobre CachyOS.\033[0m",
-        "",
-        "\033[1;33m\"Potenciando ideas, desarrollando el futuro.\"\033[0m"
-    ]
-    
     if show_text:
         for i, text_line in enumerate(welcome_text):
             clean_line = text_line.replace('\033[1;36m', '').replace('\033[1;37m', '').replace('\033[1;90m', '').replace('\033[1;33m', '').replace('\033[0m', '')
