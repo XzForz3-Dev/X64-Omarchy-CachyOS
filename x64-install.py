@@ -558,10 +558,15 @@ def setup_plymouth_bootloader():
     log_lines.append("[yellow]Instalando plymouth...[/yellow]")
     run_cmd_live("sudo pacman -S --noconfirm --needed plymouth", check=False)
     
+    log_lines.append("[yellow]Aplicando tema de Plymouth...[/yellow]")
+    run_cmd_live("sudo mkdir -p /usr/share/plymouth/themes/omarchy", check=False)
+    run_cmd_live("sudo cp -r default/plymouth/* /usr/share/plymouth/themes/omarchy/ 2>/dev/null", check=False)
+    run_cmd_live("sudo plymouth-set-default-theme omarchy", check=False)
+    
     log_lines.append("[yellow]Configurando mkinitcpio (HOOKS)...[/yellow]")
     # Soporte para mkinitcpio clásico (udev) y moderno (systemd)
     run_cmd_live("sudo bash -c 'grep -q \" plymouth\" /etc/mkinitcpio.conf || sed -i -E \"s/^(HOOKS=\\([^)]*\\b)(udev|systemd)(\\b)/\\1\\2 plymouth/\" /etc/mkinitcpio.conf' 2>/dev/null", check=False)
-    # Regenerar initramfs explícitamente para asegurar que tome los cambios
+    # Regenerar initramfs explícitamente para asegurar que tome los cambios y el tema
     run_cmd_live("sudo mkinitcpio -P", check=False)
     
     log_lines.append("[yellow]Configurando Dracut (Fallback)...[/yellow]")
@@ -578,11 +583,6 @@ def setup_plymouth_bootloader():
     
     # Actualizar limine si está instalado
     run_cmd_live("if command -v limine-update >/dev/null; then sudo limine-update; fi", check=False)
-    
-    log_lines.append("[yellow]Aplicando tema de Plymouth...[/yellow]")
-    run_cmd_live("sudo mkdir -p /usr/share/plymouth/themes/omarchy", check=False)
-    run_cmd_live("sudo cp -r default/plymouth/* /usr/share/plymouth/themes/omarchy/ 2>/dev/null", check=False)
-    run_cmd_live("sudo plymouth-set-default-theme -R omarchy", check=False)
 
 def installer_worker():
     global install_error, install_done, current_state
