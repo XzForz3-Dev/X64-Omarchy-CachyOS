@@ -558,12 +558,16 @@ def setup_plymouth_bootloader():
     log_lines.append("[yellow]Instalando plymouth...[/yellow]")
     run_cmd_live("sudo pacman -S --noconfirm --needed plymouth", check=False)
     
-    log_lines.append("[yellow]Configurando mkinitcpio.conf...[/yellow]")
-    run_cmd_live("sudo sed -i 's/^HOOKS=(base udev/HOOKS=(base udev plymouth/g' /etc/mkinitcpio.conf", check=False)
+    log_lines.append("[yellow]Configurando mkinitcpio (Fallback)...[/yellow]")
+    run_cmd_live("sudo sed -i 's/^HOOKS=(base udev/HOOKS=(base udev plymouth/g' /etc/mkinitcpio.conf 2>/dev/null", check=False)
     
-    log_lines.append("[yellow]Configurando Bootloader (GRUB/systemd-boot)...[/yellow]")
-    run_cmd_live("sudo find /boot/loader/entries -type f -name '*.conf' -exec bash -c 'grep -q splash \"$1\" || sudo sed -i \"/^options / s/$/ splash/\" \"$1\"' _ {} \\; 2>/dev/null", check=False)
-    run_cmd_live("sudo bash -c 'if [ -f /etc/default/grub ]; then grep -q splash /etc/default/grub || sed -i \"s/GRUB_CMDLINE_LINUX_DEFAULT=\\\\\"\\(.*\\)\\\\\"/GRUB_CMDLINE_LINUX_DEFAULT=\\\\\"\\1 splash\\\\\"/\" /etc/default/grub; grub-mkconfig -o /boot/grub/grub.cfg; fi' 2>/dev/null", check=False)
+    log_lines.append("[yellow]Configurando Dracut (Fallback)...[/yellow]")
+    run_cmd_live("sudo mkdir -p /etc/dracut.conf.d", check=False)
+    run_cmd_live("sudo bash -c 'echo \"add_dracutmodules+=\\\" plymouth \\\"\" > /etc/dracut.conf.d/plymouth.conf'", check=False)
+    
+    log_lines.append("[yellow]Buscando e inyectando configuración en Limine...[/yellow]")
+    run_cmd_live("sudo find /boot /efi -maxdepth 4 \\( -name 'limine.conf' -o -name 'limine.cfg' \\) -exec bash -c 'grep -q \"splash\" \"$1\" || sudo sed -i -E \"/^ *kernel_cmdline/ { /splash/! s/$/ splash/ }\" \"$1\"' _ {} \\; 2>/dev/null", check=False)
+    run_cmd_live("sudo find /boot /efi -maxdepth 4 \\( -name 'limine.conf' -o -name 'limine.cfg' \\) -exec bash -c 'grep -q \"splash\" \"$1\" || sudo sed -i -E \"/^ *cmdline/ { /splash/! s/$/ splash/ }\" \"$1\"' _ {} \\; 2>/dev/null", check=False)
     
     log_lines.append("[yellow]Aplicando tema de Plymouth...[/yellow]")
     run_cmd_live("sudo mkdir -p /usr/share/plymouth/themes/omarchy", check=False)
