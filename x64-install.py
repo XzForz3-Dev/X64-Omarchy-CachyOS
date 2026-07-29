@@ -72,9 +72,10 @@ menu_data = [
     {
         "cat": "2. Navegadores Web",
         "items": [
-            {"label": "Cachy Browser", "type": "toggle", "selected": True, "pkg": ["cachy-browser"], "desc": "Fork de Firefox parcheado y optimizado por el equipo de CachyOS para máximo rendimiento en este kernel."},
-            {"label": "LibreWolf", "type": "toggle", "selected": False, "pkg": ["librewolf-bin"], "desc": "Versión de Firefox endurecida, enfocada al 100% en la privacidad, sin telemetría y con uBlock Origin integrado."},
+            {"label": "Firefox", "type": "toggle", "selected": True, "pkg": ["firefox"], "desc": "El navegador de código abierto de Mozilla. Estándar, confiable y extremadamente personalizable."},
             {"label": "Zen Browser", "type": "toggle", "selected": False, "pkg": ["zen-browser-bin"], "desc": "Moderno, ultra rápido, con pestañas verticales nativas y gestión optimizada de memoria (Basado en Firefox)."},
+            {"label": "LibreWolf", "type": "toggle", "selected": False, "pkg": ["librewolf-bin"], "desc": "Versión de Firefox endurecida, enfocada al 100% en la privacidad, sin telemetría y con uBlock Origin integrado."},
+            {"label": "Tor Browser", "type": "toggle", "selected": False, "pkg": ["torbrowser-launcher"], "desc": "Navegador enfocado en anonimato absoluto. Enruta tu tráfico a través de la red Tor para evadir rastreo."},
             {"label": "Brave", "type": "toggle", "selected": False, "pkg": ["brave-bin"], "desc": "Basado en Chromium, con un potente bloqueador de anuncios y rastreadores integrado a nivel de motor web."},
             {"label": "Google Chrome", "type": "toggle", "selected": False, "pkg": ["google-chrome"], "desc": "El navegador de Google. Rápido, con sincronización total del ecosistema de Google."},
             {"label": "Thorium", "type": "toggle", "selected": False, "pkg": ["thorium-browser-bin"], "desc": "El Chromium más rápido del mundo, compilado con optimizaciones AVX2 y SSE4 para CPUs modernos."}
