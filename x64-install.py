@@ -214,9 +214,9 @@ menu_data = [
         ]
     },
     {
-        "cat": "14. Acción Final",
+        "cat": "14. Instalar Sistema",
         "items": [
-            {"label": "[ INICIAR METAMORFOSIS ]", "type": "action", "selected": False, "pkg": [], "desc": "Inicia la secuencia de instalación automatizada. Procesará todas las dependencias seleccionadas y configurará los servicios del sistema permanentemente."}
+            {"label": "[ PRESIONAR 'ENTER' PARA INSTALAR ]", "type": "action", "selected": False, "pkg": [], "desc": "Presiona la tecla ENTER sobre este botón para iniciar la descarga e instalación automática de todos los paquetes seleccionados."}
         ]
     }
 ]
@@ -485,7 +485,7 @@ def update_ui():
 
 # --- Threads ---
 def keyboard_worker():
-    global current_state, active_pane, cat_idx, item_idx, user_choices, install_error, install_done
+    global current_state, active_pane, cat_idx, item_idx, user_choices, install_error, install_done, transition_text
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:
