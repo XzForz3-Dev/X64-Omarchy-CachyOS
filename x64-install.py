@@ -569,8 +569,15 @@ def setup_plymouth_bootloader():
     run_cmd_live("sudo bash -c 'echo \"add_dracutmodules+=\\\" plymouth \\\"\" > /etc/dracut.conf.d/plymouth.conf'", check=False)
     
     log_lines.append("[yellow]Buscando e inyectando configuración en Limine...[/yellow]")
+    # Inyectar en cmdline base (usado por cachyos/limine-entry-tool)
+    run_cmd_live("sudo bash -c 'if [ -f /etc/kernel/cmdline ]; then grep -q \"splash\" /etc/kernel/cmdline || sed -i \"s/$/ splash/\" /etc/kernel/cmdline; fi' 2>/dev/null", check=False)
+    
+    # Inyectar directamente en limine.conf por si no usan limine-entry-tool
     run_cmd_live("sudo find /boot /efi -maxdepth 4 \\( -name 'limine.conf' -o -name 'limine.cfg' \\) -exec bash -c 'grep -q \"splash\" \"$1\" || sudo sed -i -E \"/^ *kernel_cmdline/ { /splash/! s/$/ splash/ }\" \"$1\"' _ {} \\; 2>/dev/null", check=False)
     run_cmd_live("sudo find /boot /efi -maxdepth 4 \\( -name 'limine.conf' -o -name 'limine.cfg' \\) -exec bash -c 'grep -q \"splash\" \"$1\" || sudo sed -i -E \"/^ *cmdline/ { /splash/! s/$/ splash/ }\" \"$1\"' _ {} \\; 2>/dev/null", check=False)
+    
+    # Actualizar limine si está instalado
+    run_cmd_live("if command -v limine-update >/dev/null; then sudo limine-update; fi", check=False)
     
     log_lines.append("[yellow]Aplicando tema de Plymouth...[/yellow]")
     run_cmd_live("sudo mkdir -p /usr/share/plymouth/themes/omarchy", check=False)
