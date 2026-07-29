@@ -136,7 +136,7 @@ fun display_normal_callback() {
   mode = Plymouth.GetMode();
 
   # Only show progress bar for boot and resume modes
-  if ((mode == "boot" || mode == "resume") && global.password_shown == 1) {
+  if (mode == "boot" || mode == "resume") {
     show_progress_bar();
     start_fake_progress();
   }
@@ -233,3 +233,9 @@ fun hide_message_callback(text) {
 
 Plymouth.SetDisplayMessageFunction(display_message_callback);
 Plymouth.SetHideMessageFunction(hide_message_callback);
+
+# Iniciar animación automáticamente en el arranque
+if (Plymouth.GetMode() == "boot" || Plymouth.GetMode() == "resume") {
+  show_progress_bar();
+  start_fake_progress();
+}
