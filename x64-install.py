@@ -631,7 +631,12 @@ def installer_worker():
         run_cmd_live("cp -r --remove-destination themes/* ~/.local/share/themes/ 2>/dev/null", check=False)
         run_cmd_live("chmod +x ~/.local/bin/*", check=False)
         
-        progress.update(t_config, description="[yellow]Configurando Tema SDDM...", advance=10)
+        progress.update(t_config, description="[yellow]Configurando Pantalla de Arranque (Plymouth)...", advance=5)
+        run_cmd_live("sudo mkdir -p /usr/share/plymouth/themes/omarchy", check=False)
+        run_cmd_live("sudo cp -r default/plymouth/* /usr/share/plymouth/themes/omarchy/ 2>/dev/null", check=False)
+        run_cmd_live("sudo plymouth-set-default-theme -R omarchy", check=False)
+        
+        progress.update(t_config, description="[yellow]Configurando Tema SDDM...", advance=5)
         run_cmd_live("sudo mkdir -p /usr/share/sddm/themes/omarchy", check=False)
         run_cmd_live("sudo cp -r default/sddm/omarchy/* /usr/share/sddm/themes/omarchy/ 2>/dev/null", check=False)
         run_cmd_live("sudo mkdir -p /etc/sddm.conf.d", check=False)
