@@ -20,7 +20,8 @@ CADA VEZ que completes una tarea que involucre crear una nueva función, modific
 3. **Protocolo Git Push:**
    - Realiza un `git commit` descriptivo de tus cambios y ejecuta `git push origin quattro` (o la rama activa) para asegurar que el código está respaldado en la nube.
 
-4. **El Recordatorio del Repositorio Privado de Memorias:**
-   - En tu mensaje de despedida o cierre hacia el usuario, debes incluir SIEMPRE el siguiente recordatorio exacto:
-   > ⚠️ **Protocolo de Cierre:** He actualizado el archivo de Memoria. Por favor, asegúrate de guardar o copiar el archivo `X64_OMARCHY_MEMORY.md` en tu **Repositorio Privado de Memorias de GitHub** y hacerle `git push` para que podamos retomar el trabajo sin perder contexto en tu otra laptop.
+4. **Sincronización Automática con la Bóveda de IA (Brain Vault):**
+   - Tienes terminantemente prohibido pedirle al usuario que copie o suba el archivo manualmente.
+   - Tu deber es copiar automáticamente el archivo de memoria local hacia `C:\Users\XzForz3\.gemini\antigravity-ide\scratch\X64-AI-Brain-Vault\x64_omarchy_memory.md`.
+   - Luego, debes ejecutar comandos de terminal dentro de esa carpeta (`git add .`, `git commit` y `git push origin main`) para sincronizar silenciosamente el cerebro de la IA en la nube.
 </RULE[auto_sync_system]>
