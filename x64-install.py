@@ -21,6 +21,7 @@ try:
     from rich.console import Console
     from rich.text import Text
     from rich.table import Table
+    from rich.markup import escape
 except ImportError:
     print("Fatal: python-rich not found. Please run the installer via x64-install.sh")
     sys.exit(1)
@@ -53,8 +54,7 @@ def run_cmd_live(cmd, check=True):
             line_clean = line.strip()
             if line_clean:
                 f.write(line)
-                # Escapar corchetes para que Rich no intente parsearlos como estilos
-                safe_line = line_clean.replace("[", "\\[")
+                safe_line = escape(line_clean)
                 log_lines.append(f"[dim white]{safe_line}[/dim white]")
                 
     process.wait()
@@ -139,7 +139,7 @@ def update_ui():
     layout["right"]["progress"].update(Panel(progress, title="[bold green]Progreso de Metamorfosis[/bold green]", border_style="green"))
     
     matrix_text = "\n".join(log_lines)
-    layout["right"]["matrix"].update(Panel(Text.from_markup(matrix_text, markup=False), title="[bold yellow]The Matrix (Live Log)[/bold yellow]", border_style="yellow"))
+    layout["right"]["matrix"].update(Panel(matrix_text, title="[bold yellow]The Matrix (Live Log)[/bold yellow]", border_style="yellow"))
     return layout
 
 # --- Worker Thread ---
