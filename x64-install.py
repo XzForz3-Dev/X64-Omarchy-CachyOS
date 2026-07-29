@@ -158,7 +158,7 @@ def get_sys_info():
     # 1. Fastfetch Output
     ff_text = ""
     try:
-        res = subprocess.run(["fastfetch", "--logo", "none", "--raw"], stdout=subprocess.PIPE, text=True)
+        res = subprocess.run(["fastfetch", "--logo", "none"], stdout=subprocess.PIPE, text=True)
         if res.returncode == 0:
             ff_text = res.stdout.strip()
     except:
@@ -167,7 +167,7 @@ def get_sys_info():
     if not ff_text:
         ff_text = "Detección de Hardware fallida (Fastfetch no disponible)."
         
-    table.add_row(ff_text)
+    table.add_row(Text.from_ansi(ff_text))
     table.add_row("")
     
     # 2. Live CPU/RAM Metrics
