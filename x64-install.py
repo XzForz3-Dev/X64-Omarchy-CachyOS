@@ -13,7 +13,6 @@ import shutil
 import select
 import tty
 import termios
-import math
 from datetime import datetime
 from collections import deque
 
