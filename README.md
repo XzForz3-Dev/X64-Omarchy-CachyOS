@@ -29,6 +29,8 @@ Hemos transformado el antiguo y rígido script de bash en una **interfaz gráfic
 *   **TUI 2D en Python:** Navegación fluida por teclado. Di adiós a escribir respuestas 'S/N' en scripts aburridos.
 *   **Security Gateway:** Un sistema de autenticación de seguridad en la terminal (estilo Matrix) que protege la ejecución del instalador.
 *   **Gestión Inteligente de Errores:** Intercepta bloqueos de `pacman`, paquetes rotos o caídas de red, dándote la opción interactiva de *Reintentar, Ignorar o Abortar* sin romper la instalación.
+*   **Optimización Extrema (Multicore):** Uso de compresión `zstd -T0` para initramfs, reemplazo de llamadas del sistema (cp) por librerías nativas de Python y filtrado de espejos para acelerar el despliegue al máximo.
+*   **Auto-Mantenimiento (CI/CD Shield):** Integración nativa con GitHub Actions para rastrear y fusionar automáticamente actualizaciones oficiales del proyecto base (Upstream), blindado con un sistema de pruebas que rechaza actualizaciones que rompan la arquitectura.
 *   **Perfiles de Entorno Exclusivos:** Soporte de primera clase para **Hyprland** (con estética Tokyo Night) y otros entornos, además de estar pre-armado para Gaming (Steam, Proton, MangoHud).
 *   **Optimizado para CachyOS:** Aprovecha la arquitectura BTRFS+Snapper de CachyOS y sus repositorios optimizados (v3/AVX2).
 *   **Aceleración de Video (VA-API):** Inyección automática de drivers y banderas (flags) en navegadores para reproducir video usando la tarjeta gráfica, ahorrando batería y CPU.
