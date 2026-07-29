@@ -82,13 +82,13 @@ fi
 gum style --foreground 39 "[3/7] Sincronizando repositorios y actualizando firmas..."
 # Desactivamos exit on error momentáneamente para atrapar el fallo del keyring
 set +e
-if ! gum spin --spinner dot --title "Sincronizando Pacman..." -- sudo pacman -Syu --noconfirm 2>>"$LOG_FILE"; then
+if ! sudo pacman -Syu --noconfirm 2>&1 | tee -a "$LOG_FILE"; then
   gum style --foreground 214 "⚠️ Problema de firmas de CachyOS detectado. Iniciando protocolo de autorreparación..."
-  gum spin --spinner dot --title "Reparando llavero GNUPG..." -- sudo rm -rf /etc/pacman.d/gnupg/
-  gum spin --spinner dot --title "Inicializando pacman-key..." -- sudo pacman-key --init 2>>"$LOG_FILE"
-  gum spin --spinner dot --title "Poblando firmas de Arch y CachyOS..." -- sudo pacman-key --populate archlinux cachyos 2>>"$LOG_FILE"
+  sudo rm -rf /etc/pacman.d/gnupg/
+  sudo pacman-key --init 2>&1 | tee -a "$LOG_FILE"
+  sudo pacman-key --populate archlinux cachyos 2>&1 | tee -a "$LOG_FILE"
   gum style --foreground 76 "✓ Llavero reparado."
-  gum spin --spinner dot --title "Reintentando sincronización..." -- sudo pacman -Syu --noconfirm 2>>"$LOG_FILE"
+  sudo pacman -Syu --noconfirm 2>&1 | tee -a "$LOG_FILE"
 fi
 set -e
 
