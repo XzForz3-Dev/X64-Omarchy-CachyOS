@@ -59,31 +59,30 @@ error_response = None
 
 # --- Unified Menu State ---
 menu_items = [
-    {"label": "[ SISTEMA BASE & ENTORNO ]", "type": "header"},
+    {"label": "[ ENTORNO Y NÚCLEO ]", "type": "header"},
     {"label": "Tema: Tokyo Night", "type": "toggle", "selected": True, "pkg": [], "desc": "Aplica el tema oscuro 'Tokyo Night' para Hyprland, alacritty y neovim."},
+    {"label": "Kernel: CachyOS BORE", "type": "toggle", "selected": True, "pkg": ["linux-cachyos", "linux-cachyos-headers"], "desc": "Núcleo de CachyOS optimizado con BORE scheduler para máxima respuesta en escritorio."},
     
-    {"label": "Rendimiento y Tweaks (Estilo CachyOS)", "type": "header"},
+    {"label": "Rendimiento y Tweaks", "type": "header"},
     {"label": "Tweak: Ananicy-cpp", "type": "toggle", "selected": True, "pkg": ["ananicy-cpp"], "desc": "Demonio auto-nice. Asigna prioridades a procesos dinámicamente para menor latencia."},
     {"label": "Tweak: ZRAM (Swap en RAM)", "type": "toggle", "selected": True, "pkg": ["zram-generator"], "desc": "Comprime la memoria RAM en lugar de usar el disco para Swap. Mejora fluidez en cargas pesadas."},
+    {"label": "Tweak: UKSMD (Deduplicación)", "type": "toggle", "selected": False, "pkg": ["uksmd"], "desc": "Ultra KSM Daemon. Fusiona páginas de memoria idénticas para liberar RAM (Ideal para VMs)."},
+    {"label": "Tweak: Irqbalance", "type": "toggle", "selected": True, "pkg": ["irqbalance"], "desc": "Distribuye las interrupciones de hardware entre todos los núcleos del CPU."},
     
     {"label": "Controladores Gráficos (Drivers)", "type": "header"},
     {"label": "Drivers: NVIDIA (Privativo)", "type": "toggle", "selected": False, "pkg": ["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings"], "desc": "Instala el módulo DKMS de Nvidia y herramientas. Recomendado para RTX."},
     
-    {"label": "Navegadores Web", "type": "header"},
-    {"label": "Mozilla Firefox", "type": "toggle", "selected": True, "pkg": ["firefox"], "desc": "El navegador libre por excelencia. Privado y rápido."},
-    {"label": "Chromium", "type": "toggle", "selected": False, "pkg": ["chromium"], "desc": "Navegador base de Chrome, código abierto."},
-    {"label": "Brave Browser", "type": "toggle", "selected": False, "pkg": ["brave-bin"], "desc": "Navegador enfocado en privacidad con bloqueador de anuncios integrado."},
+    {"label": "Servicios del Sistema", "type": "header"},
+    {"label": "Audio: Servidor PipeWire", "type": "toggle", "selected": True, "pkg": ["pipewire", "pipewire-pulse", "pipewire-alsa", "pipewire-jack", "wireplumber"], "desc": "Servidor de audio moderno de baja latencia. Reemplaza a PulseAudio y JACK."},
+    {"label": "Red: Soporte Bluetooth", "type": "toggle", "selected": True, "pkg": ["bluez", "bluez-utils", "blueman"], "desc": "Instala y habilita la pila Bluetooth y el gestor gráfico Blueman."},
+    {"label": "Impresión: Sistema CUPS", "type": "toggle", "selected": False, "pkg": ["cups", "cups-pdf"], "desc": "Habilita el soporte para impresoras físicas y en red."},
     
-    {"label": "Herramientas de Software", "type": "header"},
-    {"label": "Gaming: Paquete Jugador (Steam, Lutris, MangoHud)", "type": "toggle", "selected": False, "pkg": ["steam", "lutris", "mangohud", "gamemode", "gamescope"], "desc": "Configura tu PC para máximo rendimiento en videojuegos y herramientas de Wine."},
-    {"label": "Desarrollo: Paquete Creador (Docker, Git, VSCode)", "type": "toggle", "selected": False, "pkg": ["docker", "git", "code", "base-devel"], "desc": "Entorno completo de programación: virtualización, control de versiones y el IDE VSCode."},
-    
-    {"label": "Multimedia & Comunicación", "type": "header"},
-    {"label": "Diseño: OBS, Krita & VLC", "type": "toggle", "selected": False, "pkg": ["obs-studio", "krita", "vlc"], "desc": "Herramientas esenciales para creación de contenido, streaming y reproducción multimedia."},
-    {"label": "Social: Discord & Telegram", "type": "toggle", "selected": False, "pkg": ["discord", "telegram-desktop"], "desc": "Aplicaciones de mensajería instantánea más utilizadas."},
-    
-    {"label": "Ofimática", "type": "header"},
-    {"label": "LibreOffice", "type": "toggle", "selected": False, "pkg": ["libreoffice-fresh"], "desc": "La suite ofimática libre más potente (Word, Excel, PowerPoint alternativas)."},
+    {"label": "Software & Internet", "type": "header"},
+    {"label": "Navegador: Mozilla Firefox", "type": "toggle", "selected": True, "pkg": ["firefox"], "desc": "El navegador libre por excelencia. Privado y rápido."},
+    {"label": "Navegador: Brave Browser", "type": "toggle", "selected": False, "pkg": ["brave-bin"], "desc": "Navegador enfocado en privacidad con bloqueador de anuncios integrado."},
+    {"label": "Gaming: Paquete Jugador", "type": "toggle", "selected": False, "pkg": ["steam", "lutris", "mangohud", "gamemode", "gamescope"], "desc": "Steam, Lutris y herramientas de rendimiento (MangoHud, Gamescope, GameMode)."},
+    {"label": "Desarrollo: Paquete Creador", "type": "toggle", "selected": False, "pkg": ["docker", "git", "code", "base-devel"], "desc": "Virtualización (Docker), control de versiones (Git) y el IDE VSCode."},
+    {"label": "Multimedia & Social", "type": "toggle", "selected": False, "pkg": ["obs-studio", "krita", "vlc", "discord", "telegram-desktop"], "desc": "Herramientas de creación de contenido, streaming y mensajería."},
     
     {"label": "", "type": "separator"},
     {"label": "[ INICIAR METAMORFOSIS ]", "type": "action", "desc": "Aplicar configuración y comenzar la instalación del sistema X64."}
@@ -474,6 +473,12 @@ def installer_worker():
         if "zram-generator" in user_choices["packages"]:
             run_cmd_live("sudo systemctl daemon-reload", check=False)
             run_cmd_live("sudo systemctl restart systemd-zram-setup@zram0.service", check=False)
+        if "uksmd" in user_choices["packages"]:
+            run_cmd_live("sudo systemctl enable uksmd.service", check=False)
+        if "irqbalance" in user_choices["packages"]:
+            run_cmd_live("sudo systemctl enable irqbalance.service", check=False)
+        if "cups" in user_choices["packages"]:
+            run_cmd_live("sudo systemctl enable cups.service", check=False)
         
         progress.update(t_config, description="[yellow]Aplicando Diseño y Tema...", advance=20)
         if user_choices["theme"] == "Tokyo Night":
