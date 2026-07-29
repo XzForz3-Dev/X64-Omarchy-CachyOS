@@ -13,6 +13,7 @@ import shutil
 import select
 import tty
 import termios
+import math
 from datetime import datetime
 from collections import deque
 
@@ -26,6 +27,7 @@ try:
     from rich.text import Text
     from rich.table import Table
     from rich.markup import escape
+    from rich import box
 except ImportError:
     print("Fatal: python-rich not found. Please run the installer via x64-install.sh")
     sys.exit(1)
@@ -182,6 +184,15 @@ logo_text = """
    [ X64 STUDIOS ]
 """
 
+def get_animated_logo():
+    t = time.time()
+    wave = (math.sin(t * 3.5) + 1) / 2
+    colors = ["#4B0082", "#5A11A8", "#7A22CC", "#8A2BE2", "#BA55D3", "#E066FF", "#FF00FF"]
+    idx = int(wave * (len(colors) - 1))
+    current_color = colors[idx]
+    
+    return Text(logo_text.strip('\\n'), style=f"bold {current_color}", justify="center")
+
 progress = Progress(
     SpinnerColumn(),
     TextColumn("[progress.description]{task.description}"),
@@ -207,8 +218,24 @@ def update_ui():
     elif current_state == "transition":
         border_color = "yellow"
 
-    layout["left"]["logo"].update(Panel(Align.center(f"[bold {border_color}]{logo_text}[/bold {border_color}]"), border_style=border_color))
-    layout["left"]["sysinfo"].update(Panel(get_sys_info(), title="[bold blue]Hardware & Setup (Fastfetch)[/bold blue]", border_style="blue"))
+    animated_logo = get_animated_logo()
+    layout["left"]["logo"].update(
+        Panel(
+            Align.center(animated_logo, vertical="middle"),
+            title="[bold #BA55D3]CORE ENGINE[/bold #BA55D3]",
+            border_style=border_color,
+            box=box.HEAVY
+        )
+    )
+    
+    layout["left"]["sysinfo"].update(
+        Panel(
+            get_sys_info(), 
+            title="[bold blue]Hardware & Setup (Fastfetch)[/bold blue]", 
+            border_style="blue",
+            box=box.ROUNDED
+        )
+    )
     
     if current_state == "menu":
         text = "\n[bold cyan]Usa las FLECHAS para moverte. Presiona ESPACIO o ENTER para cambiar.[/bold cyan]\n\n"
