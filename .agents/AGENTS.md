@@ -20,7 +20,7 @@ CADA VEZ que completes una tarea que involucre crear una nueva función, modific
 3. **Protocolo Git Push:**
    - Realiza un `git commit` descriptivo de tus cambios y ejecuta `git push origin quattro` (o la rama activa) para asegurar que el código está respaldado en la nube.
 
-4. **El Recordatorio del Gist Secreto:**
+4. **El Recordatorio del Repositorio Privado de Memorias:**
    - En tu mensaje de despedida o cierre hacia el usuario, debes incluir SIEMPRE el siguiente recordatorio exacto:
-   > ⚠️ **Protocolo de Cierre:** He actualizado el archivo de Memoria. Por favor, copia todo el texto y pégalo en tu **Gist Secreto de GitHub** para que podamos retomar el trabajo sin perder contexto en tu otra laptop.
+   > ⚠️ **Protocolo de Cierre:** He actualizado el archivo de Memoria. Por favor, asegúrate de guardar o copiar el archivo `X64_OMARCHY_MEMORY.md` en tu **Repositorio Privado de Memorias de GitHub** y hacerle `git push` para que podamos retomar el trabajo sin perder contexto en tu otra laptop.
 </RULE[auto_sync_system]>
