@@ -573,7 +573,9 @@ def installer_worker():
         run_cmd_live("sudo bash -c 'grep -q \"omarchy\" /etc/pacman.conf || echo -e \"\\n[omarchy]\\nSigLevel = Optional TrustAll\\nServer = https://pkgs.omarchy.org/\\$arch/\\n\" >> /etc/pacman.conf'")
         progress.update(t_repo, description="[green]Repositorio Listo", completed=100)
 
-        progress.update(t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=20)
+        progress.update(t_sync, description="[yellow]Creando Snapshot BTRFS...", advance=10)
+        run_cmd_live("sudo snapper create -c root -d 'Pre-Omarchy Installation'", check=False)
+        progress.update(t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=10)
         res = run_cmd_live("sudo pacman -Syu --noconfirm", check=False)
         if res != 0:
             log_lines.append("[bold red]Fallo detectado. Reparando Llavero GPG...[/bold red]")
@@ -629,7 +631,13 @@ def installer_worker():
         run_cmd_live("cp -r --remove-destination themes/* ~/.local/share/themes/ 2>/dev/null", check=False)
         run_cmd_live("chmod +x ~/.local/bin/*", check=False)
         
-        progress.update(t_config, description="[yellow]Habilitando servicios...", advance=20)
+        progress.update(t_config, description="[yellow]Configurando Tema SDDM...", advance=10)
+        run_cmd_live("sudo mkdir -p /usr/share/sddm/themes/omarchy", check=False)
+        run_cmd_live("sudo cp -r default/sddm/omarchy/* /usr/share/sddm/themes/omarchy/ 2>/dev/null", check=False)
+        run_cmd_live("sudo mkdir -p /etc/sddm.conf.d", check=False)
+        run_cmd_live("sudo bash -c 'echo -e \"[Theme]\\nCurrent=omarchy\" > /etc/sddm.conf.d/omarchy.conf'", check=False)
+        
+        progress.update(t_config, description="[yellow]Habilitando servicios...", advance=10)
         run_cmd_live("sudo systemctl enable sddm.service --now", check=False)
         run_cmd_live("sudo systemctl enable bluetooth.service", check=False)
         if "ananicy-cpp" in user_choices["packages"]:
@@ -736,3 +744,8 @@ if not install_error:
     print("\n[!] Por favor, reinicia tu computadora para aplicar los cambios.\n")
 else:
     console.print(Panel(f"[bold red]La instalación fue abortada: {install_error}[/bold red]", expand=False))
+
+try:
+    os.system(f"sudo cp {LOG_FILE} /var/log/x64-omarchy-install.log 2>/dev/null")
+except Exception:
+    pass
