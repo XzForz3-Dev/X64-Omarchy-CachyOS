@@ -38,10 +38,36 @@ error_handler() {
 
 trap 'error_handler $LINENO "$BASH_COMMAND"' ERR
 
+# Efecto de texto estilo "máquina de escribir"
+type_text() {
+    local text="$1"
+    local delay="${2:-0.03}"
+    local color="${3:-39}"
+    # Imprime con gum usando el color
+    gum style --foreground "$color" "$text" | pv -qL 30 2>/dev/null || echo -e "\e[38;5;${color}m${text}\e[0m"
+}
+
 clear
 
-# ASCII Logo styled with Gum (Color 87 es un cyan brillante)
-cat << "EOF" | gum style --foreground 87 --bold
+# Efecto de secuencia de inicio hacker
+if ! command -v pv &> /dev/null; then
+    sudo pacman -Sy --noconfirm pv >/dev/null 2>&1
+fi
+
+echo -e "\e[1;31m[!] Inicializando motor gráfico de instalación...\e[0m"
+sleep 0.5
+echo -e "\e[1;33m[!] Desactivando protocolos estándar...\e[0m"
+sleep 0.5
+echo -e "\e[1;32m[✓] Acceso de administrador concedido.\e[0m"
+sleep 1
+clear
+
+# ASCII Logo con efecto de "dibujado" línea por línea
+echo ""
+while IFS= read -r line; do
+    echo -e "\e[1;38;5;87m$line\e[0m"
+    sleep 0.05
+done << "EOF"
 ██╗  ██╗ ██████╗ ██╗  ██╗    ███████╗████████╗██╗   ██╗██████╗ ██╗ ██████╗ ███████╗
 ╚██╗██╔╝██╔════╝ ██║  ██║    ██╔════╝╚══██╔══╝██║   ██║██╔══██╗██║██╔═══██╗██╔════╝
  ╚███╔╝ ███████╗ ███████║    ███████╗   ██║   ██║   ██║██║  ██║██║██║   ██║███████╗
@@ -49,8 +75,11 @@ cat << "EOF" | gum style --foreground 87 --bold
 ██╔╝ ██╗╚██████╔╝     ██║    ███████║   ██║   ╚██████╔╝██████╔╝██║╚██████╔╝███████║
 ╚═╝  ╚═╝ ╚═════╝      ╚═╝    ╚══════╝   ╚═╝    ╚═════╝ ╚═════╝ ╚═╝ ╚═════╝ ╚══════╝
 EOF
+echo ""
 
-gum style --border rounded --border-foreground 99 --padding "0 2" --margin "1" "Bienvenido al Instalador de X64-Omarchy para CachyOS"
+# Mensaje de bienvenida con animación de PV (Pipe Viewer) para efecto de tipeado real
+echo "Bienvenido al Instalador de X64-Omarchy para CachyOS" | pv -qL 20 | gum style --border rounded --border-foreground 99 --padding "0 2" --margin "1" 
+
 
 # 1. AUTO-ACTUALIZADOR (GIT PULL)
 gum spin --spinner dot --title "Buscando actualizaciones en el repositorio..." -- git pull origin quattro 2>&1 | tee -a "$LOG_FILE"
