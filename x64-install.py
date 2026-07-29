@@ -170,8 +170,8 @@ layout.split_row(
 )
 
 layout["left"].split_column(
-    Layout(name="logo", ratio=1),
-    Layout(name="sysinfo", ratio=2)
+    Layout(name="logo", ratio=3),
+    Layout(name="sysinfo", ratio=1)
 )
 
 logo_text = """
