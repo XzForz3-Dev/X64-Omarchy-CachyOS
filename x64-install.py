@@ -233,7 +233,6 @@ def log(msg):
     log_lines.append(f"[bold blue][{time_str}][/bold blue] [bold cyan]{msg}[/bold cyan]")
 
 def gum_choose(title, options):
-    os.system("clear")
     print(f"\n\033[1;36m=== {title} ===\033[0m\n")
     print("\033[1;33mInstrucciones:\033[0m Usa las FLECHAS para moverte y ENTER para confirmar.\n")
     cmd = ["gum", "choose"]
