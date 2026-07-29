@@ -186,10 +186,15 @@ logo_text = """
 
 def get_animated_logo():
     t = time.time()
-    wave = (math.sin(t * 3.5) + 1) / 2
-    colors = ["#4B0082", "#5A11A8", "#7A22CC", "#8A2BE2", "#BA55D3", "#E066FF", "#FF00FF"]
-    idx = int(wave * (len(colors) - 1))
-    current_color = colors[idx]
+    # Frecuencia más suave para "respiración"
+    wave = (math.sin(t * 2.5) + 1) / 2
+    
+    # Interpolación RGB fluida (De morado oscuro a magenta neón)
+    r = int(75 + (255 - 75) * wave)
+    g = 0
+    b = int(130 + (255 - 130) * wave)
+    
+    current_color = f"#{r:02x}{g:02x}{b:02x}"
     
     # Prepend newlines for manual vertical centering
     centered_text = "\n\n\n\n" + logo_text.strip('\n')
@@ -224,9 +229,9 @@ def update_ui():
     layout["left"]["logo"].update(
         Panel(
             Align.center(animated_logo),
-            title="[bold #BA55D3]CORE ENGINE[/bold #BA55D3]",
+            title="[bold white] X64 SYSTEM CORE [/bold white]",
             border_style=border_color,
-            box=box.HEAVY
+            box=box.SQUARE
         )
     )
     
