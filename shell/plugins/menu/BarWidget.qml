@@ -12,8 +12,8 @@ BarWidget {
     id: button
     anchors.fill: parent
     bar: root.bar
-    text: "\ue900"
-    fontFamily: "omarchy"
+    text: "󰣇"
+    // fontFamily: "omarchy"  // Removido para usar Nerd Fonts del sistema
     horizontalMargin: 7.5
     onPressed: function(button) {
       if (!root.bar) return
