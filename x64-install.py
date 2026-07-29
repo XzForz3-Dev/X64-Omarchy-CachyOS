@@ -285,7 +285,10 @@ def keyboard_worker():
                     else:
                         menu_items[current_menu_index]["selected"] = not menu_items[current_menu_index]["selected"]
                 elif ch == '\x03': # Ctrl+C
-                    sys.exit(0)
+                    global install_error, install_done
+                    install_error = "Instalación abortada por el usuario (Ctrl+C)."
+                    install_done = True
+                    break
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         

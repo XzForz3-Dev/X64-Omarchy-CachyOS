@@ -226,4 +226,8 @@ def main():
         sys.stdout.write("\033[?25h")
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.stdout.write("\033[?25h\033[2J\033[H")
+        sys.exit(1)
