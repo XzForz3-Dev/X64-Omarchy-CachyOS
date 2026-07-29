@@ -657,9 +657,33 @@ def installer_worker():
         install_done = True
         current_state = "error" if install_error else "done"
 
+# --- Hardware Auto-Detect ---
+def detect_gpu_and_update_menu():
+    try:
+        import subprocess
+        chk = subprocess.run(["lspci"], stdout=subprocess.PIPE, text=True, check=False)
+        output = chk.stdout.lower()
+        has_nvidia = False
+        for line in output.split('\n'):
+            if ('vga' in line or '3d' in line) and 'nvidia' in line:
+                has_nvidia = True
+                break
+        
+        for cat in menu_data:
+            if "13. Drivers Gráficos" in cat["cat"]:
+                for item in cat["items"]:
+                    if "NVIDIA" in item["label"]:
+                        item["selected"] = has_nvidia
+                    elif "Mesa" in item["label"]:
+                        item["selected"] = not has_nvidia
+    except Exception:
+        pass
+
 # --- Launch Sequence ---
 with open(LOG_FILE, "w") as f:
     f.write("=== Inicio de Instalación X64-Omarchy (Mega Dashboard) ===\n")
+
+detect_gpu_and_update_menu()
 
 k_worker = threading.Thread(target=keyboard_worker, daemon=True)
 k_worker.start()
