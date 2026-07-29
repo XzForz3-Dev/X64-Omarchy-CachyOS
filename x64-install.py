@@ -199,7 +199,7 @@ def installer_worker():
         progress.update(t_config, description="[yellow]Desplegando escudo de sistema...", advance=20)
         run_cmd_live("mkdir -p ~/.config ~/.local/bin ~/.local/share/themes")
         run_cmd_live("sudo mkdir -p /usr/share/omarchy")
-        run_cmd_live("sudo cp -r --remove-destination bin config default shell themes /usr/share/omarchy/", check=False)
+        run_cmd_live("sudo cp -r --remove-destination bin config default shell themes /usr/share/omarchy/ 2>/dev/null", check=False)
         run_cmd_live("sudo chmod -R 755 /usr/share/omarchy")
         
         run_cmd_live("sudo mkdir -p /usr/share/wayland-sessions")
@@ -209,9 +209,9 @@ def installer_worker():
         
         run_cmd_live("sudo bash -c 'echo \"export OMARCHY_PATH=/usr/share/omarchy\" > /etc/profile.d/omarchy.sh'")
         run_cmd_live("sudo chmod +x /etc/profile.d/omarchy.sh")
-        run_cmd_live("cp -r --remove-destination config/* ~/.config/", check=False)
-        run_cmd_live("cp -r --remove-destination bin/* ~/.local/bin/", check=False)
-        run_cmd_live("cp -r --remove-destination themes/* ~/.local/share/themes/", check=False)
+        run_cmd_live("cp -r --remove-destination config/* ~/.config/ 2>/dev/null", check=False)
+        run_cmd_live("cp -r --remove-destination bin/* ~/.local/bin/ 2>/dev/null", check=False)
+        run_cmd_live("cp -r --remove-destination themes/* ~/.local/share/themes/ 2>/dev/null", check=False)
         run_cmd_live("chmod +x ~/.local/bin/*", check=False)
         
         progress.update(t_config, description="[yellow]Habilitando servicios...", advance=20)
