@@ -184,10 +184,34 @@ logo_text = """
    [ X64 STUDIOS ]
 """
 
+qr_text = """
+ ▄▄▄▄▄▄▄  ▄▄▄ ▄▄ ▄▄▄ ▄▄ ▄  ▄▄▄▄▄▄▄ 
+ █ ▄▄▄ █ ▄    █▀███▄▄ █▄   █ ▄▄▄ █ 
+ █ ███ █ ██▀   ▀█▀ ▄▀▀▄▀▄▀ █ ███ █ 
+ █▄▄▄▄▄█ █▀█▀█▀█▀█▀▄ █ ▄ ▄ █▄▄▄▄▄█ 
+ ▄ ▄▄▄▄▄ ▀▀▀▀ ▄ █ ▄▀ ▄▀ ▀▀ ▄▄▄▄▄   
+ ▀█▄▀█ ▄▀▄▀██▄  ▄▀ █▀▀▀ ▀▄ ▀▀▄▀█▀▀ 
+ ▀▄██  ▄  █▄█▀ ▀█▀ ▄▄ ▀█▄█▄▀ ██▀▄▀ 
+ █ ▀█▄ ▄▀ ▄▀ █ █▀▀█ ▄▀ ▄  ▄█  ▀██▀ 
+ ▀▀▀▄ ▄▄▀ ▄█▀    ▀▄ ██▀▄▄▄█▀█▄ ▀ ▄ 
+ ███ ▄ ▄▀▀█▄▄ ▀▄███  █▄ ▀▄ ▀█▄▀█▀▀ 
+ ▄█▄ ██▄▄██▄   ▀▀█▀▀█▀▀▄ ▄█▀███▀ ▄ 
+ █▀  ▀▄▄▀  ▀ █▀██▄▄█ ▄▀▀▀▀▄▀  █▄▄▀ 
+ █ █▀▀█▄█   ▄▀ ██ ▄▀▀ ▀█▄███▄█▀█ ▀ 
+ ▄▄▄▄▄▄▄ ▀████▀▀▄▄ ▄▀▄▄ ██ ▄ █ ██  
+ █ ▄▄▄ █ █▀▀▄ ▄█▄  ▄▄███▀█▄▄▄██▀██ 
+ █ ███ █ █▄▀▀█▀▄▀▀█▄ █ ▄▀▀▀▄▄▀█ ▀▀ 
+ █▄▄▄▄▄█ ▄██▄▄ █ █▄██▀▀██▄ ▀▄▀▀▀▄  
+"""
+
 def get_static_logo():
-    # Logo estático restaurado al tamaño original, usando Cyan brillante
-    centered_text = "\n\n" + logo_text.strip('\n')
-    return Text(centered_text, style="bold cyan", justify="center")
+    t1 = Text(logo_text.strip('\n') + "\n\n", style="bold cyan", justify="center")
+    t2 = Text("GITHUB REPOSITORY\n", style="bold white", justify="center")
+    t3 = Text(qr_text.strip('\n'), style="bold white", justify="center")
+    
+    t1.append(t2)
+    t1.append(t3)
+    return t1
 
 progress = Progress(
     SpinnerColumn(),
