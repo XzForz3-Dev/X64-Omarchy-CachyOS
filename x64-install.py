@@ -741,7 +741,12 @@ if not install_error:
     report.add_row("Archivo de Log", f"[dim]{LOG_FILE}[/dim]")
     
     console.print(Panel(report, border_style="green", title="[bold green]¡Sistema Listo![/bold green]"))
-    print("\n[!] Por favor, reinicia tu computadora para aplicar los cambios.\n")
+    
+    ans = gum_choose("¿Deseas reiniciar el sistema ahora?", ["Sí, reiniciar ahora", "No, salir a la terminal"])
+    if ans and ans[0] == "Sí, reiniciar ahora":
+        os.system("sudo reboot")
+    else:
+        print("\n[!] Puedes reiniciar más tarde ejecutando 'reboot'.\n")
 else:
     console.print(Panel(f"[bold red]La instalación fue abortada: {install_error}[/bold red]", expand=False))
 
