@@ -54,5 +54,5 @@ jobs:
       - name: Escudo de Emergencia (Aviso de Fallo)
         if: failure()
         run: |
-          echo "::error title=🚨 Escudo CI/CD: Actualización Oficial Rechazada::El robot intentó descargar las últimas actualizaciones de basecamp/omarchy y fusionarlas en la rama quattro. Sin embargo, las pruebas automáticas fallaron. Esto significa que los creadores originales cambiaron algo que es incompatible con nuestras optimizaciones extremas. La actualización se ha abortado completamente para proteger tu proyecto. Instrucciones: Muestra este problema a tu asistente IA (Antigravity) en el IDE para que pueda adaptar nuestra arquitectura al nuevo código oficial."
+          echo "::error title=🚨 Escudo CI/CD: Actualización Oficial Rechazada::El robot intentó descargar las últimas actualizaciones de basecamp/omarchy y fusionarlas en la rama quattro. Sin embargo, hubo un conflicto de fusión (merge conflict) o las pruebas automáticas fallaron. Esto significa que los creadores originales hicieron cambios estructurales que chocan con nuestro código. La actualización se ha abortado completamente para proteger tu proyecto. Instrucciones: Muestra este problema a tu asistente IA (Antigravity) en el IDE para que pueda resolver el conflicto y adaptar nuestra arquitectura al nuevo código oficial."
           exit 1
