@@ -27,6 +27,11 @@ except ImportError:
     print("Fatal: python-rich not found. Please run the installer via x64-install.sh")
     sys.exit(1)
 
+try:
+    import psutil
+except ImportError:
+    psutil = None
+
 if os.geteuid() == 0:
     print("Por favor NO ejecutes este script como root. Ejecútalo como tu usuario normal.")
     sys.exit(1)
@@ -40,6 +45,11 @@ install_error = None
 install_done = False
 start_time = None
 end_time = None
+current_state = "working" # working, error, done
+
+error_prompt = None
+error_response = None
+
 user_choices = {
     "theme": "Tokyo Night",
     "drivers": "Mesa (AMD/Intel Open Source)",
@@ -53,22 +63,44 @@ def log(msg):
     log_lines.append(f"[bold blue][{time_str}][/bold blue] [bold cyan]{msg}[/bold cyan]")
 
 def run_cmd_live(cmd, check=True):
-    log(f"Ejecutando: {cmd}")
-    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+    global error_prompt, error_response, current_state
     
-    with open(LOG_FILE, "a") as f:
-        for line in process.stdout:
-            line_clean = line.strip()
-            if line_clean:
-                f.write(line)
-                safe_line = escape(line_clean)
-                log_lines.append(f"[dim white]{safe_line}[/dim white]")
+    while True:
+        log(f"Ejecutando: {cmd}")
+        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+        
+        with open(LOG_FILE, "a") as f:
+            for line in process.stdout:
+                line_clean = line.strip()
+                if line_clean:
+                    f.write(line)
+                    safe_line = escape(line_clean)
+                    log_lines.append(f"[dim white]{safe_line}[/dim white]")
+                    
+        process.wait()
+        
+        if check and process.returncode != 0:
+            log(f"FALLO: El comando devolvió código {process.returncode}")
+            current_state = "error"
+            error_prompt = {"msg": f"El comando falló con código {process.returncode}:\n{cmd}"}
+            
+            while error_response is None:
+                time.sleep(0.1)
                 
-    process.wait()
-    if check and process.returncode != 0:
-        log(f"ERROR Fatal: El comando falló con código {process.returncode}")
-        raise Exception(f"Comando fallido (revisa el log): {cmd}")
-    return process.returncode
+            resp = error_response
+            error_response = None
+            current_state = "working"
+            
+            if resp == "Reintentar":
+                log(f"Reintentando comando: {cmd}")
+                continue
+            elif resp == "Ignorar":
+                log(f"Ignorando error y continuando: {cmd}")
+                return process.returncode
+            else:
+                raise Exception(f"Abortado por el usuario tras fallo en: {cmd}")
+                
+        return process.returncode
 
 # --- Interactive Pre-Flight Phase ---
 def gum_choose(title, options, multi=False):
@@ -88,59 +120,72 @@ def gum_choose(title, options, multi=False):
 
 def interactive_setup():
     global user_choices
-    # Temas
+    
     theme = gum_choose("Diseño Visual (Tema Base)", ["Tokyo Night", "Por defecto (CachyOS)"])
     user_choices["theme"] = theme[0] if theme else "Tokyo Night"
     
-    # Drivers
     drivers = gum_choose("Controladores Gráficos (Drivers)", ["NVIDIA (Privativo)", "Mesa (AMD/Intel Open Source)"])
     user_choices["drivers"] = drivers[0] if drivers else "Mesa (AMD/Intel Open Source)"
     
-    # Navegadores
     browsers = gum_choose("Software: Navegadores Web", ["firefox", "chromium", "brave-bin", "vivaldi"], multi=True)
-    
-    # Gaming
     gaming = gum_choose("Software: Paquetes Gaming", ["steam", "lutris", "mangohud", "gamemode", "wine"], multi=True)
-    
-    # Desarrollo
     dev = gum_choose("Software: Herramientas de Desarrollo", ["git", "docker", "code", "base-devel", "nodejs"], multi=True)
     
     user_choices["packages"] = browsers + gaming + dev
     
-    # Añadir paquetes de drivers si es necesario
     if "NVIDIA" in user_choices["drivers"]:
         user_choices["packages"].extend(["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings"])
     else:
         user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon"])
 
-# --- System Info (Panel Izquierdo) ---
+    # Pantalla de confirmación (Punto de No Retorno)
+    os.system("clear")
+    print("\n\033[1;36m[ Resumen de Metamorfosis ]\033[0m")
+    print(f"\033[1;37mTema:\033[0m {user_choices['theme']}")
+    print(f"\033[1;37mDrivers:\033[0m {user_choices['drivers']}")
+    print(f"\033[1;37mPaquetes a instalar:\033[0m {len(user_choices['packages'])} elementos")
+    print("\n")
+    
+    confirm = subprocess.run(["gum", "confirm", "¿Proceder con la Inyección al Sistema?"], stdout=subprocess.PIPE)
+    if confirm.returncode != 0:
+        print("\n\033[1;31mMisión Abortada.\033[0m No se realizaron cambios en tu sistema.")
+        sys.exit(0)
+
+# --- System Info (Panel Izquierdo: Fastfetch + Live) ---
 def get_sys_info():
     table = Table(show_header=False, expand=True, box=None)
     
-    cpu = "Desconocido"
+    # 1. Fastfetch Output
+    ff_text = ""
     try:
-        with open("/proc/cpuinfo") as f:
-            for line in f:
-                if "model name" in line:
-                    cpu = line.split(":")[1].strip()
-                    break
-    except: pass
+        res = subprocess.run(["fastfetch", "--logo", "none", "--raw"], stdout=subprocess.PIPE, text=True)
+        if res.returncode == 0:
+            ff_text = res.stdout.strip()
+    except:
+        pass
+        
+    if not ff_text:
+        ff_text = "Detección de Hardware fallida (Fastfetch no disponible)."
+        
+    table.add_row(ff_text)
+    table.add_row("")
     
-    ram = "Desconocido"
-    try:
-        with open("/proc/meminfo") as f:
-            for line in f:
-                if "MemTotal" in line:
-                    kb = int(line.split()[1])
-                    ram = f"{kb/1024/1024:.1f} GB"
-                    break
-    except: pass
+    # 2. Live CPU/RAM Metrics
+    cpu_percent = psutil.cpu_percent() if psutil else 0
+    ram = psutil.virtual_memory() if psutil else None
+    ram_percent = ram.percent if ram else 0
     
-    table.add_row("[cyan]OS:[/cyan]", "CachyOS / Arch Linux")
-    table.add_row("[cyan]CPU:[/cyan]", cpu[:25] + "..." if len(cpu)>25 else cpu)
-    table.add_row("[cyan]RAM:[/cyan]", ram)
-    table.add_row("[cyan]Tema Elegido:[/cyan]", f"[bold green]{user_choices['theme']}[/bold green]")
-    table.add_row("[cyan]Drivers:[/cyan]", f"[bold purple]{'NVIDIA' if 'NVIDIA' in user_choices['drivers'] else 'Mesa (AMD/Intel)'}[/bold purple]")
+    # Crear barras ascii simples pero efectivas
+    bar_len = 30
+    cpu_filled = int((cpu_percent / 100) * bar_len)
+    cpu_bar = "█" * cpu_filled + "░" * (bar_len - cpu_filled)
+    
+    ram_filled = int((ram_percent / 100) * bar_len)
+    ram_bar = "█" * ram_filled + "░" * (bar_len - ram_filled)
+    
+    table.add_row(f"[cyan]CPU Usage:[/cyan] [yellow]{cpu_percent:>5.1f}%[/yellow] [green]{cpu_bar}[/green]")
+    table.add_row(f"[cyan]RAM Usage:[/cyan] [yellow]{ram_percent:>5.1f}%[/yellow] [magenta]{ram_bar}[/magenta]")
+    
     return table
 
 # --- Layout Setup ---
@@ -157,7 +202,7 @@ layout["right"].split_column(
 
 layout["left"].split_column(
     Layout(name="logo", ratio=1),
-    Layout(name="sysinfo", ratio=1)
+    Layout(name="sysinfo", ratio=2)
 )
 
 logo_text = """
@@ -184,9 +229,15 @@ t_backup = progress.add_task("[white]Creando Respaldo...", total=100)
 t_config = progress.add_task("[white]Aplicando Configuración...", total=100)
 
 def update_ui():
-    layout["left"]["logo"].update(Panel(Align.center(f"[bold cyan]{logo_text}[/bold cyan]"), border_style="cyan"))
-    layout["left"]["sysinfo"].update(Panel(get_sys_info(), title="[bold blue]Hardware & Setup[/bold blue]", border_style="blue"))
-    layout["right"]["progress"].update(Panel(progress, title="[bold green]Progreso de Metamorfosis[/bold green]", border_style="green"))
+    border_color = "cyan"
+    if current_state == "error":
+        border_color = "red"
+    elif current_state == "done":
+        border_color = "green"
+
+    layout["left"]["logo"].update(Panel(Align.center(f"[bold {border_color}]{logo_text}[/bold {border_color}]"), border_style=border_color))
+    layout["left"]["sysinfo"].update(Panel(get_sys_info(), title="[bold blue]Hardware & Setup (Fastfetch)[/bold blue]", border_style="blue"))
+    layout["right"]["progress"].update(Panel(progress, title=f"[bold {border_color}]Progreso de Metamorfosis[/bold {border_color}]", border_style=border_color))
     
     matrix_text = "\n".join(log_lines)
     layout["right"]["matrix"].update(Panel(Text.from_markup(matrix_text, markup=False) if False else matrix_text, title="[bold yellow]The Matrix (Live Log)[/bold yellow]", border_style="yellow"))
@@ -194,9 +245,8 @@ def update_ui():
 
 # --- Worker Thread ---
 def installer_worker():
-    global install_error, install_done
+    global install_error, install_done, current_state
     try:
-        # 1. Health Check
         progress.update(t_health, description="[yellow]Verificando Red...", advance=30)
         run_cmd_live("ping -c 1 archlinux.org")
         progress.update(t_health, description="[yellow]Verificando Espacio en Disco...", advance=30)
@@ -205,7 +255,6 @@ def installer_worker():
             raise Exception("Espacio insuficiente. Se requieren al menos 15GB libres en /.")
         progress.update(t_health, description="[green]Sistema en Óptimas Condiciones", completed=100)
         
-        # 2. Repositorios
         progress.update(t_repo, description="[yellow]Desbloqueando Pacman...", advance=30)
         if os.path.exists("/var/lib/pacman/db.lck"):
             run_cmd_live("sudo rm -f /var/lib/pacman/db.lck")
@@ -214,7 +263,6 @@ def installer_worker():
         run_cmd_live("sudo bash -c 'grep -q \"omarchy\" /etc/pacman.conf || echo -e \"\\n[omarchy]\\nSigLevel = Optional TrustAll\\nServer = https://pkgs.omarchy.org/\\$arch/\\n\" >> /etc/pacman.conf'")
         progress.update(t_repo, description="[green]Repositorio Listo", completed=100)
 
-        # 3. Sincronización
         progress.update(t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=20)
         res = run_cmd_live("sudo pacman -Syu --noconfirm", check=False)
         if res != 0:
@@ -227,7 +275,6 @@ def installer_worker():
             run_cmd_live("sudo pacman -Syu --noconfirm")
         progress.update(t_sync, description="[green]Sistema Sincronizado", completed=100)
 
-        # 4. Paquetes
         progress.update(t_pkg, description="[yellow]Calculando paquetes base...", advance=20)
         pkgs = []
         if os.path.exists("install/omarchy-base.packages"):
@@ -237,9 +284,7 @@ def installer_worker():
             with open("install/omarchy-other.packages") as f2:
                 pkgs.extend(f2.read().splitlines())
         
-        # Inyectar paquetes personalizados por el usuario
         pkgs.extend(user_choices["packages"])
-        
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
         
         chk = subprocess.run(f"pacman -T {pkg_str}", shell=True, stdout=subprocess.PIPE, text=True)
@@ -250,14 +295,12 @@ def installer_worker():
             run_cmd_live(f"sudo pacman -S --noconfirm {missing}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
 
-        # 5. Backup
         progress.update(t_backup, description="[yellow]Comprimiendo ~/.config...", advance=50)
         home = os.path.expanduser("~")
         backup_name = f"x64-backup-{datetime.now().strftime('%Y%m%d_%H%M%S')}.tar.gz"
         run_cmd_live(f"tar -czf {backup_name} -C {home} .config", check=False)
         progress.update(t_backup, description="[green]Respaldo Completado", completed=100)
 
-        # 6. Configuraciones
         progress.update(t_config, description="[yellow]Desplegando escudo de sistema...", advance=20)
         run_cmd_live("mkdir -p ~/.config ~/.local/bin ~/.local/share/themes")
         run_cmd_live("sudo mkdir -p /usr/share/omarchy")
@@ -289,35 +332,39 @@ def installer_worker():
         install_error = str(e)
     finally:
         install_done = True
+        current_state = "error" if install_error else "done"
 
 # --- Launch Sequence ---
-# 1. Interactive Setup
 interactive_setup()
 
-# 2. Main Dashboard Loop
 with open(LOG_FILE, "w") as f:
     f.write("=== Inicio de Instalación X64-Omarchy (Mega Dashboard) ===\n")
 
 start_time = time.time()
-worker = threading.Thread(target=installer_worker)
+worker = threading.Thread(target=installer_worker, daemon=True)
 worker.start()
 
-with Live(update_ui(), refresh_per_second=10, screen=True) as live:
+with Live(update_ui(), refresh_per_second=4, screen=True) as live:
     while not install_done:
-        time.sleep(0.1)
-        live.update(update_ui())
+        time.sleep(0.25)
         
+        if error_prompt:
+            live.stop()
+            os.system("clear")
+            print(f"\n\033[1;41m[ ATENCIÓN - ERROR CRÍTICO ]\033[0m")
+            print(f"\033[1;33m{error_prompt['msg']}\033[0m\n")
+            ans = gum_choose("¿Cómo deseas proceder?", ["Reintentar", "Ignorar", "Abortar"])
+            error_response = ans[0] if ans else "Abortar"
+            error_prompt = None
+            os.system("clear")
+            live.start()
+        else:
+            live.update(update_ui())
+            
     end_time = time.time()
-    
-    if install_error:
-        layout["right"]["progress"].update(Panel(f"[bold red]ERROR CRÍTICO DURANTE LA INSTALACIÓN[/bold red]\n\n{install_error}\n\nRevisa el archivo {LOG_FILE}", border_style="red", title="Fallo del Sistema"))
-    else:
-        layout["right"]["progress"].update(Panel(Align.center("\n\n[bold green]¡Metamorfosis Completada con Éxito![/bold green]\n\n[bold cyan]Generando Reporte Final...[/bold cyan]\n"), title="Finalizado", border_style="green"))
-    
     live.update(update_ui())
-    time.sleep(3)
+    time.sleep(2)
 
-# 3. Final Report
 print("\n")
 if not install_error:
     time_taken = end_time - start_time
@@ -338,4 +385,4 @@ if not install_error:
     console.print(Panel(report, border_style="green", title="[bold green]¡Sistema Listo![/bold green]"))
     print("\n[!] Por favor, reinicia tu computadora para aplicar los cambios.\n")
 else:
-    console.print(Panel(f"[bold red]La instalación falló: {install_error}[/bold red]", expand=False))
+    console.print(Panel(f"[bold red]La instalación fue abortada: {install_error}[/bold red]", expand=False))
