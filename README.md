@@ -31,6 +31,8 @@ Hemos transformado el antiguo y rígido script de bash en una **interfaz gráfic
 *   **Gestión Inteligente de Errores:** Intercepta bloqueos de `pacman`, paquetes rotos o caídas de red, dándote la opción interactiva de *Reintentar, Ignorar o Abortar* sin romper la instalación.
 *   **Perfiles de Entorno Exclusivos:** Soporte de primera clase para **Hyprland** (con estética Tokyo Night) y otros entornos, además de estar pre-armado para Gaming (Steam, Proton, MangoHud).
 *   **Optimizado para CachyOS:** Aprovecha la arquitectura BTRFS+Snapper de CachyOS y sus repositorios optimizados (v3/AVX2).
+*   **Aceleración de Video (VA-API):** Inyección automática de drivers y banderas (flags) en navegadores para reproducir video usando la tarjeta gráfica, ahorrando batería y CPU.
+*   **Animación de Arranque (Plymouth):** Inyección nativa a nivel de Kernel (mkinitcpio) y gestor de arranque (Limine/GRUB) para un inicio 100% gráfico.
 
 ## 🛠️ Requisitos Previos
 
