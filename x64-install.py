@@ -170,7 +170,7 @@ layout.split_row(
 )
 
 layout["left"].split_column(
-    Layout(name="logo", ratio=3),
+    Layout(name="logo", ratio=1),
     Layout(name="sysinfo", ratio=1)
 )
 
@@ -205,7 +205,7 @@ qr_text = """
 """
 
 def get_static_logo():
-    t1 = Text(logo_text.strip('\n') + "\n\n", style="bold cyan", justify="center")
+    t1 = Text(logo_text.strip('\n') + "\n", style="bold cyan", justify="center")
     t2 = Text("GITHUB REPOSITORY\n", style="bold white", justify="center")
     t3 = Text(qr_text.strip('\n'), style="bold white", justify="center")
     
