@@ -621,6 +621,7 @@ def installer_worker():
         progress.update(t_repo, description="[yellow]Acelerando Descargas (ParallelDownloads)...", advance=20)
         run_cmd_live("sudo sed -i 's/^#ParallelDownloads.*/ParallelDownloads = 10/' /etc/pacman.conf", check=False)
         run_cmd_live("sudo bash -c 'grep -q \"^ILoveCandy\" /etc/pacman.conf || sed -i \"/^#Color/a ILoveCandy\" /etc/pacman.conf'", check=False)
+        run_cmd_live("sudo bash -c 'grep -q \"NoExtract = usr/share/doc\" /etc/pacman.conf || echo -e \"\\nNoExtract = usr/share/doc/* usr/share/gtk-doc/* usr/share/help/* usr/share/man/* usr/share/info/*\\n\" >> /etc/pacman.conf'", check=False)
         
         progress.update(t_repo, description="[yellow]Desbloqueando Pacman...", advance=10)
         if os.path.exists("/var/lib/pacman/db.lck"):
@@ -643,7 +644,7 @@ def installer_worker():
         run_cmd_live("sudo bash -c 'pacman -S --noconfirm --needed $(pacman -Qq | grep \"^linux\" | grep -v \"headers\" | grep -v \"firmware\" | awk \"{print \\$1\\\"-headers\\\"}\")' 2>/dev/null", check=False)
 
         progress.update(t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=5)
-        res = run_cmd_live("sudo pacman -Syu --noconfirm", check=False)
+        res = run_cmd_live("sudo eatmydata pacman -Syu --noconfirm", check=False)
         if res != 0:
             log_lines.append("[bold red]Fallo detectado. Reparando Llavero GPG...[/bold red]")
             run_cmd_live("sudo rm -rf /etc/pacman.d/gnupg/")
@@ -651,7 +652,7 @@ def installer_worker():
             run_cmd_live("sudo pacman-key --init")
             run_cmd_live("sudo pacman-key --populate archlinux cachyos")
             progress.update(t_sync, description="[yellow]Reintentando Sincronización...", advance=20)
-            run_cmd_live("sudo pacman -Syu --noconfirm")
+            run_cmd_live("sudo eatmydata pacman -Syu --noconfirm")
         progress.update(t_sync, description="[green]Sistema Sincronizado", completed=100)
 
         progress.update(t_pkg, description="[yellow]Calculando paquetes base...", advance=20)
@@ -664,16 +665,16 @@ def installer_worker():
                 pkgs.extend(f2.read().splitlines())
         
         # Batch de paquetes críticos de sistema
-        pkgs.extend(["plymouth", "greetd", "greetd-tuigreet"])
+        pkgs.extend(["plymouth", "greetd", "greetd-tuigreet", "eatmydata"])
         pkgs.extend(user_choices["packages"])
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
         
         chk = subprocess.run(f"pacman -T {pkg_str}", shell=True, stdout=subprocess.PIPE, text=True)
         if chk.returncode != 0:
-            missing = chk.stdout.replace('\n', ' ').strip()
+            missing_pkgs = [p for p in chk.stdout.splitlines()]
             progress.update(t_pkg, description="[cyan]Descargando e Instalando Transacción Maestra...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm jack2", check=False)
-            run_cmd_live(f"sudo pacman -S --noconfirm {missing}")
+            run_cmd_live(f"sudo eatmydata pacman -S --noconfirm {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
 
         progress.update(t_backup, description="[yellow]Comprimiendo ~/.config...", advance=50)
@@ -842,7 +843,7 @@ user = "greeter"
         current_state = "error" if install_error else "done"
 
 def precache_worker():
-    subprocess.run("sudo pacman -Sy --noconfirm", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run("sudo pacman -Sy --noconfirm --needed libeatmydata", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 # --- Hardware Auto-Detect ---
 def detect_gpu_and_update_menu():
