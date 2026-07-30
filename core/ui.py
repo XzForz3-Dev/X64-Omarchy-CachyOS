@@ -237,8 +237,9 @@ def update_ui():
             state.ui_transitioned = True
             
         layout["right"]["progress"].update(Panel(progress, title=f"[bold {border_color}]Progreso de Metamorfosis[/bold {border_color}]", border_style=border_color))
-        matrix_text = "\n".join(state.log_lines)
-        layout["right"]["matrix"].update(Panel(Text.from_markup(matrix_text, markup=False) if False else matrix_text, title="[bold yellow]The Matrix (Live Log)[/bold yellow]", border_style="yellow"))
+        matrix_text = "\n".join(list(state.log_lines)[-12:]) # Limitar estrictamente a 12 líneas
+        matrix_obj = Text.from_markup(matrix_text, no_wrap=True, overflow="crop")
+        layout["right"]["matrix"].update(Panel(matrix_obj, title="[bold yellow]The Matrix (Live Log)[/bold yellow]", border_style="yellow"))
         
     return layout
 
