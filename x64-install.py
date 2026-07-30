@@ -514,7 +514,10 @@ def keyboard_worker():
                                         if "NVIDIA" in i["label"]:
                                             user_choices["drivers"] = "NVIDIA (Privativo)"
                                             
-                            if "NVIDIA" not in user_choices["drivers"]:
+                            if is_legacy_nvidia:
+                                user_choices["drivers"] = "NVIDIA (Legacy Pre-instalado)"
+                                user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"])
+                            elif "NVIDIA" not in user_choices["drivers"]:
                                 user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"])
                             
                             current_state = "transition"
@@ -566,6 +569,11 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False):
     # Aceleración multicore para mkinitcpio (Purgar configuración anterior y forzar array de bash)
     run_cmd_live("sudo sed -i '/COMPRESSION/d' /etc/mkinitcpio.conf", check=False)
     run_cmd_live("sudo bash -c 'cat <<EOF >> /etc/mkinitcpio.conf\nCOMPRESSION=\"zstd\"\nCOMPRESSION_OPTIONS=(\"-T0\")\nEOF'", check=False)
+    
+    # Asegurar que todos los módulos DKMS (como nvidia-470xx-dkms legacy) estén compilados para el kernel actual
+    log_lines.append("[yellow]Compilando módulos DKMS (Puede tardar)...[/yellow]")
+    run_cmd_live("sudo dkms autoinstall", check=False)
+    
     # Regenerar initramfs explícitamente y silenciar advertencias de limine
     run_cmd_live("echo '' | sudo mkinitcpio -P", check=False)
     
