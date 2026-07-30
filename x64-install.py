@@ -560,7 +560,7 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False):
     
     if has_nvidia_gpu:
         log_lines.append("[yellow]Inyectando Early KMS para NVIDIA...[/yellow]")
-        run_cmd_live("sudo bash -c 'sed -i -E \"s/^MODULES=\\(([^)]*)\\)/MODULES=(\\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/\" /etc/mkinitcpio.conf' 2>/dev/null", check=False)
+        run_cmd_live("sudo bash -c 'grep -q \"nvidia_drm\" /etc/mkinitcpio.conf || sed -i -E \"s/^MODULES=\\(([^)]*)\\)/MODULES=(\\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/\" /etc/mkinitcpio.conf' 2>/dev/null", check=False)
         run_cmd_live("sudo bash -c 'sed -i \"s/nvidia nvidia/nvidia/g\" /etc/mkinitcpio.conf' 2>/dev/null", check=False) # Cleanup duplicates
     
     # Aceleración multicore para mkinitcpio (Purgar configuración anterior y forzar array de bash)
@@ -579,7 +579,8 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False):
     # Inyectar en cmdline base (usado por cachyos/limine-entry-tool)
     cmdline_extra = " splash"
     if has_nvidia_gpu:
-        cmdline_extra += " nvidia_drm.modeset=1 nvidia_drm.fbdev=1"
+        run_cmd_live("sudo mkdir -p /etc/modprobe.d", check=False)
+        run_cmd_live("sudo bash -c 'echo \"options nvidia_drm modeset=1 fbdev=1\" > /etc/modprobe.d/nvidia-kms.conf'", check=False)
         
     run_cmd_live(f"sudo bash -c 'if [ -f /etc/kernel/cmdline ]; then grep -q \"splash\" /etc/kernel/cmdline || sed -i \"s/$/{cmdline_extra}/\" /etc/kernel/cmdline; fi' 2>/dev/null", check=False)
     
