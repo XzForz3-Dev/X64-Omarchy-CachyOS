@@ -82,6 +82,48 @@
                     "budgie-desktop"
                 ],
                 "desc": "Entorno moderno y enfocado en la simplicidad."
+            },
+            {
+                "label": "SwayFX",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "swayfx",
+                    "waybar"
+                ],
+                "desc": "Sway con efectos visuales (blur, esquinas redondeadas)."
+            },
+            {
+                "label": "AwesomeWM",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "awesome",
+                    "picom"
+                ],
+                "desc": "Gestor de ventanas clásico Tiling en X11 configurable en Lua."
+            },
+            {
+                "label": "Bspwm",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "bspwm",
+                    "sxhkd",
+                    "picom"
+                ],
+                "desc": "Tiling puro en X11 basado en nodos binarios."
+            },
+            {
+                "label": "I3WM",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "i3-wm",
+                    "i3status",
+                    "picom"
+                ],
+                "desc": "El Tiling window manager más famoso y estable en X11."
             }
         ]
     },
@@ -186,6 +228,33 @@
                     "mullvad-browser-bin"
                 ],
                 "desc": "Navegador enfocado en privacidad máxima colaborativo con Tor Project."
+            },
+            {
+                "label": "Midori",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "midori"
+                ],
+                "desc": "Navegador ultraligero y rápido."
+            },
+            {
+                "label": "Falkon",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "falkon"
+                ],
+                "desc": "Navegador nativo del ecosistema KDE."
+            },
+            {
+                "label": "Waterfox",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "waterfox-bin"
+                ],
+                "desc": "Bifurcación de Firefox sin telemetría enfocada en rendimiento."
             }
         ]
     },
@@ -409,6 +478,42 @@
                     "mame"
                 ],
                 "desc": "Emulador de máquinas recreativas Arcade."
+            },
+            {
+                "label": "Snes9x",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "snes9x-gtk"
+                ],
+                "desc": "Emulador de Super Nintendo."
+            },
+            {
+                "label": "mGBA",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "mgba-qt"
+                ],
+                "desc": "El mejor emulador de Game Boy Advance."
+            },
+            {
+                "label": "PPSSPP",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "ppsspp"
+                ],
+                "desc": "Emulador de PlayStation Portable (PSP)."
+            },
+            {
+                "label": "Citra (3DS)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "citra"
+                ],
+                "desc": "Emulador de Nintendo 3DS."
             }
         ]
     },
@@ -486,6 +591,24 @@
                     "skypeforlinux-bin"
                 ],
                 "desc": "El clásico cliente de Microsoft para videollamadas."
+            },
+            {
+                "label": "WhatsApp Native",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "whatsapp-nativefier"
+                ],
+                "desc": "Cliente de escritorio encapsulado para WhatsApp."
+            },
+            {
+                "label": "Caprine",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "caprine"
+                ],
+                "desc": "Cliente de escritorio elegante para Facebook Messenger."
             }
         ]
     },
@@ -658,6 +781,60 @@
                     "synfigstudio"
                 ],
                 "desc": "Software de animación 2D vectorial de calidad profesional."
+            },
+            {
+                "label": "Pinta",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "pinta"
+                ],
+                "desc": "Editor de imágenes simple estilo Paint.NET."
+            },
+            {
+                "label": "MyPaint",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "mypaint"
+                ],
+                "desc": "Aplicación ágil para pintores digitales."
+            },
+            {
+                "label": "Scribus",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "scribus"
+                ],
+                "desc": "Maquetación profesional de páginas (DTP)."
+            },
+            {
+                "label": "FreeCAD",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "freecad"
+                ],
+                "desc": "Modelador 3D paramétrico para diseño CAD."
+            },
+            {
+                "label": "OpenShot",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "openshot"
+                ],
+                "desc": "Editor de video no lineal muy fácil de usar."
+            },
+            {
+                "label": "Shotcut",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "shotcut"
+                ],
+                "desc": "Potente editor de video multiplataforma."
             }
         ]
     },
@@ -753,6 +930,44 @@
                     "cursor-bin"
                 ],
                 "desc": "IDE basado en VSCode integrado profundamente con IA (GPT-4/Claude) para pair-programming."
+            },
+            {
+                "label": "Neovim (NvChad)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "neovim",
+                    "git",
+                    "gcc"
+                ],
+                "desc": "Neovim preconfigurado con una interfaz preciosa (NvChad)."
+            },
+            {
+                "label": "WebStorm",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "webstorm"
+                ],
+                "desc": "IDE de JetBrains enfocado en JavaScript y TypeScript."
+            },
+            {
+                "label": "Geany",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "geany"
+                ],
+                "desc": "Editor de texto rápido y ligero con características IDE."
+            },
+            {
+                "label": "Kate",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "kate"
+                ],
+                "desc": "El editor avanzado de texto de KDE."
             }
         ]
     },
@@ -844,6 +1059,52 @@
                     "cargo"
                 ],
                 "desc": "Lenguaje de programación de sistemas seguro y ultrarrápido."
+            },
+            {
+                "label": "Go (Golang)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "go"
+                ],
+                "desc": "Lenguaje de programación Go (Google)."
+            },
+            {
+                "label": "Java (OpenJDK 21)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "jdk21-openjdk"
+                ],
+                "desc": "Kit de desarrollo estándar para Java."
+            },
+            {
+                "label": "GCC & Make",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "gcc",
+                    "make"
+                ],
+                "desc": "Compiladores C/C++ y sistema build esencial."
+            },
+            {
+                "label": "CMake",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "cmake"
+                ],
+                "desc": "Sistema de compilación cruzada moderno."
+            },
+            {
+                "label": "Lazygit",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "lazygit"
+                ],
+                "desc": "Interfaz TUI visual para Git."
             }
         ]
     },
@@ -921,6 +1182,15 @@
                     "joplin-appimage"
                 ],
                 "desc": "App de toma de notas de código abierto con sincronización cifrada end-to-end."
+            },
+            {
+                "label": "Zettlr",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "zettlr"
+                ],
+                "desc": "Editor Markdown para académicos y Zettelkasten."
             }
         ]
     },
@@ -975,6 +1245,60 @@
                     "stow"
                 ],
                 "desc": "Gestor de enlaces simbólicos ideal para gestionar tus dotfiles."
+            },
+            {
+                "label": "Neofetch",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "neofetch"
+                ],
+                "desc": "Script clásico para mostrar información del sistema."
+            },
+            {
+                "label": "FZF",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "fzf"
+                ],
+                "desc": "Buscador difuso de archivos para la terminal."
+            },
+            {
+                "label": "Bat",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "bat"
+                ],
+                "desc": "Clon de 'cat' con resaltado de sintaxis y paginación."
+            },
+            {
+                "label": "Lsd",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "lsd"
+                ],
+                "desc": "Sustituto moderno de 'ls' con iconos y colores."
+            },
+            {
+                "label": "Zoxide",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "zoxide"
+                ],
+                "desc": "Sustituto inteligente y rápido de 'cd'."
+            },
+            {
+                "label": "Tldr",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "tldr"
+                ],
+                "desc": "Páginas de manual simplificadas y prácticas."
             }
         ]
     },
@@ -1419,6 +1743,24 @@
                     "nmap"
                 ],
                 "desc": "Escáner de puertos y redes indispensable para ciberseguridad y auditoría."
+            },
+            {
+                "label": "Wireshark",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "wireshark-qt"
+                ],
+                "desc": "Analizador de protocolos de red (Sniffer)."
+            },
+            {
+                "label": "Angry IP Scanner",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "angryipscanner"
+                ],
+                "desc": "Escáner de red rápido."
             }
         ]
     },
@@ -1583,6 +1925,15 @@
                     "yt-dlp"
                 ],
                 "desc": "Herramienta CLI implacable para descargar videos o extraer música de miles de sitios (incluido YouTube)."
+            },
+            {
+                "label": "Motrix",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "motrix"
+                ],
+                "desc": "Gestor de descargas moderno y completo."
             }
         ]
     },

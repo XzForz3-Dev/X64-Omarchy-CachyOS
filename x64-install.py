@@ -332,7 +332,7 @@ def update_ui():
                 style = "bold green reverse" if is_active else "bold green"
                 cells.append(f"{cursor}[{style}]{item['label']}[/{style}]")
             else:
-                chk_box = "[bold green][✓][/bold green]" if item.get("selected", False) else "[bold bright_black][ ][/bold bright_black]"
+                chk_box = "[bold green][████] ON [/bold green]" if item.get("selected", False) else "[bold bright_black][░░░░] OFF[/bold bright_black]"
                 style = "bold white" if is_active else "dim white"
                 if not is_active:
                     chk_box = chk_box.replace("bold", "dim")
