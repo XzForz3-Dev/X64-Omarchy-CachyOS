@@ -560,7 +560,7 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False):
     
     if has_nvidia_gpu:
         log_lines.append("[yellow]Inyectando Early KMS para NVIDIA...[/yellow]")
-        run_cmd_live("sudo bash -c 'grep -q \"nvidia_drm\" /etc/mkinitcpio.conf || sed -i -E \"s/^MODULES=\\(([^)]*)\\)/MODULES=(\\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/\" /etc/mkinitcpio.conf' 2>/dev/null", check=False)
+        run_cmd_live("sudo bash -c 'grep -q \"nvidia_drm?\" /etc/mkinitcpio.conf || sed -i -E \"s/^MODULES=\\(([^)]*)\\)/MODULES=(\\1 nvidia? nvidia_modeset? nvidia_uvm? nvidia_drm?)/\" /etc/mkinitcpio.conf' 2>/dev/null", check=False)
         run_cmd_live("sudo bash -c 'sed -i \"s/nvidia nvidia/nvidia/g\" /etc/mkinitcpio.conf' 2>/dev/null", check=False) # Cleanup duplicates
     
     # Aceleración multicore para mkinitcpio (Purgar configuración anterior y forzar array de bash)
@@ -618,7 +618,11 @@ def installer_worker():
 
         progress.update(t_sync, description="[yellow]Creando Snapshot BTRFS...", advance=5)
         run_cmd_live("sudo snapper create -c root -d 'Pre-Omarchy Installation'", check=False)
-        progress.update(t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=10)
+        
+        progress.update(t_sync, description="[yellow]Instalando Cabeceras del Kernel (Para DKMS)...", advance=5)
+        run_cmd_live("sudo bash -c 'pacman -S --noconfirm --needed $(pacman -Qq | grep \"^linux\" | grep -v \"headers\" | grep -v \"firmware\" | awk \"{print \\$1\\\"-headers\\\"}\")' 2>/dev/null", check=False)
+
+        progress.update(t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=5)
         res = run_cmd_live("sudo pacman -Syu --noconfirm", check=False)
         if res != 0:
             log_lines.append("[bold red]Fallo detectado. Reparando Llavero GPG...[/bold red]")
