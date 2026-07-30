@@ -86,7 +86,7 @@ for c in menu_data:
             if item["label"] == "Mesa (AMD / Intel)":
                 item["selected"] = not has_nvidia
             elif item["label"] == "NVIDIA (Privativo DKMS)":
-                item["selected"] = has_nvidia and not is_legacy_nvidia
+                item["selected"] = has_nvidia
 
 def log(msg):
     time_str = datetime.now().strftime('%H:%M:%S')
@@ -414,9 +414,9 @@ def update_ui():
         
         warning_msg = ""
         if is_legacy_nvidia and "NVIDIA" in current_item["label"].upper():
-            warning_msg = "\n\n[bold red]⚠️  ATENCIÓN: Tu hardware ha sido detectado como NVIDIA Legacy. La selección manual de drivers modernos está deshabilitada para prevenir cuelgues del servidor gráfico. El sistema instalará automáticamente el driver legacy correspondiente (390xx o 470xx).[/bold red]"
+            warning_msg = "\\n\\n[bold red]⚠️  ATENCIÓN: Tu hardware ha sido detectado como NVIDIA de arquitectura antigua. El sistema instalará los drivers modernos DKMS, pero habilitará el protocolo de rescate TTY Pura para evitar colapsos del servidor gráfico.[/bold red]"
             
-        desc_text = Text.from_markup(f"[bold cyan]Paquete:[/bold cyan] {current_item['label']}\n[bold yellow]Detalles:[/bold yellow] {desc}{warning_msg}\n\n[dim]Usa ESPACIO para alternar el estado del paquete seleccionado.[/dim]", style="white", justify="left")
+        desc_text = Text.from_markup(f"[bold cyan]Paquete:[/bold cyan] {current_item['label']}\\n[bold yellow]Detalles:[/bold yellow] {desc}{warning_msg}\\n\\n[dim]Usa ESPACIO para alternar el estado del paquete seleccionado.[/dim]", style="white", justify="left")
         desc_panel = Panel(Align.center(desc_text, vertical="middle"), title="[bold yellow]Información Detallada[/bold yellow]", border_style="yellow")
         
         right_layout = Layout()
@@ -499,11 +499,7 @@ def keyboard_worker():
                     if active_pane == "right":
                         item = menu_data[cat_idx]["items"][item_idx]
                         if item["type"] == "toggle":
-                            if is_legacy_nvidia and "NVIDIA" in item["label"]:
-                                sys.stdout.write('\a')
-                                sys.stdout.flush()
-                            else:
-                                item["selected"] = not item.get("selected", False)
+                            item["selected"] = not item.get("selected", False)
                 elif ch == '\r' or ch == '\n':
                     if active_pane == "right":
                         item = menu_data[cat_idx]["items"][item_idx]
@@ -516,20 +512,13 @@ def keyboard_worker():
                                         if "NVIDIA" in i["label"]:
                                             user_choices["drivers"] = "NVIDIA (Privativo)"
                                             
-                            if is_legacy_nvidia:
-                                user_choices["drivers"] = "NVIDIA (Legacy Pre-instalado)"
-                                user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"])
-                            elif "NVIDIA" not in user_choices["drivers"]:
+                            if "NVIDIA" not in user_choices["drivers"]:
                                 user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"])
                             
                             current_state = "transition"
                             break
                         else:
-                            if is_legacy_nvidia and "NVIDIA" in item["label"]:
-                                sys.stdout.write('\a')
-                                sys.stdout.flush()
-                            else:
-                                item["selected"] = not item.get("selected", False)
+                            item["selected"] = not item.get("selected", False)
                     else:
                         # Si da enter en la izquierda, se pasa a la derecha
                         active_pane = "right"
@@ -862,9 +851,9 @@ def detect_gpu_and_update_menu():
             if "Drivers Gráficos" in cat["cat"]:
                 for item in cat["items"]:
                     if "NVIDIA" in item["label"]:
-                        item["selected"] = has_nvidia and not is_legacy_nvidia
+                        item["selected"] = has_nvidia
                         if is_legacy_nvidia:
-                            item["desc"] += " [bold red](Bloqueado: Hardware Legacy Detectado)[/bold red]"
+                            item["desc"] += " [bold yellow](Nota: Hardware antiguo. Se usará TTY Pura para evitar crasheos.)[/bold yellow]"
                     elif "Mesa" in item["label"]:
                         item["selected"] = not has_nvidia
     except Exception:
