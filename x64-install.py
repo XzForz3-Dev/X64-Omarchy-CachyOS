@@ -545,7 +545,7 @@ def keyboard_worker():
         time.sleep(0.8)
         current_state = "working"
 
-def setup_plymouth_bootloader():
+def setup_plymouth_bootloader(has_nvidia_gpu=False):
     log_lines.append("[yellow]Instalando plymouth...[/yellow]")
     run_cmd_live("sudo pacman -S --noconfirm --needed plymouth", check=False)
     
@@ -554,9 +554,15 @@ def setup_plymouth_bootloader():
     run_cmd_live("sudo cp -r default/plymouth/* /usr/share/plymouth/themes/omarchy/ 2>/dev/null", check=False)
     run_cmd_live("sudo plymouth-set-default-theme omarchy", check=False)
     
-    log_lines.append("[yellow]Configurando mkinitcpio (HOOKS)...[/yellow]")
+    log_lines.append("[yellow]Configurando mkinitcpio (HOOKS & KMS)...[/yellow]")
     # Soporte para mkinitcpio clásico (udev) y moderno (systemd)
     run_cmd_live("sudo bash -c 'grep -q \" plymouth\" /etc/mkinitcpio.conf || sed -i -E \"s/^(HOOKS=\\([^)]*\\b)(udev|systemd)(\\b)/\\1\\2 plymouth/\" /etc/mkinitcpio.conf' 2>/dev/null", check=False)
+    
+    if has_nvidia_gpu:
+        log_lines.append("[yellow]Inyectando Early KMS para NVIDIA...[/yellow]")
+        run_cmd_live("sudo bash -c 'sed -i -E \"s/^MODULES=\\(([^)]*)\\)/MODULES=(\\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/\" /etc/mkinitcpio.conf' 2>/dev/null", check=False)
+        run_cmd_live("sudo bash -c 'sed -i \"s/nvidia nvidia/nvidia/g\" /etc/mkinitcpio.conf' 2>/dev/null", check=False) # Cleanup duplicates
+    
     # Aceleración multicore para mkinitcpio (Purgar configuración anterior y forzar array de bash)
     run_cmd_live("sudo sed -i '/COMPRESSION/d' /etc/mkinitcpio.conf", check=False)
     run_cmd_live("sudo bash -c 'cat <<EOF >> /etc/mkinitcpio.conf\nCOMPRESSION=\"zstd\"\nCOMPRESSION_OPTIONS=(\"-T0\")\nEOF'", check=False)
@@ -566,14 +572,20 @@ def setup_plymouth_bootloader():
     log_lines.append("[yellow]Configurando Dracut (Fallback)...[/yellow]")
     run_cmd_live("sudo mkdir -p /etc/dracut.conf.d", check=False)
     run_cmd_live("sudo bash -c 'echo \"add_dracutmodules+=\\\" plymouth \\\"\" > /etc/dracut.conf.d/plymouth.conf'", check=False)
+    if has_nvidia_gpu:
+        run_cmd_live("sudo bash -c 'echo \"force_drivers+=\\\" nvidia nvidia_modeset nvidia_uvm nvidia_drm \\\"\" >> /etc/dracut.conf.d/plymouth.conf'", check=False)
     
     log_lines.append("[yellow]Buscando e inyectando configuración en Limine...[/yellow]")
     # Inyectar en cmdline base (usado por cachyos/limine-entry-tool)
-    run_cmd_live("sudo bash -c 'if [ -f /etc/kernel/cmdline ]; then grep -q \"splash\" /etc/kernel/cmdline || sed -i \"s/$/ splash/\" /etc/kernel/cmdline; fi' 2>/dev/null", check=False)
+    cmdline_extra = " splash"
+    if has_nvidia_gpu:
+        cmdline_extra += " nvidia_drm.modeset=1 nvidia_drm.fbdev=1"
+        
+    run_cmd_live(f"sudo bash -c 'if [ -f /etc/kernel/cmdline ]; then grep -q \"splash\" /etc/kernel/cmdline || sed -i \"s/$/{cmdline_extra}/\" /etc/kernel/cmdline; fi' 2>/dev/null", check=False)
     
     # Inyectar directamente en limine.conf por si no usan limine-entry-tool
-    run_cmd_live("sudo find /boot /efi -maxdepth 4 \\( -name 'limine.conf' -o -name 'limine.cfg' \\) -exec bash -c 'grep -q \"splash\" \"$1\" || sudo sed -i -E \"/^ *kernel_cmdline/ { /splash/! s/$/ splash/ }\" \"$1\"' _ {} \\; 2>/dev/null", check=False)
-    run_cmd_live("sudo find /boot /efi -maxdepth 4 \\( -name 'limine.conf' -o -name 'limine.cfg' \\) -exec bash -c 'grep -q \"splash\" \"$1\" || sudo sed -i -E \"/^ *cmdline/ { /splash/! s/$/ splash/ }\" \"$1\"' _ {} \\; 2>/dev/null", check=False)
+    run_cmd_live(f"sudo find /boot /efi -maxdepth 4 \\( -name 'limine.conf' -o -name 'limine.cfg' \\) -exec bash -c 'grep -q \"splash\" \"$1\" || sudo sed -i -E \"/^ *kernel_cmdline/ {{ /splash/! s/$/{cmdline_extra}/ }}\" \"$1\"' _ {{}} \\; 2>/dev/null", check=False)
+    run_cmd_live(f"sudo find /boot /efi -maxdepth 4 \\( -name 'limine.conf' -o -name 'limine.cfg' \\) -exec bash -c 'grep -q \"splash\" \"$1\" || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/{cmdline_extra}/ }}\" \"$1\"' _ {{}} \\; 2>/dev/null", check=False)
     
     # Actualizar limine si está instalado (ignorando prompts)
     run_cmd_live("if command -v limine-update >/dev/null; then echo '' | sudo limine-update; fi", check=False)
@@ -672,7 +684,7 @@ def installer_worker():
         run_cmd_live("chmod +x ~/.local/bin/*", check=False)
         
         progress.update(t_config, description="[yellow]Configurando Pantalla de Arranque (Plymouth)...", advance=5)
-        setup_plymouth_bootloader()
+        setup_plymouth_bootloader(has_nvidia)
         
         progress.update(t_config, description="[yellow]Desplegando Gestor TUI (Tuigreet)...", advance=5)
         
