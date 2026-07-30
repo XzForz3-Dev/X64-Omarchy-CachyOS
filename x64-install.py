@@ -101,13 +101,15 @@ def run_cmd_live(cmd, check=True):
         log(f"Ejecutando: {cmd}")
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
         
-        with open(LOG_FILE, "a") as f:
+        with open(LOG_FILE, "a", buffering=8192) as f:
             for line in process.stdout:
                 line_clean = line.strip()
                 if line_clean:
                     f.write(line)
-                    safe_line = escape(line_clean)
-                    log_lines.append(f"[dim white]{safe_line}[/dim white]")
+                    # Mitigación I/O: Solo enviamos al UI render las líneas importantes o espaciadas
+                    if "error" in line_clean.lower() or "warning" in line_clean.lower() or len(line_clean) > 10:
+                        safe_line = escape(line_clean)
+                        log_lines.append(f"[dim white]{safe_line}[/dim white]")
                     
         process.wait()
         
@@ -570,8 +572,8 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False):
     run_cmd_live("sudo bash -c 'cat /tmp/mkinitcpio_add.conf >> /etc/mkinitcpio.conf'", check=False)
     
     # Asegurar que todos los módulos DKMS (como nvidia-470xx-dkms legacy) estén compilados para el kernel actual
-    log_lines.append("[yellow]Compilando módulos DKMS (Puede tardar)...[/yellow]")
-    run_cmd_live("sudo dkms autoinstall", check=False)
+    log_lines.append("[yellow]Compilando módulos DKMS (Multihilo)...[/yellow]")
+    run_cmd_live("sudo dkms autoinstall -j $(nproc)", check=False)
     
     # Regenerar initramfs explícitamente y silenciar advertencias de limine
     run_cmd_live("echo '' | sudo mkinitcpio -P", check=False)
@@ -614,7 +616,11 @@ def installer_worker():
             raise Exception("Espacio insuficiente. Se requieren al menos 15GB libres en /.")
         progress.update(t_health, description="[green]Sistema en Óptimas Condiciones", completed=100)
         
-        progress.update(t_repo, description="[yellow]Desbloqueando Pacman...", advance=30)
+        progress.update(t_repo, description="[yellow]Acelerando Descargas (ParallelDownloads)...", advance=20)
+        run_cmd_live("sudo sed -i 's/^#ParallelDownloads.*/ParallelDownloads = 10/' /etc/pacman.conf", check=False)
+        run_cmd_live("sudo bash -c 'grep -q \"^ILoveCandy\" /etc/pacman.conf || sed -i \"/^#Color/a ILoveCandy\" /etc/pacman.conf'", check=False)
+        
+        progress.update(t_repo, description="[yellow]Desbloqueando Pacman...", advance=10)
         if os.path.exists("/var/lib/pacman/db.lck"):
             run_cmd_live("sudo rm -f /var/lib/pacman/db.lck")
         
