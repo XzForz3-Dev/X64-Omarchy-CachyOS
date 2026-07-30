@@ -67,6 +67,7 @@ cat_idx = 0
 item_idx = 0
 user_choices = {"theme": "Tokyo Night", "drivers": "Mesa (AMD/Intel)", "packages": []}
 transition_text = ""
+is_legacy_nvidia = False
 
 def log(msg):
     time_str = datetime.now().strftime('%H:%M:%S')
@@ -503,6 +504,14 @@ def installer_worker():
         
         # Copiado acelerado mediante Python nativo (shutil)
         shutil.copytree("config", os.path.expanduser("~/.config"), dirs_exist_ok=True)
+        
+        if is_legacy_nvidia:
+            autostart_path = os.path.expanduser("~/.config/hypr/autostart.lua")
+            if os.path.exists(autostart_path):
+                with open(autostart_path, "a") as f:
+                    f.write('\no.launch_on_start("killall waybar swaybg")\n')
+                    f.write('o.launch_on_start("quickshell -n -p /usr/share/omarchy/shell")\n')
+                    
         shutil.copytree("bin", os.path.expanduser("~/.local/bin"), dirs_exist_ok=True)
         shutil.copytree("themes", os.path.expanduser("~/.local/share/themes"), dirs_exist_ok=True)
         run_cmd_live("chmod +x ~/.local/bin/*", check=False)
@@ -536,6 +545,11 @@ def installer_worker():
             run_cmd_live("export OMARCHY_PATH=/usr/share/omarchy && export OMARCHY_THEME_HEADLESS=1 && /usr/share/omarchy/bin/omarchy-theme-set 'Tokyo Night'", check=False)
         
         progress.update(t_config, description="[green]Sistema Listo", completed=100)
+        
+        if is_legacy_nvidia:
+            run_cmd_live("echo -e '\n\033[1;41m[ ALERTA NVIDIA LEGACY ]\033[0m\nHardware antiguo detectado. El protocolo de rescate se ha inyectado. Por favor, inicia sesión escribiendo: \033[1;33mHyprland\033[0m (No uses UWSM ni el display manager).'", check=False)
+            time.sleep(5)
+            
     except Exception as e:
         install_error = str(e)
     finally:
@@ -544,6 +558,7 @@ def installer_worker():
 
 # --- Hardware Auto-Detect ---
 def detect_gpu_and_update_menu():
+    global is_legacy_nvidia
     try:
         import subprocess
         chk = subprocess.run(["lspci"], stdout=subprocess.PIPE, text=True, check=False)
@@ -554,11 +569,22 @@ def detect_gpu_and_update_menu():
                 has_nvidia = True
                 break
         
+        if has_nvidia:
+            try:
+                pacman_q = subprocess.run(["pacman", "-Q"], stdout=subprocess.PIPE, text=True, check=False)
+                installed_pkgs = pacman_q.stdout.lower()
+                if "nvidia-580xx-dkms" in installed_pkgs or "nvidia-470xx-dkms" in installed_pkgs or "nvidia-390xx-dkms" in installed_pkgs:
+                    is_legacy_nvidia = True
+            except Exception:
+                pass
+        
         for cat in menu_data:
             if "13. Drivers Gráficos" in cat["cat"]:
                 for item in cat["items"]:
                     if "NVIDIA" in item["label"]:
-                        item["selected"] = has_nvidia
+                        item["selected"] = has_nvidia and not is_legacy_nvidia
+                        if is_legacy_nvidia:
+                            item["desc"] += " [bold red](Bloqueado: Hardware Legacy Detectado)[/bold red]"
                     elif "Mesa" in item["label"]:
                         item["selected"] = not has_nvidia
     except Exception:
