@@ -649,9 +649,9 @@ k_worker = threading.Thread(target=keyboard_worker, daemon=True)
 k_worker.start()
 
 try:
-    with Live(update_ui(), refresh_per_second=10, screen=True) as live:
+    with Live(update_ui(), refresh_per_second=30, screen=True) as live:
         while not install_done:
-            time.sleep(0.1)
+            time.sleep(0.02)
             
             if current_state == "error" and error_prompt:
                 live.stop()
