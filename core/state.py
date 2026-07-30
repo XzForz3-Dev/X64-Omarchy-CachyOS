@@ -2,7 +2,7 @@ import json
 from collections import deque
 from rich.console import Console
 
-LOG_FILE = "x64-install.log"
+LOG_FILE = "/tmp/x64-install.log"
 console = Console()
 
 log_lines = deque(maxlen=25)
