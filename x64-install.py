@@ -14,6 +14,7 @@ import select
 import tty
 import termios
 import json
+import asyncio
 from datetime import datetime
 from collections import deque
 
@@ -97,44 +98,52 @@ def log(msg):
 def run_cmd_live(cmd, check=True):
     global error_prompt, error_response, current_state
     
-    while True:
-        log(f"Ejecutando: {cmd}")
-        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
-        
-        with open(LOG_FILE, "a", buffering=8192) as f:
-            for line in process.stdout:
-                line_clean = line.strip()
-                if line_clean:
-                    f.write(line)
-                    # Mitigación I/O: Solo enviamos al UI render las líneas importantes o espaciadas
-                    if "error" in line_clean.lower() or "warning" in line_clean.lower() or len(line_clean) > 10:
-                        safe_line = escape(line_clean)
-                        log_lines.append(f"[dim white]{safe_line}[/dim white]")
+    async def _run():
+        global error_prompt, error_response, current_state
+        while True:
+            log(f"Ejecutando (async): {cmd}")
+            process = await asyncio.create_subprocess_shell(
+                cmd,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.STDOUT
+            )
+            
+            with open(LOG_FILE, "a", buffering=8192) as f:
+                async for line_bytes in process.stdout:
+                    line_clean = line_bytes.decode('utf-8', errors='replace').strip()
+                    if line_clean:
+                        f.write(line_clean + "\\n")
+                        # Mitigación I/O: Solo enviamos al UI render las líneas importantes o espaciadas
+                        if "error" in line_clean.lower() or "warning" in line_clean.lower() or len(line_clean) > 10:
+                            safe_line = escape(line_clean)
+                            log_lines.append(f"[dim white]{safe_line}[/dim white]")
+                        
+            await process.wait()
+            
+            if check and process.returncode != 0:
+                log(f"FALLO: El comando devolvió código {process.returncode}")
+                current_state = "error"
+                error_prompt = {"msg": f"El comando falló con código {process.returncode}:\\n{cmd}"}
+                
+                while error_response is None:
+                    await asyncio.sleep(0.1)
                     
-        process.wait()
-        
-        if check and process.returncode != 0:
-            log(f"FALLO: El comando devolvió código {process.returncode}")
-            current_state = "error"
-            error_prompt = {"msg": f"El comando falló con código {process.returncode}:\n{cmd}"}
-            
-            while error_response is None:
-                time.sleep(0.1)
+                resp = error_response
+                error_response = None
+                current_state = "working"
                 
-            resp = error_response
-            error_response = None
-            current_state = "working"
+                if resp == "Reintentar":
+                    log(f"Reintentando comando: {cmd}")
+                    continue
+                elif resp == "Ignorar":
+                    log(f"Ignorando error y continuando: {cmd}")
+                    return process.returncode
+                else:
+                    raise Exception(f"Abortado por el usuario tras fallo en: {cmd}")
+                    
+            return process.returncode
             
-            if resp == "Reintentar":
-                log(f"Reintentando comando: {cmd}")
-                continue
-            elif resp == "Ignorar":
-                log(f"Ignorando error y continuando: {cmd}")
-                return process.returncode
-            else:
-                raise Exception(f"Abortado por el usuario tras fallo en: {cmd}")
-                
-        return process.returncode
+    return asyncio.run(_run())
 
 # --- System Info (Panel Izquierdo: Fastfetch + Live) ---
 def get_sys_info():
@@ -603,6 +612,10 @@ def installer_worker():
         free_space = shutil.disk_usage("/").free
         if free_space < 15 * 1024 * 1024 * 1024:
             raise Exception("Espacio insuficiente. Se requieren al menos 15GB libres en /.")
+        progress.update(t_health, description="[yellow]Ajustando flags de BTRFS en fstab (I/O Extremo)...", advance=15)
+        run_cmd_live("sudo bash -c 'if [ -f /etc/fstab ]; then sed -i -E \"/btrfs/ s/(defaults|[a-z0-9=,]+)/\\1,noatime,space_cache=v2,discard=async/g\" /etc/fstab; fi'", check=False)
+        run_cmd_live("sudo bash -c 'if [ -f /etc/fstab ]; then sed -i \"s/,,/,/g\" /etc/fstab; fi'", check=False)
+
         progress.update(t_health, description="[green]Sistema en Óptimas Condiciones", completed=100)
         
         progress.update(t_repo, description="[yellow]Acelerando Descargas (ParallelDownloads)...", advance=20)
@@ -813,6 +826,9 @@ user = "greeter"
         if user_choices["theme"] == "Tokyo Night":
             run_cmd_live("export OMARCHY_PATH=/usr/share/omarchy && export OMARCHY_THEME_HEADLESS=1 && /usr/share/omarchy/bin/omarchy-theme-set 'Tokyo Night'", check=False)
         
+        progress.update(t_final, description="[yellow]Purgando caché de Pacman...", advance=10)
+        run_cmd_live("sudo pacman -Scc --noconfirm", check=False)
+        
         progress.update(t_config, description="[green]Sistema Listo", completed=100)
         
         if is_legacy_nvidia:
@@ -824,6 +840,9 @@ user = "greeter"
     finally:
         install_done = True
         current_state = "error" if install_error else "done"
+
+def precache_worker():
+    subprocess.run("sudo pacman -Sy --noconfirm", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 # --- Hardware Auto-Detect ---
 def detect_gpu_and_update_menu():
@@ -858,6 +877,9 @@ def detect_gpu_and_update_menu():
                         item["selected"] = not has_nvidia
     except Exception:
         pass
+
+# Iniciar la Sincronización Fantasma inmediatamente en background
+threading.Thread(target=precache_worker, daemon=True).start()
 
 # --- Launch Sequence ---
 with open(LOG_FILE, "w") as f:
