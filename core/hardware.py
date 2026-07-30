@@ -2,30 +2,35 @@ import subprocess
 from rich.table import Table
 import core.state as state
 
+import psutil
+
 def get_sys_info():
     table = Table(show_header=False, expand=True, box=None)
     
-    if not hasattr(get_sys_info, "ff_text"):
-        get_sys_info.ff_text = ""
-        get_sys_info.last_update = 0
+    cpu_percent = psutil.cpu_percent()
+    cpu_bar_len = int(cpu_percent / 5)
+    cpu_bar = "█" * cpu_bar_len + "░" * (20 - cpu_bar_len)
+    
+    ram = psutil.virtual_memory()
+    ram_percent = ram.percent
+    ram_bar_len = int(ram_percent / 5)
+    ram_bar = "█" * ram_bar_len + "░" * (20 - ram_bar_len)
+    
+    table.add_row(f"[bold cyan]CPU Usage[/bold cyan]", f"[yellow]{cpu_percent:>5.1f}%[/yellow] [green]{cpu_bar}[/green]")
+    table.add_row(f"[bold cyan]RAM Usage[/bold cyan]", f"[yellow]{ram_percent:>5.1f}%[/yellow] [magenta]{ram_bar}[/magenta]")
+    table.add_row("", "")
+    
+    if not hasattr(get_sys_info, "cached_rows"):
         get_sys_info.cached_rows = []
         try:
-            res = subprocess.run(["fastfetch", "--logo", "none", "--structure", "Title:Separator:OS:Host:Kernel:Uptime:Packages:Shell:Display:WM:CPU:GPU:Memory:Swap:Disk:LocalIP:Battery:PowerAdapter:Locale:Vulkan:OpenGL"], stdout=subprocess.PIPE, text=True)
+            res = subprocess.run(["fastfetch", "--logo", "none", "--structure", "OS:Host:Kernel:Packages:Display:WM:GPU:Disk"], stdout=subprocess.PIPE, text=True)
             if res.returncode == 0:
-                raw_text = res.stdout.strip()
-                lines = raw_text.split('\n')
-                get_sys_info.ff_text = "\n".join(lines)
-                get_sys_info.cached_rows = []
-                for line in lines:
-                    if line.strip() == "" or "---" in line:
-                        continue
-                    if ":" in line:
+                for line in res.stdout.strip().split('\n'):
+                    if line.strip() and ":" in line:
                         k, v = line.split(":", 1)
                         get_sys_info.cached_rows.append((f"[bold cyan]{k.strip()}[/bold cyan]", f"[white]{v.strip()}[/white]"))
-                    else:
-                        get_sys_info.cached_rows.append((f"[bold cyan]{line.strip()}[/bold cyan]", ""))
         except Exception:
-            get_sys_info.ff_text = "Fastfetch no disponible"
+            pass
             
     for k, v in get_sys_info.cached_rows:
         table.add_row(k, v)
