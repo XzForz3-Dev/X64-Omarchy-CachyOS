@@ -243,15 +243,19 @@ qr_text = """
 """
 
 def get_static_logo():
-    # Añadimos un par de saltos de línea al principio para separarlo del borde superior
+    from rich.console import Console
+    console = Console()
+    
     t1 = Text("\n\n" + logo_text.strip('\n') + "\n", style="bold cyan", justify="center")
-    t2 = Text("GITHUB REPOSITORY\n", style="bold white", justify="center")
     
-    clean_qr = qr_text.strip('\n').replace('\xa0', ' ')
-    t3 = Text(clean_qr, style="white", justify="center")
-    
-    t1.append(t2)
-    t1.append(t3)
+    # Hide QR code on small terminals to prevent layout explosion
+    if console.size.height > 50:
+        t2 = Text("GITHUB REPOSITORY\n", style="bold white", justify="center")
+        clean_qr = qr_text.strip('\n').replace('\xa0', ' ')
+        t3 = Text(clean_qr, style="white", justify="center")
+        t1.append(t2)
+        t1.append(t3)
+        
     return t1
 
 progress = Progress(
@@ -338,8 +342,8 @@ def update_ui():
         cat_border = "cyan" if active_pane == "left" else "dim white"
         item_border = "green" if active_pane == "right" else "dim white"
         
-        cat_panel = Panel(Align.center(cat_text, vertical="middle"), title="[bold cyan]Índice de Categorías[/bold cyan]", border_style=cat_border)
-        item_panel = Panel(Align.center(item_text, vertical="middle"), title="[bold green]Paquetes y Opciones[/bold green]", border_style=item_border)
+        cat_panel = Panel(cat_text, title="[bold cyan]Índice de Categorías[/bold cyan]", border_style=cat_border)
+        item_panel = Panel(item_text, title="[bold green]Paquetes y Opciones[/bold green]", border_style=item_border)
         
         menu_layout = Layout()
         menu_layout.split_row(
