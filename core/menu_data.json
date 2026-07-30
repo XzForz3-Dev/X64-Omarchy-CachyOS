@@ -22,15 +22,25 @@
         ]
     },
     {
-        "cat": "3. Gaming y Emulación",
+        "cat": "3. Gaming (Plataformas)",
         "items": [
             {"label": "Steam & Proton", "type": "toggle", "selected": false, "pkg": ["steam", "protonup-qt"], "desc": "La plataforma de Valve. Incluye ProtonUp-Qt para instalar versiones personalizadas de Proton-GE."},
             {"label": "Lutris", "type": "toggle", "selected": false, "pkg": ["lutris"], "desc": "Centraliza y gestiona juegos de GOG, emuladores y scripts de Wine en una sola interfaz gráfica."},
-            {"label": "Heroic Games Launcher", "type": "toggle", "selected": false, "pkg": ["heroic-games-launcher-bin"], "desc": "Cliente nativo y de código abierto para gestionar tu biblioteca de Epic Games Store y GOG en Linux."},
+            {"label": "Heroic Games Launcher", "type": "toggle", "selected": false, "pkg": ["heroic-games-launcher-bin"], "desc": "Cliente nativo y de código abierto para gestionar tu biblioteca de Epic Games Store y GOG en Linux."}
+        ]
+    },
+    {
+        "cat": "4. Gaming (Herramientas)",
+        "items": [
             {"label": "MangoHud", "type": "toggle", "selected": false, "pkg": ["mangohud"], "desc": "Telemetría OSD en pantalla para monitorear FPS, CPU, GPU y RAM mientras juegas."},
             {"label": "GOverlay", "type": "toggle", "selected": false, "pkg": ["goverlay"], "desc": "Interfaz gráfica (GUI) para configurar MangoHud fácilmente sin tocar archivos de texto."},
             {"label": "GameMode (Feral)", "type": "toggle", "selected": false, "pkg": ["gamemode"], "desc": "Demonio que optimiza agresivamente tu CPU y GPU en el momento en que abres un juego pesado."},
-            {"label": "Gamescope", "type": "toggle", "selected": false, "pkg": ["gamescope"], "desc": "Microcompositor de SteamOS para forzar resoluciones, limitar FPS o aplicar upscaling (FSR) a juegos."},
+            {"label": "Gamescope", "type": "toggle", "selected": false, "pkg": ["gamescope"], "desc": "Microcompositor de SteamOS para forzar resoluciones, limitar FPS o aplicar upscaling (FSR) a juegos."}
+        ]
+    },
+    {
+        "cat": "5. Emuladores Clásicos",
+        "items": [
             {"label": "RetroArch", "type": "toggle", "selected": false, "pkg": ["retroarch"], "desc": "El frontend definitivo para emulación clásica (NES, SNES, N64, GBA, etc)."},
             {"label": "RPCS3 (PS3)", "type": "toggle", "selected": false, "pkg": ["rpcs3-bin"], "desc": "Emulador experimental y de código abierto de PlayStation 3."},
             {"label": "PCSX2 (PS2)", "type": "toggle", "selected": false, "pkg": ["pcsx2"], "desc": "Emulador altamente compatible para jugar todo el catálogo de PlayStation 2."},
@@ -38,7 +48,7 @@
         ]
     },
     {
-        "cat": "4. Comunicación (Chat)",
+        "cat": "6. Chat y Voz",
         "items": [
             {"label": "Discord", "type": "toggle", "selected": false, "pkg": ["discord"], "desc": "El cliente oficial de Discord para chat de voz y texto."},
             {"label": "Vesktop (Discord Wayland)", "type": "toggle", "selected": false, "pkg": ["vesktop-bin"], "desc": "Cliente alternativo de Discord con soporte nativo para transmitir pantalla CON AUDIO en Wayland y Vencord integrado."},
@@ -47,11 +57,16 @@
         ]
     },
     {
-        "cat": "5. Multimedia y Gráficos",
+        "cat": "7. Reproductores Multimedia",
         "items": [
             {"label": "VLC Media Player", "type": "toggle", "selected": false, "pkg": ["vlc"], "desc": "Reproductor universal capaz de reproducir literalmente cualquier formato de audio o video."},
             {"label": "MPV", "type": "toggle", "selected": false, "pkg": ["mpv"], "desc": "Reproductor de video purista, operado por teclado, ultraligero y con potente aceleración por hardware."},
-            {"label": "Spotify", "type": "toggle", "selected": false, "pkg": ["spotify"], "desc": "Cliente oficial para streaming de música y podcasts."},
+            {"label": "Spotify", "type": "toggle", "selected": false, "pkg": ["spotify"], "desc": "Cliente oficial para streaming de música y podcasts."}
+        ]
+    },
+    {
+        "cat": "8. Edición y Diseño Gráfico",
+        "items": [
             {"label": "OBS Studio", "type": "toggle", "selected": false, "pkg": ["obs-studio"], "desc": "Software profesional para transmisión en vivo (Streaming) y grabación de pantalla con aceleración por GPU."},
             {"label": "Kdenlive", "type": "toggle", "selected": false, "pkg": ["kdenlive"], "desc": "Editor de video profesional no-lineal desarrollado por la comunidad KDE."},
             {"label": "Audacity", "type": "toggle", "selected": false, "pkg": ["audacity"], "desc": "El mítico editor y grabador de audio multipista de código abierto."},
@@ -62,20 +77,25 @@
         ]
     },
     {
-        "cat": "6. Desarrollo (Dev)",
+        "cat": "9. Editores de Código (IDE)",
         "items": [
             {"label": "Visual Studio Code", "type": "toggle", "selected": false, "pkg": ["code"], "desc": "El entorno de desarrollo de Microsoft (OSS). Soporte inmenso de plugins y telemetría deshabilitada por defecto."},
             {"label": "VSCodium", "type": "toggle", "selected": false, "pkg": ["vscodium-bin"], "desc": "Versión 100% libre de telemetría e infraestructura de Microsoft de VSCode."},
             {"label": "Neovim", "type": "toggle", "selected": false, "pkg": ["neovim"], "desc": "El editor de texto hiperextensible, rápido y purista basado en Vim. Ideal para ninjas de la terminal."},
             {"label": "Zed", "type": "toggle", "selected": false, "pkg": ["zed"], "desc": "Nuevo editor ultrarrápido programado en Rust con integración nativa de IA e interfaces a 120 FPS."},
-            {"label": "Sublime Text 4", "type": "toggle", "selected": false, "pkg": ["sublime-text-4"], "desc": "Editor de texto ligero, propietario y extremadamente fluido."},
+            {"label": "Sublime Text 4", "type": "toggle", "selected": false, "pkg": ["sublime-text-4"], "desc": "Editor de texto ligero, propietario y extremadamente fluido."}
+        ]
+    },
+    {
+        "cat": "10. Herramientas de Desarrollo",
+        "items": [
             {"label": "Docker & Compose", "type": "toggle", "selected": false, "pkg": ["docker", "docker-compose"], "desc": "Plataforma de virtualización por contenedores estándar en la industria para despliegue de microservicios."},
             {"label": "Podman", "type": "toggle", "selected": false, "pkg": ["podman"], "desc": "Alternativa de RedHat a Docker, diseñada para ejecutar contenedores sin necesidad de demonios root."},
             {"label": "Git & GitHub CLI", "type": "toggle", "selected": true, "pkg": ["git", "github-cli"], "desc": "Control de versiones esencial para programar, clonar repositorios y compilar paquetes AUR."}
         ]
     },
     {
-        "cat": "7. Ofimática",
+        "cat": "11. Ofimática y Notas",
         "items": [
             {"label": "LibreOffice", "type": "toggle", "selected": false, "pkg": ["libreoffice-fresh"], "desc": "La suite libre más potente. Alternativa completa a Microsoft Office con excelente compatibilidad de formatos clásicos."},
             {"label": "OnlyOffice", "type": "toggle", "selected": false, "pkg": ["onlyoffice-bin"], "desc": "Suite de oficina colaborativa que ofrece la mayor fidelidad y compatibilidad con formatos nativos de Microsoft (.docx, .xlsx)."},
@@ -86,23 +106,38 @@
         ]
     },
     {
-        "cat": "8. Sistema y Compresión",
+        "cat": "12. Sistema Base y Compresión",
         "items": [
-            {"label": "Base de Sistema y Compresión", "type": "toggle", "selected": true, "pkg": ["base-devel", "p7zip", "unrar", "unzip", "ntfs-3g"], "desc": "[AGRUPADO - CRÍTICO] Instala compiladores, soporte para ZIP/RAR/7Z y drivers NTFS para montar USBs formateados en Windows."},
+            {"label": "Base de Sistema y Compresión", "type": "toggle", "selected": true, "pkg": ["base-devel", "p7zip", "unrar", "unzip", "ntfs-3g"], "desc": "[AGRUPADO - CRÍTICO] Instala compiladores, soporte para ZIP/RAR/7Z y drivers NTFS para montar USBs formateados en Windows."}
+        ]
+    },
+    {
+        "cat": "13. Monitoreo de Sistema",
+        "items": [
             {"label": "Btop", "type": "toggle", "selected": false, "pkg": ["btop"], "desc": "Impresionante monitor de sistema interactivo en terminal para observar CPU, Memoria, Red y Discos."},
             {"label": "Fastfetch", "type": "toggle", "selected": false, "pkg": ["fastfetch"], "desc": "Utilidad CLI ultrarrápida que muestra el logo de tu distribución y las specs completas de tu hardware (escrito en C)."},
-            {"label": "Stacer", "type": "toggle", "selected": false, "pkg": ["stacer"], "desc": "Optimizador y monitor de sistema gráfico que te permite limpiar cachés, basura y gestionar servicios fácilmente."},
+            {"label": "Stacer", "type": "toggle", "selected": false, "pkg": ["stacer"], "desc": "Optimizador y monitor de sistema gráfico que te permite limpiar cachés, basura y gestionar servicios fácilmente."}
+        ]
+    },
+    {
+        "cat": "14. Particiones y Discos",
+        "items": [
             {"label": "GParted", "type": "toggle", "selected": false, "pkg": ["gparted"], "desc": "El gestor de particiones estándar de GNOME. Formatea, redimensiona y verifica discos duros."},
             {"label": "KDE Partition Manager", "type": "toggle", "selected": false, "pkg": ["partitionmanager"], "desc": "Alternativa de KDE para el manejo avanzado de particiones de discos duros."}
         ]
     },
     {
-        "cat": "9. Archivos y Terminales",
+        "cat": "15. Emuladores de Terminal",
         "items": [
             {"label": "Alacritty", "type": "toggle", "selected": true, "pkg": ["alacritty"], "desc": "Terminal acelerada por GPU, hiper-rápida y configurada por defecto con nuestro tema Tokyo Night."},
             {"label": "Kitty", "type": "toggle", "selected": false, "pkg": ["kitty"], "desc": "Terminal moderna con aceleración OpenGL, soporte nativo para multiplexación y visualización de imágenes (Kittens)."},
             {"label": "WezTerm", "type": "toggle", "selected": false, "pkg": ["wezterm"], "desc": "Terminal escrita en Rust, hiper-configurable usando archivos Lua y con excelente soporte para fuentes de ligadura."},
-            {"label": "Foot", "type": "toggle", "selected": false, "pkg": ["foot"], "desc": "Emulador de terminal ultraligero y purista diseñado exclusivamente para Wayland."},
+            {"label": "Foot", "type": "toggle", "selected": false, "pkg": ["foot"], "desc": "Emulador de terminal ultraligero y purista diseñado exclusivamente para Wayland."}
+        ]
+    },
+    {
+        "cat": "16. Gestores de Archivos",
+        "items": [
             {"label": "Thunar", "type": "toggle", "selected": false, "pkg": ["thunar"], "desc": "Gestor de archivos ligero, rápido y predeterminado en entornos XFCE."},
             {"label": "Dolphin", "type": "toggle", "selected": false, "pkg": ["dolphin"], "desc": "Gestor de archivos de KDE. Extremadamente potente con soporte nativo para terminal integrada y split-view."},
             {"label": "Nautilus", "type": "toggle", "selected": false, "pkg": ["nautilus"], "desc": "Gestor de archivos de GNOME. Enfoque visual moderno y simplificado."},
@@ -111,19 +146,34 @@
         ]
     },
     {
-        "cat": "10. Shells, Fuentes e Impresión",
+        "cat": "17. Intérpretes de Comandos",
         "items": [
             {"label": "Zsh", "type": "toggle", "selected": false, "pkg": ["zsh"], "desc": "Intérprete de comandos (Shell) súper personalizable (ej. con Oh-My-Zsh) y plugins de autocompletado avanzado."},
-            {"label": "Fish", "type": "toggle", "selected": false, "pkg": ["fish"], "desc": "Shell amistosa que funciona de manera brillante desde el primer minuto con autocompletado nativo asombroso."},
-            {"label": "Fuentes y Emojis (Nerd Fonts)", "type": "toggle", "selected": true, "pkg": ["ttf-fira-code", "ttf-meslo-nerd", "noto-fonts-emoji"], "desc": "[AGRUPADO - ESENCIAL] Instala las fuentes necesarias para que los íconos de la terminal (Waybar, NeoVim, etc) no se rompan."},
+            {"label": "Fish", "type": "toggle", "selected": false, "pkg": ["fish"], "desc": "Shell amistosa que funciona de manera brillante desde el primer minuto con autocompletado nativo asombroso."}
+        ]
+    },
+    {
+        "cat": "18. Fuentes (Nerd Fonts)",
+        "items": [
+            {"label": "Fuentes y Emojis (Nerd Fonts)", "type": "toggle", "selected": true, "pkg": ["ttf-fira-code", "ttf-meslo-nerd", "noto-fonts-emoji"], "desc": "[AGRUPADO - ESENCIAL] Instala las fuentes necesarias para que los íconos de la terminal (Waybar, NeoVim, etc) no se rompan."}
+        ]
+    },
+    {
+        "cat": "19. Servicios de Impresión",
+        "items": [
             {"label": "Soporte de Impresión (CUPS)", "type": "toggle", "selected": false, "pkg": ["cups", "cups-pdf", "system-config-printer"], "desc": "[AGRUPADO] Habilita los demonios de impresión para reconocer impresoras físicas en red y generar impresiones virtuales en formato PDF."}
         ]
     },
     {
-        "cat": "11. Audio y Redes",
+        "cat": "20. Subsistema de Audio",
         "items": [
             {"label": "Soporte Base de Audio (PipeWire)", "type": "toggle", "selected": true, "pkg": ["pipewire", "pipewire-pulse", "pipewire-alsa", "pipewire-jack", "wireplumber"], "desc": "[AGRUPADO - VITAL] El estándar moderno de audio en Linux que reemplaza a PulseAudio y JACK. Baja latencia ideal para gaming y música."},
-            {"label": "EasyEffects", "type": "toggle", "selected": false, "pkg": ["easyeffects"], "desc": "Potente rack de efectos (ecualizador, reductor de ruido, compresor) impulsado por PipeWire para transformar tu audio y micrófono."},
+            {"label": "EasyEffects", "type": "toggle", "selected": false, "pkg": ["easyeffects"], "desc": "Potente rack de efectos (ecualizador, reductor de ruido, compresor) impulsado por PipeWire para transformar tu audio y micrófono."}
+        ]
+    },
+    {
+        "cat": "21. Redes y VPN",
+        "items": [
             {"label": "Bluetooth (Bluez)", "type": "toggle", "selected": true, "pkg": ["bluez", "bluez-utils", "blueman"], "desc": "[AGRUPADO] Pila oficial de Bluetooth. Necesaria para conectar audífonos inalámbricos y mandos de consola (Xbox/PlayStation)."},
             {"label": "UFW (Firewall)", "type": "toggle", "selected": false, "pkg": ["ufw"], "desc": "Uncomplicated Firewall. Interfaz sencilla para gestionar los puertos y el muro de fuego de tu sistema operativo."},
             {"label": "Tailscale", "type": "toggle", "selected": false, "pkg": ["tailscale"], "desc": "VPN del tipo Mesh (Zero Trust) para interconectar todos tus dispositivos (PC, Servidor, Celular) de manera privada sin abrir puertos."},
@@ -131,31 +181,41 @@
         ]
     },
     {
-        "cat": "12. VMs, Nube y Torrents",
+        "cat": "22. Máquinas Virtuales",
         "items": [
             {"label": "Virt-Manager (QEMU/KVM)", "type": "toggle", "selected": false, "pkg": ["virt-manager", "qemu-desktop"], "desc": "Hipervisor nativo del kernel Linux. Permite virtualizar Windows u otras distros con un rendimiento casi nativo (GPU Passthrough)."},
             {"label": "GNOME Boxes", "type": "toggle", "selected": false, "pkg": ["gnome-boxes"], "desc": "Gestor de máquinas virtuales diseñado específicamente para ser ridículamente fácil de usar por cualquier usuario."},
-            {"label": "VirtualBox", "type": "toggle", "selected": false, "pkg": ["virtualbox"], "desc": "Hipervisor tipo 2 clásico desarrollado por Oracle. Muy fácil de usar pero con menor rendimiento nativo que KVM."},
+            {"label": "VirtualBox", "type": "toggle", "selected": false, "pkg": ["virtualbox"], "desc": "Hipervisor tipo 2 clásico desarrollado por Oracle. Muy fácil de usar pero con menor rendimiento nativo que KVM."}
+        ]
+    },
+    {
+        "cat": "23. Nube y Sincronización",
+        "items": [
             {"label": "Bitwarden", "type": "toggle", "selected": false, "pkg": ["bitwarden"], "desc": "Gestor de contraseñas de código abierto con sincronización en la nube."},
             {"label": "KeePassXC", "type": "toggle", "selected": false, "pkg": ["keepassxc"], "desc": "Gestor de contraseñas local offline (almacenado en archivo cifrado en tu PC)."},
             {"label": "Syncthing", "type": "toggle", "selected": false, "pkg": ["syncthing"], "desc": "Herramienta mágica P2P para mantener carpetas idénticas sincronizadas entre tu PC, laptop y celular sin usar servidores centralizados."},
-            {"label": "Nextcloud Client", "type": "toggle", "selected": false, "pkg": ["nextcloud-client"], "desc": "Cliente de sincronización de archivos para servidores Nextcloud (Tu propia nube personal)."},
+            {"label": "Nextcloud Client", "type": "toggle", "selected": false, "pkg": ["nextcloud-client"], "desc": "Cliente de sincronización de archivos para servidores Nextcloud (Tu propia nube personal)."}
+        ]
+    },
+    {
+        "cat": "24. Descargas y Torrents",
+        "items": [
             {"label": "qBittorrent", "type": "toggle", "selected": false, "pkg": ["qbittorrent"], "desc": "El cliente BitTorrent libre más popular, confiable y sin publicidad. Similar a uTorrent pero seguro."},
             {"label": "JDownloader2", "type": "toggle", "selected": false, "pkg": ["jdownloader2"], "desc": "Gestor de descargas masivas capaz de capturar enlaces, sortear captchas y automatizar extracciones de RAR/ZIP."},
             {"label": "Transmission", "type": "toggle", "selected": false, "pkg": ["transmission-gtk"], "desc": "Cliente BitTorrent ultraligero y purista que utiliza ínfimos recursos de tu PC."}
         ]
     },
     {
-        "cat": "13. Drivers Gráficos",
+        "cat": "25. Drivers Gráficos",
         "items": [
             {"label": "Mesa (AMD / Intel)", "type": "toggle", "selected": true, "pkg": ["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel", "intel-media-driver", "libva-mesa-driver", "lib32-libva-mesa-driver", "libva-utils"], "desc": "[AGRUPADO] Drivers de código abierto para gráficas Radeon e Intel, con aceleración de video por hardware (VA-API)."},
             {"label": "NVIDIA (Privativo DKMS)", "type": "toggle", "selected": false, "pkg": ["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings", "libva-utils"], "desc": "[AGRUPADO] Módulo DKMS, bibliotecas propietarias y aceleración VA-API para NVIDIA. Esencial para extraer el 100% del rendimiento."}
         ]
     },
     {
-        "cat": "[ PRESIONA ENTER PARA INSTALAR ]",
+        "cat": "[ INICIAR METAMORFOSIS ]",
         "items": [
-            {"label": "[ >> INICIAR METAMORFOSIS << ]", "type": "action", "selected": false, "pkg": [], "desc": "Presiona la tecla ENTER sobre este botón para iniciar la descarga e instalación automática de todos los paquetes seleccionados."}
+            {"label": "[ >> ARRANCAR INSTALADOR << ]", "type": "action", "selected": false, "pkg": [], "desc": "Presiona la tecla ENTER sobre este botón para iniciar la descarga e instalación automática de todos los paquetes seleccionados."}
         ]
     }
 ]

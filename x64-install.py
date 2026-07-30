@@ -260,10 +260,10 @@ def update_ui():
             if i == cat_idx:
                 style = "bold cyan reverse" if active_pane == "left" else "bold cyan"
                 prefix = "▶ " if active_pane == "left" else "  "
-                cat_text += f"{prefix}[{style}]{c['cat']}[/{style}]\n\n"
+                cat_text += f"{prefix}[{style}]{c['cat']}[/{style}]\n"
             else:
                 style = "dim white" if active_pane == "right" else "white"
-                cat_text += f"  [{style}]{c['cat']}[/{style}]\n\n"
+                cat_text += f"  [{style}]{c['cat']}[/{style}]\n"
                 
         item_text = ""
         items = menu_data[cat_idx]["items"]
@@ -273,7 +273,7 @@ def update_ui():
             
             if item["type"] == "action":
                 style = "bold green reverse" if is_active else "bold green"
-                item_text += f"\n{cursor}[{style}]{item['label']}[/{style}]\n"
+                item_text += f"\n{cursor}[{style}]{item['label']}[/{style}]\n\n"
             else:
                 chk_box = "[bold green][████] ON [/bold green]" if item.get("selected", False) else "[bold bright_black][░░░░] OFF[/bold bright_black]"
                 if is_active:
@@ -282,7 +282,7 @@ def update_ui():
                     style = "dim white"
                     chk_box = chk_box.replace("bold", "dim")
                     
-                item_text += f"{cursor}{chk_box} [{style}]{item['label']}[/{style}]\n"
+                item_text += f"{cursor}{chk_box} [{style}]{item['label']}[/{style}]\n\n"
                 
         menu_table.add_row(cat_text, item_text)
         
