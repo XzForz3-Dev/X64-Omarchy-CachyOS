@@ -250,26 +250,27 @@ def keyboard_worker():
             if select.select([sys.stdin], [], [], 0.1)[0]:
                 ch = sys.stdin.read(1)
                 if ch == '\x1b':
-                    ch += sys.stdin.read(2)
+                    if select.select([sys.stdin], [], [], 0.1)[0]:
+                        ch += sys.stdin.read(2)
                 
-                if ch == '\x1b[A': # Arriba
+                if ch in ('\x1b[A', '\x1bOA'): # Arriba
                     if state.active_pane == "left":
                         state.cat_idx = max(0, state.cat_idx - 1)
                         state.item_idx = 0
                     else:
                         state.item_idx = max(0, state.item_idx - 3)
-                elif ch == '\x1b[B': # Abajo
+                elif ch in ('\x1b[B', '\x1bOB'): # Abajo
                     if state.active_pane == "left":
                         state.cat_idx = min(len(state.menu_data) - 1, state.cat_idx + 1)
                         state.item_idx = 0
                     else:
                         state.item_idx = min(len(state.menu_data[state.cat_idx]["items"]) - 1, state.item_idx + 3)
-                elif ch == '\x1b[C': # Derecha
+                elif ch in ('\x1b[C', '\x1bOC'): # Derecha
                     if state.active_pane == "left":
                         state.active_pane = "right"
                     else:
                         state.item_idx = min(len(state.menu_data[state.cat_idx]["items"]) - 1, state.item_idx + 1)
-                elif ch == '\x1b[D': # Izquierda
+                elif ch in ('\x1b[D', '\x1bOD'): # Izquierda
                     if state.active_pane == "right":
                         if state.item_idx % 3 == 0:
                             state.active_pane = "left"
