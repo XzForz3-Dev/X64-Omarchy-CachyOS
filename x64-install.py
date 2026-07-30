@@ -129,6 +129,8 @@ def get_sys_info():
                 raw_text = res.stdout.strip()
                 colored_lines = []
                 for line in raw_text.split('\n'):
+                    if "██" in line:
+                        continue
                     sep = " 󰁔 " if " 󰁔 " in line else (": " if ": " in line else None)
                     if sep:
                         key, val = line.split(sep, 1)
@@ -302,10 +304,10 @@ def update_ui():
             if i == cat_idx:
                 style = "bold cyan reverse" if active_pane == "left" else "bold cyan"
                 prefix = "▶ " if active_pane == "left" else "  "
-                cat_text += f"{prefix}[{style}]{c['cat']}[/{style}]\n\n"
+                cat_text += f"{prefix}[{style}]{c['cat']}[/{style}]\n"
             else:
                 style = "dim white" if active_pane == "right" else "white"
-                cat_text += f"  [{style}]{c['cat']}[/{style}]\n\n"
+                cat_text += f"  [{style}]{c['cat']}[/{style}]\n"
                 
         item_text = ""
         items = menu_data[cat_idx]["items"]
@@ -336,8 +338,8 @@ def update_ui():
         cat_border = "cyan" if active_pane == "left" else "dim white"
         item_border = "green" if active_pane == "right" else "dim white"
         
-        cat_panel = Panel(cat_text, title="[bold cyan]Índice de Categorías[/bold cyan]", border_style=cat_border)
-        item_panel = Panel(item_text, title="[bold green]Paquetes y Opciones[/bold green]", border_style=item_border)
+        cat_panel = Panel(Align.center(cat_text, vertical="middle"), title="[bold cyan]Índice de Categorías[/bold cyan]", border_style=cat_border)
+        item_panel = Panel(Align.center(item_text, vertical="middle"), title="[bold green]Paquetes y Opciones[/bold green]", border_style=item_border)
         
         menu_layout = Layout()
         menu_layout.split_row(
