@@ -252,7 +252,10 @@ def keyboard_worker():
     old_settings = termios.tcgetattr(fd)
     try:
         tty.setraw(fd)
-        while state.current_state == "menu":
+        while not state.install_done:
+            if state.current_state != "menu":
+                time.sleep(1)
+                continue
             if select.select([sys.stdin], [], [], 0.1)[0]:
                 data = os.read(fd, 1024)
                 if not data:
