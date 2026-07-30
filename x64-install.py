@@ -692,6 +692,10 @@ def installer_worker():
         run_cmd_live("sudo pacman -S --noconfirm greetd greetd-tuigreet", check=False)
         run_cmd_live("sudo mkdir -p /etc/greetd", check=False)
         
+        # Parche de seguridad para evitar que Plymouth congele la TTY1 tapando a Tuigreet
+        run_cmd_live("sudo mkdir -p /etc/systemd/system/greetd.service.d", check=False)
+        run_cmd_live("sudo bash -c 'cat << \"EOF\" > /etc/systemd/system/greetd.service.d/plymouth-fix.conf\n[Service]\nExecStartPre=-/usr/bin/plymouth quit\nEOF'", check=False)
+        
         # --- Configurar Sesiones ---
         if is_legacy_nvidia:
             # Crear sesión Legacy
