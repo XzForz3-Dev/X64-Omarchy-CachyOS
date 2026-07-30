@@ -2,220 +2,1545 @@
     {
         "cat": "1. Entornos (Desktop)",
         "items": [
-            {"label": "Hyprland (Tokyo Night)", "type": "toggle", "selected": true, "pkg": ["hyprland", "waybar", "swaybg", "wofi"], "desc": "Entorno base (Wayland) con estética hacker/cyberpunk, animaciones fluidas y bajo consumo de recursos."},
-            {"label": "KDE Plasma 6", "type": "toggle", "selected": false, "pkg": ["plasma-meta", "konsole", "dolphin"], "desc": "Entorno moderno y altamente personalizable, con todas las herramientas nativas del ecosistema KDE."},
-            {"label": "GNOME", "type": "toggle", "selected": false, "pkg": ["gnome", "gnome-extra"], "desc": "Interfaz enfocada en gestos táctiles, minimalismo y un flujo de trabajo centrado en el teclado."},
-            {"label": "XFCE4", "type": "toggle", "selected": false, "pkg": ["xfce4", "xfce4-goodies"], "desc": "El entorno clásico y ultraligero por excelencia. Ideal para hardware antiguo o minimalismo extremo."},
-            {"label": "Cosmic (System76)", "type": "toggle", "selected": false, "pkg": ["cosmic-session"], "desc": "El nuevo y moderno entorno de escritorio de Pop!_OS escrito en Rust (Alpha)."}
+            {
+                "label": "Hyprland (Tokyo Night)",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "hyprland",
+                    "waybar",
+                    "swaybg",
+                    "wofi"
+                ],
+                "desc": "Entorno base (Wayland) con estética hacker/cyberpunk, animaciones fluidas y bajo consumo de recursos."
+            },
+            {
+                "label": "KDE Plasma 6",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "plasma-meta",
+                    "konsole",
+                    "dolphin"
+                ],
+                "desc": "Entorno moderno y altamente personalizable, con todas las herramientas nativas del ecosistema KDE."
+            },
+            {
+                "label": "GNOME",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "gnome",
+                    "gnome-extra"
+                ],
+                "desc": "Interfaz enfocada en gestos táctiles, minimalismo y un flujo de trabajo centrado en el teclado."
+            },
+            {
+                "label": "XFCE4",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "xfce4",
+                    "xfce4-goodies"
+                ],
+                "desc": "El entorno clásico y ultraligero por excelencia. Ideal para hardware antiguo o minimalismo extremo."
+            },
+            {
+                "label": "Cosmic (System76)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "cosmic-session"
+                ],
+                "desc": "El nuevo y moderno entorno de escritorio de Pop!_OS escrito en Rust (Alpha)."
+            },
+            {
+                "label": "Sway",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "sway",
+                    "swaybg",
+                    "waybar"
+                ],
+                "desc": "Gestor de ventanas Tiling para Wayland (compatible con i3)."
+            },
+            {
+                "label": "Cinnamon",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "cinnamon"
+                ],
+                "desc": "Entorno clásico tradicional, amigable y muy estable (creado por Linux Mint)."
+            },
+            {
+                "label": "Budgie",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "budgie-desktop"
+                ],
+                "desc": "Entorno moderno y enfocado en la simplicidad."
+            }
         ]
     },
     {
         "cat": "2. Navegadores Web",
         "items": [
-            {"label": "Firefox", "type": "toggle", "selected": true, "pkg": ["firefox"], "desc": "El navegador de código abierto de Mozilla. Estándar, confiable y extremadamente personalizable."},
-            {"label": "Zen Browser", "type": "toggle", "selected": false, "pkg": ["zen-browser-bin"], "desc": "Moderno, ultra rápido, con pestañas verticales nativas y gestión optimizada de memoria (Basado en Firefox)."},
-            {"label": "LibreWolf", "type": "toggle", "selected": false, "pkg": ["librewolf-bin"], "desc": "Versión de Firefox endurecida, enfocada al 100% en la privacidad, sin telemetría y con uBlock Origin integrado."},
-            {"label": "Tor Browser", "type": "toggle", "selected": false, "pkg": ["torbrowser-launcher"], "desc": "Navegador enfocado en anonimato absoluto. Enruta tu tráfico a través de la red Tor para evadir rastreo."},
-            {"label": "Brave", "type": "toggle", "selected": false, "pkg": ["brave-bin"], "desc": "Basado en Chromium, con un potente bloqueador de anuncios y rastreadores integrado a nivel de motor web."},
-            {"label": "Google Chrome", "type": "toggle", "selected": false, "pkg": ["google-chrome"], "desc": "El navegador de Google. Rápido, con sincronización total del ecosistema de Google."},
-            {"label": "Thorium", "type": "toggle", "selected": false, "pkg": ["thorium-browser-bin"], "desc": "El Chromium más rápido del mundo, compilado con optimizaciones AVX2 y SSE4 para CPUs modernos."}
+            {
+                "label": "Firefox",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "firefox"
+                ],
+                "desc": "El navegador de código abierto de Mozilla. Estándar, confiable y extremadamente personalizable."
+            },
+            {
+                "label": "Zen Browser",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "zen-browser-bin"
+                ],
+                "desc": "Moderno, ultra rápido, con pestañas verticales nativas y gestión optimizada de memoria (Basado en Firefox)."
+            },
+            {
+                "label": "LibreWolf",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "librewolf-bin"
+                ],
+                "desc": "Versión de Firefox endurecida, enfocada al 100% en la privacidad, sin telemetría y con uBlock Origin integrado."
+            },
+            {
+                "label": "Tor Browser",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "torbrowser-launcher"
+                ],
+                "desc": "Navegador enfocado en anonimato absoluto. Enruta tu tráfico a través de la red Tor para evadir rastreo."
+            },
+            {
+                "label": "Brave",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "brave-bin"
+                ],
+                "desc": "Basado en Chromium, con un potente bloqueador de anuncios y rastreadores integrado a nivel de motor web."
+            },
+            {
+                "label": "Google Chrome",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "google-chrome"
+                ],
+                "desc": "El navegador de Google. Rápido, con sincronización total del ecosistema de Google."
+            },
+            {
+                "label": "Thorium",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "thorium-browser-bin"
+                ],
+                "desc": "El Chromium más rápido del mundo, compilado con optimizaciones AVX2 y SSE4 para CPUs modernos."
+            },
+            {
+                "label": "Chromium",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "chromium"
+                ],
+                "desc": "La base de código abierto de Chrome sin la integración propietaria de Google."
+            },
+            {
+                "label": "Vivaldi",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "vivaldi"
+                ],
+                "desc": "El navegador más personalizable para usuarios avanzados, creado por ex-desarrolladores de Opera."
+            },
+            {
+                "label": "Opera",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "opera"
+                ],
+                "desc": "Navegador clásico con VPN gratuita integrada y bloqueador de anuncios."
+            },
+            {
+                "label": "Mullvad Browser",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "mullvad-browser-bin"
+                ],
+                "desc": "Navegador enfocado en privacidad máxima colaborativo con Tor Project."
+            }
         ]
     },
     {
         "cat": "3. Gaming (Plataformas)",
         "items": [
-            {"label": "Steam & Proton", "type": "toggle", "selected": false, "pkg": ["steam", "protonup-qt"], "desc": "La plataforma de Valve. Incluye ProtonUp-Qt para instalar versiones personalizadas de Proton-GE."},
-            {"label": "Lutris", "type": "toggle", "selected": false, "pkg": ["lutris"], "desc": "Centraliza y gestiona juegos de GOG, emuladores y scripts de Wine en una sola interfaz gráfica."},
-            {"label": "Heroic Games Launcher", "type": "toggle", "selected": false, "pkg": ["heroic-games-launcher-bin"], "desc": "Cliente nativo y de código abierto para gestionar tu biblioteca de Epic Games Store y GOG en Linux."}
+            {
+                "label": "Steam & Proton",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "steam",
+                    "protonup-qt"
+                ],
+                "desc": "La plataforma de Valve. Incluye ProtonUp-Qt para instalar versiones personalizadas de Proton-GE."
+            },
+            {
+                "label": "Lutris",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "lutris"
+                ],
+                "desc": "Centraliza y gestiona juegos de GOG, emuladores y scripts de Wine en una sola interfaz gráfica."
+            },
+            {
+                "label": "Heroic Games Launcher",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "heroic-games-launcher-bin"
+                ],
+                "desc": "Cliente nativo y de código abierto para gestionar tu biblioteca de Epic Games Store y GOG en Linux."
+            },
+            {
+                "label": "Bottles",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "bottles"
+                ],
+                "desc": "Ejecuta software y juegos de Windows en entornos aislados de Wine ('botellas')."
+            },
+            {
+                "label": "Minigalaxy",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "minigalaxy"
+                ],
+                "desc": "Cliente nativo y ligero exclusivo para descargar tus juegos de GOG Linux."
+            },
+            {
+                "label": "Itch.io",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "itch-setup"
+                ],
+                "desc": "Plataforma enfocada en juegos indie y creadores independientes."
+            }
         ]
     },
     {
         "cat": "4. Gaming (Herramientas)",
         "items": [
-            {"label": "MangoHud", "type": "toggle", "selected": false, "pkg": ["mangohud"], "desc": "Telemetría OSD en pantalla para monitorear FPS, CPU, GPU y RAM mientras juegas."},
-            {"label": "GOverlay", "type": "toggle", "selected": false, "pkg": ["goverlay"], "desc": "Interfaz gráfica (GUI) para configurar MangoHud fácilmente sin tocar archivos de texto."},
-            {"label": "GameMode (Feral)", "type": "toggle", "selected": false, "pkg": ["gamemode"], "desc": "Demonio que optimiza agresivamente tu CPU y GPU en el momento en que abres un juego pesado."},
-            {"label": "Gamescope", "type": "toggle", "selected": false, "pkg": ["gamescope"], "desc": "Microcompositor de SteamOS para forzar resoluciones, limitar FPS o aplicar upscaling (FSR) a juegos."}
+            {
+                "label": "MangoHud",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "mangohud"
+                ],
+                "desc": "Telemetría OSD en pantalla para monitorear FPS, CPU, GPU y RAM mientras juegas."
+            },
+            {
+                "label": "GOverlay",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "goverlay"
+                ],
+                "desc": "Interfaz gráfica (GUI) para configurar MangoHud fácilmente sin tocar archivos de texto."
+            },
+            {
+                "label": "GameMode (Feral)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "gamemode"
+                ],
+                "desc": "Demonio que optimiza agresivamente tu CPU y GPU en el momento en que abres un juego pesado."
+            },
+            {
+                "label": "Gamescope",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "gamescope"
+                ],
+                "desc": "Microcompositor de SteamOS para forzar resoluciones, limitar FPS o aplicar upscaling (FSR) a juegos."
+            },
+            {
+                "label": "CoreCtrl",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "corectrl"
+                ],
+                "desc": "Herramienta avanzada para hacer Overclocking y Undervolting en GPUs AMD."
+            },
+            {
+                "label": "GreenWithEnvy",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "gwe"
+                ],
+                "desc": "Herramienta equivalente a MSI Afterburner para controlar ventiladores y Overclock en GPUs NVIDIA."
+            },
+            {
+                "label": "ProtonUp-Qt",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "protonup-qt"
+                ],
+                "desc": "Instala fácilmente GE-Proton para Steam y Wine-GE para Lutris."
+            }
         ]
     },
     {
         "cat": "5. Emuladores Clásicos",
         "items": [
-            {"label": "RetroArch", "type": "toggle", "selected": false, "pkg": ["retroarch"], "desc": "El frontend definitivo para emulación clásica (NES, SNES, N64, GBA, etc)."},
-            {"label": "RPCS3 (PS3)", "type": "toggle", "selected": false, "pkg": ["rpcs3-bin"], "desc": "Emulador experimental y de código abierto de PlayStation 3."},
-            {"label": "PCSX2 (PS2)", "type": "toggle", "selected": false, "pkg": ["pcsx2"], "desc": "Emulador altamente compatible para jugar todo el catálogo de PlayStation 2."},
-            {"label": "Dolphin (Wii/GC)", "type": "toggle", "selected": false, "pkg": ["dolphin-emu"], "desc": "Emulador líder mundial para Nintendo GameCube y Nintendo Wii."}
+            {
+                "label": "RetroArch",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "retroarch"
+                ],
+                "desc": "El frontend definitivo para emulación clásica (NES, SNES, N64, GBA, etc)."
+            },
+            {
+                "label": "RPCS3 (PS3)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "rpcs3-bin"
+                ],
+                "desc": "Emulador experimental y de código abierto de PlayStation 3."
+            },
+            {
+                "label": "PCSX2 (PS2)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "pcsx2"
+                ],
+                "desc": "Emulador altamente compatible para jugar todo el catálogo de PlayStation 2."
+            },
+            {
+                "label": "Dolphin (Wii/GC)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "dolphin-emu"
+                ],
+                "desc": "Emulador líder mundial para Nintendo GameCube y Nintendo Wii."
+            },
+            {
+                "label": "Yuzu (Switch)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "yuzu-mainline-bin"
+                ],
+                "desc": "Emulador experimental de Nintendo Switch."
+            },
+            {
+                "label": "Ryujinx (Switch)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "ryujinx"
+                ],
+                "desc": "Emulador de Nintendo Switch escrito en C# con gran precisión."
+            },
+            {
+                "label": "DuckStation (PS1)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "duckstation"
+                ],
+                "desc": "El mejor y más moderno emulador de PlayStation 1 con soporte para resoluciones 4K."
+            },
+            {
+                "label": "Cemu (Wii U)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "cemu"
+                ],
+                "desc": "Emulador altamente optimizado para jugar todo el catálogo de Nintendo Wii U."
+            },
+            {
+                "label": "Xemu (Xbox)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "xemu"
+                ],
+                "desc": "Emulador de la primera Xbox original (Classic)."
+            },
+            {
+                "label": "MAME",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "mame"
+                ],
+                "desc": "Emulador de máquinas recreativas Arcade."
+            }
         ]
     },
     {
         "cat": "6. Chat y Voz",
         "items": [
-            {"label": "Discord", "type": "toggle", "selected": false, "pkg": ["discord"], "desc": "El cliente oficial de Discord para chat de voz y texto."},
-            {"label": "Vesktop (Discord Wayland)", "type": "toggle", "selected": false, "pkg": ["vesktop-bin"], "desc": "Cliente alternativo de Discord con soporte nativo para transmitir pantalla CON AUDIO en Wayland y Vencord integrado."},
-            {"label": "Telegram Desktop", "type": "toggle", "selected": false, "pkg": ["telegram-desktop"], "desc": "Cliente oficial rápido, ligero e independiente de tu teléfono móvil."},
-            {"label": "Signal Desktop", "type": "toggle", "selected": false, "pkg": ["signal-desktop"], "desc": "El estándar de oro en mensajería cifrada de extremo a extremo."}
+            {
+                "label": "Discord",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "discord"
+                ],
+                "desc": "El cliente oficial de Discord para chat de voz y texto."
+            },
+            {
+                "label": "Vesktop (Discord Wayland)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "vesktop-bin"
+                ],
+                "desc": "Cliente alternativo de Discord con soporte nativo para transmitir pantalla CON AUDIO en Wayland y Vencord integrado."
+            },
+            {
+                "label": "Telegram Desktop",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "telegram-desktop"
+                ],
+                "desc": "Cliente oficial rápido, ligero e independiente de tu teléfono móvil."
+            },
+            {
+                "label": "Signal Desktop",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "signal-desktop"
+                ],
+                "desc": "El estándar de oro en mensajería cifrada de extremo a extremo."
+            },
+            {
+                "label": "Element",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "element-desktop"
+                ],
+                "desc": "Cliente de mensajería descentralizada y cifrada basada en el protocolo Matrix."
+            },
+            {
+                "label": "Slack",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "slack-desktop"
+                ],
+                "desc": "Plataforma de comunicación corporativa y empresarial."
+            },
+            {
+                "label": "Zoom",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "zoom"
+                ],
+                "desc": "Cliente de videoconferencias para el trabajo y la escuela."
+            },
+            {
+                "label": "Skype",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "skypeforlinux-bin"
+                ],
+                "desc": "El clásico cliente de Microsoft para videollamadas."
+            }
         ]
     },
     {
         "cat": "7. Reproductores Multimedia",
         "items": [
-            {"label": "VLC Media Player", "type": "toggle", "selected": false, "pkg": ["vlc"], "desc": "Reproductor universal capaz de reproducir literalmente cualquier formato de audio o video."},
-            {"label": "MPV", "type": "toggle", "selected": false, "pkg": ["mpv"], "desc": "Reproductor de video purista, operado por teclado, ultraligero y con potente aceleración por hardware."},
-            {"label": "Spotify", "type": "toggle", "selected": false, "pkg": ["spotify"], "desc": "Cliente oficial para streaming de música y podcasts."}
+            {
+                "label": "VLC Media Player",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "vlc"
+                ],
+                "desc": "Reproductor universal capaz de reproducir literalmente cualquier formato de audio o video."
+            },
+            {
+                "label": "MPV",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "mpv"
+                ],
+                "desc": "Reproductor de video purista, operado por teclado, ultraligero y con potente aceleración por hardware."
+            },
+            {
+                "label": "Spotify",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "spotify"
+                ],
+                "desc": "Cliente oficial para streaming de música y podcasts."
+            },
+            {
+                "label": "YouTube Music",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "youtube-music-bin"
+                ],
+                "desc": "Cliente de escritorio no oficial y rico en funciones para YouTube Music."
+            },
+            {
+                "label": "Clementine",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "clementine"
+                ],
+                "desc": "Reproductor clásico para organizar inmensas bibliotecas locales de MP3/FLAC."
+            },
+            {
+                "label": "Kodi",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "kodi"
+                ],
+                "desc": "Centro multimedia (Media Center) definitivo para tu TV o PC."
+            }
         ]
     },
     {
         "cat": "8. Edición y Diseño Gráfico",
         "items": [
-            {"label": "OBS Studio", "type": "toggle", "selected": false, "pkg": ["obs-studio"], "desc": "Software profesional para transmisión en vivo (Streaming) y grabación de pantalla con aceleración por GPU."},
-            {"label": "Kdenlive", "type": "toggle", "selected": false, "pkg": ["kdenlive"], "desc": "Editor de video profesional no-lineal desarrollado por la comunidad KDE."},
-            {"label": "Audacity", "type": "toggle", "selected": false, "pkg": ["audacity"], "desc": "El mítico editor y grabador de audio multipista de código abierto."},
-            {"label": "Krita", "type": "toggle", "selected": false, "pkg": ["krita"], "desc": "Herramienta profesional gratuita de pintura digital e ilustración rasterizada en 2D."},
-            {"label": "GIMP", "type": "toggle", "selected": false, "pkg": ["gimp"], "desc": "Editor avanzado de imágenes. La alternativa libre por excelencia a Adobe Photoshop."},
-            {"label": "Blender", "type": "toggle", "selected": false, "pkg": ["blender"], "desc": "La suite de creación 3D de código abierto líder en el mundo. Modelado, animación y renderizado CGI."},
-            {"label": "Inkscape", "type": "toggle", "selected": false, "pkg": ["inkscape"], "desc": "Editor profesional de gráficos vectoriales (SVG). Alternativa libre a Illustrator."}
+            {
+                "label": "OBS Studio",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "obs-studio"
+                ],
+                "desc": "Software profesional para transmisión en vivo (Streaming) y grabación de pantalla con aceleración por GPU."
+            },
+            {
+                "label": "Kdenlive",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "kdenlive"
+                ],
+                "desc": "Editor de video profesional no-lineal desarrollado por la comunidad KDE."
+            },
+            {
+                "label": "Audacity",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "audacity"
+                ],
+                "desc": "El mítico editor y grabador de audio multipista de código abierto."
+            },
+            {
+                "label": "Krita",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "krita"
+                ],
+                "desc": "Herramienta profesional gratuita de pintura digital e ilustración rasterizada en 2D."
+            },
+            {
+                "label": "GIMP",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "gimp"
+                ],
+                "desc": "Editor avanzado de imágenes. La alternativa libre por excelencia a Adobe Photoshop."
+            },
+            {
+                "label": "Blender",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "blender"
+                ],
+                "desc": "La suite de creación 3D de código abierto líder en el mundo. Modelado, animación y renderizado CGI."
+            },
+            {
+                "label": "Inkscape",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "inkscape"
+                ],
+                "desc": "Editor profesional de gráficos vectoriales (SVG). Alternativa libre a Illustrator."
+            },
+            {
+                "label": "DaVinci Resolve",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "davinci-resolve"
+                ],
+                "desc": "Estudio profesional de corrección de color, VFX y edición de video no-lineal de Hollywood."
+            },
+            {
+                "label": "Figma (Desktop)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "figma-linux-bin"
+                ],
+                "desc": "Cliente no oficial para la popular herramienta de diseño UI/UX basada en la web."
+            },
+            {
+                "label": "Darktable",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "darktable"
+                ],
+                "desc": "Flujo de trabajo fotográfico profesional en formato RAW (Alternativa a Lightroom)."
+            },
+            {
+                "label": "Natron",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "natron"
+                ],
+                "desc": "Composición nodal avanzada para VFX (Alternativa a Nuke o After Effects)."
+            },
+            {
+                "label": "Synfig Studio",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "synfigstudio"
+                ],
+                "desc": "Software de animación 2D vectorial de calidad profesional."
+            }
         ]
     },
     {
         "cat": "9. Editores de Código (IDE)",
         "items": [
-            {"label": "Visual Studio Code", "type": "toggle", "selected": false, "pkg": ["code"], "desc": "El entorno de desarrollo de Microsoft (OSS). Soporte inmenso de plugins y telemetría deshabilitada por defecto."},
-            {"label": "VSCodium", "type": "toggle", "selected": false, "pkg": ["vscodium-bin"], "desc": "Versión 100% libre de telemetría e infraestructura de Microsoft de VSCode."},
-            {"label": "Neovim", "type": "toggle", "selected": false, "pkg": ["neovim"], "desc": "El editor de texto hiperextensible, rápido y purista basado en Vim. Ideal para ninjas de la terminal."},
-            {"label": "Zed", "type": "toggle", "selected": false, "pkg": ["zed"], "desc": "Nuevo editor ultrarrápido programado en Rust con integración nativa de IA e interfaces a 120 FPS."},
-            {"label": "Sublime Text 4", "type": "toggle", "selected": false, "pkg": ["sublime-text-4"], "desc": "Editor de texto ligero, propietario y extremadamente fluido."}
+            {
+                "label": "Visual Studio Code",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "code"
+                ],
+                "desc": "El entorno de desarrollo de Microsoft (OSS). Soporte inmenso de plugins y telemetría deshabilitada por defecto."
+            },
+            {
+                "label": "VSCodium",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "vscodium-bin"
+                ],
+                "desc": "Versión 100% libre de telemetría e infraestructura de Microsoft de VSCode."
+            },
+            {
+                "label": "Neovim",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "neovim"
+                ],
+                "desc": "El editor de texto hiperextensible, rápido y purista basado en Vim. Ideal para ninjas de la terminal."
+            },
+            {
+                "label": "Zed",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "zed"
+                ],
+                "desc": "Nuevo editor ultrarrápido programado en Rust con integración nativa de IA e interfaces a 120 FPS."
+            },
+            {
+                "label": "Sublime Text 4",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "sublime-text-4"
+                ],
+                "desc": "Editor de texto ligero, propietario y extremadamente fluido."
+            },
+            {
+                "label": "IntelliJ IDEA",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "intellij-idea-community-edition"
+                ],
+                "desc": "El potente IDE de JetBrains enfocado en ecosistema Java/Kotlin."
+            },
+            {
+                "label": "PyCharm",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "pycharm-community-edition"
+                ],
+                "desc": "El IDE de JetBrains especializado y dominante en desarrollo Python."
+            },
+            {
+                "label": "RustRover",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "rustrover"
+                ],
+                "desc": "El IDE de JetBrains exclusivo para desarrollo en Rust."
+            },
+            {
+                "label": "Emacs",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "emacs"
+                ],
+                "desc": "El sistema operativo disfrazado de editor de texto ultra extensible."
+            },
+            {
+                "label": "Cursor",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "cursor-bin"
+                ],
+                "desc": "IDE basado en VSCode integrado profundamente con IA (GPT-4/Claude) para pair-programming."
+            }
         ]
     },
     {
         "cat": "10. Herramientas de Desarrollo",
         "items": [
-            {"label": "Docker & Compose", "type": "toggle", "selected": false, "pkg": ["docker", "docker-compose"], "desc": "Plataforma de virtualización por contenedores estándar en la industria para despliegue de microservicios."},
-            {"label": "Podman", "type": "toggle", "selected": false, "pkg": ["podman"], "desc": "Alternativa de RedHat a Docker, diseñada para ejecutar contenedores sin necesidad de demonios root."},
-            {"label": "Git & GitHub CLI", "type": "toggle", "selected": true, "pkg": ["git", "github-cli"], "desc": "Control de versiones esencial para programar, clonar repositorios y compilar paquetes AUR."}
+            {
+                "label": "Docker & Compose",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "docker",
+                    "docker-compose"
+                ],
+                "desc": "Plataforma de virtualización por contenedores estándar en la industria para despliegue de microservicios."
+            },
+            {
+                "label": "Podman",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "podman"
+                ],
+                "desc": "Alternativa de RedHat a Docker, diseñada para ejecutar contenedores sin necesidad de demonios root."
+            },
+            {
+                "label": "Git & GitHub CLI",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "git",
+                    "github-cli"
+                ],
+                "desc": "Control de versiones esencial para programar, clonar repositorios y compilar paquetes AUR."
+            },
+            {
+                "label": "Postman",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "postman-bin"
+                ],
+                "desc": "Plataforma de API líder en la industria para construir, probar y modificar APIs."
+            },
+            {
+                "label": "Insomnia",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "insomnia-bin"
+                ],
+                "desc": "Cliente API REST/GraphQL de código abierto, sin necesidad de cuentas."
+            },
+            {
+                "label": "DBeaver",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "dbeaver"
+                ],
+                "desc": "Herramienta universal de gestión de bases de datos GUI para PostgreSQL, MySQL, SQLite, etc."
+            },
+            {
+                "label": "Node.js (LTS)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "nodejs",
+                    "npm"
+                ],
+                "desc": "Entorno de ejecución de JavaScript del lado del servidor (LTS)."
+            },
+            {
+                "label": "Python 3.12",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "python",
+                    "python-pip"
+                ],
+                "desc": "El lenguaje de programación más versátil, incluyendo PIP."
+            },
+            {
+                "label": "Rust & Cargo",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "rust",
+                    "cargo"
+                ],
+                "desc": "Lenguaje de programación de sistemas seguro y ultrarrápido."
+            }
         ]
     },
     {
         "cat": "11. Ofimática y Notas",
         "items": [
-            {"label": "LibreOffice", "type": "toggle", "selected": false, "pkg": ["libreoffice-fresh"], "desc": "La suite libre más potente. Alternativa completa a Microsoft Office con excelente compatibilidad de formatos clásicos."},
-            {"label": "OnlyOffice", "type": "toggle", "selected": false, "pkg": ["onlyoffice-bin"], "desc": "Suite de oficina colaborativa que ofrece la mayor fidelidad y compatibilidad con formatos nativos de Microsoft (.docx, .xlsx)."},
-            {"label": "WPS Office", "type": "toggle", "selected": false, "pkg": ["wps-office"], "desc": "Suite privada con una interfaz idéntica a MS Office y compatibilidad excepcional (código cerrado)."},
-            {"label": "Obsidian", "type": "toggle", "selected": false, "pkg": ["obsidian"], "desc": "Potente base de conocimiento que almacena tus notas localmente en formato Markdown puro."},
-            {"label": "Thunderbird", "type": "toggle", "selected": false, "pkg": ["thunderbird"], "desc": "Gestor avanzado de correo electrónico desarrollado por la Fundación Mozilla."},
-            {"label": "Okular", "type": "toggle", "selected": false, "pkg": ["okular"], "desc": "El lector de documentos universal de KDE (PDF, EPUB, CBR), rápido y rico en funciones."}
+            {
+                "label": "LibreOffice",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "libreoffice-fresh"
+                ],
+                "desc": "La suite libre más potente. Alternativa completa a Microsoft Office con excelente compatibilidad de formatos clásicos."
+            },
+            {
+                "label": "OnlyOffice",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "onlyoffice-bin"
+                ],
+                "desc": "Suite de oficina colaborativa que ofrece la mayor fidelidad y compatibilidad con formatos nativos de Microsoft (.docx, .xlsx)."
+            },
+            {
+                "label": "WPS Office",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "wps-office"
+                ],
+                "desc": "Suite privada con una interfaz idéntica a MS Office y compatibilidad excepcional (código cerrado)."
+            },
+            {
+                "label": "Obsidian",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "obsidian"
+                ],
+                "desc": "Potente base de conocimiento que almacena tus notas localmente en formato Markdown puro."
+            },
+            {
+                "label": "Thunderbird",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "thunderbird"
+                ],
+                "desc": "Gestor avanzado de correo electrónico desarrollado por la Fundación Mozilla."
+            },
+            {
+                "label": "Okular",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "okular"
+                ],
+                "desc": "El lector de documentos universal de KDE (PDF, EPUB, CBR), rápido y rico en funciones."
+            },
+            {
+                "label": "Notion",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "notion-app-electron"
+                ],
+                "desc": "Cliente no oficial de Notion para gestionar tu vida, tareas y wikis."
+            },
+            {
+                "label": "Joplin",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "joplin-appimage"
+                ],
+                "desc": "App de toma de notas de código abierto con sincronización cifrada end-to-end."
+            }
         ]
     },
     {
         "cat": "12. Sistema Base y Compresión",
         "items": [
-            {"label": "Base de Sistema y Compresión", "type": "toggle", "selected": true, "pkg": ["base-devel", "p7zip", "unrar", "unzip", "ntfs-3g"], "desc": "[AGRUPADO - CRÍTICO] Instala compiladores, soporte para ZIP/RAR/7Z y drivers NTFS para montar USBs formateados en Windows."}
+            {
+                "label": "Base de Sistema y Compresión",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "base-devel",
+                    "p7zip",
+                    "unrar",
+                    "unzip",
+                    "ntfs-3g"
+                ],
+                "desc": "[AGRUPADO - CRÍTICO] Instala compiladores, soporte para ZIP/RAR/7Z y drivers NTFS para montar USBs formateados en Windows."
+            },
+            {
+                "label": "HTop",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "htop"
+                ],
+                "desc": "Visor de procesos interactivo clásico (C)."
+            },
+            {
+                "label": "BTop",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "btop"
+                ],
+                "desc": "Monitor de recursos espectacularmente visual y detallado (C++)."
+            },
+            {
+                "label": "Fastfetch",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "fastfetch"
+                ],
+                "desc": "Alternativa ultrarrápida a Neofetch escrita en C."
+            },
+            {
+                "label": "Stow",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "stow"
+                ],
+                "desc": "Gestor de enlaces simbólicos ideal para gestionar tus dotfiles."
+            }
         ]
     },
     {
         "cat": "13. Monitoreo de Sistema",
         "items": [
-            {"label": "Btop", "type": "toggle", "selected": false, "pkg": ["btop"], "desc": "Impresionante monitor de sistema interactivo en terminal para observar CPU, Memoria, Red y Discos."},
-            {"label": "Fastfetch", "type": "toggle", "selected": false, "pkg": ["fastfetch"], "desc": "Utilidad CLI ultrarrápida que muestra el logo de tu distribución y las specs completas de tu hardware (escrito en C)."},
-            {"label": "Stacer", "type": "toggle", "selected": false, "pkg": ["stacer"], "desc": "Optimizador y monitor de sistema gráfico que te permite limpiar cachés, basura y gestionar servicios fácilmente."}
+            {
+                "label": "Btop",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "btop"
+                ],
+                "desc": "Impresionante monitor de sistema interactivo en terminal para observar CPU, Memoria, Red y Discos."
+            },
+            {
+                "label": "Fastfetch",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "fastfetch"
+                ],
+                "desc": "Utilidad CLI ultrarrápida que muestra el logo de tu distribución y las specs completas de tu hardware (escrito en C)."
+            },
+            {
+                "label": "Stacer",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "stacer"
+                ],
+                "desc": "Optimizador y monitor de sistema gráfico que te permite limpiar cachés, basura y gestionar servicios fácilmente."
+            }
         ]
     },
     {
         "cat": "14. Particiones y Discos",
         "items": [
-            {"label": "GParted", "type": "toggle", "selected": false, "pkg": ["gparted"], "desc": "El gestor de particiones estándar de GNOME. Formatea, redimensiona y verifica discos duros."},
-            {"label": "KDE Partition Manager", "type": "toggle", "selected": false, "pkg": ["partitionmanager"], "desc": "Alternativa de KDE para el manejo avanzado de particiones de discos duros."}
+            {
+                "label": "GParted",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "gparted"
+                ],
+                "desc": "El gestor de particiones estándar de GNOME. Formatea, redimensiona y verifica discos duros."
+            },
+            {
+                "label": "KDE Partition Manager",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "partitionmanager"
+                ],
+                "desc": "Alternativa de KDE para el manejo avanzado de particiones de discos duros."
+            }
         ]
     },
     {
         "cat": "15. Emuladores de Terminal",
         "items": [
-            {"label": "Alacritty", "type": "toggle", "selected": true, "pkg": ["alacritty"], "desc": "Terminal acelerada por GPU, hiper-rápida y configurada por defecto con nuestro tema Tokyo Night."},
-            {"label": "Kitty", "type": "toggle", "selected": false, "pkg": ["kitty"], "desc": "Terminal moderna con aceleración OpenGL, soporte nativo para multiplexación y visualización de imágenes (Kittens)."},
-            {"label": "WezTerm", "type": "toggle", "selected": false, "pkg": ["wezterm"], "desc": "Terminal escrita en Rust, hiper-configurable usando archivos Lua y con excelente soporte para fuentes de ligadura."},
-            {"label": "Foot", "type": "toggle", "selected": false, "pkg": ["foot"], "desc": "Emulador de terminal ultraligero y purista diseñado exclusivamente para Wayland."}
+            {
+                "label": "Alacritty",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "alacritty"
+                ],
+                "desc": "Terminal acelerada por GPU, hiper-rápida y configurada por defecto con nuestro tema Tokyo Night."
+            },
+            {
+                "label": "Kitty",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "kitty"
+                ],
+                "desc": "Terminal moderna con aceleración OpenGL, soporte nativo para multiplexación y visualización de imágenes (Kittens)."
+            },
+            {
+                "label": "WezTerm",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "wezterm"
+                ],
+                "desc": "Terminal escrita en Rust, hiper-configurable usando archivos Lua y con excelente soporte para fuentes de ligadura."
+            },
+            {
+                "label": "Foot",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "foot"
+                ],
+                "desc": "Emulador de terminal ultraligero y purista diseñado exclusivamente para Wayland."
+            }
         ]
     },
     {
         "cat": "16. Gestores de Archivos",
         "items": [
-            {"label": "Thunar", "type": "toggle", "selected": false, "pkg": ["thunar"], "desc": "Gestor de archivos ligero, rápido y predeterminado en entornos XFCE."},
-            {"label": "Dolphin", "type": "toggle", "selected": false, "pkg": ["dolphin"], "desc": "Gestor de archivos de KDE. Extremadamente potente con soporte nativo para terminal integrada y split-view."},
-            {"label": "Nautilus", "type": "toggle", "selected": false, "pkg": ["nautilus"], "desc": "Gestor de archivos de GNOME. Enfoque visual moderno y simplificado."},
-            {"label": "Yazi (CLI)", "type": "toggle", "selected": false, "pkg": ["yazi"], "desc": "Moderno e increíblemente rápido gestor de archivos para la terminal (Rust) con previsualización asíncrona de imágenes."},
-            {"label": "Ranger (CLI)", "type": "toggle", "selected": false, "pkg": ["ranger"], "desc": "El gestor de archivos de terminal clásico, controlado enteramente por atajos tipo Vim."}
+            {
+                "label": "Thunar",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "thunar"
+                ],
+                "desc": "Gestor de archivos ligero, rápido y predeterminado en entornos XFCE."
+            },
+            {
+                "label": "Dolphin",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "dolphin"
+                ],
+                "desc": "Gestor de archivos de KDE. Extremadamente potente con soporte nativo para terminal integrada y split-view."
+            },
+            {
+                "label": "Nautilus",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "nautilus"
+                ],
+                "desc": "Gestor de archivos de GNOME. Enfoque visual moderno y simplificado."
+            },
+            {
+                "label": "Yazi (CLI)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "yazi"
+                ],
+                "desc": "Moderno e increíblemente rápido gestor de archivos para la terminal (Rust) con previsualización asíncrona de imágenes."
+            },
+            {
+                "label": "Ranger (CLI)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "ranger"
+                ],
+                "desc": "El gestor de archivos de terminal clásico, controlado enteramente por atajos tipo Vim."
+            },
+            {
+                "label": "Nemo",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "nemo"
+                ],
+                "desc": "Gestor de archivos de Cinnamon, muy potente, soporta extensiones y es ideal para usuarios tradicionales."
+            },
+            {
+                "label": "Ranger",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "ranger"
+                ],
+                "desc": "Gestor de archivos en consola operado con atajos estilo Vim (Py)."
+            },
+            {
+                "label": "Yazi",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "yazi"
+                ],
+                "desc": "El nuevo rey de los gestores TUI. Escrito en Rust, ultrarrápido y soporta previsualización asíncrona de imágenes."
+            }
         ]
     },
     {
         "cat": "17. Intérpretes de Comandos",
         "items": [
-            {"label": "Zsh", "type": "toggle", "selected": false, "pkg": ["zsh"], "desc": "Intérprete de comandos (Shell) súper personalizable (ej. con Oh-My-Zsh) y plugins de autocompletado avanzado."},
-            {"label": "Fish", "type": "toggle", "selected": false, "pkg": ["fish"], "desc": "Shell amistosa que funciona de manera brillante desde el primer minuto con autocompletado nativo asombroso."}
+            {
+                "label": "Zsh",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "zsh"
+                ],
+                "desc": "Intérprete de comandos (Shell) súper personalizable (ej. con Oh-My-Zsh) y plugins de autocompletado avanzado."
+            },
+            {
+                "label": "Fish",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "fish"
+                ],
+                "desc": "Shell amistosa que funciona de manera brillante desde el primer minuto con autocompletado nativo asombroso."
+            },
+            {
+                "label": "Starship",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "starship"
+                ],
+                "desc": "Prompt universal e infinitamente personalizable escrito en Rust, compatible con Bash, ZSH y Fish."
+            },
+            {
+                "label": "Tmux",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "tmux"
+                ],
+                "desc": "Multiplexor de terminal. Divide tu terminal en paneles y desvincula procesos para que no mueran al cerrar."
+            }
         ]
     },
     {
         "cat": "18. Fuentes (Nerd Fonts)",
         "items": [
-            {"label": "Fuentes y Emojis (Nerd Fonts)", "type": "toggle", "selected": true, "pkg": ["ttf-fira-code", "ttf-meslo-nerd", "noto-fonts-emoji"], "desc": "[AGRUPADO - ESENCIAL] Instala las fuentes necesarias para que los íconos de la terminal (Waybar, NeoVim, etc) no se rompan."}
+            {
+                "label": "Fuentes y Emojis (Nerd Fonts)",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "ttf-fira-code",
+                    "ttf-meslo-nerd",
+                    "noto-fonts-emoji"
+                ],
+                "desc": "[AGRUPADO - ESENCIAL] Instala las fuentes necesarias para que los íconos de la terminal (Waybar, NeoVim, etc) no se rompan."
+            }
         ]
     },
     {
         "cat": "19. Servicios de Impresión",
         "items": [
-            {"label": "Soporte de Impresión (CUPS)", "type": "toggle", "selected": false, "pkg": ["cups", "cups-pdf", "system-config-printer"], "desc": "[AGRUPADO] Habilita los demonios de impresión para reconocer impresoras físicas en red y generar impresiones virtuales en formato PDF."}
+            {
+                "label": "Soporte de Impresión (CUPS)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "cups",
+                    "cups-pdf",
+                    "system-config-printer"
+                ],
+                "desc": "[AGRUPADO] Habilita los demonios de impresión para reconocer impresoras físicas en red y generar impresiones virtuales en formato PDF."
+            }
         ]
     },
     {
         "cat": "20. Subsistema de Audio",
         "items": [
-            {"label": "Soporte Base de Audio (PipeWire)", "type": "toggle", "selected": true, "pkg": ["pipewire", "pipewire-pulse", "pipewire-alsa", "pipewire-jack", "wireplumber"], "desc": "[AGRUPADO - VITAL] El estándar moderno de audio en Linux que reemplaza a PulseAudio y JACK. Baja latencia ideal para gaming y música."},
-            {"label": "EasyEffects", "type": "toggle", "selected": false, "pkg": ["easyeffects"], "desc": "Potente rack de efectos (ecualizador, reductor de ruido, compresor) impulsado por PipeWire para transformar tu audio y micrófono."}
+            {
+                "label": "Soporte Base de Audio (PipeWire)",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "pipewire",
+                    "pipewire-pulse",
+                    "pipewire-alsa",
+                    "pipewire-jack",
+                    "wireplumber"
+                ],
+                "desc": "[AGRUPADO - VITAL] El estándar moderno de audio en Linux que reemplaza a PulseAudio y JACK. Baja latencia ideal para gaming y música."
+            },
+            {
+                "label": "EasyEffects",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "easyeffects"
+                ],
+                "desc": "Potente rack de efectos (ecualizador, reductor de ruido, compresor) impulsado por PipeWire para transformar tu audio y micrófono."
+            },
+            {
+                "label": "Helvum",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "helvum"
+                ],
+                "desc": "Interfaz gráfica estilo patchbay (nodos) para enrutar el audio de PipeWire visualmente."
+            }
         ]
     },
     {
         "cat": "21. Redes y VPN",
         "items": [
-            {"label": "Bluetooth (Bluez)", "type": "toggle", "selected": true, "pkg": ["bluez", "bluez-utils", "blueman"], "desc": "[AGRUPADO] Pila oficial de Bluetooth. Necesaria para conectar audífonos inalámbricos y mandos de consola (Xbox/PlayStation)."},
-            {"label": "UFW (Firewall)", "type": "toggle", "selected": false, "pkg": ["ufw"], "desc": "Uncomplicated Firewall. Interfaz sencilla para gestionar los puertos y el muro de fuego de tu sistema operativo."},
-            {"label": "Tailscale", "type": "toggle", "selected": false, "pkg": ["tailscale"], "desc": "VPN del tipo Mesh (Zero Trust) para interconectar todos tus dispositivos (PC, Servidor, Celular) de manera privada sin abrir puertos."},
-            {"label": "DNSCrypt-Proxy", "type": "toggle", "selected": false, "pkg": ["dnscrypt-proxy"], "desc": "Servicio que encripta tus consultas DNS para prevenir que tu proveedor de internet (ISP) rastree o censure tu navegación."}
+            {
+                "label": "Bluetooth (Bluez)",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "bluez",
+                    "bluez-utils",
+                    "blueman"
+                ],
+                "desc": "[AGRUPADO] Pila oficial de Bluetooth. Necesaria para conectar audífonos inalámbricos y mandos de consola (Xbox/PlayStation)."
+            },
+            {
+                "label": "UFW (Firewall)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "ufw"
+                ],
+                "desc": "Uncomplicated Firewall. Interfaz sencilla para gestionar los puertos y el muro de fuego de tu sistema operativo."
+            },
+            {
+                "label": "Tailscale",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "tailscale"
+                ],
+                "desc": "VPN del tipo Mesh (Zero Trust) para interconectar todos tus dispositivos (PC, Servidor, Celular) de manera privada sin abrir puertos."
+            },
+            {
+                "label": "DNSCrypt-Proxy",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "dnscrypt-proxy"
+                ],
+                "desc": "Servicio que encripta tus consultas DNS para prevenir que tu proveedor de internet (ISP) rastree o censure tu navegación."
+            },
+            {
+                "label": "WireGuard",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "wireguard-tools"
+                ],
+                "desc": "El protocolo VPN del kernel moderno, inmensamente rápido y seguro."
+            },
+            {
+                "label": "OpenVPN",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "openvpn",
+                    "networkmanager-openvpn"
+                ],
+                "desc": "El protocolo VPN corporativo clásico, totalmente integrado con NetworkManager."
+            },
+            {
+                "label": "Nmap",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "nmap"
+                ],
+                "desc": "Escáner de puertos y redes indispensable para ciberseguridad y auditoría."
+            }
         ]
     },
     {
         "cat": "22. Máquinas Virtuales",
         "items": [
-            {"label": "Virt-Manager (QEMU/KVM)", "type": "toggle", "selected": false, "pkg": ["virt-manager", "qemu-desktop"], "desc": "Hipervisor nativo del kernel Linux. Permite virtualizar Windows u otras distros con un rendimiento casi nativo (GPU Passthrough)."},
-            {"label": "GNOME Boxes", "type": "toggle", "selected": false, "pkg": ["gnome-boxes"], "desc": "Gestor de máquinas virtuales diseñado específicamente para ser ridículamente fácil de usar por cualquier usuario."},
-            {"label": "VirtualBox", "type": "toggle", "selected": false, "pkg": ["virtualbox"], "desc": "Hipervisor tipo 2 clásico desarrollado por Oracle. Muy fácil de usar pero con menor rendimiento nativo que KVM."}
+            {
+                "label": "Virt-Manager (QEMU/KVM)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "virt-manager",
+                    "qemu-desktop"
+                ],
+                "desc": "Hipervisor nativo del kernel Linux. Permite virtualizar Windows u otras distros con un rendimiento casi nativo (GPU Passthrough)."
+            },
+            {
+                "label": "GNOME Boxes",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "gnome-boxes"
+                ],
+                "desc": "Gestor de máquinas virtuales diseñado específicamente para ser ridículamente fácil de usar por cualquier usuario."
+            },
+            {
+                "label": "VirtualBox",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "virtualbox"
+                ],
+                "desc": "Hipervisor tipo 2 clásico desarrollado por Oracle. Muy fácil de usar pero con menor rendimiento nativo que KVM."
+            },
+            {
+                "label": "Virt-Manager (KVM)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "virt-manager",
+                    "qemu-desktop",
+                    "libvirt",
+                    "edk2-ovmf",
+                    "dnsmasq"
+                ],
+                "desc": "Hipervisor nativo del kernel Linux (QEMU/KVM). Rendimiento casi nativo para Windows o distros (Soporta GPU Passthrough)."
+            },
+            {
+                "label": "Distrobox",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "distrobox"
+                ],
+                "desc": "Ejecuta cualquier distribución de Linux dentro de contenedores (Docker/Podman) totalmente integrados a tu sistema local."
+            }
         ]
     },
     {
         "cat": "23. Nube y Sincronización",
         "items": [
-            {"label": "Bitwarden", "type": "toggle", "selected": false, "pkg": ["bitwarden"], "desc": "Gestor de contraseñas de código abierto con sincronización en la nube."},
-            {"label": "KeePassXC", "type": "toggle", "selected": false, "pkg": ["keepassxc"], "desc": "Gestor de contraseñas local offline (almacenado en archivo cifrado en tu PC)."},
-            {"label": "Syncthing", "type": "toggle", "selected": false, "pkg": ["syncthing"], "desc": "Herramienta mágica P2P para mantener carpetas idénticas sincronizadas entre tu PC, laptop y celular sin usar servidores centralizados."},
-            {"label": "Nextcloud Client", "type": "toggle", "selected": false, "pkg": ["nextcloud-client"], "desc": "Cliente de sincronización de archivos para servidores Nextcloud (Tu propia nube personal)."}
+            {
+                "label": "Bitwarden",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "bitwarden"
+                ],
+                "desc": "Gestor de contraseñas de código abierto con sincronización en la nube."
+            },
+            {
+                "label": "KeePassXC",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "keepassxc"
+                ],
+                "desc": "Gestor de contraseñas local offline (almacenado en archivo cifrado en tu PC)."
+            },
+            {
+                "label": "Syncthing",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "syncthing"
+                ],
+                "desc": "Herramienta mágica P2P para mantener carpetas idénticas sincronizadas entre tu PC, laptop y celular sin usar servidores centralizados."
+            },
+            {
+                "label": "Nextcloud Client",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "nextcloud-client"
+                ],
+                "desc": "Cliente de sincronización de archivos para servidores Nextcloud (Tu propia nube personal)."
+            },
+            {
+                "label": "Nextcloud Desktop",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "nextcloud-client"
+                ],
+                "desc": "Cliente de sincronización para tu propia nube privada Nextcloud."
+            },
+            {
+                "label": "Rclone",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "rclone"
+                ],
+                "desc": "La 'Navaja Suiza' de la nube. Monta y sincroniza Google Drive, OneDrive, S3, Mega directamente como discos duros."
+            }
         ]
     },
     {
         "cat": "24. Descargas y Torrents",
         "items": [
-            {"label": "qBittorrent", "type": "toggle", "selected": false, "pkg": ["qbittorrent"], "desc": "El cliente BitTorrent libre más popular, confiable y sin publicidad. Similar a uTorrent pero seguro."},
-            {"label": "JDownloader2", "type": "toggle", "selected": false, "pkg": ["jdownloader2"], "desc": "Gestor de descargas masivas capaz de capturar enlaces, sortear captchas y automatizar extracciones de RAR/ZIP."},
-            {"label": "Transmission", "type": "toggle", "selected": false, "pkg": ["transmission-gtk"], "desc": "Cliente BitTorrent ultraligero y purista que utiliza ínfimos recursos de tu PC."}
+            {
+                "label": "qBittorrent",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "qbittorrent"
+                ],
+                "desc": "El cliente BitTorrent libre más popular, confiable y sin publicidad. Similar a uTorrent pero seguro."
+            },
+            {
+                "label": "JDownloader2",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "jdownloader2"
+                ],
+                "desc": "Gestor de descargas masivas capaz de capturar enlaces, sortear captchas y automatizar extracciones de RAR/ZIP."
+            },
+            {
+                "label": "Transmission",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "transmission-gtk"
+                ],
+                "desc": "Cliente BitTorrent ultraligero y purista que utiliza ínfimos recursos de tu PC."
+            },
+            {
+                "label": "JDownloader 2",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "jdownloader2"
+                ],
+                "desc": "El rey de los gestores de descarga directa. Capta enlaces de decenas de hostings y extrae archivos automáticamente."
+            },
+            {
+                "label": "yt-dlp",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "yt-dlp"
+                ],
+                "desc": "Herramienta CLI implacable para descargar videos o extraer música de miles de sitios (incluido YouTube)."
+            }
         ]
     },
     {
         "cat": "25. Drivers Gráficos",
         "items": [
-            {"label": "Mesa (AMD / Intel)", "type": "toggle", "selected": true, "pkg": ["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel", "intel-media-driver", "libva-mesa-driver", "lib32-libva-mesa-driver", "libva-utils"], "desc": "[AGRUPADO] Drivers de código abierto para gráficas Radeon e Intel, con aceleración de video por hardware (VA-API)."},
-            {"label": "NVIDIA (Privativo DKMS)", "type": "toggle", "selected": false, "pkg": ["nvidia-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings", "libva-utils"], "desc": "[AGRUPADO] Módulo DKMS, bibliotecas propietarias y aceleración VA-API para NVIDIA. Esencial para extraer el 100% del rendimiento."}
+            {
+                "label": "Mesa (AMD / Intel)",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "mesa",
+                    "lib32-mesa",
+                    "vulkan-radeon",
+                    "lib32-vulkan-radeon",
+                    "vulkan-intel",
+                    "lib32-vulkan-intel",
+                    "intel-media-driver",
+                    "libva-mesa-driver",
+                    "lib32-libva-mesa-driver",
+                    "libva-utils"
+                ],
+                "desc": "[AGRUPADO] Drivers de código abierto para gráficas Radeon e Intel, con aceleración de video por hardware (VA-API)."
+            },
+            {
+                "label": "NVIDIA (Privativo DKMS)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "nvidia-dkms",
+                    "nvidia-utils",
+                    "lib32-nvidia-utils",
+                    "nvidia-settings",
+                    "libva-utils"
+                ],
+                "desc": "[AGRUPADO] Módulo DKMS, bibliotecas propietarias y aceleración VA-API para NVIDIA. Esencial para extraer el 100% del rendimiento."
+            }
         ]
     },
     {
         "cat": "[ INICIAR METAMORFOSIS ]",
         "items": [
-            {"label": "[ >> ARRANCAR INSTALADOR << ]", "type": "action", "selected": false, "pkg": [], "desc": "Presiona la tecla ENTER sobre este botón para iniciar la descarga e instalación automática de todos los paquetes seleccionados."}
+            {
+                "label": "[ >> ARRANCAR INSTALADOR << ]",
+                "type": "action",
+                "selected": false,
+                "pkg": [],
+                "desc": "Presiona la tecla ENTER sobre este botón para iniciar la descarga e instalación automática de todos los paquetes seleccionados."
+            }
         ]
     }
 ]

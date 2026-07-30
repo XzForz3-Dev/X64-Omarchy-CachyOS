@@ -316,28 +316,36 @@ def update_ui():
                 style = "dim white" if active_pane == "right" else "white"
                 cat_text += f"  [{style}]{c['cat']}[/{style}]\n\n"
                 
-        item_text = ""
+        from rich.table import Table
+        grid = Table.grid(padding=(1, 2))
+        grid.add_column("C1", ratio=1)
+        grid.add_column("C2", ratio=1)
+        grid.add_column("C3", ratio=1)
+        
         items = menu_data[cat_idx]["items"]
+        cells = []
         for i, item in enumerate(items):
             is_active = (i == item_idx and active_pane == "right")
             cursor = "[bold yellow]➤[/bold yellow] " if is_active else "  "
             
             if item["type"] == "action":
                 style = "bold green reverse" if is_active else "bold green"
-                item_text += f"\n{cursor}[{style}]{item['label']}[/{style}]\n\n"
+                cells.append(f"{cursor}[{style}]{item['label']}[/{style}]")
             else:
-                chk_box = "[bold green][████] ON [/bold green]" if item.get("selected", False) else "[bold bright_black][░░░░] OFF[/bold bright_black]"
-                if is_active:
-                    style = "bold white"
-                else:
-                    style = "dim white"
+                chk_box = "[bold green][✓][/bold green]" if item.get("selected", False) else "[bold bright_black][ ][/bold bright_black]"
+                style = "bold white" if is_active else "dim white"
+                if not is_active:
                     chk_box = chk_box.replace("bold", "dim")
-                    
-                item_text += f"{cursor}{chk_box} [{style}]{item['label']}[/{style}]\n\n"
+                cells.append(f"{cursor}{chk_box} [{style}]{item['label']}[/{style}]")
                 
+        while len(cells) % 3 != 0:
+            cells.append("")
+            
+        for i in range(0, len(cells), 3):
+            grid.add_row(cells[i], cells[i+1], cells[i+2])
         # --- NUEVO LAYOUT COMPLETO ESTILO IDE ---
         nav_panel = Panel(
-            Align.center(Text.from_markup("[bold cyan]NAVEGACIÓN 2D:[/bold cyan] Flechas [bold yellow]⬅️ ➡️[/bold yellow] cambian panel. Flechas [bold yellow]⬆️ ⬇️[/bold yellow] mueven selector. [bold yellow]ESPACIO[/bold yellow] alterna.", justify="center"), vertical="middle"),
+            Align.center(Text.from_markup("[bold cyan]NAVEGACIÓN 2D:[/bold cyan] Flechas [bold yellow]← →[/bold yellow] cambian panel. Flechas [bold yellow]↑ ↓[/bold yellow] mueven selector. [bold yellow]ESPACIO[/bold yellow] alterna.", justify="center"), vertical="middle"),
             title=f"[bold magenta]Configuración Pre-Vuelo[/bold magenta]",
             border_style=border_color
         )
@@ -346,7 +354,7 @@ def update_ui():
         item_border = "green" if active_pane == "right" else "dim white"
         
         cat_panel = Panel(cat_text, title="[bold cyan]Índice de Categorías[/bold cyan]", border_style=cat_border)
-        item_panel = Panel(item_text, title="[bold green]Paquetes y Opciones[/bold green]", border_style=item_border)
+        item_panel = Panel(grid, title="[bold green]Paquetes y Opciones[/bold green]", border_style=item_border)
         
         menu_layout = Layout()
         menu_layout.split_row(
@@ -400,17 +408,24 @@ def keyboard_worker():
                         cat_idx = max(0, cat_idx - 1)
                         item_idx = 0
                     else:
-                        item_idx = max(0, item_idx - 1)
+                        item_idx = max(0, item_idx - 3)
                 elif ch == '\x1b[B': # Abajo
                     if active_pane == "left":
                         cat_idx = min(len(menu_data) - 1, cat_idx + 1)
                         item_idx = 0
                     else:
-                        item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 1)
+                        item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 3)
                 elif ch == '\x1b[C': # Derecha
-                    active_pane = "right"
+                    if active_pane == "left":
+                        active_pane = "right"
+                    else:
+                        item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 1)
                 elif ch == '\x1b[D': # Izquierda
-                    active_pane = "left"
+                    if active_pane == "right":
+                        if item_idx % 3 == 0:
+                            active_pane = "left"
+                        else:
+                            item_idx = max(0, item_idx - 1)
                 elif ch == ' ':
                     if active_pane == "right":
                         item = menu_data[cat_idx]["items"][item_idx]
