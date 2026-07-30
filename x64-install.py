@@ -39,13 +39,16 @@ with open(state.LOG_FILE, "w") as f:
 
 hardware.detect_gpu_and_update_menu()
 
+# Precargar fastfetch antes de iniciar la UI para evitar parpadeos de carga
+hardware.get_sys_info()
+
 try:
-    with Live(ui.update_ui(), refresh_per_second=4) as live:
+    with Live(ui.update_ui(), refresh_per_second=30, screen=True) as live:
         k_worker = threading.Thread(target=ui.keyboard_worker, daemon=True)
         k_worker.start()
         
         while not state.install_done:
-            time.sleep(0.25)
+            time.sleep(0.02)
             
             if state.current_state == "error" and state.error_prompt:
                 live.stop()
