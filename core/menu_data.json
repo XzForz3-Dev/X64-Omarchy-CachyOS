@@ -1007,6 +1007,33 @@
                     "stacer"
                 ],
                 "desc": "Optimizador y monitor de sistema gráfico que te permite limpiar cachés, basura y gestionar servicios fácilmente."
+            },
+            {
+                "label": "Mission Center",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "mission-center"
+                ],
+                "desc": "Monitor de sistema moderno estilo Windows Task Manager escrito en Rust (GTK4)."
+            },
+            {
+                "label": "NVTop",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "nvtop"
+                ],
+                "desc": "Monitor de tareas estilo htop específicamente para GPUs (NVIDIA, AMD, Intel)."
+            },
+            {
+                "label": "Glances",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "glances"
+                ],
+                "desc": "Monitor de sistema cruzado en Python con interfaz web integrada."
             }
         ]
     },
@@ -1205,6 +1232,42 @@
                     "noto-fonts-emoji"
                 ],
                 "desc": "[AGRUPADO - ESENCIAL] Instala las fuentes necesarias para que los íconos de la terminal (Waybar, NeoVim, etc) no se rompan."
+            },
+            {
+                "label": "JetBrains Mono (Nerd)",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "ttf-jetbrains-mono-nerd"
+                ],
+                "desc": "Fuente optimizada para programadores y TUI, con iconos Nerd."
+            },
+            {
+                "label": "FiraCode (Nerd)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "ttf-firacode-nerd"
+                ],
+                "desc": "Fuente clásica con ligaduras de programación."
+            },
+            {
+                "label": "Meslo (Nerd)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "ttf-meslo-nerd"
+                ],
+                "desc": "Fuente oficial recomendada por terminales avanzadas (zsh/p10k)."
+            },
+            {
+                "label": "Noto Color Emoji",
+                "type": "toggle",
+                "selected": true,
+                "pkg": [
+                    "noto-fonts-emoji"
+                ],
+                "desc": "Soporte universal para Emojis en el sistema (Google Noto)."
             }
         ]
     },
@@ -1221,6 +1284,34 @@
                     "system-config-printer"
                 ],
                 "desc": "[AGRUPADO] Habilita los demonios de impresión para reconocer impresoras físicas en red y generar impresiones virtuales en formato PDF."
+            },
+            {
+                "label": "CUPS (Core)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "cups",
+                    "cups-pdf"
+                ],
+                "desc": "Sistema de impresión estándar de Linux y soporte para imprimir a PDF."
+            },
+            {
+                "label": "GUI Config (Impresoras)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "system-config-printer"
+                ],
+                "desc": "Interfaz gráfica para configurar y añadir impresoras fácilmente."
+            },
+            {
+                "label": "HPLIP (HP Drivers)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "hplip"
+                ],
+                "desc": "Controladores oficiales para impresoras y escáneres HP."
             }
         ]
     },
@@ -1528,6 +1619,34 @@
                     "libva-utils"
                 ],
                 "desc": "[AGRUPADO] Módulo DKMS, bibliotecas propietarias y aceleración VA-API para NVIDIA. Esencial para extraer el 100% del rendimiento."
+            },
+            {
+                "label": "Vulkan Tools",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "vulkan-tools"
+                ],
+                "desc": "Herramientas de diagnóstico de Vulkan (vulkaninfo)."
+            },
+            {
+                "label": "Mesa Utils",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "mesa-utils"
+                ],
+                "desc": "Utilidades OpenGL (glxinfo, glxgears)."
+            },
+            {
+                "label": "AMD VLK",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "amdvlk",
+                    "lib32-amdvlk"
+                ],
+                "desc": "Driver Vulkan Open Source oficial de AMD (Alternativo a RADV)."
             }
         ]
     },
