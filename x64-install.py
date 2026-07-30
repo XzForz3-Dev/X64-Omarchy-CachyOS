@@ -126,14 +126,27 @@ def get_sys_info():
         try:
             res = subprocess.run(["fastfetch", "--logo", "none"], stdout=subprocess.PIPE, text=True)
             if res.returncode == 0:
-                get_sys_info.ff_text = res.stdout.strip()
+                raw_text = res.stdout.strip()
+                colored_lines = []
+                for line in raw_text.split('\n'):
+                    sep = " 󰁔 " if " 󰁔 " in line else (": " if ": " in line else None)
+                    if sep:
+                        key, val = line.split(sep, 1)
+                        colored_lines.append(f"[bold cyan]{key}[/bold cyan]{sep}[yellow]{val}[/yellow]")
+                    elif "@" in line and "---" not in line and "GHz" not in line:
+                        colored_lines.append(f"[bold magenta]{line}[/bold magenta]")
+                    elif "---" in line:
+                        colored_lines.append(f"[dim white]{line}[/dim white]")
+                    else:
+                        colored_lines.append(line)
+                get_sys_info.ff_text = "\n".join(colored_lines)
         except:
             pass
             
         if not get_sys_info.ff_text:
             get_sys_info.ff_text = "Detección de Hardware fallida (Fastfetch no disponible)."
             
-    table.add_row(Text.from_ansi(get_sys_info.ff_text))
+    table.add_row(Text.from_markup(get_sys_info.ff_text))
     table.add_row("")
     
     import time
