@@ -568,7 +568,9 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False):
     
     # Aceleración multicore para mkinitcpio (Purgar configuración anterior y forzar array de bash)
     run_cmd_live("sudo sed -i '/COMPRESSION/d' /etc/mkinitcpio.conf", check=False)
-    run_cmd_live("sudo bash -c 'cat <<EOF >> /etc/mkinitcpio.conf\nCOMPRESSION=\"zstd\"\nCOMPRESSION_OPTIONS=(\"-T0\")\nEOF'", check=False)
+    with open("/tmp/mkinitcpio_add.conf", "w") as f:
+        f.write('COMPRESSION="zstd"\nCOMPRESSION_OPTIONS=("-T0")\n')
+    run_cmd_live("sudo bash -c 'cat /tmp/mkinitcpio_add.conf >> /etc/mkinitcpio.conf'", check=False)
     
     # Asegurar que todos los módulos DKMS (como nvidia-470xx-dkms legacy) estén compilados para el kernel actual
     log_lines.append("[yellow]Compilando módulos DKMS (Puede tardar)...[/yellow]")
@@ -707,7 +709,9 @@ def installer_worker():
         
         # Parche de seguridad para evitar que Plymouth congele la TTY1 tapando a Tuigreet
         run_cmd_live("sudo mkdir -p /etc/systemd/system/greetd.service.d", check=False)
-        run_cmd_live("sudo bash -c 'cat << \"EOF\" > /etc/systemd/system/greetd.service.d/plymouth-fix.conf\n[Service]\nExecStartPre=-/usr/bin/plymouth quit\nEOF'", check=False)
+        with open("/tmp/plymouth-fix.conf", "w") as f:
+            f.write("[Service]\nExecStartPre=-/usr/bin/plymouth quit\n")
+        run_cmd_live("sudo mv /tmp/plymouth-fix.conf /etc/systemd/system/greetd.service.d/plymouth-fix.conf", check=False)
         
         # --- Configurar Sesiones ---
         if is_legacy_nvidia:
@@ -718,7 +722,9 @@ Exec=Hyprland
 Type=Application
 """
             run_cmd_live("sudo mkdir -p /usr/share/wayland-sessions", check=False)
-            run_cmd_live(f"sudo bash -c 'cat << \"EOF\" > /usr/share/wayland-sessions/omarchy-legacy.desktop\n{legacy_session}EOF'", check=False)
+            with open("/tmp/omarchy-legacy.desktop", "w") as f:
+                f.write(legacy_session)
+            run_cmd_live("sudo mv /tmp/omarchy-legacy.desktop /usr/share/wayland-sessions/omarchy-legacy.desktop", check=False)
             
             greetd_config = """[terminal]
 vt = 1
@@ -734,7 +740,9 @@ command = "tuigreet --cmd 'uwsm start hyprland-uwsm.desktop' --asterisks --time 
 user = "greeter"
 """
 
-        run_cmd_live(f"sudo bash -c 'cat << \"EOF\" > /etc/greetd/config.toml\n{greetd_config}EOF'", check=False)
+        with open("/tmp/greetd_config.toml", "w") as f:
+            f.write(greetd_config)
+        run_cmd_live("sudo mv /tmp/greetd_config.toml /etc/greetd/config.toml", check=False)
 
         if not is_legacy_nvidia:
             progress.update(t_config, description="[yellow]Configurando Tema SDDM...", advance=5)
@@ -749,7 +757,7 @@ user = "greeter"
         else:
             progress.update(t_config, description="[yellow]Habilitando Tuigreet (Legacy Hardware)...", advance=15)
             run_cmd_live("sudo systemctl disable sddm.service 2>/dev/null", check=False)
-            run_cmd_live("sudo systemctl enable greetd.service --now", check=False)
+            run_cmd_live("sudo systemctl enable -f greetd.service --now", check=False)
 
 
         run_cmd_live("sudo systemctl enable bluetooth.service", check=False)
