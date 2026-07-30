@@ -315,6 +315,15 @@
                     "itch-setup"
                 ],
                 "desc": "Plataforma enfocada en juegos indie y creadores independientes."
+            },
+            {
+                "label": "Prism Launcher",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "prismlauncher"
+                ],
+                "desc": "El mejor lanzador Open Source para Minecraft. Permite gestionar mods y múltiples versiones fácilmente."
             }
         ]
     },
@@ -383,6 +392,35 @@
                     "protonup-qt"
                 ],
                 "desc": "Instala fácilmente GE-Proton para Steam y Wine-GE para Lutris."
+            },
+            {
+                "label": "Steam Devices (Mandos)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "steam-devices"
+                ],
+                "desc": "Reglas udev oficiales que permiten que Steam reconozca cientos de mandos (PS4/PS5/Xbox/Switch) sin problemas."
+            },
+            {
+                "label": "Wine (Base)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "wine",
+                    "wine-gecko",
+                    "wine-mono"
+                ],
+                "desc": "La capa de compatibilidad cruda para ejecutar archivos .exe de Windows sin Steam ni Lutris."
+            },
+            {
+                "label": "Winetricks",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "winetricks"
+                ],
+                "desc": "Script indispensable para instalar dependencias de Windows (DirectX, .NET, VC++) en entornos de Wine."
             }
         ]
     },
@@ -1358,6 +1396,33 @@
                     "glances"
                 ],
                 "desc": "Monitor de sistema cruzado en Python con interfaz web integrada."
+            },
+            {
+                "label": "Neofetch",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "neofetch"
+                ],
+                "desc": "El script clásico que imprime la información de tu sistema junto a tu logo ASCII en la terminal."
+            },
+            {
+                "label": "Bottom",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "bottom"
+                ],
+                "desc": "Monitor de sistema en terminal escrito en Rust. Altamente visual con gráficos, alternativo a Btop."
+            },
+            {
+                "label": "Sysbench",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "sysbench"
+                ],
+                "desc": "Herramienta de terminal para hacer benchmarks de CPU, Memoria e I/O."
             }
         ]
     },
@@ -1381,6 +1446,51 @@
                     "partitionmanager"
                 ],
                 "desc": "Alternativa de KDE para el manejo avanzado de particiones de discos duros."
+            },
+            {
+                "label": "GNOME Disks",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "gnome-disk-utility"
+                ],
+                "desc": "Gestor de discos de GNOME, excelente para formatear USBs y montar particiones fácilmente."
+            },
+            {
+                "label": "NCDU (Terminal)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "ncdu"
+                ],
+                "desc": "Analizador de uso de disco en terminal (TUI). Imprescindible para encontrar qué carpetas llenan tu disco."
+            },
+            {
+                "label": "Baobab (Gráfico)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "baobab"
+                ],
+                "desc": "Analizador de uso de disco gráfico del proyecto GNOME (gráfico de anillos)."
+            },
+            {
+                "label": "Filelight (KDE)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "filelight"
+                ],
+                "desc": "Analizador de uso de disco gráfico del ecosistema KDE Plasma."
+            },
+            {
+                "label": "TestDisk & PhotoRec",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "testdisk"
+                ],
+                "desc": "Herramientas forenses de terminal para recuperar particiones perdidas o archivos borrados por accidente."
             }
         ]
     },
@@ -1422,6 +1532,42 @@
                     "foot"
                 ],
                 "desc": "Emulador de terminal ultraligero y purista diseñado exclusivamente para Wayland."
+            },
+            {
+                "label": "GNOME Terminal",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "gnome-terminal"
+                ],
+                "desc": "Terminal clásica, robusta y estándar de GNOME."
+            },
+            {
+                "label": "Konsole",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "konsole"
+                ],
+                "desc": "Terminal oficial de KDE, altamente personalizable con perfiles."
+            },
+            {
+                "label": "Tilix",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "tilix"
+                ],
+                "desc": "Terminal GTK avanzada que permite dividir la ventana en múltiples paneles (tiling) fácilmente."
+            },
+            {
+                "label": "Yakuake",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "yakuake"
+                ],
+                "desc": "Terminal desplegable al estilo Quake para el ecosistema KDE."
             }
         ]
     },
@@ -1540,6 +1686,42 @@
                     "tmux"
                 ],
                 "desc": "Multiplexor de terminal. Divide tu terminal en paneles y desvincula procesos para que no mueran al cerrar."
+            },
+            {
+                "label": "Bash Completion",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "bash-completion"
+                ],
+                "desc": "Habilita el autocompletado avanzado (tecla TAB) para comandos y paquetes en Bash."
+            },
+            {
+                "label": "Nushell",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "nushell"
+                ],
+                "desc": "Una shell moderna escrita en Rust orientada al manejo de datos estructurados (tablas en vez de texto plano)."
+            },
+            {
+                "label": "Zellij",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "zellij"
+                ],
+                "desc": "Multiplexor de terminal moderno escrito en Rust, excelente alternativa amigable a Tmux."
+            },
+            {
+                "label": "Kitty Terminfo",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "kitty-terminfo"
+                ],
+                "desc": "Archivos de información requeridos si usas Kitty para conectarte a otros servidores por SSH sin romper los colores."
             }
         ]
     },
@@ -1592,6 +1774,42 @@
                     "noto-fonts-emoji"
                 ],
                 "desc": "Soporte universal para Emojis en el sistema (Google Noto)."
+            },
+            {
+                "label": "Hack (Nerd)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "ttf-hack-nerd"
+                ],
+                "desc": "Fuente Hack optimizada con ligaduras e íconos Nerd Font."
+            },
+            {
+                "label": "Cascadia Code (Nerd)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "ttf-cascadia-code-nerd"
+                ],
+                "desc": "La famosa tipografía para terminales desarrollada por Microsoft, parcheada con Nerd Fonts."
+            },
+            {
+                "label": "DejaVu Sans Mono (Nerd)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "ttf-dejavu-nerd"
+                ],
+                "desc": "Una de las fuentes monoespaciadas más clásicas y legibles en Linux."
+            },
+            {
+                "label": "Noto Fonts CJK",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "noto-fonts-cjk"
+                ],
+                "desc": "Soporte oficial de Google para caracteres asiáticos (Chino, Japonés, Coreano) para evitar cuadritos de error."
             }
         ]
     },
@@ -1636,6 +1854,25 @@
                     "hplip"
                 ],
                 "desc": "Controladores oficiales para impresoras y escáneres HP."
+            },
+            {
+                "label": "Gutenprint (Drivers)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "gutenprint"
+                ],
+                "desc": "Colección masiva de controladores Open Source para cientos de impresoras Canon, Epson, Lexmark, etc."
+            },
+            {
+                "label": "SANE (Escáneres)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "sane",
+                    "xsane"
+                ],
+                "desc": "Scanner Access Now Easy. Bibliotecas y GUI base para detectar y utilizar escáneres en Linux."
             }
         ]
     },
@@ -1672,6 +1909,33 @@
                     "helvum"
                 ],
                 "desc": "Interfaz gráfica estilo patchbay (nodos) para enrutar el audio de PipeWire visualmente."
+            },
+            {
+                "label": "Pavucontrol",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "pavucontrol"
+                ],
+                "desc": "El mezclador de audio gráfico estándar. Permite controlar el volumen de aplicaciones individuales fácilmente."
+            },
+            {
+                "label": "Qpwgraph",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "qpwgraph"
+                ],
+                "desc": "Interfaz gráfica en Qt para gestionar conexiones y ruteo de audio y video en PipeWire (Alternativa a Helvum)."
+            },
+            {
+                "label": "ALSA Utils",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "alsa-utils"
+                ],
+                "desc": "Utilidades de bajo nivel para audio (incluye alsamixer para arreglar volúmenes silenciados a nivel kernel)."
             }
         ]
     },
@@ -1816,6 +2080,16 @@
                     "distrobox"
                 ],
                 "desc": "Ejecuta cualquier distribución de Linux dentro de contenedores (Docker/Podman) totalmente integrados a tu sistema local."
+            },
+            {
+                "label": "Podman",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "podman",
+                    "podman-compose"
+                ],
+                "desc": "Motor de contenedores compatible con Docker pero sin necesidad de demonio root (Rootless)."
             }
         ]
     },
@@ -1875,6 +2149,24 @@
                     "rclone"
                 ],
                 "desc": "La 'Navaja Suiza' de la nube. Monta y sincroniza Google Drive, OneDrive, S3, Mega directamente como discos duros."
+            },
+            {
+                "label": "MEGA Sync",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "megasync"
+                ],
+                "desc": "Cliente oficial gráfico de MEGA para sincronizar archivos con cifrado de extremo a extremo."
+            },
+            {
+                "label": "Rclone Browser",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "rclone-browser"
+                ],
+                "desc": "Interfaz gráfica para Rclone, facilitando la conexión a más de 40 servicios en la nube."
             }
         ]
     },
@@ -1934,6 +2226,33 @@
                     "motrix"
                 ],
                 "desc": "Gestor de descargas moderno y completo."
+            },
+            {
+                "label": "Aria2",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "aria2"
+                ],
+                "desc": "Gestor de descargas CLI ultrarrápido y ligero. Soporta HTTP, FTP, BitTorrent y Metalink."
+            },
+            {
+                "label": "FileZilla",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "filezilla"
+                ],
+                "desc": "El cliente FTP, FTPS y SFTP más famoso y robusto con interfaz gráfica."
+            },
+            {
+                "label": "KTorrent",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "ktorrent"
+                ],
+                "desc": "Cliente BitTorrent nativo del proyecto KDE, lleno de funcionalidades avanzadas."
             }
         ]
     },
