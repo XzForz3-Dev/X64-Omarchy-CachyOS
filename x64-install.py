@@ -121,6 +121,8 @@ def get_sys_info():
     
     if not hasattr(get_sys_info, "ff_text"):
         get_sys_info.ff_text = ""
+        get_sys_info.last_update = 0
+        get_sys_info.cached_rows = []
         try:
             res = subprocess.run(["fastfetch", "--logo", "none"], stdout=subprocess.PIPE, text=True)
             if res.returncode == 0:
@@ -134,20 +136,51 @@ def get_sys_info():
     table.add_row(Text.from_ansi(get_sys_info.ff_text))
     table.add_row("")
     
-    cpu_percent = psutil.cpu_percent() if psutil else 0
-    ram = psutil.virtual_memory() if psutil else None
-    ram_percent = ram.percent if ram else 0
-    
-    bar_len = 25
-    cpu_filled = int((cpu_percent / 100) * bar_len)
-    cpu_bar = "█" * cpu_filled + "░" * (bar_len - cpu_filled)
-    
-    ram_filled = int((ram_percent / 100) * bar_len)
-    ram_bar = "█" * ram_filled + "░" * (bar_len - ram_filled)
-    
-    table.add_row(f"[cyan]CPU Uso:[/cyan] [yellow]{cpu_percent:>5.1f}%[/yellow] [green]{cpu_bar}[/green]")
-    table.add_row(f"[cyan]RAM Uso:[/cyan] [yellow]{ram_percent:>5.1f}%[/yellow] [magenta]{ram_bar}[/magenta]")
-    
+    import time
+    now = time.time()
+    if now - get_sys_info.last_update > 1.0:
+        get_sys_info.last_update = now
+        rows = []
+        bar_len = 25
+        
+        cpu_percent = psutil.cpu_percent() if psutil else 0
+        cpu_filled = int((cpu_percent / 100) * bar_len)
+        cpu_bar = "█" * cpu_filled + "░" * (bar_len - cpu_filled)
+        rows.append(f"[cyan]CPU Uso:[/cyan] [yellow]{cpu_percent:>5.1f}%[/yellow] [green]{cpu_bar}[/green]")
+        
+        if psutil:
+            ram = psutil.virtual_memory()
+            ram_percent = ram.percent
+            ram_filled = int((ram_percent / 100) * bar_len)
+            ram_bar = "█" * ram_filled + "░" * (bar_len - ram_filled)
+            rows.append(f"[cyan]RAM Uso:[/cyan] [yellow]{ram_percent:>5.1f}%[/yellow] [magenta]{ram_bar}[/magenta]")
+            
+            try:
+                disk = psutil.disk_usage('/')
+                disk_percent = disk.percent
+                disk_filled = int((disk_percent / 100) * bar_len)
+                disk_bar = "█" * disk_filled + "░" * (bar_len - disk_filled)
+                rows.append(f"[cyan]SSD Uso:[/cyan] [yellow]{disk_percent:>5.1f}%[/yellow] [blue]{disk_bar}[/blue]")
+            except:
+                pass
+                
+            try:
+                bat = psutil.sensors_battery()
+                if bat is not None:
+                    bat_percent = bat.percent
+                    bat_filled = int((bat_percent / 100) * bar_len)
+                    bat_color = "red" if bat_percent < 20 and not bat.power_plugged else "green"
+                    bat_bar = "█" * bat_filled + "░" * (bar_len - bat_filled)
+                    plug_icon = "🔌" if bat.power_plugged else "🔋"
+                    rows.append(f"[cyan]Batería:[/cyan] [yellow]{bat_percent:>5.1f}%[/yellow] [{bat_color}]{bat_bar}[/{bat_color}] {plug_icon}")
+            except:
+                pass
+                
+        get_sys_info.cached_rows = rows
+        
+    for row in get_sys_info.cached_rows:
+        table.add_row(row)
+        
     return table
 
 # --- Layout Setup ---
