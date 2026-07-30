@@ -175,7 +175,7 @@ def installer_worker():
         if state.is_legacy_nvidia:
             fish_autostart = """if status is-login
     if test (tty) = /dev/tty1
-        exec Hyprland
+        exec omarchy-tty-selector
     end
 end
 """

@@ -31,6 +31,7 @@ import core.installer as installer
 
 # Iniciar la Sincronización Fantasma inmediatamente en background
 threading.Thread(target=engine.precache_worker, daemon=True).start()
+threading.Thread(target=engine.keep_sudo_alive, daemon=True).start()
 
 # --- Launch Sequence ---
 with open(state.LOG_FILE, "w") as f:

@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+# omarchy:group=system
+# omarchy:name=tty-selector
+# omarchy:summary=TTY Session Selector for Legacy NVIDIA
+import os
+import sys
+import glob
+
+def get_sessions():
+    sessions = []
+    # Wayland and X11 sessions directories
+    dirs = ['/usr/share/wayland-sessions', '/usr/share/xsessions']
+    for d in dirs:
+        if os.path.exists(d):
+            for f in glob.glob(os.path.join(d, '*.desktop')):
+                name, exec_cmd = None, None
+                try:
+                    with open(f, 'r', encoding='utf-8') as file:
+                        for line in file:
+                            line = line.strip()
+                            if line.startswith('Name=') and not name:
+                                name = line.split('=', 1)[1].strip()
+                            elif line.startswith('Exec=') and not exec_cmd:
+                                exec_cmd = line.split('=', 1)[1].strip()
+                except Exception:
+                    continue
+                if name and exec_cmd:
+                    sessions.append((name, exec_cmd))
+    return sessions
+
+def main():
+    sessions = get_sessions()
+    
+    if not sessions:
+        sys.stderr.write("\n\033[1;31m[!] No se encontraron entornos de escritorio instalados.\033[0m\n")
+        sys.exit(1)
+
+    # Sort alphabetically but put Omarchy/Hyprland at the top
+    sessions.sort(key=lambda s: (0 if "hyprland" in s[0].lower() or "omarchy" in s[0].lower() else 1, s[0]))
+    
+    default_idx = 0
+    
+    sys.stderr.write("\033[2J\033[H")
+    sys.stderr.write("\033[1;36m╭────────────────────────────────────────╮\033[0m\n")
+    sys.stderr.write("\033[1;36m│\033[0m \033[1;33mX64 OMARCHY - SELECTOR DE ENTORNOS TTY\033[0m \033[1;36m│\033[0m\n")
+    sys.stderr.write("\033[1;36m╰────────────────────────────────────────╯\033[0m\n\n")
+
+    for i, (name, _) in enumerate(sessions):
+        if i == default_idx:
+            sys.stderr.write(f"  \033[1;32m[{i+1}] {name} (Default)\033[0m\n")
+        else:
+            sys.stderr.write(f"  \033[1;37m[{i+1}] {name}\033[0m\n")
+
+    sys.stderr.write(f"\n\033[1;36m> Elige tu entorno (Presiona Enter para Default): \033[0m")
+    sys.stderr.flush()
+
+    try:
+        choice = input().strip()
+        if not choice:
+            selected = sessions[default_idx]
+        else:
+            idx = int(choice) - 1
+            if 0 <= idx < len(sessions):
+                selected = sessions[idx]
+            else:
+                sys.stderr.write("\033[1;31mOpción inválida. Usando Default.\033[0m\n")
+                selected = sessions[default_idx]
+    except Exception:
+        selected = sessions[default_idx]
+
+    cmd = selected[1]
+    
+    # Handle uwsm specific executions properly
+    if cmd.startswith("uwsm start"):
+        # Just pass it to bash
+        os.execvp("bash", ["bash", "-c", cmd])
+    else:
+        # Standard execution
+        parts = cmd.split()
+        os.execvp(parts[0], parts)
+
+if __name__ == "__main__":
+    main()
