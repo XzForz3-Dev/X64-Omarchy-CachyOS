@@ -291,7 +291,7 @@ ShellRoot {
     var url = pluginRegistry.entryPointUrl(manifest, "service")
     if (!url) return null
 
-    var comp = Qt.createComponent(url, Component.PreferSynchronous)
+    var comp = Qt.createComponent(url, Component.Asynchronous)
     function finalize() {
       if (comp.status !== Component.Ready) {
         console.warn("service plugin load failed for " + key + ": " + comp.errorString())
