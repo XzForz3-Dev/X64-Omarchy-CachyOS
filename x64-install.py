@@ -373,7 +373,11 @@ def keyboard_worker():
                             current_state = "transition"
                             break
                         else:
-                            item["selected"] = not item.get("selected", False)
+                            if is_legacy_nvidia and "NVIDIA" in item["label"]:
+                                sys.stdout.write('\a')
+                                sys.stdout.flush()
+                            else:
+                                item["selected"] = not item.get("selected", False)
                     else:
                         # Si da enter en la izquierda, se pasa a la derecha
                         active_pane = "right"
