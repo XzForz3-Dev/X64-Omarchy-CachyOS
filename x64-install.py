@@ -533,7 +533,7 @@ def installer_worker():
         
         progress.update(t_config, description="[yellow]Aplicando Diseño y Tema...", advance=20)
         if user_choices["theme"] == "Tokyo Night":
-            run_cmd_live("export OMARCHY_PATH=/usr/share/omarchy && /usr/share/omarchy/bin/omarchy-theme-set 'Tokyo Night'", check=False)
+            run_cmd_live("export OMARCHY_PATH=/usr/share/omarchy && export OMARCHY_THEME_HEADLESS=1 && /usr/share/omarchy/bin/omarchy-theme-set 'Tokyo Night'", check=False)
         
         progress.update(t_config, description="[green]Sistema Listo", completed=100)
     except Exception as e:
