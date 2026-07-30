@@ -84,9 +84,9 @@ for c in menu_data:
     if "Drivers" in c["cat"]:
         for item in c["items"]:
             if "Mesa" in item["label"]:
-                item["selected"] = not has_nvidia
+                item["selected"] = not has_nvidia or is_legacy_nvidia
             elif "NVIDIA" in item["label"] and "Privativo" in item["label"]:
-                item["selected"] = has_nvidia
+                item["selected"] = has_nvidia and not is_legacy_nvidia
 
 def log(msg):
     time_str = datetime.now().strftime('%H:%M:%S')
