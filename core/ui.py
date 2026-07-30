@@ -187,11 +187,10 @@ def update_ui():
         )
         
         cat_border = "cyan" if state.active_pane == "left" else "dim white"
-        cat_str = "\n".join(cat_lines)
-        cat_text = Text.from_markup(cat_str, no_wrap=True, overflow="crop")
+        cat_text_obj = Text.from_markup(cat_text, no_wrap=True, overflow="crop")
         item_border = "green" if state.active_pane == "right" else "dim white"
         
-        cat_panel = Panel(cat_text, title="[bold cyan]Índice de Categorías[/bold cyan]", border_style=cat_border)
+        cat_panel = Panel(cat_text_obj, title="[bold cyan]Índice de Categorías[/bold cyan]", border_style=cat_border)
         grid_panel = Panel(Align.center(grid, vertical="middle"), title="[bold green]Opciones de Software[/bold green]", border_style=item_border)
         
         current_item = items[state.item_idx] if state.active_pane == "right" else state.menu_data[state.cat_idx]["items"][0]
