@@ -251,15 +251,13 @@ def keyboard_worker():
         termios.tcsetattr(fd, termios.TCSADRAIN, new_settings)
         
         while state.current_state == "menu":
-            if select.select([sys.stdin], [], [], 0.1)[0]:
-                ch = sys.stdin.read(1)
-                if ch == '\x1b':
-                    if select.select([sys.stdin], [], [], 0.05)[0]:
-                        ch += sys.stdin.read(1)
-                        if select.select([sys.stdin], [], [], 0.05)[0]:
-                            ch += sys.stdin.read(1)
+            if select.select([fd], [], [], 0.1)[0]:
+                data = os.read(fd, 1024)
+                if not data:
+                    continue
+                ch = data.decode('utf-8', errors='ignore')
                 
-                if ch in ('\x1b[A', '\x1bOA'): # Arriba
+                if '\x1b[A' in ch or '\x1bOA' in ch: # Arriba
                     if state.active_pane == "left":
                         state.cat_idx = max(0, state.cat_idx - 1)
                         state.item_idx = 0
