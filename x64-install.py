@@ -119,18 +119,19 @@ def run_cmd_live(cmd, check=True):
 def get_sys_info():
     table = Table(show_header=False, expand=True, box=None)
     
-    ff_text = ""
-    try:
-        res = subprocess.run(["fastfetch", "--logo", "none"], stdout=subprocess.PIPE, text=True)
-        if res.returncode == 0:
-            ff_text = res.stdout.strip()
-    except:
-        pass
-        
-    if not ff_text:
-        ff_text = "Detección de Hardware fallida (Fastfetch no disponible)."
-        
-    table.add_row(Text.from_ansi(ff_text))
+    if not hasattr(get_sys_info, "ff_text"):
+        get_sys_info.ff_text = ""
+        try:
+            res = subprocess.run(["fastfetch", "--logo", "none"], stdout=subprocess.PIPE, text=True)
+            if res.returncode == 0:
+                get_sys_info.ff_text = res.stdout.strip()
+        except:
+            pass
+            
+        if not get_sys_info.ff_text:
+            get_sys_info.ff_text = "Detección de Hardware fallida (Fastfetch no disponible)."
+            
+    table.add_row(Text.from_ansi(get_sys_info.ff_text))
     table.add_row("")
     
     cpu_percent = psutil.cpu_percent() if psutil else 0
