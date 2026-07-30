@@ -242,25 +242,24 @@ def update_ui():
     return layout
 
 def keyboard_worker():
+    time.sleep(0.5) # Esperar a que rich.Live inicialice la terminal
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:
         new_settings = termios.tcgetattr(fd)
         new_settings[3] = new_settings[3] & ~(termios.ICANON | termios.ECHO)
-        new_settings[6][termios.VMIN] = 1
-        new_settings[6][termios.VTIME] = 0
         termios.tcsetattr(fd, termios.TCSADRAIN, new_settings)
         
         while state.current_state == "menu":
-            if select.select([fd], [], [], 0.1)[0]:
-                data = os.read(fd, 1024)
-                if not data:
-                    continue
-                ch = data.decode('utf-8', errors='ignore')
-                with open("/tmp/keys.log", "a") as f:
-                    f.write(repr(ch) + "\n")
+            if select.select([sys.stdin], [], [], 0.1)[0]:
+                ch = sys.stdin.read(1)
+                if ch == '\x1b':
+                    if select.select([sys.stdin], [], [], 0.05)[0]:
+                        ch += sys.stdin.read(1)
+                        if select.select([sys.stdin], [], [], 0.05)[0]:
+                            ch += sys.stdin.read(1)
                 
-                if '\x1b[A' in ch or '\x1bOA' in ch: # Arriba
+                if ch in ('\x1b[A', '\x1bOA'): # Arriba
                     if state.active_pane == "left":
                         state.cat_idx = max(0, state.cat_idx - 1)
                         state.item_idx = 0
