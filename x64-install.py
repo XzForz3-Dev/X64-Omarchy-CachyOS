@@ -251,10 +251,6 @@ def update_ui():
     )
     
     if current_state == "menu":
-        menu_table = Table(box=None, expand=True, show_header=False, padding=(0, 1))
-        menu_table.add_column("Categorías", ratio=30)
-        menu_table.add_column("Opciones", ratio=70)
-        
         cat_text = ""
         for i, c in enumerate(menu_data):
             if i == cat_idx:
@@ -284,11 +280,23 @@ def update_ui():
                     
                 item_text += f"{cursor}{chk_box} [{style}]{item['label']}[/{style}]\n\n"
                 
-        menu_table.add_row(cat_text, item_text)
+        # --- NUEVO LAYOUT COMPLETO ESTILO IDE ---
+        nav_panel = Panel(
+            Align.center(Text.from_markup("[bold cyan]NAVEGACIÓN 2D:[/bold cyan] Flechas [bold yellow]⬅️ ➡️[/bold yellow] cambian panel. Flechas [bold yellow]⬆️ ⬇️[/bold yellow] mueven selector. [bold yellow]ESPACIO[/bold yellow] alterna.", justify="center"), vertical="middle"),
+            title=f"[bold magenta]Configuración Pre-Vuelo[/bold magenta]",
+            border_style=border_color
+        )
         
-        panel_content = Group(
-            Text.from_markup("\n[bold cyan]NAVEGACIÓN 2D:[/bold cyan] Flechas [bold yellow]⬅️ ➡️[/bold yellow] cambian panel. Flechas [bold yellow]⬆️ ⬇️[/bold yellow] mueven selector. [bold yellow]ESPACIO[/bold yellow] alterna.\n"),
-            menu_table
+        cat_border = "cyan" if active_pane == "left" else "dim white"
+        item_border = "green" if active_pane == "right" else "dim white"
+        
+        cat_panel = Panel(cat_text, title="[bold cyan]Índice de Categorías[/bold cyan]", border_style=cat_border)
+        item_panel = Panel(item_text, title="[bold green]Paquetes y Opciones[/bold green]", border_style=item_border)
+        
+        menu_layout = Layout()
+        menu_layout.split_row(
+            Layout(cat_panel, ratio=35),
+            Layout(item_panel, ratio=65)
         )
         
         current_item = items[item_idx] if active_pane == "right" else menu_data[cat_idx]["items"][0]
@@ -298,7 +306,8 @@ def update_ui():
         
         main_layout = Layout()
         main_layout.split_column(
-            Layout(Panel(panel_content, title="[bold magenta]Configuración Pre-Vuelo[/bold magenta]", border_style=border_color), ratio=1),
+            Layout(nav_panel, size=3),
+            Layout(menu_layout, ratio=1),
             Layout(hud_panel, size=7)
         )
         layout["right"].update(main_layout)
