@@ -292,7 +292,7 @@ def update_ui():
         
         current_item = items[item_idx] if active_pane == "right" else menu_data[cat_idx]["items"][0]
         desc = current_item.get("desc", "")
-        desc_text = Text(desc, style="white", justify="left")
+        desc_text = Text.from_markup(desc, style="white", justify="left")
         hud_panel = Panel(desc_text, title="[bold cyan]INFORMACIÓN DETALLADA[/bold cyan]", border_style="magenta", height=7, box=box.ROUNDED)
         
         main_layout = Layout()
@@ -349,8 +349,12 @@ def keyboard_worker():
                 elif ch == ' ':
                     if active_pane == "right":
                         item = menu_data[cat_idx]["items"][item_idx]
-                        if item["type"] != "action":
-                            item["selected"] = not item.get("selected", False)
+                        if item["type"] == "toggle":
+                            if is_legacy_nvidia and "NVIDIA" in item["label"]:
+                                sys.stdout.write('\a')
+                                sys.stdout.flush()
+                            else:
+                                item["selected"] = not item.get("selected", False)
                 elif ch == '\r' or ch == '\n':
                     if active_pane == "right":
                         item = menu_data[cat_idx]["items"][item_idx]
