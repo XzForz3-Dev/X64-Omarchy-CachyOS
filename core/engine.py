@@ -12,6 +12,9 @@ def log(msg):
         f.write(f"[{time_str}] {msg}\n")
     state.log_lines.append(f"[bold blue][{time_str}][/bold blue] [bold cyan]{msg}[/bold cyan]")
 
+import re
+ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+
 def run_cmd_live(cmd, check=True):
     async def _run():
         while True:
@@ -27,6 +30,8 @@ def run_cmd_live(cmd, check=True):
                     line_clean = line_bytes.decode('utf-8', errors='replace').strip()
                     if line_clean:
                         f.write(line_clean + "\n")
+                        # Limpiar ANSI para que no rompa el layout de Rich
+                        line_clean = ansi_escape.sub('', line_clean)
                         if "error" in line_clean.lower() or "warning" in line_clean.lower() or len(line_clean) > 10:
                             safe_line = escape(line_clean)
                             state.log_lines.append(f"[dim white]{safe_line}[/dim white]")
