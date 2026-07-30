@@ -3,6 +3,7 @@ import tty
 import termios
 import select
 import time
+import os
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 from rich.layout import Layout
