@@ -143,7 +143,7 @@ def get_sys_info():
         get_sys_info.last_update = 0
         get_sys_info.cached_rows = []
         try:
-            res = subprocess.run(["fastfetch", "--logo", "none", "--structure", "Title:Separator:OS:Host:Kernel:Uptime:Packages:Shell:Display:WM:CPU:GPU:Memory:Swap:Disk:LocalIP:Battery:PowerAdapter:Locale:Vulkan:OpenGL:CPUUsage"], stdout=subprocess.PIPE, text=True)
+            res = subprocess.run(["fastfetch", "--logo", "none", "--structure", "Title:Separator:OS:Host:Kernel:Uptime:Packages:Shell:Display:WM:CPU:GPU:Memory:Swap:Disk:LocalIP:Battery:PowerAdapter:Locale:Vulkan:OpenGL"], stdout=subprocess.PIPE, text=True)
             if res.returncode == 0:
                 raw_text = res.stdout.strip()
                 colored_lines = []
