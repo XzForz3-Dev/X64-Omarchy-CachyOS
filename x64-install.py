@@ -523,41 +523,38 @@ def installer_worker():
         progress.update(t_config, description="[yellow]Configurando Pantalla de Arranque (Plymouth)...", advance=5)
         setup_plymouth_bootloader()
         
-        progress.update(t_config, description="[yellow]Desplegando TTY Cyberpunk (Rescue Net)...", advance=5)
+        progress.update(t_config, description="[yellow]Desplegando Gestor TUI (Tuigreet)...", advance=5)
         
-        # --- Lógica Universal de TTY (ASCII Art) ---
+        # --- Instalar Greetd + Tuigreet ---
+        run_cmd_live("sudo pacman -S --noconfirm greetd greetd-tuigreet", check=False)
+        run_cmd_live("sudo mkdir -p /etc/greetd", check=False)
+        
+        # --- Configurar Sesiones ---
         if is_legacy_nvidia:
-            tty_subtitle = r"\e[1;31m[ NVIDIA LEGACY FALLBACK PROTOCOL ]\e[0m\n\n\e[1;33m🚀 Modo Gráfico: Inicia sesión aquí (TTY1) para arrancar automáticamente.\n🛠️ Modo Rescate: Presiona [Ctrl + Alt + F2] para una consola pura.\e[0m"
-            autostart_cmd = "exec Hyprland"
-        else:
-            tty_subtitle = r"\e[1;35m[ OMARCHY CYBERPUNK ENVIRONMENT ]\e[0m\n\n\e[1;33m🚀 Modo Gráfico: Inicia sesión aquí (TTY1) para arrancar automáticamente.\n🛠️ Modo Rescate: Presiona [Ctrl + Alt + F2] para una consola pura.\e[0m"
-            autostart_cmd = "exec uwsm start hyprland-uwsm.desktop"
+            # Crear sesión Legacy
+            legacy_session = """[Desktop Entry]
+Name=Omarchy (Legacy)
+Exec=Hyprland
+Type=Application
+"""
+            run_cmd_live("sudo mkdir -p /usr/share/wayland-sessions", check=False)
+            run_cmd_live(f"sudo bash -c 'cat << \"EOF\" > /usr/share/wayland-sessions/omarchy-legacy.desktop\n{legacy_session}EOF'", check=False)
             
-        issue_content = f"""\\e[1;36m
-   ____                             __           
-  / __ \\____ ___  ____ ___________/ /_  __  __
- / / / / __ `__ \\/ __ `/ ___/ ___/ __ \\/ / / /
-/ /_/ / / / / / / /_/ / /  / /__/ / / / /_/ / 
-\\____/_/ /_/ /_/\\__,_/_/   \\___/_/ /_/\\__, /  
-                                     /____/   \\e[0m
-{tty_subtitle}
+            greetd_config = """[terminal]
+vt = 1
+[default_session]
+command = "tuigreet --cmd 'Hyprland' --asterisks --time --greeting 'NVIDIA Legacy Fallback Protocol' --remember --remember-user-session --sessions /usr/share/wayland-sessions"
+user = "greeter"
 """
-        run_cmd_live(f"sudo bash -c 'cat << \"EOF\" > /etc/issue\n{issue_content}\nEOF'", check=False)
-        
-        # --- Inyección Universal de Auto-Arranque en TTY1 ---
-        profile_injection = f"""
-# --- Omarchy Auto-Start (TTY1) ---
-if [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
-    clear
-    echo -e "\\e[1;36m[X64 STUDIOS] Iniciando Entorno Gráfico...\\e[0m"
-    sleep 1
-    {autostart_cmd}
-fi
+        else:
+            greetd_config = """[terminal]
+vt = 1
+[default_session]
+command = "tuigreet --cmd 'uwsm start hyprland-uwsm.desktop' --asterisks --time --greeting 'Bienvenido a Omarchy Cyberpunk Environment' --remember --remember-user-session --sessions /usr/share/wayland-sessions"
+user = "greeter"
 """
-        with open(os.path.expanduser("~/.bash_profile"), "a") as f:
-            f.write(profile_injection)
-        with open(os.path.expanduser("~/.zprofile"), "a") as f:
-            f.write(profile_injection)
+
+        run_cmd_live(f"sudo bash -c 'cat << \"EOF\" > /etc/greetd/config.toml\n{greetd_config}EOF'", check=False)
 
         if not is_legacy_nvidia:
             progress.update(t_config, description="[yellow]Configurando Tema SDDM...", advance=5)
@@ -567,10 +564,13 @@ fi
             run_cmd_live("sudo bash -c 'echo -e \"[Theme]\\nCurrent=omarchy\" > /etc/sddm.conf.d/omarchy.conf'", check=False)
             
             progress.update(t_config, description="[yellow]Habilitando servicios...", advance=10)
+            run_cmd_live("sudo systemctl disable greetd.service 2>/dev/null", check=False)
             run_cmd_live("sudo systemctl enable sddm.service --now", check=False)
         else:
-            progress.update(t_config, description="[yellow]Deshabilitando SDDM (Legacy Hardware)...", advance=15)
+            progress.update(t_config, description="[yellow]Habilitando Tuigreet (Legacy Hardware)...", advance=15)
             run_cmd_live("sudo systemctl disable sddm.service 2>/dev/null", check=False)
+            run_cmd_live("sudo systemctl enable greetd.service --now", check=False)
+
 
         run_cmd_live("sudo systemctl enable bluetooth.service", check=False)
         if "ananicy-cpp" in user_choices["packages"]:
