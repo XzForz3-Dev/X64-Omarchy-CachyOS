@@ -128,8 +128,11 @@ def get_sys_info():
             if res.returncode == 0:
                 raw_text = res.stdout.strip()
                 colored_lines = []
+                import re
+                ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
                 for line in raw_text.split('\n'):
-                    if "██" in line:
+                    clean_line = ansi_escape.sub('', line).strip()
+                    if not clean_line:
                         continue
                     sep = " 󰁔 " if " 󰁔 " in line else (": " if ": " in line else None)
                     if sep:
@@ -156,7 +159,7 @@ def get_sys_info():
     if now - get_sys_info.last_update > 1.0:
         get_sys_info.last_update = now
         rows = []
-        bar_len = 25
+        bar_len = 12
         
         cpu_percent = psutil.cpu_percent() if psutil else 0
         cpu_filled = int((cpu_percent / 100) * bar_len)
