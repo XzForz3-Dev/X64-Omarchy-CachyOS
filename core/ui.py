@@ -249,9 +249,8 @@ def keyboard_worker():
         while state.current_state == "menu":
             if select.select([sys.stdin], [], [], 0.1)[0]:
                 ch = sys.stdin.read(1)
-                if ch == '\x1b':
-                    if select.select([sys.stdin], [], [], 0.1)[0]:
-                        ch += sys.stdin.read(2)
+                while select.select([sys.stdin], [], [], 0.01)[0]:
+                    ch += sys.stdin.read(1)
                 
                 if ch in ('\x1b[A', '\x1bOA'): # Arriba
                     if state.active_pane == "left":
