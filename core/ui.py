@@ -247,11 +247,12 @@ def keyboard_worker():
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:
-        new_settings = termios.tcgetattr(fd)
-        new_settings[3] = new_settings[3] & ~(termios.ICANON | termios.ECHO)
-        termios.tcsetattr(fd, termios.TCSADRAIN, new_settings)
-        
         while state.current_state == "menu":
+            # Forzar termios continuamente para vencer a rich.Live
+            new_settings = termios.tcgetattr(fd)
+            if new_settings[3] & (termios.ICANON | termios.ECHO):
+                new_settings[3] = new_settings[3] & ~(termios.ICANON | termios.ECHO)
+                termios.tcsetattr(fd, termios.TCSANOW, new_settings)
             if select.select([fd], [], [], 0.1)[0]:
                 data = os.read(fd, 1024)
                 if not data:
