@@ -283,49 +283,40 @@ def update_ui():
         border_color = "green"
     elif current_state == "menu":
         border_color = "magenta"
-    elif current_state == "transition":
-        border_color = "yellow"
-
-    static_logo = get_static_logo()
-    layout["left"]["logo"].update(
-        Panel(
-            Align.center(static_logo),
-            title="[bold white] X64 SYSTEM CORE [/bold white]",
-            border_style=border_color,
-            box=box.SQUARE
-        )
-    )
-    
-    layout["left"]["sysinfo"].update(
-        Panel(
-            get_sys_info(), 
-            title="[bold blue]Hardware & Setup (Fastfetch)[/bold blue]", 
-            border_style="blue",
-            box=box.ROUNDED
-        )
-    )
-    
-    if current_state == "menu":
-        cat_text = ""
-        for i, c in enumerate(menu_data):
-            if i == cat_idx:
-                style = "bold cyan reverse" if active_pane == "left" else "bold cyan"
-                prefix = "▶ " if active_pane == "left" else "  "
-                cat_text += f"{prefix}[{style}]{c['cat']}[/{style}]\n\n"
-            else:
-                style = "dim white" if active_pane == "right" else "white"
-                cat_text += f"  [{style}]{c['cat']}[/{style}]\n\n"
-                
+        # --- VIEWPORT ROW SCROLLING LOGIC ---
+        items = menu_data[cat_idx]["items"]
+        MAX_ROWS = 6
+        
+        current_row = item_idx // 3
+        start_row = max(0, current_row - (MAX_ROWS // 2))
+        end_row = start_row + MAX_ROWS
+        
+        total_rows = (len(items) + 2) // 3
+        if end_row > total_rows:
+            end_row = total_rows
+            start_row = max(0, end_row - MAX_ROWS)
+            
+        start_idx = start_row * 3
+        end_idx = end_row * 3
+        
+        visible_items = items[start_idx:end_idx]
+        
         from rich.table import Table
-        grid = Table.grid(padding=(1, 2))
+        grid = Table.grid(padding=(2, 2))
         grid.add_column("C1", ratio=1)
         grid.add_column("C2", ratio=1)
         grid.add_column("C3", ratio=1)
         
-        items = menu_data[cat_idx]["items"]
         cells = []
-        for i, item in enumerate(items):
-            is_active = (i == item_idx and active_pane == "right")
+        if start_row > 0:
+            cells.extend(["[dim cyan]... (↑ Arriba)[/dim cyan]", "", ""])
+            
+        for i_vis, item in enumerate(visible_items):
+            actual_i = start_idx + i_vis
+            if actual_i >= len(items):
+                break
+                
+            is_active = (actual_i == item_idx and active_pane == "right")
             cursor = "[bold yellow]➤[/bold yellow] " if is_active else "  "
             
             if item["type"] == "action":
@@ -341,11 +332,25 @@ def update_ui():
         while len(cells) % 3 != 0:
             cells.append("")
             
+        if end_row < total_rows:
+            cells.extend(["[dim cyan]... (↓ Abajo)[/dim cyan]", "", ""])
+            
         for i in range(0, len(cells), 3):
             grid.add_row(cells[i], cells[i+1], cells[i+2])
+
+        cat_text = ""
+        for i, c in enumerate(menu_data):
+            if i == cat_idx:
+                style = "bold cyan reverse" if active_pane == "left" else "bold cyan"
+                prefix = "▶ " if active_pane == "left" else "  "
+                cat_text += f"{prefix}[{style}]{c['cat']}[/{style}]\n\n"
+            else:
+                style = "dim white" if active_pane == "right" else "white"
+                cat_text += f"  [{style}]{c['cat']}[/{style}]\n\n"
+        
         # --- NUEVO LAYOUT COMPLETO ESTILO IDE ---
         nav_panel = Panel(
-            Align.center(Text.from_markup("[bold cyan]NAVEGACIÓN 2D:[/bold cyan] Flechas [bold yellow]← →[/bold yellow] cambian panel. Flechas [bold yellow]↑ ↓[/bold yellow] mueven selector. [bold yellow]ESPACIO[/bold yellow] alterna.", justify="center"), vertical="middle"),
+            Align.center(Text.from_markup("[bold cyan]NAVEGACIÓN:[/bold cyan] Flechas [bold yellow]← →[/bold yellow] cambian panel. Flechas [bold yellow]↑ ↓[/bold yellow] mueven selector. [bold yellow]ESPACIO[/bold yellow] alterna.", justify="center"), vertical="middle"),
             title=f"[bold magenta]Configuración Pre-Vuelo[/bold magenta]",
             border_style=border_color
         )
@@ -354,26 +359,37 @@ def update_ui():
         item_border = "green" if active_pane == "right" else "dim white"
         
         cat_panel = Panel(cat_text, title="[bold cyan]Índice de Categorías[/bold cyan]", border_style=cat_border)
-        item_panel = Panel(grid, title="[bold green]Paquetes y Opciones[/bold green]", border_style=item_border)
+        grid_panel = Panel(Align.center(grid, vertical="middle"), title="[bold green]Opciones de Software[/bold green]", border_style=item_border)
+        
+        current_item = items[item_idx] if active_pane == "right" else menu_data[cat_idx]["items"][0]
+        desc = current_item.get("desc", "Sin descripción detallada disponible.")
+        desc_text = Text.from_markup(f"[bold cyan]Paquete:[/bold cyan] {current_item['label']}\n[bold yellow]Detalles:[/bold yellow] {desc}\n\n[dim]Usa ESPACIO para alternar el estado del paquete seleccionado.[/dim]", style="white", justify="left")
+        desc_panel = Panel(Align.center(desc_text, vertical="middle"), title="[bold yellow]Información Detallada[/bold yellow]", border_style="yellow")
+        
+        right_layout = Layout()
+        right_layout.split_column(
+            Layout(grid_panel, ratio=60),
+            Layout(desc_panel, ratio=40)
+        )
         
         menu_layout = Layout()
         menu_layout.split_row(
             Layout(cat_panel, ratio=35),
-            Layout(item_panel, ratio=65)
+            Layout(right_layout, ratio=65)
         )
         
-        current_item = items[item_idx] if active_pane == "right" else menu_data[cat_idx]["items"][0]
-        desc = current_item.get("desc", "")
-        desc_text = Text.from_markup(desc, style="white", justify="left")
-        hud_panel = Panel(desc_text, title="[bold cyan]INFORMACIÓN DETALLADA[/bold cyan]", border_style="magenta", height=7, box=box.ROUNDED)
+        total_selected = sum(1 for c in menu_data for i in c["items"] if i.get("selected"))
+        hud_text = Text.from_markup(f"[bold green]✓ Paquetes marcados para instalación:[/bold green] [bold white]{total_selected}[/bold white]   |   [dim]Presiona ENTER sobre [Iniciar Instalación] para proceder.[/dim]", style="white", justify="center")
+        hud_panel = Panel(Align.center(hud_text, vertical="middle"), title="[bold cyan]ESTADO GLOBAL DEL SISTEMA[/bold cyan]", border_style="magenta", height=5, box=box.ROUNDED)
         
         main_layout = Layout()
         main_layout.split_column(
             Layout(nav_panel, size=3),
             Layout(menu_layout, ratio=1),
-            Layout(hud_panel, size=7)
+            Layout(hud_panel, size=5)
         )
         layout["right"].update(main_layout)
+
     elif current_state == "transition":
         layout["right"].update(Panel(Align.center(f"\n\n\n\n\n\n[bold yellow]{transition_text}[/bold yellow]"), title="[bold yellow]Inicializando Sistema...[/bold yellow]", border_style="yellow"))
     else:
