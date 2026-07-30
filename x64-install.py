@@ -40,7 +40,7 @@ with open(state.LOG_FILE, "w") as f:
 hardware.detect_gpu_and_update_menu()
 
 try:
-    with Live(ui.update_ui(), refresh_per_second=4, screen=True) as live:
+    with Live(ui.update_ui(), refresh_per_second=4) as live:
         k_worker = threading.Thread(target=ui.keyboard_worker, daemon=True)
         k_worker.start()
         
