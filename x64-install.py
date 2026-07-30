@@ -283,6 +283,29 @@ def update_ui():
         border_color = "green"
     elif current_state == "menu":
         border_color = "magenta"
+    elif current_state == "transition":
+        border_color = "yellow"
+
+    static_logo = get_static_logo()
+    layout["left"]["logo"].update(
+        Panel(
+            Align.center(static_logo),
+            title="[bold white] X64 SYSTEM CORE [/bold white]",
+            border_style=border_color,
+            box=box.SQUARE
+        )
+    )
+    
+    layout["left"]["sysinfo"].update(
+        Panel(
+            get_sys_info(), 
+            title="[bold blue]Hardware & Setup (Fastfetch)[/bold blue]", 
+            border_style="blue",
+            box=box.ROUNDED
+        )
+    )
+    
+    if current_state == "menu":
         # --- VIEWPORT ROW SCROLLING LOGIC ---
         items = menu_data[cat_idx]["items"]
         MAX_ROWS = 6
