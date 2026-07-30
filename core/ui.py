@@ -245,42 +245,45 @@ def keyboard_worker():
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:
-        tty.setcbreak(fd)
+        new_settings = termios.tcgetattr(fd)
+        new_settings[3] = new_settings[3] & ~(termios.ICANON | termios.ECHO)
+        termios.tcsetattr(fd, termios.TCSADRAIN, new_settings)
+        
         while state.current_state == "menu":
             if select.select([sys.stdin], [], [], 0.1)[0]:
                 ch = sys.stdin.read(1)
                 while select.select([sys.stdin], [], [], 0.01)[0]:
                     ch += sys.stdin.read(1)
                 
-                if ch in ('\x1b[A', '\x1bOA'): # Arriba
+                if '\x1b[A' in ch or '\x1bOA' in ch: # Arriba
                     if state.active_pane == "left":
                         state.cat_idx = max(0, state.cat_idx - 1)
                         state.item_idx = 0
                     else:
                         state.item_idx = max(0, state.item_idx - 3)
-                elif ch in ('\x1b[B', '\x1bOB'): # Abajo
+                elif '\x1b[B' in ch or '\x1bOB' in ch: # Abajo
                     if state.active_pane == "left":
                         state.cat_idx = min(len(state.menu_data) - 1, state.cat_idx + 1)
                         state.item_idx = 0
                     else:
                         state.item_idx = min(len(state.menu_data[state.cat_idx]["items"]) - 1, state.item_idx + 3)
-                elif ch in ('\x1b[C', '\x1bOC'): # Derecha
+                elif '\x1b[C' in ch or '\x1bOC' in ch: # Derecha
                     if state.active_pane == "left":
                         state.active_pane = "right"
                     else:
                         state.item_idx = min(len(state.menu_data[state.cat_idx]["items"]) - 1, state.item_idx + 1)
-                elif ch in ('\x1b[D', '\x1bOD'): # Izquierda
+                elif '\x1b[D' in ch or '\x1bOD' in ch: # Izquierda
                     if state.active_pane == "right":
                         if state.item_idx % 3 == 0:
                             state.active_pane = "left"
                         else:
                             state.item_idx = max(0, state.item_idx - 1)
-                elif ch == ' ':
+                elif ' ' in ch:
                     if state.active_pane == "right":
                         item = state.menu_data[state.cat_idx]["items"][state.item_idx]
                         if item["type"] == "toggle":
                             item["selected"] = not item.get("selected", False)
-                elif ch == '\r' or ch == '\n':
+                elif '\r' in ch or '\n' in ch:
                     if state.active_pane == "right":
                         item = state.menu_data[state.cat_idx]["items"][state.item_idx]
                         if item["type"] == "action":
@@ -300,7 +303,7 @@ def keyboard_worker():
                             item["selected"] = not item.get("selected", False)
                     else:
                         state.active_pane = "right"
-                elif ch == '\x03': # Ctrl+C
+                elif '\x03' in ch: # Ctrl+C
                     state.install_error = "Instalación abortada por el usuario (Ctrl+C)."
                     state.install_done = True
                     break
