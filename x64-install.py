@@ -311,10 +311,10 @@ def update_ui():
             if i == cat_idx:
                 style = "bold cyan reverse" if active_pane == "left" else "bold cyan"
                 prefix = "▶ " if active_pane == "left" else "  "
-                cat_text += f"{prefix}[{style}]{c['cat']}[/{style}]\n"
+                cat_text += f"{prefix}[{style}]{c['cat']}[/{style}]\n\n"
             else:
                 style = "dim white" if active_pane == "right" else "white"
-                cat_text += f"  [{style}]{c['cat']}[/{style}]\n"
+                cat_text += f"  [{style}]{c['cat']}[/{style}]\n\n"
                 
         item_text = ""
         items = menu_data[cat_idx]["items"]
