@@ -5,7 +5,7 @@
             {
                 "label": "Hyprland (Tokyo Night)",
                 "type": "toggle",
-                "selected": false,
+                "selected": true,
                 "pkg": [
                     "hyprland",
                     "waybar",
@@ -1238,7 +1238,7 @@
             {
                 "label": "Base de Sistema y Compresión",
                 "type": "toggle",
-                "selected": false,
+                "selected": true,
                 "pkg": [
                     "base-devel",
                     "p7zip",
