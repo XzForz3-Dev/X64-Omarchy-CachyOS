@@ -72,7 +72,8 @@ def installer_worker():
         ui.progress.update(ui.t_repo, description="[yellow]Acelerando Descargas (ParallelDownloads)...", advance=20)
         run_cmd_live("sudo sed -i 's/^#ParallelDownloads.*/ParallelDownloads = 10/' /etc/pacman.conf", check=False)
         run_cmd_live("sudo bash -c 'grep -q \"^ILoveCandy\" /etc/pacman.conf || sed -i \"/^#Color/a ILoveCandy\" /etc/pacman.conf'", check=False)
-        run_cmd_live("sudo bash -c 'grep -q \"NoExtract = usr/share/doc\" /etc/pacman.conf || echo -e \"\\nNoExtract = usr/share/doc/* usr/share/gtk-doc/* usr/share/help/* usr/share/man/* usr/share/info/*\\n\" >> /etc/pacman.conf'", check=False)
+        run_cmd_live("sudo sed -i '/NoExtract = usr\\/share\\/doc\\/\\*/d' /etc/pacman.conf", check=False)
+        run_cmd_live("sudo bash -c 'grep -q \"NoExtract = usr/share/doc\" /etc/pacman.conf || sed -i \"/^\\[options\\]/a NoExtract = usr/share/doc/* usr/share/gtk-doc/* usr/share/help/* usr/share/man/* usr/share/info/*\" /etc/pacman.conf'", check=False)
         
         ui.progress.update(ui.t_repo, description="[yellow]Desbloqueando Pacman...", advance=10)
         if os.path.exists("/var/lib/pacman/db.lck"):

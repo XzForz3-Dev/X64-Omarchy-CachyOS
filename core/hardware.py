@@ -105,7 +105,7 @@ def detect_gpu_and_update_menu():
         
         if has_nvidia:
             try:
-                pacman_q = subprocess.run(["pacman", "-Q"], stdout=subprocess.PIPE, text=True, check=False)
+                pacman_q = subprocess.run(["pacman", "-Q"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, check=False)
                 installed_pkgs = pacman_q.stdout.lower()
                 if "nvidia-470xx-dkms" in installed_pkgs or "nvidia-390xx-dkms" in installed_pkgs:
                     state.is_legacy_nvidia = True

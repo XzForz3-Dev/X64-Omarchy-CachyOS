@@ -22,6 +22,7 @@ fi
 
 clear
 echo -e "\n[+] Verificando motor de interfaz..."
+sudo sed -i '/NoExtract = usr\/share\/doc\/\*/d' /etc/pacman.conf 2>/dev/null || true
 
 if ! command -v python3 &> /dev/null; then
     echo "Instalando dependencias base (Python)..."
