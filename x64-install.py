@@ -344,46 +344,45 @@ def update_ui():
         visible_items = items[start_idx:end_idx]
         
         from rich.table import Table
-        grid = Table.grid(padding=(2, 2))
-        grid.add_column("C1", ratio=1)
-        grid.add_column("C2", ratio=1)
-        grid.add_column("C3", ratio=1)
         
-        cells = []
-        if start_row > 0:
-            cells.extend(["[dim cyan]... (↑ Arriba)[/dim cyan]", "", ""])
-            
-        for i_vis, item in enumerate(visible_items):
-            actual_i = start_idx + i_vis
-            if actual_i >= len(items):
-                break
-                
-            is_active = (actual_i == item_idx and active_pane == "right")
-            cursor = "[bold yellow]➤[/bold yellow] " if is_active else "  "
-            
-            if item["type"] == "action":
-                if is_active:
-                    button = f"[bold white on red] ☣  {item['label']}  ☣ [/]"
-                    cursor = "[bold red]►[/bold red] "
-                else:
-                    button = f"[bold green on black] 🚀  {item['label']}  🚀 [/]"
-                    cursor = "  "
-                cells.append(f"{cursor}{button}")
+        if items[0]["type"] == "action":
+            is_active = (active_pane == "right")
+            if is_active:
+                grid = Text.from_markup("\n\n\n[bold white on red blink]  ☣   INICIAR METAMORFOSIS DEL SISTEMA   ☣  [/]\n\n\n", justify="center")
             else:
+                grid = Text.from_markup("\n\n\n[bold green]  🚀   INICIAR METAMORFOSIS DEL SISTEMA   🚀  [/]\n\n\n", justify="center")
+        else:
+            grid = Table.grid(padding=(2, 2))
+            grid.add_column("C1", ratio=1)
+            grid.add_column("C2", ratio=1)
+            grid.add_column("C3", ratio=1)
+            
+            cells = []
+            if start_row > 0:
+                cells.extend(["[dim cyan]... (↑ Arriba)[/dim cyan]", "", ""])
+                
+            for i_vis, item in enumerate(visible_items):
+                actual_i = start_idx + i_vis
+                if actual_i >= len(items):
+                    break
+                    
+                is_active = (actual_i == item_idx and active_pane == "right")
+                cursor = "[bold yellow]➤[/bold yellow] " if is_active else "  "
+                
                 chk_box = "[bold green][████] ON [/bold green]" if item.get("selected", False) else "[bold bright_black][░░░░] OFF[/bold bright_black]"
                 style = "bold white" if is_active else "dim white"
                 if not is_active:
                     chk_box = chk_box.replace("bold", "dim")
                 cells.append(f"{cursor}{chk_box} [{style}]{item['label']}[/{style}]")
+                    
+            while len(cells) % 3 != 0:
+                cells.append("")
                 
-        while len(cells) % 3 != 0:
-            cells.append("")
-            
-        if end_row < total_rows:
-            cells.extend(["[dim cyan]... (↓ Abajo)[/dim cyan]", "", ""])
-            
-        for i in range(0, len(cells), 3):
-            grid.add_row(cells[i], cells[i+1], cells[i+2])
+            if end_row < total_rows:
+                cells.extend(["[dim cyan]... (↓ Abajo)[/dim cyan]", "", ""])
+                
+            for i in range(0, len(cells), 3):
+                grid.add_row(cells[i], cells[i+1], cells[i+2])
 
         cat_text = ""
         for i, c in enumerate(menu_data):
