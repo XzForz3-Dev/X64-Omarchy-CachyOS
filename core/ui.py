@@ -247,6 +247,8 @@ def keyboard_worker():
     try:
         new_settings = termios.tcgetattr(fd)
         new_settings[3] = new_settings[3] & ~(termios.ICANON | termios.ECHO)
+        new_settings[6][termios.VMIN] = 1
+        new_settings[6][termios.VTIME] = 0
         termios.tcsetattr(fd, termios.TCSADRAIN, new_settings)
         
         while state.current_state == "menu":
@@ -255,6 +257,8 @@ def keyboard_worker():
                 if not data:
                     continue
                 ch = data.decode('utf-8', errors='ignore')
+                with open("/tmp/keys.log", "a") as f:
+                    f.write(repr(ch) + "\n")
                 
                 if '\x1b[A' in ch or '\x1bOA' in ch: # Arriba
                     if state.active_pane == "left":
