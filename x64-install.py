@@ -715,23 +715,58 @@ def installer_worker():
         
         # --- Configurar Sesiones ---
         if is_legacy_nvidia:
-            # Crear sesión Legacy
-            legacy_session = """[Desktop Entry]
-Name=Omarchy (Legacy)
-Exec=Hyprland
-Type=Application
+            # --- Configuración TTY Pura (Legacy NVIDIA) ---
+            # 1. Configurar auto-arranque en Fish para TTY1
+            fish_autostart = """if status is-login
+    if test (tty) = /dev/tty1
+        exec Hyprland
+    end
+end
 """
-            run_cmd_live("sudo mkdir -p /usr/share/wayland-sessions", check=False)
-            with open("/tmp/omarchy-legacy.desktop", "w") as f:
-                f.write(legacy_session)
-            run_cmd_live("sudo mv /tmp/omarchy-legacy.desktop /usr/share/wayland-sessions/omarchy-legacy.desktop", check=False)
+            run_cmd_live("mkdir -p ~/.config/fish/conf.d", check=False)
+            with open(os.path.expanduser("~/.config/fish/conf.d/hyprland_autostart.fish"), "w") as f:
+                f.write(fish_autostart)
+                
+            # 2. Arte ASCII para TTY1
+            issue_omarchy = """\\e[2J\\e[H
+
+\\e[38;2;0;255;255m╭───────────────────────────────────────────────────────────────────╮\\e[0m
+\\e[38;2;0;230;255m│\\e[0m  \\e[38;2;0;230;255m ██████╗ ███╗   ███╗ █████╗ ██████╗  ██████╗██╗  ██╗██╗   ██╗\\e[0m \\e[38;2;0;230;255m│\\e[0m
+\\e[38;2;0;200;255m│\\e[0m  \\e[38;2;0;200;255m██╔═══██╗████╗ ████║██╔══██╗██╔══██╗██╔════╝██║  ██║╚██╗ ██╔╝\\e[0m \\e[38;2;0;200;255m│\\e[0m
+\\e[38;2;150;0;255m│\\e[0m  \\e[38;2;150;0;255m██║   ██║██╔████╔██║███████║██████╔╝██║     ███████║ ╚████╔╝\\e[0m  \\e[38;2;150;0;255m│\\e[0m
+\\e[38;2;255;0;200m│\\e[0m  \\e[38;2;255;0;200m██║   ██║██║╚██╔╝██║██╔══██║██╔══██╗██║     ██╔══██║  ╚██╔╝\\e[0m   \\e[38;2;255;0;200m│\\e[0m
+\\e[38;2;255;0;100m│\\e[0m  \\e[38;2;255;0;100m╚██████╔╝██║ ╚═╝ ██║██║  ██║██║  ██║╚██████╗██║  ██║   ██║\\e[0m     \\e[38;2;255;0;100m│\\e[0m
+\\e[38;2;255;0;50m╰───────────────────────────────────────────────────────────────────╯\\e[0m
+
+\\e[1;36m[\\e[0m \\e[1;37m\\S \\m\\e[0m \\e[1;36m]\\e[0m   \\e[1;35m[\\e[0m \\e[1;37m\\r\\e[0m \\e[1;35m]\\e[0m
+\\e[1;36m[\\e[0m \\e[1;37m\\n (\\l)\\e[0m \\e[1;36m]\\e[0m   \\e[1;35m[\\e[0m \\e[1;37m\\d - \\t\\e[0m \\e[1;35m]\\e[0m
+
+\\e[1;32m>>> MODO GRÁFICO (PORTAL PRINCIPAL) <<<\\e[0m
+\\e[1;37mEstás en la \\e[1;33mTTY1\\e[1;37m. Ingresa tu usuario y contraseña aquí para 
+entrar automáticamente al entorno gráfico de Omarchy.\\e[0m
+
+\\e[1;31m>>> MODO DE RESCATE (MANTENIMIENTO) <<<\\e[0m
+\\e[1;37mSi necesitas reparar el sistema o instalar drivers sin gráfica, 
+presiona \\e[1;33mCtrl + Alt + F2\\e[1;37m (o F3 a F6) para usar una consola pura.\\e[0m
+
+\\e[38;2;0;255;150m> INGRESA TUS CREDENCIALES ABAJO:\\e[0m
+
+"""
+            with open("/tmp/issue.omarchy", "w", encoding="utf-8") as f:
+                f.write(issue_omarchy)
+            run_cmd_live("sudo mv /tmp/issue.omarchy /etc/issue.omarchy", check=False)
             
-            greetd_config = """[terminal]
-vt = 1
-[default_session]
-command = "tuigreet --cmd 'Hyprland' --asterisks --time --greeting 'NVIDIA Legacy Fallback Protocol' --remember --remember-user-session --sessions /usr/share/wayland-sessions"
-user = "greeter"
+            # 3. Drop-in para TTY1 y restaurar default TTYs
+            run_cmd_live("sudo bash -c 'echo -e \"\\\\S \\\\r (\\\\l)\\\\n\" > /etc/issue'", check=False)
+            run_cmd_live("sudo mkdir -p /etc/systemd/system/getty@tty1.service.d/", check=False)
+            getty_override = """[Service]
+ExecStart=
+ExecStart=-/sbin/agetty -o '-p -- \\u' --noclear --issue-file /etc/issue.omarchy %I $TERM
 """
+            with open("/tmp/issue.conf", "w") as f:
+                f.write(getty_override)
+            run_cmd_live("sudo mv /tmp/issue.conf /etc/systemd/system/getty@tty1.service.d/issue.conf", check=False)
+            
         else:
             greetd_config = """[terminal]
 vt = 1
@@ -739,10 +774,9 @@ vt = 1
 command = "tuigreet --cmd 'uwsm start hyprland-uwsm.desktop' --asterisks --time --greeting 'Bienvenido a Omarchy Cyberpunk Environment' --remember --remember-user-session --sessions /usr/share/wayland-sessions"
 user = "greeter"
 """
-
-        with open("/tmp/greetd_config.toml", "w") as f:
-            f.write(greetd_config)
-        run_cmd_live("sudo mv /tmp/greetd_config.toml /etc/greetd/config.toml", check=False)
+            with open("/tmp/greetd_config.toml", "w") as f:
+                f.write(greetd_config)
+            run_cmd_live("sudo mv /tmp/greetd_config.toml /etc/greetd/config.toml", check=False)
 
         if not is_legacy_nvidia:
             progress.update(t_config, description="[yellow]Configurando Tema SDDM...", advance=5)
@@ -755,9 +789,10 @@ user = "greeter"
             run_cmd_live("sudo systemctl disable greetd.service 2>/dev/null", check=False)
             run_cmd_live("sudo systemctl enable sddm.service --now", check=False)
         else:
-            progress.update(t_config, description="[yellow]Habilitando Tuigreet (Legacy Hardware)...", advance=15)
+            progress.update(t_config, description="[yellow]Habilitando TTY Pura (Legacy Hardware)...", advance=15)
             run_cmd_live("sudo systemctl disable sddm.service 2>/dev/null", check=False)
-            run_cmd_live("sudo systemctl enable -f greetd.service --now", check=False)
+            run_cmd_live("sudo systemctl disable greetd.service 2>/dev/null", check=False)
+            run_cmd_live("sudo systemctl enable getty@tty1.service --now", check=False)
 
 
         run_cmd_live("sudo systemctl enable bluetooth.service", check=False)
