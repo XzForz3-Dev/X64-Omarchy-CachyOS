@@ -285,7 +285,11 @@ def keyboard_worker():
                     if state.active_pane == "right":
                         item = state.menu_data[state.cat_idx]["items"][state.item_idx]
                         if item["type"] == "toggle":
-                            item["selected"] = not item.get("selected", False)
+                            if state.is_legacy_nvidia and "NVIDIA" in item["label"]:
+                                sys.stdout.write('\a')
+                                sys.stdout.flush()
+                            else:
+                                item["selected"] = not item.get("selected", False)
                 elif '\r' in ch or '\n' in ch:
                     if state.active_pane == "right":
                         item = state.menu_data[state.cat_idx]["items"][state.item_idx]
@@ -297,13 +301,20 @@ def keyboard_worker():
                                         if "NVIDIA" in i["label"]:
                                             state.user_choices["drivers"] = "NVIDIA (Privativo)"
                                             
-                            if "NVIDIA" not in state.user_choices["drivers"]:
+                            if state.is_legacy_nvidia:
+                                state.user_choices["drivers"] = "NVIDIA (Legacy Pre-instalado)"
+                                state.user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"])
+                            elif "NVIDIA" not in state.user_choices["drivers"]:
                                 state.user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"])
                             
                             state.current_state = "transition"
                             break
                         else:
-                            item["selected"] = not item.get("selected", False)
+                            if state.is_legacy_nvidia and "NVIDIA" in item["label"]:
+                                sys.stdout.write('\a')
+                                sys.stdout.flush()
+                            else:
+                                item["selected"] = not item.get("selected", False)
                     else:
                         state.active_pane = "right"
                 elif '\x03' in ch: # Ctrl+C
