@@ -159,24 +159,24 @@ def get_sys_info():
     if now - get_sys_info.last_update > 1.0:
         get_sys_info.last_update = now
         rows = []
-        bar_len = 12
+        bar_len = 18
         
         cpu_percent = psutil.cpu_percent() if psutil else 0
-        cpu_filled = int((cpu_percent / 100) * bar_len)
+        cpu_filled = max(1, int((cpu_percent / 100) * bar_len)) if cpu_percent > 0 else 0
         cpu_bar = "█" * cpu_filled + "░" * (bar_len - cpu_filled)
         rows.append(f"[cyan]CPU Uso:[/cyan] [yellow]{cpu_percent:>5.1f}%[/yellow] [green]{cpu_bar}[/green]")
         
         if psutil:
             ram = psutil.virtual_memory()
             ram_percent = ram.percent
-            ram_filled = int((ram_percent / 100) * bar_len)
+            ram_filled = max(1, int((ram_percent / 100) * bar_len)) if ram_percent > 0 else 0
             ram_bar = "█" * ram_filled + "░" * (bar_len - ram_filled)
             rows.append(f"[cyan]RAM Uso:[/cyan] [yellow]{ram_percent:>5.1f}%[/yellow] [magenta]{ram_bar}[/magenta]")
             
             try:
                 disk = psutil.disk_usage('/')
                 disk_percent = disk.percent
-                disk_filled = int((disk_percent / 100) * bar_len)
+                disk_filled = max(1, int((disk_percent / 100) * bar_len)) if disk_percent > 0 else 0
                 disk_bar = "█" * disk_filled + "░" * (bar_len - disk_filled)
                 rows.append(f"[cyan]SSD Uso:[/cyan] [yellow]{disk_percent:>5.1f}%[/yellow] [blue]{disk_bar}[/blue]")
             except:
@@ -186,7 +186,7 @@ def get_sys_info():
                 bat = psutil.sensors_battery()
                 if bat is not None:
                     bat_percent = bat.percent
-                    bat_filled = int((bat_percent / 100) * bar_len)
+                    bat_filled = max(1, int((bat_percent / 100) * bar_len)) if bat_percent > 0 else 0
                     bat_color = "red" if bat_percent < 20 and not bat.power_plugged else "green"
                     bat_bar = "█" * bat_filled + "░" * (bar_len - bat_filled)
                     plug_icon = "🔌" if bat.power_plugged else "🔋"
