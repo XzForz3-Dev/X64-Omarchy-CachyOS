@@ -116,9 +116,9 @@ def detect_gpu_and_update_menu():
             if "Drivers Gráficos" in cat["cat"]:
                 for item in cat["items"]:
                     if "NVIDIA" in item["label"]:
-                        item["selected"] = has_nvidia and not state.is_legacy_nvidia
+                        item["selected"] = has_nvidia
                         if state.is_legacy_nvidia:
-                            item["desc"] += " [bold yellow](Nota: Hardware antiguo. Se usará TTY Pura para evitar crasheos.)[/bold yellow]"
+                            item["desc"] += " [bold yellow](Nota: Hardware antiguo detectado. Pacman purgará automáticamente los drivers legacy para instalar esta versión.)[/bold yellow]"
                     elif "Mesa" in item["label"]:
                         item["selected"] = not has_nvidia
     except Exception:

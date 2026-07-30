@@ -124,6 +124,7 @@ def installer_worker():
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             ui.progress.update(ui.t_pkg, description="[cyan]Descargando e Instalando Transacción Maestra...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm jack2", check=False)
+            run_cmd_live("sudo pacman -Rdd --noconfirm nvidia-470xx-dkms nvidia-470xx-utils lib32-nvidia-470xx-utils nvidia-settings-470xx opencl-nvidia-470xx nvidia-390xx-dkms nvidia-390xx-utils lib32-nvidia-390xx-utils nvidia-settings-390xx opencl-nvidia-390xx", check=False)
             run_cmd_live(f"sudo eatmydata pacman -S --noconfirm {' '.join(missing_pkgs)}")
         ui.progress.update(ui.t_pkg, description="[green]Paquetes Instalados", completed=100)
 
