@@ -308,7 +308,7 @@ def update_ui():
     static_logo = get_static_logo()
     layout["left"]["logo"].update(
         Panel(
-            Align.center(static_logo),
+            Align.center(static_logo, vertical="middle"),
             title="[bold white] X64 SYSTEM CORE [/bold white]",
             border_style=border_color,
             box=box.SQUARE
@@ -317,7 +317,7 @@ def update_ui():
     
     layout["left"]["sysinfo"].update(
         Panel(
-            get_sys_info(), 
+            Align.center(get_sys_info(), vertical="middle"), 
             title="[bold blue]Hardware & Setup (Fastfetch)[/bold blue]", 
             border_style="blue",
             box=box.ROUNDED
