@@ -7,7 +7,7 @@ Rectangle {
   height: 480
   color: "#1a1b26"
 
-  property string currentUser: userModel.lastUser
+  property string currentUser: userModel.lastUser !== "" ? userModel.lastUser : (userModel.rowCount() > 0 ? userModel.data(userModel.index(0, 0), userModel.NameRole) : "")
   property bool loginFailed: false
   property int sessionIndex: {
     for (var i = 0; i < sessionModel.rowCount(); i++) {
