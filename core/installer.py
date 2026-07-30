@@ -84,7 +84,7 @@ def installer_worker():
         ui.progress.update(ui.t_repo, description="[yellow]Inyectando Chaotic-AUR...", advance=10)
         run_cmd_live("sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com", check=False)
         run_cmd_live("sudo pacman-key --lsign-key 3056513887B78AEB", check=False)
-        run_cmd_live("sudo pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'", check=False)
+        run_cmd_live("sudo pacman -U --noconfirm --noprogressbar 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'", check=False)
         run_cmd_live("sudo bash -c 'grep -q \"chaotic-aur\" /etc/pacman.conf || echo -e \"\\n[chaotic-aur]\\nInclude = /etc/pacman.d/chaotic-mirrorlist\\n\" >> /etc/pacman.conf'")
         ui.progress.update(ui.t_repo, description="[green]Repositorios Listos", completed=100)
 
@@ -93,10 +93,10 @@ def installer_worker():
         run_cmd_live("sudo snapper create -c root -d 'Pre-Omarchy Installation'", check=False)
         
         ui.progress.update(ui.t_sync, description="[yellow]Instalando Cabeceras del Kernel (Para DKMS)...", advance=5)
-        run_cmd_live("sudo bash -c 'pacman -S --noconfirm --needed $(pacman -Qq | grep \"^linux\" | grep -v \"headers\" | grep -v \"firmware\" | awk \"{print \\$1\\\"-headers\\\"}\")' 2>/dev/null", check=False)
+        run_cmd_live("sudo bash -c 'pacman -S --noconfirm --noprogressbar --needed $(pacman -Qq | grep \"^linux\" | grep -v \"headers\" | grep -v \"firmware\" | awk \"{print \\$1\\\"-headers\\\"}\")' 2>/dev/null", check=False)
 
         ui.progress.update(ui.t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=5)
-        res = run_cmd_live("sudo eatmydata pacman -Syu --noconfirm", check=False)
+        res = run_cmd_live("sudo eatmydata pacman -Syu --noconfirm --noprogressbar", check=False)
         if res != 0:
             state.log_lines.append("[bold red]Fallo detectado. Reparando Llavero GPG...[/bold red]")
             run_cmd_live("sudo rm -rf /etc/pacman.d/gnupg/")
@@ -104,7 +104,7 @@ def installer_worker():
             run_cmd_live("sudo pacman-key --init")
             run_cmd_live("sudo pacman-key --populate archlinux cachyos")
             ui.progress.update(ui.t_sync, description="[yellow]Reintentando Sincronización...", advance=20)
-            run_cmd_live("sudo eatmydata pacman -Syu --noconfirm")
+            run_cmd_live("sudo eatmydata pacman -Syu --noconfirm --noprogressbar")
         ui.progress.update(ui.t_sync, description="[green]Sistema Sincronizado", completed=100)
 
         ui.progress.update(ui.t_pkg, description="[yellow]Calculando paquetes base...", advance=20)
@@ -124,9 +124,9 @@ def installer_worker():
         if chk.returncode != 0:
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             ui.progress.update(ui.t_pkg, description="[cyan]Descargando e Instalando Transacción Maestra...", advance=40)
-            run_cmd_live("sudo pacman -Rdd --noconfirm jack2", check=False)
-            run_cmd_live("sudo pacman -Rdd --noconfirm nvidia-470xx-dkms nvidia-470xx-utils lib32-nvidia-470xx-utils nvidia-settings-470xx opencl-nvidia-470xx nvidia-390xx-dkms nvidia-390xx-utils lib32-nvidia-390xx-utils nvidia-settings-390xx opencl-nvidia-390xx", check=False)
-            run_cmd_live(f"sudo eatmydata pacman -S --noconfirm {' '.join(missing_pkgs)}")
+            run_cmd_live("sudo pacman -Rdd --noconfirm --noprogressbar jack2", check=False)
+            run_cmd_live("sudo pacman -Rdd --noconfirm --noprogressbar nvidia-470xx-dkms nvidia-470xx-utils lib32-nvidia-470xx-utils nvidia-settings-470xx opencl-nvidia-470xx nvidia-390xx-dkms nvidia-390xx-utils lib32-nvidia-390xx-utils nvidia-settings-390xx opencl-nvidia-390xx", check=False)
+            run_cmd_live(f"sudo eatmydata pacman -S --noconfirm --noprogressbar {' '.join(missing_pkgs)}")
         ui.progress.update(ui.t_pkg, description="[green]Paquetes Instalados", completed=100)
 
         ui.progress.update(ui.t_backup, description="[yellow]Comprimiendo ~/.config...", advance=50)
