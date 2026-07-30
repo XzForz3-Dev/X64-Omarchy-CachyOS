@@ -791,7 +791,7 @@ def detect_gpu_and_update_menu():
                 pass
         
         for cat in menu_data:
-            if "13. Drivers Gráficos" in cat["cat"]:
+            if "Drivers Gráficos" in cat["cat"]:
                 for item in cat["items"]:
                     if "NVIDIA" in item["label"]:
                         item["selected"] = has_nvidia and not is_legacy_nvidia
