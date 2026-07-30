@@ -5,7 +5,7 @@
             {
                 "label": "Hyprland (Tokyo Night)",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "hyprland",
                     "waybar",
@@ -133,7 +133,7 @@
             {
                 "label": "Firefox",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "firefox"
                 ],
@@ -1034,7 +1034,7 @@
             {
                 "label": "Git & GitHub CLI",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "git",
                     "github-cli"
@@ -1081,7 +1081,7 @@
             {
                 "label": "Python 3.12",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "python",
                     "python-pip"
@@ -1238,7 +1238,7 @@
             {
                 "label": "Base de Sistema y Compresión",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "base-devel",
                     "p7zip",
@@ -1269,7 +1269,7 @@
             {
                 "label": "Fastfetch",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "fastfetch"
                 ],
@@ -1296,7 +1296,7 @@
             {
                 "label": "FZF",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "fzf"
                 ],
@@ -1305,7 +1305,7 @@
             {
                 "label": "Bat",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "bat"
                 ],
@@ -1314,7 +1314,7 @@
             {
                 "label": "Lsd",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "lsd"
                 ],
@@ -1323,7 +1323,7 @@
             {
                 "label": "Zoxide",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "zoxide"
                 ],
@@ -1332,7 +1332,7 @@
             {
                 "label": "Tldr",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "tldr"
                 ],
@@ -1500,7 +1500,7 @@
             {
                 "label": "Alacritty",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "alacritty"
                 ],
@@ -1742,7 +1742,7 @@
             {
                 "label": "JetBrains Mono (Nerd)",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "ttf-jetbrains-mono-nerd"
                 ],
@@ -1769,7 +1769,7 @@
             {
                 "label": "Noto Color Emoji",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "noto-fonts-emoji"
                 ],
@@ -1945,7 +1945,7 @@
             {
                 "label": "Bluetooth (Bluez)",
                 "type": "toggle",
-                "selected": true,
+                "selected": false,
                 "pkg": [
                     "bluez",
                     "bluez-utils",
