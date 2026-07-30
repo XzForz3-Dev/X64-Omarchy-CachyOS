@@ -187,7 +187,8 @@ def update_ui():
         )
         
         cat_border = "cyan" if state.active_pane == "left" else "dim white"
-        cat_text_obj = Text.from_markup(cat_text, no_wrap=True, overflow="crop")
+        cat_text_obj = Text.from_markup(cat_text, overflow="crop")
+        cat_text_obj.no_wrap = True
         item_border = "green" if state.active_pane == "right" else "dim white"
         
         cat_panel = Panel(cat_text_obj, title="[bold cyan]Índice de Categorías[/bold cyan]", border_style=cat_border)
@@ -239,7 +240,8 @@ def update_ui():
             
         layout["right"]["progress"].update(Panel(progress, title=f"[bold {border_color}]Progreso de Metamorfosis[/bold {border_color}]", border_style=border_color))
         matrix_text = "\n".join(list(state.log_lines)[-12:]) # Limitar estrictamente a 12 líneas
-        matrix_obj = Text.from_markup(matrix_text, no_wrap=True, overflow="crop")
+        matrix_obj = Text.from_markup(matrix_text, overflow="crop")
+        matrix_obj.no_wrap = True
         layout["right"]["matrix"].update(Panel(matrix_obj, title="[bold yellow]The Matrix (Live Log)[/bold yellow]", border_style="yellow"))
         
     return layout
