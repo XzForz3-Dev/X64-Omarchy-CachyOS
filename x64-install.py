@@ -343,8 +343,13 @@ def update_ui():
             cursor = "[bold yellow]➤[/bold yellow] " if is_active else "  "
             
             if item["type"] == "action":
-                style = "bold green reverse" if is_active else "bold green"
-                cells.append(f"{cursor}[{style}]{item['label']}[/{style}]")
+                if is_active:
+                    button = f"[bold white on red] ☣  {item['label']}  ☣ [/]"
+                    cursor = "[bold red]►[/bold red] "
+                else:
+                    button = f"[bold green on black] 🚀  {item['label']}  🚀 [/]"
+                    cursor = "  "
+                cells.append(f"{cursor}{button}")
             else:
                 chk_box = "[bold green][████] ON [/bold green]" if item.get("selected", False) else "[bold bright_black][░░░░] OFF[/bold bright_black]"
                 style = "bold white" if is_active else "dim white"
@@ -386,7 +391,12 @@ def update_ui():
         
         current_item = items[item_idx] if active_pane == "right" else menu_data[cat_idx]["items"][0]
         desc = current_item.get("desc", "Sin descripción detallada disponible.")
-        desc_text = Text.from_markup(f"[bold cyan]Paquete:[/bold cyan] {current_item['label']}\n[bold yellow]Detalles:[/bold yellow] {desc}\n\n[dim]Usa ESPACIO para alternar el estado del paquete seleccionado.[/dim]", style="white", justify="left")
+        
+        warning_msg = ""
+        if is_legacy_nvidia and "NVIDIA" in current_item["label"].upper():
+            warning_msg = "\n\n[bold red]⚠️  ATENCIÓN: Tu hardware ha sido detectado como NVIDIA Legacy. La selección manual de drivers modernos está deshabilitada para prevenir cuelgues del servidor gráfico. El sistema instalará automáticamente el driver legacy correspondiente (390xx o 470xx).[/bold red]"
+            
+        desc_text = Text.from_markup(f"[bold cyan]Paquete:[/bold cyan] {current_item['label']}\n[bold yellow]Detalles:[/bold yellow] {desc}{warning_msg}\n\n[dim]Usa ESPACIO para alternar el estado del paquete seleccionado.[/dim]", style="white", justify="left")
         desc_panel = Panel(Align.center(desc_text, vertical="middle"), title="[bold yellow]Información Detallada[/bold yellow]", border_style="yellow")
         
         right_layout = Layout()
