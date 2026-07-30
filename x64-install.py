@@ -549,9 +549,6 @@ def keyboard_worker():
         current_state = "working"
 
 def setup_plymouth_bootloader(has_nvidia_gpu=False):
-    log_lines.append("[yellow]Instalando plymouth...[/yellow]")
-    run_cmd_live("sudo pacman -S --noconfirm --needed plymouth", check=False)
-    
     log_lines.append("[yellow]Aplicando tema de Plymouth...[/yellow]")
     run_cmd_live("sudo mkdir -p /usr/share/plymouth/themes/omarchy", check=False)
     run_cmd_live("sudo cp -r default/plymouth/* /usr/share/plymouth/themes/omarchy/ 2>/dev/null", check=False)
@@ -594,9 +591,14 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False):
         
     run_cmd_live(f"sudo bash -c 'if [ -f /etc/kernel/cmdline ]; then grep -q \"splash\" /etc/kernel/cmdline || sed -i \"s/$/{cmdline_extra}/\" /etc/kernel/cmdline; fi' 2>/dev/null", check=False)
     
-    # Inyectar directamente en limine.conf por si no usan limine-entry-tool
-    run_cmd_live(f"sudo find /boot /efi -maxdepth 4 \\( -name 'limine.conf' -o -name 'limine.cfg' \\) -exec bash -c 'grep -q \"splash\" \"$1\" || sudo sed -i -E \"/^ *kernel_cmdline/ {{ /splash/! s/$/{cmdline_extra}/ }}\" \"$1\"' _ {{}} \\; 2>/dev/null", check=False)
-    run_cmd_live(f"sudo find /boot /efi -maxdepth 4 \\( -name 'limine.conf' -o -name 'limine.cfg' \\) -exec bash -c 'grep -q \"splash\" \"$1\" || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/{cmdline_extra}/ }}\" \"$1\"' _ {{}} \\; 2>/dev/null", check=False)
+    # Búsqueda optimizada de Limine nativa (Sin escaneos ciegos)
+    limine_paths = ["/boot/limine.conf", "/boot/limine/limine.conf", "/efi/limine.conf", "/boot/efi/limine.conf",
+                    "/boot/limine.cfg", "/boot/limine/limine.cfg", "/efi/limine.cfg", "/boot/efi/limine.cfg"]
+    for lpath in limine_paths:
+        if os.path.exists(lpath):
+            run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *kernel_cmdline/ {{ /splash/! s/$/{cmdline_extra}/ }}\" {lpath}' 2>/dev/null", check=False)
+            run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/{cmdline_extra}/ }}\" {lpath}' 2>/dev/null", check=False)
+            break
     
     # Actualizar limine si está instalado (ignorando prompts)
     run_cmd_live("if command -v limine-update >/dev/null; then echo '' | sudo limine-update; fi", check=False)
@@ -653,13 +655,15 @@ def installer_worker():
             with open("install/omarchy-other.packages") as f2:
                 pkgs.extend(f2.read().splitlines())
         
+        # Batch de paquetes críticos de sistema
+        pkgs.extend(["plymouth", "greetd", "greetd-tuigreet"])
         pkgs.extend(user_choices["packages"])
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
         
         chk = subprocess.run(f"pacman -T {pkg_str}", shell=True, stdout=subprocess.PIPE, text=True)
         if chk.returncode != 0:
             missing = chk.stdout.replace('\n', ' ').strip()
-            progress.update(t_pkg, description="[cyan]Descargando e Instalando...", advance=40)
+            progress.update(t_pkg, description="[cyan]Descargando e Instalando Transacción Maestra...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm jack2", check=False)
             run_cmd_live(f"sudo pacman -S --noconfirm {missing}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
@@ -703,8 +707,7 @@ def installer_worker():
         
         progress.update(t_config, description="[yellow]Desplegando Gestor TUI (Tuigreet)...", advance=5)
         
-        # --- Instalar Greetd + Tuigreet ---
-        run_cmd_live("sudo pacman -S --noconfirm greetd greetd-tuigreet", check=False)
+        # --- Configurar Greetd + Tuigreet (Los paquetes ya se instalaron en el Batch Maestro) ---
         run_cmd_live("sudo mkdir -p /etc/greetd", check=False)
         
         # Parche de seguridad para evitar que Plymouth congele la TTY1 tapando a Tuigreet
@@ -778,35 +781,38 @@ user = "greeter"
                 f.write(greetd_config)
             run_cmd_live("sudo mv /tmp/greetd_config.toml /etc/greetd/config.toml", check=False)
 
+        # --- Batch Shelling para Servicios y Entornos ---
+        progress.update(t_config, description="[yellow]Aplicando configuraciones finales (Batch Shell)...", advance=10)
+        services_script = "#!/bin/bash\\n"
+        
         if not is_legacy_nvidia:
-            progress.update(t_config, description="[yellow]Configurando Tema SDDM...", advance=5)
-            run_cmd_live("sudo mkdir -p /usr/share/sddm/themes/omarchy", check=False)
-            run_cmd_live("sudo cp -r default/sddm/omarchy/* /usr/share/sddm/themes/omarchy/ 2>/dev/null", check=False)
-            run_cmd_live("sudo mkdir -p /etc/sddm.conf.d", check=False)
-            run_cmd_live("sudo bash -c 'echo -e \"[Theme]\\nCurrent=omarchy\" > /etc/sddm.conf.d/omarchy.conf'", check=False)
-            
-            progress.update(t_config, description="[yellow]Habilitando servicios...", advance=10)
-            run_cmd_live("sudo systemctl disable greetd.service 2>/dev/null", check=False)
-            run_cmd_live("sudo systemctl enable sddm.service --now", check=False)
+            services_script += "mkdir -p /usr/share/sddm/themes/omarchy /etc/sddm.conf.d\\n"
+            services_script += "cp -r default/sddm/omarchy/* /usr/share/sddm/themes/omarchy/ 2>/dev/null\\n"
+            services_script += "echo -e \\\"[Theme]\\\\nCurrent=omarchy\\\" > /etc/sddm.conf.d/omarchy.conf\\n"
+            services_script += "systemctl disable greetd.service 2>/dev/null\\n"
+            services_script += "systemctl enable sddm.service --now\\n"
         else:
-            progress.update(t_config, description="[yellow]Habilitando TTY Pura (Legacy Hardware)...", advance=15)
-            run_cmd_live("sudo systemctl disable sddm.service 2>/dev/null", check=False)
-            run_cmd_live("sudo systemctl disable greetd.service 2>/dev/null", check=False)
-            run_cmd_live("sudo systemctl enable getty@tty1.service --now", check=False)
+            services_script += "systemctl disable sddm.service 2>/dev/null\\n"
+            services_script += "systemctl disable greetd.service 2>/dev/null\\n"
+            services_script += "systemctl enable getty@tty1.service --now\\n"
 
-
-        run_cmd_live("sudo systemctl enable bluetooth.service", check=False)
+        services_script += "systemctl enable bluetooth.service\\n"
+        
         if "ananicy-cpp" in user_choices["packages"]:
-            run_cmd_live("sudo systemctl enable ananicy-cpp.service", check=False)
+            services_script += "systemctl enable ananicy-cpp.service\\n"
         if "zram-generator" in user_choices["packages"]:
-            run_cmd_live("sudo systemctl daemon-reload", check=False)
-            run_cmd_live("sudo systemctl restart systemd-zram-setup@zram0.service", check=False)
+            services_script += "systemctl daemon-reload\\n"
+            services_script += "systemctl restart systemd-zram-setup@zram0.service\\n"
         if "uksmd" in user_choices["packages"]:
-            run_cmd_live("sudo systemctl enable uksmd.service", check=False)
+            services_script += "systemctl enable uksmd.service\\n"
         if "irqbalance" in user_choices["packages"]:
-            run_cmd_live("sudo systemctl enable irqbalance.service", check=False)
+            services_script += "systemctl enable irqbalance.service\\n"
         if "cups" in user_choices["packages"]:
-            run_cmd_live("sudo systemctl enable cups.service", check=False)
+            services_script += "systemctl enable cups.service\\n"
+            
+        with open("/tmp/omarchy-services.sh", "w") as f:
+            f.write(services_script)
+        run_cmd_live("sudo bash /tmp/omarchy-services.sh", check=False)
         
         progress.update(t_config, description="[yellow]Aplicando Diseño y Tema...", advance=20)
         if user_choices["theme"] == "Tokyo Night":
