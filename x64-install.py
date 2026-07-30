@@ -68,6 +68,25 @@ item_idx = 0
 user_choices = {"theme": "Tokyo Night", "drivers": "Mesa (AMD/Intel)", "packages": []}
 transition_text = ""
 is_legacy_nvidia = False
+has_nvidia = False
+
+try:
+    pci_out = subprocess.check_output("lspci -k | grep -iEA3 'vga|3d|display'", shell=True, text=True).lower()
+    if "nvidia" in pci_out:
+        has_nvidia = True
+        if any(arch in pci_out for arch in ["gtx 9", "gtx 7", "gtx 6", "kepler", "maxwell"]):
+             is_legacy_nvidia = True
+except Exception:
+    pass
+
+# Auto-toggle drivers based on hardware detection
+for c in menu_data:
+    if "Drivers" in c["cat"]:
+        for item in c["items"]:
+            if "Mesa" in item["label"]:
+                item["selected"] = not has_nvidia
+            elif "NVIDIA" in item["label"] and "Privativo" in item["label"]:
+                item["selected"] = has_nvidia
 
 def log(msg):
     time_str = datetime.now().strftime('%H:%M:%S')
