@@ -297,7 +297,7 @@ EOF
       [[ -r $unit ]] && cmp -s "$unit_source" "$unit" &&
       systemctl --user is-active --quiet "$unit_name" 2>/dev/null &&
       systemctl --user is-enabled --quiet "$unit_name" 2>/dev/null &&
-      [[ "$(tuning_downstream_sink)" == "$speaker_sink" ]]; then
+      [[ $(tuning_downstream_sink) == "$speaker_sink" ]]; then
       echo "Speaker tuning already current: $description"
       exit 0
     fi
@@ -328,7 +328,7 @@ EOF
 
     # Confirm the output really landed on the sink this tuning was measured for.
     for _ in {1..20}; do
-      [[ "$(tuning_downstream_sink)" == "$speaker_sink" ]] && break
+      [[ $(tuning_downstream_sink) == "$speaker_sink" ]] && break
       sleep 0.25
     done
     downstream="$(tuning_downstream_sink)"
