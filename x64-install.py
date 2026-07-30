@@ -519,14 +519,46 @@ def installer_worker():
         progress.update(t_config, description="[yellow]Configurando Pantalla de Arranque (Plymouth)...", advance=5)
         setup_plymouth_bootloader()
         
-        progress.update(t_config, description="[yellow]Configurando Tema SDDM...", advance=5)
-        run_cmd_live("sudo mkdir -p /usr/share/sddm/themes/omarchy", check=False)
-        run_cmd_live("sudo cp -r default/sddm/omarchy/* /usr/share/sddm/themes/omarchy/ 2>/dev/null", check=False)
-        run_cmd_live("sudo mkdir -p /etc/sddm.conf.d", check=False)
-        run_cmd_live("sudo bash -c 'echo -e \"[Theme]\\nCurrent=omarchy\" > /etc/sddm.conf.d/omarchy.conf'", check=False)
-        
-        progress.update(t_config, description="[yellow]Habilitando servicios...", advance=10)
-        run_cmd_live("sudo systemctl enable sddm.service --now", check=False)
+        if not is_legacy_nvidia:
+            progress.update(t_config, description="[yellow]Configurando Tema SDDM...", advance=5)
+            run_cmd_live("sudo mkdir -p /usr/share/sddm/themes/omarchy", check=False)
+            run_cmd_live("sudo cp -r default/sddm/omarchy/* /usr/share/sddm/themes/omarchy/ 2>/dev/null", check=False)
+            run_cmd_live("sudo mkdir -p /etc/sddm.conf.d", check=False)
+            run_cmd_live("sudo bash -c 'echo -e \"[Theme]\\nCurrent=omarchy\" > /etc/sddm.conf.d/omarchy.conf'", check=False)
+            
+            progress.update(t_config, description="[yellow]Habilitando servicios...", advance=10)
+            run_cmd_live("sudo systemctl enable sddm.service --now", check=False)
+        else:
+            progress.update(t_config, description="[yellow]Configurando TTY Login (Legacy Fallback)...", advance=15)
+            issue_content = r"""\e[1;36m
+   ____                             __           
+  / __ \____ ___  ____ ___________/ /_  __  __
+ / / / / __ `__ \/ __ `/ ___/ ___/ __ \/ / / /
+/ /_/ / / / / / / /_/ / /  / /__/ / / / /_/ / 
+\____/_/ /_/ /_/\__,_/_/   \___/_/ /_/\__, /  
+                                     /____/   \e[0m
+\e[1;31m[ NVIDIA LEGACY FALLBACK PROTOCOL ENGAGED ]\e[0m
+
+\e[1;33m⚠️ MODO RESCATE / MANTENIMIENTO:
+Si Hyprland falla y necesitas una terminal pura,
+presiona [Ctrl + Alt + F2] en tu teclado ahora.\e[0m
+"""
+            run_cmd_live(f"sudo bash -c 'cat << \"EOF\" > /etc/issue\n{issue_content}\nEOF'", check=False)
+            run_cmd_live("sudo systemctl disable sddm.service 2>/dev/null", check=False)
+            
+            profile_injection = r"""
+# --- Omarchy Legacy Fallback Auto-Start ---
+if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
+    clear
+    echo -e "\e[1;36m[X64 STUDIOS] Iniciando Omarchy Cyberpunk Environment...\e[0m"
+    sleep 1
+    exec Hyprland
+fi
+"""
+            with open(os.path.expanduser("~/.bash_profile"), "a") as f:
+                f.write(profile_injection)
+            with open(os.path.expanduser("~/.zprofile"), "a") as f:
+                f.write(profile_injection)
         run_cmd_live("sudo systemctl enable bluetooth.service", check=False)
         if "ananicy-cpp" in user_choices["packages"]:
             run_cmd_live("sudo systemctl enable ananicy-cpp.service", check=False)
