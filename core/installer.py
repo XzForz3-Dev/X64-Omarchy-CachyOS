@@ -117,9 +117,9 @@ def installer_worker():
         
         pkgs.extend(["plymouth", "greetd", "greetd-tuigreet", "eatmydata"])
         pkgs.extend(state.user_choices["packages"])
-        pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
+        valid_pkgs = [p for p in pkgs if p and not p.startswith('#')]
         
-        chk = subprocess.run(f"pacman -T {pkg_str}", shell=True, stdout=subprocess.PIPE, text=True)
+        chk = subprocess.run(["pacman", "-T"] + valid_pkgs, stdout=subprocess.PIPE, text=True)
         if chk.returncode != 0:
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             ui.progress.update(ui.t_pkg, description="[cyan]Descargando e Instalando Transacción Maestra...", advance=40)

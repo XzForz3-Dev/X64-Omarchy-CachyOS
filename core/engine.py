@@ -1,5 +1,7 @@
 import asyncio
 import subprocess
+import time
+import threading
 from datetime import datetime
 from rich.markup import escape
 import core.state as state
@@ -58,3 +60,8 @@ def run_cmd_live(cmd, check=True):
 
 def precache_worker():
     subprocess.run("sudo pacman -Sy --noconfirm --needed libeatmydata", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+def keep_sudo_alive():
+    while not state.install_done:
+        subprocess.run("sudo -v", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        time.sleep(120)
