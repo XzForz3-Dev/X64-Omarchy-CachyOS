@@ -106,18 +106,6 @@ def get_static_logo():
         t1.append(t3)
     return t1
 
-progress = Progress(
-    SpinnerColumn(),
-    TextColumn("[progress.description]{task.description}"),
-    BarColumn(),
-    TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
-)
-t_health = progress.add_task("[white]Health Check del Sistema...", total=100)
-t_repo = progress.add_task("[white]Preparando Repositorios...", total=100)
-t_sync = progress.add_task("[white]Sincronizando Sistema...", total=100)
-t_pkg = progress.add_task("[white]Instalando X64-Omarchy...", total=100)
-t_backup = progress.add_task("[white]Creando Respaldo...", total=100)
-t_config = progress.add_task("[white]Aplicando Configuración...", total=100)
 
 def update_ui():
     border_color = "cyan"
@@ -274,7 +262,7 @@ def update_ui():
             )
             state.ui_transitioned = True
             
-        layout["right"]["progress"].update(Panel(progress, title=f"[bold {border_color}]Progreso de Metamorfosis[/bold {border_color}]", border_style=border_color))
+        layout["right"]["progress"].update(Panel(state.progress, title=f"[bold {border_color}]Progreso de Metamorfosis[/bold {border_color}]", border_style=border_color))
         matrix_text = "\n".join(list(state.log_lines)[-12:]) # Limitar estrictamente a 12 líneas
         matrix_obj = Text.from_markup(matrix_text, overflow="crop")
         matrix_obj.no_wrap = True

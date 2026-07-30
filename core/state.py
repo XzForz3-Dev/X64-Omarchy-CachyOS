@@ -1,9 +1,23 @@
 import json
 from collections import deque
 from rich.console import Console
+from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 
 LOG_FILE = "/tmp/x64-install.log"
 console = Console()
+
+progress = Progress(
+    SpinnerColumn(),
+    TextColumn("[progress.description]{task.description}"),
+    BarColumn(),
+    TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+)
+t_health = progress.add_task("[white]Health Check del Sistema...", total=100)
+t_repo = progress.add_task("[white]Preparando Repositorios...", total=100)
+t_sync = progress.add_task("[white]Sincronizando Sistema...", total=100)
+t_pkg = progress.add_task("[white]Instalando X64-Omarchy...", total=100)
+t_backup = progress.add_task("[white]Creando Respaldo...", total=100)
+t_config = progress.add_task("[white]Aplicando Configuración...", total=100)
 
 log_lines = deque(maxlen=25)
 install_error = None

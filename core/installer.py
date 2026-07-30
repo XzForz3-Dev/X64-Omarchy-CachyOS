@@ -5,7 +5,7 @@ import subprocess
 from datetime import datetime
 import core.state as state
 from core.engine import run_cmd_live
-import core.ui as ui
+
 
 def setup_plymouth_bootloader(has_nvidia_gpu=False):
     state.log_lines.append("[yellow]Aplicando tema de Plymouth...[/yellow]")
@@ -57,57 +57,57 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False):
 
 def installer_worker():
     try:
-        ui.progress.update(ui.t_health, description="[yellow]Verificando Red...", advance=30)
+        state.progress.update(state.t_health, description="[yellow]Verificando Red...", advance=30)
         run_cmd_live("ping -c 1 archlinux.org")
-        ui.progress.update(ui.t_health, description="[yellow]Verificando Espacio en Disco...", advance=30)
+        state.progress.update(state.t_health, description="[yellow]Verificando Espacio en Disco...", advance=30)
         free_space = shutil.disk_usage("/").free
         if free_space < 15 * 1024 * 1024 * 1024:
             raise Exception("Espacio insuficiente. Se requieren al menos 15GB libres en /.")
-        ui.progress.update(ui.t_health, description="[yellow]Ajustando flags de BTRFS en fstab (I/O Extremo)...", advance=15)
+        state.progress.update(state.t_health, description="[yellow]Ajustando flags de BTRFS en fstab (I/O Extremo)...", advance=15)
         run_cmd_live("sudo bash -c 'if [ -f /etc/fstab ]; then sed -i -E \"/btrfs/ s/(defaults|[a-z0-9=,]+)/\\1,noatime,space_cache=v2,discard=async/g\" /etc/fstab; fi'", check=False)
         run_cmd_live("sudo bash -c 'if [ -f /etc/fstab ]; then sed -i \"s/,,/,/g\" /etc/fstab; fi'", check=False)
 
-        ui.progress.update(ui.t_health, description="[green]Sistema en Óptimas Condiciones", completed=100)
+        state.progress.update(state.t_health, description="[green]Sistema en Óptimas Condiciones", completed=100)
         
-        ui.progress.update(ui.t_repo, description="[yellow]Acelerando Descargas (ParallelDownloads)...", advance=20)
+        state.progress.update(state.t_repo, description="[yellow]Acelerando Descargas (ParallelDownloads)...", advance=20)
         run_cmd_live("sudo sed -i 's/^#ParallelDownloads.*/ParallelDownloads = 10/' /etc/pacman.conf", check=False)
         run_cmd_live("sudo bash -c 'grep -q \"^ILoveCandy\" /etc/pacman.conf || sed -i \"/^#Color/a ILoveCandy\" /etc/pacman.conf'", check=False)
         run_cmd_live("sudo sed -i '/NoExtract = usr\\/share\\/doc\\/\\*/d' /etc/pacman.conf", check=False)
         run_cmd_live("sudo bash -c 'grep -q \"NoExtract = usr/share/doc\" /etc/pacman.conf || sed -i \"/^\\[options\\]/a NoExtract = usr/share/doc/* usr/share/gtk-doc/* usr/share/help/* usr/share/man/* usr/share/info/*\" /etc/pacman.conf'", check=False)
         
-        ui.progress.update(ui.t_repo, description="[yellow]Desbloqueando Pacman...", advance=10)
+        state.progress.update(state.t_repo, description="[yellow]Desbloqueando Pacman...", advance=10)
         if os.path.exists("/var/lib/pacman/db.lck"):
             run_cmd_live("sudo rm -f /var/lib/pacman/db.lck")
         
-        ui.progress.update(ui.t_repo, description="[yellow]Inyectando repo Omarchy...", advance=50)
+        state.progress.update(state.t_repo, description="[yellow]Inyectando repo Omarchy...", advance=50)
         run_cmd_live("sudo bash -c 'grep -q \"omarchy\" /etc/pacman.conf || echo -e \"\\n[omarchy]\\nSigLevel = Optional TrustAll\\nServer = https://pkgs.omarchy.org/\\$arch/\\n\" >> /etc/pacman.conf'")
-        ui.progress.update(ui.t_repo, description="[yellow]Inyectando Chaotic-AUR...", advance=10)
+        state.progress.update(state.t_repo, description="[yellow]Inyectando Chaotic-AUR...", advance=10)
         run_cmd_live("sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com", check=False)
         run_cmd_live("sudo pacman-key --lsign-key 3056513887B78AEB", check=False)
         run_cmd_live("sudo pacman -U --noconfirm --noprogressbar 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'", check=False)
         run_cmd_live("sudo bash -c 'grep -q \"chaotic-aur\" /etc/pacman.conf || echo -e \"\\n[chaotic-aur]\\nInclude = /etc/pacman.d/chaotic-mirrorlist\\n\" >> /etc/pacman.conf'")
-        ui.progress.update(ui.t_repo, description="[green]Repositorios Listos", completed=100)
+        state.progress.update(state.t_repo, description="[green]Repositorios Listos", completed=100)
 
 
-        ui.progress.update(ui.t_sync, description="[yellow]Creando Snapshot BTRFS...", advance=5)
+        state.progress.update(state.t_sync, description="[yellow]Creando Snapshot BTRFS...", advance=5)
         run_cmd_live("sudo snapper create -c root -d 'Pre-Omarchy Installation'", check=False)
         
-        ui.progress.update(ui.t_sync, description="[yellow]Instalando Cabeceras del Kernel (Para DKMS)...", advance=5)
+        state.progress.update(state.t_sync, description="[yellow]Instalando Cabeceras del Kernel (Para DKMS)...", advance=5)
         run_cmd_live("sudo bash -c 'pacman -S --noconfirm --noprogressbar --needed $(pacman -Qq | grep \"^linux\" | grep -v \"headers\" | grep -v \"firmware\" | awk \"{print \\$1\\\"-headers\\\"}\")' 2>/dev/null", check=False)
 
-        ui.progress.update(ui.t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=5)
+        state.progress.update(state.t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=5)
         res = run_cmd_live("sudo eatmydata pacman -Syu --noconfirm --noprogressbar", check=False)
         if res != 0:
             state.log_lines.append("[bold red]Fallo detectado. Reparando Llavero GPG...[/bold red]")
             run_cmd_live("sudo rm -rf /etc/pacman.d/gnupg/")
-            ui.progress.update(ui.t_sync, description="[yellow]Reparando Llavero...", advance=10)
+            state.progress.update(state.t_sync, description="[yellow]Reparando Llavero...", advance=10)
             run_cmd_live("sudo pacman-key --init")
             run_cmd_live("sudo pacman-key --populate archlinux cachyos")
-            ui.progress.update(ui.t_sync, description="[yellow]Reintentando Sincronización...", advance=20)
+            state.progress.update(state.t_sync, description="[yellow]Reintentando Sincronización...", advance=20)
             run_cmd_live("sudo eatmydata pacman -Syu --noconfirm --noprogressbar")
-        ui.progress.update(ui.t_sync, description="[green]Sistema Sincronizado", completed=100)
+        state.progress.update(state.t_sync, description="[green]Sistema Sincronizado", completed=100)
 
-        ui.progress.update(ui.t_pkg, description="[yellow]Calculando paquetes base...", advance=20)
+        state.progress.update(state.t_pkg, description="[yellow]Calculando paquetes base...", advance=20)
         pkgs = []
         if os.path.exists("install/omarchy-base.packages"):
             with open("install/omarchy-base.packages") as f1:
@@ -123,19 +123,19 @@ def installer_worker():
         chk = subprocess.run(["pacman", "-T"] + valid_pkgs, stdout=subprocess.PIPE, text=True)
         if chk.returncode != 0:
             missing_pkgs = [p for p in chk.stdout.splitlines()]
-            ui.progress.update(ui.t_pkg, description="[cyan]Descargando e Instalando Transacción Maestra...", advance=40)
+            state.progress.update(state.t_pkg, description="[cyan]Descargando e Instalando Transacción Maestra...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm --noprogressbar jack2", check=False)
             run_cmd_live("sudo pacman -Rdd --noconfirm --noprogressbar nvidia-470xx-dkms nvidia-470xx-utils lib32-nvidia-470xx-utils nvidia-settings-470xx opencl-nvidia-470xx nvidia-390xx-dkms nvidia-390xx-utils lib32-nvidia-390xx-utils nvidia-settings-390xx opencl-nvidia-390xx", check=False)
             run_cmd_live(f"sudo eatmydata pacman -S --noconfirm --noprogressbar {' '.join(missing_pkgs)}")
-        ui.progress.update(ui.t_pkg, description="[green]Paquetes Instalados", completed=100)
+        state.progress.update(state.t_pkg, description="[green]Paquetes Instalados", completed=100)
 
-        ui.progress.update(ui.t_backup, description="[yellow]Comprimiendo ~/.config...", advance=50)
+        state.progress.update(state.t_backup, description="[yellow]Comprimiendo ~/.config...", advance=50)
         home = os.path.expanduser("~")
         backup_name = f"x64-backup-{datetime.now().strftime('%Y%m%d_%H%M%S')}.tar.gz"
         run_cmd_live(f"tar -czf {backup_name} -C {home} .config", check=False)
-        ui.progress.update(ui.t_backup, description="[green]Respaldo Completado", completed=100)
+        state.progress.update(state.t_backup, description="[green]Respaldo Completado", completed=100)
 
-        ui.progress.update(ui.t_config, description="[yellow]Desplegando escudo de sistema...", advance=20)
+        state.progress.update(state.t_config, description="[yellow]Desplegando escudo de sistema...", advance=20)
         run_cmd_live("mkdir -p ~/.config ~/.local/bin ~/.local/share/themes")
         run_cmd_live("sudo mkdir -p /usr/share/omarchy")
         run_cmd_live("sudo cp -r --remove-destination bin config default shell themes /usr/share/omarchy/ 2>/dev/null", check=False)
@@ -162,10 +162,10 @@ def installer_worker():
         shutil.copytree("themes", os.path.expanduser("~/.local/share/themes"), dirs_exist_ok=True)
         run_cmd_live("chmod +x ~/.local/bin/*", check=False)
         
-        ui.progress.update(ui.t_config, description="[yellow]Configurando Pantalla de Arranque (Plymouth)...", advance=5)
+        state.progress.update(state.t_config, description="[yellow]Configurando Pantalla de Arranque (Plymouth)...", advance=5)
         setup_plymouth_bootloader(state.has_nvidia)
         
-        ui.progress.update(ui.t_config, description="[yellow]Desplegando Gestor TUI (Tuigreet)...", advance=5)
+        state.progress.update(state.t_config, description="[yellow]Desplegando Gestor TUI (Tuigreet)...", advance=5)
         
         run_cmd_live("sudo mkdir -p /etc/greetd", check=False)
         
@@ -234,7 +234,7 @@ user = "greeter"
                 f.write(greetd_config)
             run_cmd_live("sudo mv /tmp/greetd_config.toml /etc/greetd/config.toml", check=False)
 
-        ui.progress.update(ui.t_config, description="[yellow]Aplicando configuraciones finales (Batch Shell)...", advance=10)
+        state.progress.update(state.t_config, description="[yellow]Aplicando configuraciones finales (Batch Shell)...", advance=10)
         services_script = "#!/bin/bash\n"
         
         if not state.is_legacy_nvidia:
@@ -266,14 +266,14 @@ user = "greeter"
             f.write(services_script)
         run_cmd_live("sudo bash /tmp/omarchy-services.sh", check=False)
         
-        ui.progress.update(ui.t_config, description="[yellow]Aplicando Diseño y Tema...", advance=20)
+        state.progress.update(state.t_config, description="[yellow]Aplicando Diseño y Tema...", advance=20)
         if state.user_choices["theme"] == "Tokyo Night":
             run_cmd_live("export OMARCHY_PATH=/usr/share/omarchy && export OMARCHY_THEME_HEADLESS=1 && /usr/share/omarchy/bin/omarchy-theme-set 'Tokyo Night'", check=False)
         
-        ui.progress.update(ui.t_config, description="[yellow]Purgando caché de Pacman...", advance=10)
+        state.progress.update(state.t_config, description="[yellow]Purgando caché de Pacman...", advance=10)
         run_cmd_live("sudo pacman -Scc --noconfirm", check=False)
         
-        ui.progress.update(ui.t_config, description="[green]Sistema Listo", completed=100)
+        state.progress.update(state.t_config, description="[green]Sistema Listo", completed=100)
         
         if state.is_legacy_nvidia:
             run_cmd_live("echo -e '\\n\033[1;41m[ ALERTA NVIDIA LEGACY ]\033[0m\\nHardware antiguo detectado. El protocolo de rescate se ha inyectado. Por favor, inicia sesión escribiendo: \033[1;33mHyprland\033[0m (No uses UWSM ni el display manager).'", check=False)
