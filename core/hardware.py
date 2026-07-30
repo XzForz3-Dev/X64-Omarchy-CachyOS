@@ -119,7 +119,7 @@ def detect_gpu_and_update_menu():
                         item["selected"] = has_nvidia
                         if state.is_legacy_nvidia:
                             item["desc"] += " [bold yellow](Nota: Hardware antiguo detectado. Pacman purgará automáticamente los drivers legacy para instalar esta versión.)[/bold yellow]"
-                    elif "Mesa" in item["label"]:
+                    elif "Mesa (AMD" in item["label"]:
                         item["selected"] = not has_nvidia
     except Exception:
         pass
