@@ -999,7 +999,9 @@ if not install_error:
     console.print(Panel(report, border_style="green", title="[bold green]¡Sistema Listo![/bold green]"))
     
     try:
-        termios.tcflush(sys.stdin.fileno(), termios.TCIFLUSH)
+        termios.tcflush(fd, termios.TCIFLUSH)
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        fcntl.fcntl(fd, fcntl.F_SETFL, fl)
     except Exception:
         pass
     ans = Prompt.ask("\n¿Deseas reiniciar el sistema ahora?", choices=["Si", "No"], default="Si")
