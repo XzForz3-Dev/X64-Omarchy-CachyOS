@@ -238,11 +238,6 @@ layout.split_row(
     Layout(name="right", ratio=2)
 )
 
-layout["left"].split_column(
-    Layout(name="logo", ratio=1),
-    Layout(name="sysinfo", ratio=1)
-)
-
 logo_text = """
 ██╗  ██╗ ██████╗ ██╗  ██╗
 ╚██╗██╔╝██╔════╝ ██║  ██║
@@ -315,26 +310,44 @@ def update_ui():
         border_color = "magenta"
     elif current_state == "transition":
         border_color = "yellow"
-
-    static_logo = get_static_logo()
-    layout["left"]["logo"].update(
-        Panel(
-            Align.center(static_logo, vertical="middle"),
-            title="[bold white] X64 SYSTEM CORE [/bold white]",
-            border_style=border_color,
-            box=box.SQUARE
-        )
-    )
+    from rich.console import Console
+    console = Console()
     
-    layout["left"]["sysinfo"].update(
-        Panel(
-            Align.center(get_sys_info(), vertical="middle"), 
-            title="[bold blue]Hardware & Setup (Fastfetch)[/bold blue]", 
-            border_style="blue",
-            box=box.ROUNDED
+    # LAYOUT DINÁMICO: Ocultar logo si la terminal es de 24 líneas (VGA clásica)
+    if console.size.height < 30:
+        layout["left"].split_column(
+            Layout(name="sysinfo")
         )
-    )
-    
+        layout["left"]["sysinfo"].update(
+            Panel(
+                Align.center(get_sys_info(), vertical="middle"), 
+                title="[bold blue]Hardware & Setup (Fastfetch)[/bold blue]", 
+                border_style="blue",
+                box=box.ROUNDED
+            )
+        )
+    else:
+        layout["left"].split_column(
+            Layout(name="logo", ratio=1),
+            Layout(name="sysinfo", ratio=1)
+        )
+        static_logo = get_static_logo()
+        layout["left"]["logo"].update(
+            Panel(
+                Align.center(static_logo, vertical="middle"),
+                title="[bold white] X64 SYSTEM CORE [/bold white]",
+                border_style=border_color,
+                box=box.SQUARE
+            )
+        )
+        layout["left"]["sysinfo"].update(
+            Panel(
+                Align.center(get_sys_info(), vertical="middle"), 
+                title="[bold blue]Hardware & Setup (Fastfetch)[/bold blue]", 
+                border_style="blue",
+                box=box.ROUNDED
+            )
+        )
     if current_state == "menu":
         # --- VIEWPORT ROW SCROLLING LOGIC ---
         items = menu_data[cat_idx]["items"]
