@@ -612,7 +612,7 @@ def installer_worker():
         chk = subprocess.run(f"pacman -T {pkg_str}", shell=True, stdout=subprocess.PIPE, text=True)
         if chk.returncode != 0:
             missing_pkgs = [p for p in chk.stdout.splitlines()]
-            progress.update(t_pkg, description="[cyan]Descargando e Instalando Transacción Maestra...", advance=40)
+            progress.update(t_pkg, description="[cyan]Descargando e Instalando Paquetes (Puede tardar varios minutos)...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm jack2", check=False)
             run_cmd_live(f"sudo pacman -S --noconfirm {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
