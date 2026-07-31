@@ -885,10 +885,6 @@ try:
                                             for i in c["items"]:
                                                 if i.get("selected"):
                                                     user_choices["packages"].extend(i.get("pkg", []))
-                                                    if "NVIDIA" in i["label"]:
-                                                        user_choices["drivers"] = "NVIDIA (Privativo)"
-                                        if "NVIDIA" not in user_choices["drivers"]:
-                                            user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"])
                                         
                                         current_state = "transition"
                                         # Set up transition animation state
