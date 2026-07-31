@@ -105,6 +105,7 @@ def run_cmd_live(cmd, check=True):
             log(f"Ejecutando (async): {cmd}")
             process = await asyncio.create_subprocess_shell(
                 cmd,
+                stdin=asyncio.subprocess.DEVNULL,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.STDOUT
             )
@@ -556,9 +557,6 @@ def installer_worker():
 
         progress.update(t_health, description="[green]Sistema en Óptimas Condiciones", completed=100)
         
-        progress.update(t_repo, description="[yellow]Instalando Acelerador de I/O (libeatmydata)...", advance=10)
-        run_cmd_live("sudo pacman -Sy --noconfirm --needed libeatmydata", check=False)
-        
         progress.update(t_repo, description="[yellow]Acelerando Descargas (ParallelDownloads)...", advance=10)
         run_cmd_live("sudo sed -i 's/^#ParallelDownloads.*/ParallelDownloads = 10/' /etc/pacman.conf", check=False)
         run_cmd_live("sudo bash -c 'grep -q \"^ILoveCandy\" /etc/pacman.conf || sed -i \"/^#Color/a ILoveCandy\" /etc/pacman.conf'", check=False)
@@ -586,7 +584,7 @@ def installer_worker():
         run_cmd_live("sudo bash -c 'pacman -S --noconfirm --needed $(pacman -Qq | grep \"^linux\" | grep -v \"headers\" | grep -v \"firmware\" | awk \"{print \\$1\\\"-headers\\\"}\")' 2>/dev/null", check=False)
 
         progress.update(t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=5)
-        res = run_cmd_live("sudo eatmydata pacman -Syu --noconfirm", check=False)
+        res = run_cmd_live("sudo pacman -Syu --noconfirm", check=False)
         if res != 0:
             log_lines.append("[bold red]Fallo detectado. Reparando Llavero GPG...[/bold red]")
             run_cmd_live("sudo rm -rf /etc/pacman.d/gnupg/")
@@ -594,7 +592,7 @@ def installer_worker():
             run_cmd_live("sudo pacman-key --init")
             run_cmd_live("sudo pacman-key --populate archlinux cachyos")
             progress.update(t_sync, description="[yellow]Reintentando Sincronización...", advance=20)
-            run_cmd_live("sudo eatmydata pacman -Syu --noconfirm")
+            run_cmd_live("sudo pacman -Syu --noconfirm")
         progress.update(t_sync, description="[green]Sistema Sincronizado", completed=100)
 
         progress.update(t_pkg, description="[yellow]Calculando paquetes base...", advance=20)
@@ -616,7 +614,7 @@ def installer_worker():
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             progress.update(t_pkg, description="[cyan]Descargando e Instalando Transacción Maestra...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm jack2", check=False)
-            run_cmd_live(f"sudo eatmydata pacman -S --noconfirm {' '.join(missing_pkgs)}")
+            run_cmd_live(f"sudo pacman -S --noconfirm {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
 
         progress.update(t_backup, description="[yellow]Comprimiendo ~/.config...", advance=50)
