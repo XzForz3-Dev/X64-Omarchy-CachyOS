@@ -771,6 +771,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
 end
 """
         run_cmd_live("mkdir -p ~/.config/fish/conf.d", check=False)
+        run_cmd_live("rm -f ~/.config/fish/conf.d/hyprland_autostart.fish", check=False)
         with open(os.path.expanduser("~/.config/fish/conf.d/omarchy_selector.fish"), "w") as f:
             f.write(fish_selector)
 
