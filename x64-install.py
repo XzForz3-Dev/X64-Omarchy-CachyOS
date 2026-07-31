@@ -423,9 +423,9 @@ def update_ui():
         
         warning_msg = ""
         if is_legacy_nvidia and "NVIDIA" in current_item["label"].upper():
-            warning_msg = "\\n\\n[bold red]⚠️  ATENCIÓN: Tu hardware ha sido detectado como NVIDIA de arquitectura antigua. El sistema instalará los drivers modernos DKMS, pero habilitará el protocolo de rescate TTY Pura para evitar colapsos del servidor gráfico.[/bold red]"
+            warning_msg = "\n\n[bold red]⚠️  ATENCIÓN: Tu hardware ha sido detectado como NVIDIA de arquitectura antigua. El sistema instalará los drivers modernos DKMS, pero habilitará el protocolo de rescate TTY Pura para evitar colapsos del servidor gráfico.[/bold red]"
             
-        desc_text = Text.from_markup(f"[bold cyan]Paquete:[/bold cyan] {current_item['label']}\\n[bold yellow]Detalles:[/bold yellow] {desc}{warning_msg}\\n\\n[dim]Usa ESPACIO para alternar el estado del paquete seleccionado.[/dim]", style="white", justify="left")
+        desc_text = Text.from_markup(f"[bold cyan]Paquete:[/bold cyan] {current_item['label']}\n[bold yellow]Detalles:[/bold yellow] {desc}{warning_msg}\n\n[dim]Usa ESPACIO para alternar el estado del paquete seleccionado.[/dim]", style="white", justify="left")
         desc_panel = Panel(Align.center(desc_text, vertical="middle"), title="[bold yellow]Información Detallada[/bold yellow]", border_style="yellow")
         
         right_layout = Layout()
