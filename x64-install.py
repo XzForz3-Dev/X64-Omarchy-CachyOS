@@ -470,48 +470,43 @@ def keyboard_worker():
     try:
         tty.setcbreak(fd)
         while not install_done:
-            # Solo procesar teclas durante el menú
             if current_state != "menu":
                 time.sleep(0.5)
                 continue
             if select.select([sys.stdin], [], [], 0.1)[0]:
-                try:
-                    data = os.read(fd, 1024)
-                    if not data:
-                        continue
-                    ch = data.decode('utf-8', errors='ignore')
-                except BlockingIOError:
-                    continue
+                ch = sys.stdin.read(1)
+                if ch == '\x1b':
+                    ch += sys.stdin.read(2)
                 
-                if '\x1b[A' in ch or '\x1bOA' in ch: # Arriba
+                if ch == '\x1b[A' or ch == '\x1bOA': # Arriba
                     if active_pane == "left":
                         cat_idx = max(0, cat_idx - 1)
                         item_idx = 0
                     else:
                         item_idx = max(0, item_idx - 3)
-                elif '\x1b[B' in ch or '\x1bOB' in ch: # Abajo
+                elif ch == '\x1b[B' or ch == '\x1bOB': # Abajo
                     if active_pane == "left":
                         cat_idx = min(len(menu_data) - 1, cat_idx + 1)
                         item_idx = 0
                     else:
                         item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 3)
-                elif '\x1b[C' in ch or '\x1bOC' in ch: # Derecha
+                elif ch == '\x1b[C' or ch == '\x1bOC': # Derecha
                     if active_pane == "left":
                         active_pane = "right"
                     else:
                         item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 1)
-                elif '\x1b[D' in ch or '\x1bOD' in ch: # Izquierda
+                elif ch == '\x1b[D' or ch == '\x1bOD': # Izquierda
                     if active_pane == "right":
                         if item_idx % 3 == 0:
                             active_pane = "left"
                         else:
                             item_idx = max(0, item_idx - 1)
-                elif ' ' in ch:
+                elif ch == ' ':
                     if active_pane == "right":
                         item = menu_data[cat_idx]["items"][item_idx]
                         if item["type"] == "toggle":
                             item["selected"] = not item.get("selected", False)
-                elif '\r' in ch or '\n' in ch:
+                elif ch == '\r' or ch == '\n':
                     if active_pane == "right":
                         item = menu_data[cat_idx]["items"][item_idx]
                         if item["type"] == "action":
@@ -528,11 +523,13 @@ def keyboard_worker():
                             item["selected"] = not item.get("selected", False)
                     else:
                         active_pane = "right"
-                elif '\x03' in ch: # Ctrl+C
+                elif ch == '\x03': # Ctrl+C
                     install_error = "Instalación abortada por el usuario (Ctrl+C)."
                     install_done = True
                     break
-    except Exception:
+    finally:
+        # Avoid tcsetattr here to prevent terminal destruction mid-installation, 
+        # let rich.Live handle the restoration on exit.
         pass
         
     if current_state == "transition":
