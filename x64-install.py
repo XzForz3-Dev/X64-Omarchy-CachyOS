@@ -568,9 +568,6 @@ def installer_worker():
         free_space = shutil.disk_usage("/").free
         if free_space < 15 * 1024 * 1024 * 1024:
             raise Exception("Espacio insuficiente. Se requieren al menos 15GB libres en /.")
-        progress.update(t_health, description="[yellow]Ajustando flags de BTRFS en fstab (I/O Extremo)...", advance=15)
-        run_cmd_live("sudo bash -c 'if [ -f /etc/fstab ]; then sed -i -E \"/btrfs/ s/(defaults|[a-z0-9=,]+)/\\1,noatime,space_cache=v2,discard=async/g\" /etc/fstab; fi'", check=False)
-        run_cmd_live("sudo bash -c 'if [ -f /etc/fstab ]; then sed -i \"s/,,/,/g\" /etc/fstab; fi'", check=False)
 
         progress.update(t_health, description="[green]Sistema en Óptimas Condiciones", completed=100)
         
