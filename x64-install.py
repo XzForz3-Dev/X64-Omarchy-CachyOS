@@ -462,6 +462,10 @@ def update_ui():
         layout["right"].update(main_layout)
 
     elif current_state == "error" and error_prompt:
+        global ui_transitioned
+        ui_transitioned = False
+        layout["right"].unsplit()
+        
         error_text = Text.from_markup(f"\n[bold red blink]⚠️  ERROR CRÍTICO DETECTADO  ⚠️[/bold red blink]\n\n[bold yellow]{error_prompt['msg']}[/bold yellow]\n\n[cyan]Elige cómo proceder (Usa las flechas ← y →, presiona ENTER para confirmar):[/cyan]\n", justify="center")
         
         opt1 = "[bold black on white] > REINTENTAR < [/]" if error_idx == 0 else "  Reintentar  "
