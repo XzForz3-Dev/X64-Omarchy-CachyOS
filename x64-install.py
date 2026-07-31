@@ -473,75 +473,101 @@ def update_ui():
 def keyboard_worker():
     global current_state, active_pane, cat_idx, item_idx, user_choices, install_error, install_done, transition_text, live_instance
     fd = sys.stdin.fileno()
+    
+    # Configure stdin to be strictly non-blocking
+    import fcntl
+    fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+    fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+    
     try:
         tty.setcbreak(fd)
+        key_buffer = b""
+        
         while current_state == "menu":
             if select.select([sys.stdin], [], [], 0.1)[0]:
-                ch = sys.stdin.read(1)
-                if ch == '\x1b':
-                    ch += sys.stdin.read(2)
+                try:
+                    chunk = os.read(fd, 1024)
+                    if chunk:
+                        key_buffer += chunk
+                except BlockingIOError:
+                    pass
+            
+            if not key_buffer:
+                continue
                 
-                key_processed = False
-                if ch == '\x1b[A' or ch == '\x1bOA': # Arriba
-                    if active_pane == "left":
-                        cat_idx = max(0, cat_idx - 1)
-                        item_idx = 0
+            ch = key_buffer.decode('utf-8', errors='ignore')
+            key_processed = False
+            
+            if '\x1b[A' in ch or '\x1bOA' in ch: # Arriba
+                key_buffer = b""
+                if active_pane == "left":
+                    cat_idx = max(0, cat_idx - 1)
+                    item_idx = 0
+                else:
+                    item_idx = max(0, item_idx - 3)
+                key_processed = True
+            elif '\x1b[B' in ch or '\x1bOB' in ch: # Abajo
+                key_buffer = b""
+                if active_pane == "left":
+                    cat_idx = min(len(menu_data) - 1, cat_idx + 1)
+                    item_idx = 0
+                else:
+                    item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 3)
+                key_processed = True
+            elif '\x1b[C' in ch or '\x1bOC' in ch: # Derecha
+                key_buffer = b""
+                if active_pane == "left":
+                    active_pane = "right"
+                else:
+                    item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 1)
+                key_processed = True
+            elif '\x1b[D' in ch or '\x1bOD' in ch: # Izquierda
+                key_buffer = b""
+                if active_pane == "right":
+                    if item_idx % 3 == 0:
+                        active_pane = "left"
                     else:
-                        item_idx = max(0, item_idx - 3)
-                    key_processed = True
-                elif ch == '\x1b[B' or ch == '\x1bOB': # Abajo
-                    if active_pane == "left":
-                        cat_idx = min(len(menu_data) - 1, cat_idx + 1)
-                        item_idx = 0
+                        item_idx = max(0, item_idx - 1)
+                key_processed = True
+            elif ' ' in ch:
+                key_buffer = b""
+                if active_pane == "right":
+                    item = menu_data[cat_idx]["items"][item_idx]
+                    if item["type"] == "toggle":
+                        item["selected"] = not item.get("selected", False)
+                key_processed = True
+            elif '\r' in ch or '\n' in ch:
+                key_buffer = b""
+                if active_pane == "right":
+                    item = menu_data[cat_idx]["items"][item_idx]
+                    if item["type"] == "action":
+                        for c in menu_data:
+                            for i in c["items"]:
+                                if i.get("selected"):
+                                    user_choices["packages"].extend(i.get("pkg", []))
+                                    if "NVIDIA" in i["label"]:
+                                        user_choices["drivers"] = "NVIDIA (Privativo)"
+                        if "NVIDIA" not in user_choices["drivers"]:
+                            user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"])
+                        current_state = "transition"
                     else:
-                        item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 3)
-                    key_processed = True
-                elif ch == '\x1b[C' or ch == '\x1bOC': # Derecha
-                    if active_pane == "left":
-                        active_pane = "right"
-                    else:
-                        item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 1)
-                    key_processed = True
-                elif ch == '\x1b[D' or ch == '\x1bOD': # Izquierda
-                    if active_pane == "right":
-                        if item_idx % 3 == 0:
-                            active_pane = "left"
-                        else:
-                            item_idx = max(0, item_idx - 1)
-                    key_processed = True
-                elif ch == ' ':
-                    if active_pane == "right":
-                        item = menu_data[cat_idx]["items"][item_idx]
-                        if item["type"] == "toggle":
-                            item["selected"] = not item.get("selected", False)
-                    key_processed = True
-                elif ch == '\r' or ch == '\n':
-                    if active_pane == "right":
-                        item = menu_data[cat_idx]["items"][item_idx]
-                        if item["type"] == "action":
-                            for c in menu_data:
-                                for i in c["items"]:
-                                    if i.get("selected"):
-                                        user_choices["packages"].extend(i.get("pkg", []))
-                                        if "NVIDIA" in i["label"]:
-                                            user_choices["drivers"] = "NVIDIA (Privativo)"
-                            if "NVIDIA" not in user_choices["drivers"]:
-                                user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"])
-                            current_state = "transition"
-                        else:
-                            item["selected"] = not item.get("selected", False)
-                    else:
-                        active_pane = "right"
-                    key_processed = True
-                elif ch == '\x03': # Ctrl+C
-                    install_error = "Instalación abortada por el usuario (Ctrl+C)."
-                    install_done = True
-                    key_processed = True
-                    break
+                        item["selected"] = not item.get("selected", False)
+                else:
+                    active_pane = "right"
+                key_processed = True
+            elif '\x03' in ch: # Ctrl+C
+                key_buffer = b""
+                install_error = "Instalación abortada por el usuario (Ctrl+C)."
+                install_done = True
+                key_processed = True
+                break
+            else:
+                if len(key_buffer) > 10:
+                    key_buffer = b""
                     
-                if key_processed and live_instance:
-                    live_instance.update(update_ui())
-                    live_instance.refresh()
+            if key_processed and live_instance:
+                live_instance.update(update_ui())
+                live_instance.refresh()
     finally:
         # Avoid tcsetattr here to prevent terminal destruction mid-installation, 
         # let rich.Live handle the restoration on exit.
