@@ -127,6 +127,13 @@ def run_cmd_live(cmd, check=True):
                 current_state = "error"
                 error_prompt = {"msg": f"El comando falló con código {process.returncode}:\\n{cmd}"}
                 
+                # Flush the input buffer so that if the user pressed Enter/Arrows while it was frozen, it doesn't auto-abort
+                try:
+                    import termios
+                    termios.tcflush(sys.stdin.fileno(), termios.TCIFLUSH)
+                except Exception:
+                    pass
+                
                 while error_response is None:
                     await asyncio.sleep(0.1)
                     
