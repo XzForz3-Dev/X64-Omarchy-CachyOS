@@ -630,6 +630,17 @@ def installer_worker():
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             progress.update(t_pkg, description="[cyan]Descargando e Instalando Paquetes (Puede tardar varios minutos)...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm jack2", check=False)
+            
+            # Limpiar cualquier driver nvidia preinstalado en la ISO viva (ej. nvidia-580xx-dkms) que pueda causar conflictos
+            try:
+                pacman_q = subprocess.run(["pacman", "-Qq"], stdout=subprocess.PIPE, text=True, check=False)
+                for p in pacman_q.stdout.splitlines():
+                    if p.startswith("nvidia-") and ("-dkms" in p or "-utils" in p or "-settings" in p) and "xx" in p:
+                        if p not in missing_pkgs:
+                            run_cmd_live(f"sudo pacman -Rdd --noconfirm {p}", check=False)
+            except Exception:
+                pass
+                
             run_cmd_live(f"sudo pacman -S --noconfirm {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
 
@@ -813,40 +824,22 @@ def detect_gpu_and_update_menu():
         
         if has_nvidia:
             try:
-                pacman_q = subprocess.run(["pacman", "-Qq"], stdout=subprocess.PIPE, text=True, check=False)
-                installed_pkgs = pacman_q.stdout.splitlines()
-                installed_legacy_dkms = None
-                for p in installed_pkgs:
-                    if p.startswith("nvidia-") and p.endswith("-dkms") and "xx" in p:
-                        installed_legacy_dkms = p
-                        is_legacy_nvidia = True
-                        break
-                        
-                for cat in menu_data:
-                    if "Drivers Gráficos" in cat["cat"]:
-                        for item in cat["items"]:
-                            if "NVIDIA" in item["label"]:
-                                item["selected"] = True
-                                if installed_legacy_dkms:
-                                    ver_prefix = installed_legacy_dkms.replace("-dkms", "")
-                                    new_pkgs = []
-                                    for pkg in item["pkg"]:
-                                        if pkg == "nvidia-dkms":
-                                            new_pkgs.append(installed_legacy_dkms)
-                                        elif pkg == "nvidia-utils":
-                                            new_pkgs.append(ver_prefix + "-utils")
-                                        elif pkg == "lib32-nvidia-utils":
-                                            new_pkgs.append("lib32-" + ver_prefix + "-utils")
-                                        elif pkg == "nvidia-settings":
-                                            new_pkgs.append(ver_prefix + "-settings")
-                                        else:
-                                            new_pkgs.append(pkg)
-                                    item["pkg"] = new_pkgs
-                                    item["desc"] += f" [bold yellow](Nota: Se instalará driver detectado: {installed_legacy_dkms})[/bold yellow]"
-                            elif "Mesa" in item["label"]:
-                                item["selected"] = False
+                pacman_q = subprocess.run(["pacman", "-Q"], stdout=subprocess.PIPE, text=True, check=False)
+                installed_pkgs = pacman_q.stdout.lower()
+                if "nvidia-470xx-dkms" in installed_pkgs or "nvidia-390xx-dkms" in installed_pkgs:
+                    is_legacy_nvidia = True
             except Exception:
                 pass
+        
+        for cat in menu_data:
+            if "Drivers Gráficos" in cat["cat"]:
+                for item in cat["items"]:
+                    if "NVIDIA" in item["label"]:
+                        item["selected"] = has_nvidia
+                        if is_legacy_nvidia:
+                            item["desc"] += " [bold yellow](Nota: Hardware antiguo. Se usará TTY Pura para evitar crasheos.)[/bold yellow]"
+                    elif "Mesa" in item["label"]:
+                        item["selected"] = not has_nvidia
     except Exception:
         pass
 
