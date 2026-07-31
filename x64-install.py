@@ -611,7 +611,7 @@ def installer_worker():
                 pkgs.extend(f2.read().splitlines())
         
         # Batch de paquetes críticos de sistema
-        pkgs.extend(["plymouth"])
+        pkgs.extend(["plymouth", "xorg-xinit", "xorg-server"])
         pkgs.extend(user_choices["packages"])
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
         
@@ -714,13 +714,17 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q startplasma-wayland
             echo " [$idx] KDE Plasma 6"
             set -a options $idx
-            set -a cmds "exec dbus-run-session startplasma-wayland"
+            if type -q startplasma-x11
+                set -a cmds "exec startx /usr/bin/startplasma-x11"
+            else
+                set -a cmds "exec dbus-run-session startplasma-wayland"
+            end
             set idx (math $idx + 1)
         end
         if type -q gnome-session
             echo " [$idx] GNOME"
             set -a options $idx
-            set -a cmds "exec env XDG_SESSION_TYPE=wayland dbus-run-session gnome-session"
+            set -a cmds "exec startx /usr/bin/gnome-session"
             set idx (math $idx + 1)
         end
         if type -q startxfce4
@@ -744,19 +748,19 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q cinnamon-session
             echo " [$idx] Cinnamon"
             set -a options $idx
-            set -a cmds "exec env XDG_SESSION_TYPE=wayland dbus-run-session cinnamon-session"
+            set -a cmds "exec startx /usr/bin/cinnamon-session"
             set idx (math $idx + 1)
         end
         if type -q budgie-desktop
             echo " [$idx] Budgie"
             set -a options $idx
-            set -a cmds "exec dbus-run-session budgie-desktop"
+            set -a cmds "exec startx /usr/bin/budgie-desktop"
             set idx (math $idx + 1)
         end
         if type -q awesome
             echo " [$idx] AwesomeWM"
             set -a options $idx
-            set -a cmds "exec dbus-run-session awesome"
+            set -a cmds "exec startx /usr/bin/awesome"
             set idx (math $idx + 1)
         end
         
