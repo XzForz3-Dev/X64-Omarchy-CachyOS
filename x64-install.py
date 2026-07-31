@@ -757,7 +757,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q budgie-desktop
             echo " [$idx] Budgie"
             set -a options $idx
-            set -a cmds "exec dbus-run-session startx /usr/bin/budgie-desktop"
+            set -a cmds "exec env XDG_CURRENT_DESKTOP=Budgie:GNOME XDG_MENU_PREFIX=budgie- dbus-run-session startx /usr/bin/budgie-desktop"
             set idx (math $idx + 1)
         end
         if type -q awesome
