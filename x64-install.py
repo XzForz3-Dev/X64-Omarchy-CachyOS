@@ -714,17 +714,13 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q startplasma-wayland
             echo " [$idx] KDE Plasma 6"
             set -a options $idx
-            if type -q startplasma-x11
-                set -a cmds "exec startx /usr/bin/startplasma-x11"
-            else
-                set -a cmds "exec dbus-run-session startplasma-wayland"
-            end
+            set -a cmds "exec dbus-run-session startplasma-wayland"
             set idx (math $idx + 1)
         end
         if type -q gnome-session
             echo " [$idx] GNOME"
             set -a options $idx
-            set -a cmds "exec startx /usr/bin/gnome-session"
+            set -a cmds "exec env XDG_SESSION_TYPE=wayland dbus-run-session gnome-shell --display-server --wayland"
             set idx (math $idx + 1)
         end
         if type -q startxfce4
@@ -748,7 +744,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q cinnamon-session
             echo " [$idx] Cinnamon"
             set -a options $idx
-            set -a cmds "exec startx /usr/bin/cinnamon-session"
+            set -a cmds "exec env XDG_SESSION_TYPE=wayland dbus-run-session cinnamon-session --wayland"
             set idx (math $idx + 1)
         end
         if type -q budgie-desktop
