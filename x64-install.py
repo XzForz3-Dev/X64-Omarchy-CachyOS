@@ -469,10 +469,7 @@ def keyboard_worker():
     fd = sys.stdin.fileno()
     try:
         tty.setcbreak(fd)
-        while not install_done:
-            if current_state != "menu":
-                time.sleep(0.5)
-                continue
+        while current_state == "menu":
             if select.select([sys.stdin], [], [], 0.1)[0]:
                 ch = sys.stdin.read(1)
                 if ch == '\x1b':
