@@ -998,6 +998,10 @@ if not install_error:
     
     console.print(Panel(report, border_style="green", title="[bold green]¡Sistema Listo![/bold green]"))
     
+    try:
+        termios.tcflush(sys.stdin.fileno(), termios.TCIFLUSH)
+    except Exception:
+        pass
     ans = Prompt.ask("\n¿Deseas reiniciar el sistema ahora?", choices=["Si", "No"], default="Si")
     if ans == "Si":
         os.system("sudo reboot")
