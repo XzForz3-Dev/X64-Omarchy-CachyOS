@@ -714,13 +714,13 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q startplasma-wayland
             echo " [$idx] KDE Plasma 6"
             set -a options $idx
-            set -a cmds "uwsm start plasma-wayland.desktop"
+            set -a cmds "uwsm start plasma.desktop"
             set idx (math $idx + 1)
         end
         if type -q gnome-session
             echo " [$idx] GNOME"
             set -a options $idx
-            set -a cmds "uwsm start gnome-wayland.desktop"
+            set -a cmds "uwsm start gnome.desktop"
             set idx (math $idx + 1)
         end
         if type -q startxfce4
@@ -732,13 +732,13 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q cosmic-session
             echo " [$idx] Cosmic"
             set -a options $idx
-            set -a cmds "uwsm start cosmic-wayland.desktop"
+            set -a cmds "uwsm start cosmic-comp.desktop"
             set idx (math $idx + 1)
         end
         if type -q sway
             echo " [$idx] Sway"
             set -a options $idx
-            set -a cmds "uwsm start sway-wayland.desktop"
+            set -a cmds "uwsm start sway.desktop"
             set idx (math $idx + 1)
         end
         
