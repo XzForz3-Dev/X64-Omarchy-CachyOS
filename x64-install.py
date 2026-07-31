@@ -110,11 +110,15 @@ def run_cmd_live(cmd, check=True):
                 stderr=asyncio.subprocess.STDOUT
             )
             
+            last_lines = []
             with open(LOG_FILE, "a", buffering=8192) as f:
                 async for line_bytes in process.stdout:
                     line_clean = line_bytes.decode('utf-8', errors='replace').strip()
                     if line_clean:
-                        f.write(line_clean + "\\n")
+                        f.write(line_clean + "\n")
+                        last_lines.append(line_clean)
+                        if len(last_lines) > 5:
+                            last_lines.pop(0)
                         # Mitigación I/O: Solo enviamos al UI render las líneas importantes o espaciadas
                         if "error" in line_clean.lower() or "warning" in line_clean.lower() or len(line_clean) > 10:
                             safe_line = escape(line_clean)
@@ -125,7 +129,8 @@ def run_cmd_live(cmd, check=True):
             if check and process.returncode != 0:
                 log(f"FALLO: El comando devolvió código {process.returncode}")
                 current_state = "error"
-                error_prompt = {"msg": f"El comando falló con código {process.returncode}:\\n{cmd}"}
+                err_details = "\n".join(last_lines)
+                error_prompt = {"msg": f"El comando falló con código {process.returncode}:\n{cmd}\n\n[bold white]Detalles del Error (Últimas líneas):[/bold white]\n[red]{escape(err_details)}[/red]"}
                 
                 # Flush the input buffer so that if the user pressed Enter/Arrows while it was frozen, it doesn't auto-abort
                 try:
