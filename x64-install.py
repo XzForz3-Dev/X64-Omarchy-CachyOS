@@ -69,12 +69,15 @@ cat_idx = 0
 item_idx = 0
 user_choices = {"theme": "Tokyo Night", "packages": []}
 transition_text = ""
+is_legacy_nvidia = False
 has_nvidia = False
 
 try:
     pci_out = subprocess.check_output("lspci -k | grep -iEA3 'vga|3d|display'", shell=True, text=True).lower()
     if "nvidia" in pci_out:
         has_nvidia = True
+        if any(arch in pci_out for arch in ["gtx 9", "gtx 7", "gtx 6", "kepler", "maxwell"]):
+             is_legacy_nvidia = True
 except Exception:
     pass
 
@@ -660,8 +663,10 @@ def installer_worker():
             f.write("[Service]\nExecStartPre=-/usr/bin/plymouth quit\n")
         run_cmd_live("sudo mv /tmp/plymouth-fix.conf /etc/systemd/system/greetd.service.d/plymouth-fix.conf", check=False)
 
-        # 1. Arte ASCII para TTY1 (Antes de Loguearse)
-        issue_omarchy = """\\e[2J\\e[H
+        # --- Configurar Sesiones Híbridas ---
+        if is_legacy_nvidia:
+            # 1. Arte ASCII para TTY1 (Antes de Loguearse)
+            issue_omarchy = """\\e[2J\\e[H
 
 \\e[38;2;0;255;255m╭───────────────────────────────────────────────────────────────────╮\\e[0m
 \\e[38;2;0;230;255m│\\e[0m  \\e[38;2;0;230;255m ██████╗ ███╗   ███╗ █████╗ ██████╗  ██████╗██╗  ██╗██╗   ██╗\\e[0m \\e[38;2;0;230;255m│\\e[0m
@@ -773,9 +778,16 @@ end
         progress.update(t_config, description="[yellow]Aplicando configuraciones finales (Batch Shell)...", advance=10)
         services_script = "#!/bin/bash\\n"
         
-        services_script += "systemctl disable sddm.service 2>/dev/null\\n"
-        services_script += "systemctl disable greetd.service 2>/dev/null\\n"
-        services_script += "systemctl enable getty@tty1.service --now\\n"
+        if not is_legacy_nvidia:
+            services_script += "mkdir -p /usr/share/sddm/themes/omarchy /etc/sddm.conf.d\\n"
+            services_script += "cp -r default/sddm/omarchy/* /usr/share/sddm/themes/omarchy/ 2>/dev/null\\n"
+            services_script += "echo -e \\\"[Theme]\\\\nCurrent=omarchy\\\" > /etc/sddm.conf.d/omarchy.conf\\n"
+            services_script += "systemctl disable greetd.service 2>/dev/null\\n"
+            services_script += "systemctl enable sddm.service --now\\n"
+        else:
+            services_script += "systemctl disable sddm.service 2>/dev/null\\n"
+            services_script += "systemctl disable greetd.service 2>/dev/null\\n"
+            services_script += "systemctl enable getty@tty1.service --now\\n"
 
         services_script += "systemctl enable bluetooth.service\\n"
         
