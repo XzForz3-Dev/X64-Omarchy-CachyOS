@@ -616,7 +616,7 @@ def installer_worker():
                 pkgs.extend(f2.read().splitlines())
         
         # Batch de paquetes críticos de sistema
-        pkgs.extend(["plymouth", "greetd", "greetd-tuigreet", "eatmydata"])
+        pkgs.extend(["plymouth", "greetd", "greetd-tuigreet"])
         pkgs.extend(user_choices["packages"])
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
         
