@@ -963,7 +963,6 @@ if not install_error:
     
     report.add_row("Tiempo de Instalación", f"{int(mins)}m {int(secs)}s")
     report.add_row("Tema Base", user_choices["theme"])
-    report.add_row("Drivers Instalados", user_choices["drivers"])
     report.add_row("Software Extra Elegido", f"{len(user_choices['packages'])} paquetes")
     if len(user_choices["packages"]) > 0:
         report.add_row("Lista de Software", ", ".join(user_choices["packages"]))
