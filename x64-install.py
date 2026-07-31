@@ -751,13 +751,13 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q cinnamon-session
             echo " [$idx] Cinnamon"
             set -a options $idx
-            set -a cmds "exec startx /usr/bin/dbus-run-session /usr/bin/cinnamon-session"
+            set -a cmds "exec dbus-run-session startx /usr/bin/cinnamon-session"
             set idx (math $idx + 1)
         end
         if type -q budgie-desktop
             echo " [$idx] Budgie"
             set -a options $idx
-            set -a cmds "exec startx /usr/bin/dbus-run-session /usr/bin/budgie-desktop"
+            set -a cmds "exec dbus-run-session startx /usr/bin/budgie-desktop"
             set idx (math $idx + 1)
         end
         if type -q awesome
