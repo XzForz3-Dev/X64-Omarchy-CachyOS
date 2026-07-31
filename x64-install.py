@@ -720,7 +720,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q gnome-session
             echo " [$idx] GNOME"
             set -a options $idx
-            set -a cmds "exec dbus-run-session gnome-session"
+            set -a cmds "exec env XDG_SESSION_TYPE=wayland dbus-run-session gnome-session"
             set idx (math $idx + 1)
         end
         if type -q startxfce4
@@ -736,9 +736,27 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             set idx (math $idx + 1)
         end
         if type -q sway
-            echo " [$idx] Sway"
+            echo " [$idx] Sway / SwayFX"
             set -a options $idx
             set -a cmds "exec sway"
+            set idx (math $idx + 1)
+        end
+        if type -q cinnamon-session
+            echo " [$idx] Cinnamon"
+            set -a options $idx
+            set -a cmds "exec env XDG_SESSION_TYPE=wayland dbus-run-session cinnamon-session"
+            set idx (math $idx + 1)
+        end
+        if type -q budgie-desktop
+            echo " [$idx] Budgie"
+            set -a options $idx
+            set -a cmds "exec dbus-run-session budgie-desktop"
+            set idx (math $idx + 1)
+        end
+        if type -q awesome
+            echo " [$idx] AwesomeWM"
+            set -a options $idx
+            set -a cmds "exec dbus-run-session awesome"
             set idx (math $idx + 1)
         end
         
