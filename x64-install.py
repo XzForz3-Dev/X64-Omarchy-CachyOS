@@ -708,37 +708,37 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q Hyprland
             echo " [$idx] Hyprland (Omarchy Cyberpunk)"
             set -a options $idx
-            set -a cmds "uwsm start hyprland-uwsm.desktop"
+            set -a cmds "exec uwsm start hyprland-uwsm.desktop"
             set idx (math $idx + 1)
         end
         if type -q startplasma-wayland
             echo " [$idx] KDE Plasma 6"
             set -a options $idx
-            set -a cmds "uwsm start plasma.desktop"
+            set -a cmds "exec dbus-run-session startplasma-wayland"
             set idx (math $idx + 1)
         end
         if type -q gnome-session
             echo " [$idx] GNOME"
             set -a options $idx
-            set -a cmds "uwsm start gnome.desktop"
+            set -a cmds "exec dbus-run-session gnome-session"
             set idx (math $idx + 1)
         end
         if type -q startxfce4
             echo " [$idx] XFCE4"
             set -a options $idx
-            set -a cmds "startxfce4"
+            set -a cmds "exec startxfce4"
             set idx (math $idx + 1)
         end
         if type -q cosmic-session
             echo " [$idx] Cosmic"
             set -a options $idx
-            set -a cmds "uwsm start cosmic-comp.desktop"
+            set -a cmds "exec cosmic-session"
             set idx (math $idx + 1)
         end
         if type -q sway
             echo " [$idx] Sway"
             set -a options $idx
-            set -a cmds "uwsm start sway.desktop"
+            set -a cmds "exec sway"
             set idx (math $idx + 1)
         end
         
