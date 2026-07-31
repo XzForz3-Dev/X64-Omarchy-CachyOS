@@ -55,15 +55,14 @@
                 "desc": "El nuevo y moderno entorno de escritorio de Pop!_OS escrito en Rust (Alpha)."
             },
             {
-                "label": "Sway",
+                "label": "MATE",
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "sway",
-                    "swaybg",
-                    "waybar"
+                    "mate",
+                    "mate-extra"
                 ],
-                "desc": "Gestor de ventanas Tiling para Wayland (compatible con i3)."
+                "desc": "Entorno clásico, ligero e intuitivo (continuación de GNOME 2)."
             },
             {
                 "label": "Cinnamon",
@@ -84,14 +83,13 @@
                 "desc": "Entorno moderno y enfocado en la simplicidad."
             },
             {
-                "label": "SwayFX",
+                "label": "LXQt",
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "swayfx",
-                    "waybar"
+                    "lxqt"
                 ],
-                "desc": "Sway con efectos visuales (blur, esquinas redondeadas)."
+                "desc": "Entorno de escritorio ligero, rápido y clásico basado en Qt."
             },
             {
                 "label": "AwesomeWM",

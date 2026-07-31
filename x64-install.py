@@ -614,8 +614,6 @@ def installer_worker():
         pkgs.extend(["plymouth", "xorg-xinit", "xorg-server"])
         pkgs.extend(user_choices["packages"])
         pkgs = list(set(pkgs))
-        if "swayfx" in pkgs and "sway" in pkgs:
-            pkgs.remove("sway")
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
         
         chk = subprocess.run(f"pacman -T {pkg_str}", shell=True, stdout=subprocess.PIPE, text=True)
@@ -623,8 +621,6 @@ def installer_worker():
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             progress.update(t_pkg, description="[cyan]Descargando e Instalando Paquetes (Puede tardar varios minutos)...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm jack2", check=False)
-            if "swayfx" in pkgs:
-                run_cmd_live("sudo pacman -Rdd --noconfirm sway", check=False)
 
             run_cmd_live(f"sudo pacman -S --noconfirm {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
@@ -740,10 +736,16 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             set -a cmds "exec cosmic-session"
             set idx (math $idx + 1)
         end
-        if type -q sway
-            echo " [$idx] Sway / SwayFX"
+        if type -q mate-session
+            echo " [$idx] MATE"
             set -a options $idx
-            set -a cmds "exec sway"
+            set -a cmds "exec startx /usr/bin/mate-session"
+            set idx (math $idx + 1)
+        end
+        if type -q startlxqt
+            echo " [$idx] LXQt"
+            set -a options $idx
+            set -a cmds "exec startx /usr/bin/startlxqt"
             set idx (math $idx + 1)
         end
         if type -q cinnamon-session
