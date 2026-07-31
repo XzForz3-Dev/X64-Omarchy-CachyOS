@@ -541,7 +541,10 @@ def installer_worker():
 
         progress.update(t_health, description="[green]Sistema en Óptimas Condiciones", completed=100)
         
-        progress.update(t_repo, description="[yellow]Acelerando Descargas (ParallelDownloads)...", advance=20)
+        progress.update(t_repo, description="[yellow]Instalando Acelerador de I/O (libeatmydata)...", advance=10)
+        run_cmd_live("sudo pacman -Sy --noconfirm --needed libeatmydata", check=False)
+        
+        progress.update(t_repo, description="[yellow]Acelerando Descargas (ParallelDownloads)...", advance=10)
         run_cmd_live("sudo sed -i 's/^#ParallelDownloads.*/ParallelDownloads = 10/' /etc/pacman.conf", check=False)
         run_cmd_live("sudo bash -c 'grep -q \"^ILoveCandy\" /etc/pacman.conf || sed -i \"/^#Color/a ILoveCandy\" /etc/pacman.conf'", check=False)
         run_cmd_live("sudo sed -i '/NoExtract = usr\\/share\\/doc\\/\\*/d' /etc/pacman.conf", check=False)
