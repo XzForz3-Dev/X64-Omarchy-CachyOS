@@ -67,28 +67,16 @@ with open("core/menu_data.json", "r", encoding="utf-8") as f:
 active_pane = "left"
 cat_idx = 0
 item_idx = 0
-user_choices = {"theme": "Tokyo Night", "drivers": "Mesa (AMD/Intel)", "packages": []}
+user_choices = {"theme": "Tokyo Night", "packages": []}
 transition_text = ""
-is_legacy_nvidia = False
 has_nvidia = False
 
 try:
     pci_out = subprocess.check_output("lspci -k | grep -iEA3 'vga|3d|display'", shell=True, text=True).lower()
     if "nvidia" in pci_out:
         has_nvidia = True
-        if any(arch in pci_out for arch in ["gtx 9", "gtx 7", "gtx 6", "kepler", "maxwell"]):
-             is_legacy_nvidia = True
 except Exception:
     pass
-
-# Auto-toggle drivers based on hardware detection
-for c in menu_data:
-    if "Drivers" in c["cat"]:
-        for item in c["items"]:
-            if item["label"] == "Mesa (AMD / Intel)":
-                item["selected"] = not has_nvidia
-            elif item["label"] == "NVIDIA (Privativo DKMS)":
-                item["selected"] = has_nvidia
 
 def log(msg):
     time_str = datetime.now().strftime('%H:%M:%S')
@@ -597,8 +585,6 @@ def installer_worker():
         progress.update(t_sync, description="[yellow]Instalando Cabeceras del Kernel (Para DKMS)...", advance=5)
         run_cmd_live("sudo bash -c 'pacman -S --noconfirm --needed $(pacman -Qq | grep \"^linux\" | grep -v \"headers\" | grep -v \"firmware\" | awk \"{print \\$1\\\"-headers\\\"}\")' 2>/dev/null", check=False)
 
-        progress.update(t_sync, description="[yellow]Optimizando Servidores (Evitando 404s)...", advance=2)
-        run_cmd_live("sudo cachyos-rate-mirrors 2>/dev/null", check=False)
 
         progress.update(t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=3)
         res = run_cmd_live("sudo pacman -Syu --noconfirm", check=False)
@@ -631,17 +617,7 @@ def installer_worker():
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             progress.update(t_pkg, description="[cyan]Descargando e Instalando Paquetes (Puede tardar varios minutos)...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm jack2", check=False)
-            
-            # Limpiar cualquier driver nvidia preinstalado en la ISO viva (ej. nvidia-580xx-dkms) que pueda causar conflictos
-            try:
-                pacman_q = subprocess.run(["pacman", "-Qq"], stdout=subprocess.PIPE, text=True, check=False)
-                for p in pacman_q.stdout.splitlines():
-                    if p.startswith("nvidia-") and ("-dkms" in p or "-utils" in p or "-settings" in p) and "xx" in p:
-                        if p not in missing_pkgs:
-                            run_cmd_live(f"sudo pacman -Rdd --noconfirm {p}", check=False)
-            except Exception:
-                pass
-                
+
             run_cmd_live(f"sudo pacman -S --noconfirm {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
 
@@ -667,13 +643,7 @@ def installer_worker():
         
         # Copiado acelerado mediante Python nativo (shutil)
         shutil.copytree("config", os.path.expanduser("~/.config"), dirs_exist_ok=True)
-        
-        if is_legacy_nvidia:
-            autostart_path = os.path.expanduser("~/.config/hypr/autostart.lua")
-            if os.path.exists(autostart_path):
-                with open(autostart_path, "a") as f:
-                    f.write('\no.launch_on_start("killall waybar swaybg")\n')
-                    f.write('o.launch_on_start("quickshell -n -p /usr/share/omarchy/shell")\n')
+
                     
         shutil.copytree("bin", os.path.expanduser("~/.local/bin"), dirs_exist_ok=True)
         shutil.copytree("themes", os.path.expanduser("~/.local/share/themes"), dirs_exist_ok=True)
@@ -811,43 +781,8 @@ user = "greeter"
         current_state = "error" if install_error else "done"
 
 
-def detect_gpu_and_update_menu():
-    global is_legacy_nvidia
-    try:
-        import subprocess
-        chk = subprocess.run(["lspci"], stdout=subprocess.PIPE, text=True, check=False)
-        output = chk.stdout.lower()
-        has_nvidia = False
-        for line in output.split('\n'):
-            if ('vga' in line or '3d' in line) and 'nvidia' in line:
-                has_nvidia = True
-                break
-        
-        if has_nvidia:
-            try:
-                pacman_q = subprocess.run(["pacman", "-Q"], stdout=subprocess.PIPE, text=True, check=False)
-                installed_pkgs = pacman_q.stdout.lower()
-                if "nvidia-470xx-dkms" in installed_pkgs or "nvidia-390xx-dkms" in installed_pkgs:
-                    is_legacy_nvidia = True
-            except Exception:
-                pass
-        
-        for cat in menu_data:
-            if "Drivers Gráficos" in cat["cat"]:
-                for item in cat["items"]:
-                    if "NVIDIA" in item["label"]:
-                        item["selected"] = has_nvidia
-                        if is_legacy_nvidia:
-                            item["desc"] += " [bold yellow](Nota: Hardware antiguo. Se usará TTY Pura para evitar crasheos.)[/bold yellow]"
-                    elif "Mesa" in item["label"]:
-                        item["selected"] = not has_nvidia
-    except Exception:
-        pass
-
 with open(LOG_FILE, "w") as f:
     f.write("=== Inicio de Instalación X64-Omarchy (Mega Dashboard) ===\n")
-
-detect_gpu_and_update_menu()
 
 live_instance = None
 
