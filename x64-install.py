@@ -708,7 +708,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q Hyprland
             echo " [$idx] Hyprland (Omarchy Cyberpunk)"
             set -a options $idx
-            set -a cmds "exec uwsm start hyprland-uwsm.desktop"
+            set -a cmds "exec Hyprland"
             set idx (math $idx + 1)
         end
         if type -q startplasma-wayland
