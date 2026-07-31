@@ -130,7 +130,7 @@ def update_ui():
     
     layout["left"]["sysinfo"].update(
         Panel(
-            Align.center(get_sys_info(), vertical="middle"), 
+            Align.center(hardware.get_sys_info(), vertical="middle"), 
             title="[bold blue]Hardware & Setup (Fastfetch)[/bold blue]", 
             border_style="blue",
             box=box.ROUNDED
