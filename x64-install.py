@@ -469,119 +469,7 @@ def update_ui():
         
     return layout
 
-# --- Threads ---
-def keyboard_worker():
-    global current_state, active_pane, cat_idx, item_idx, user_choices, install_error, install_done, transition_text, live_instance
-    fd = sys.stdin.fileno()
-    
-    # Configure stdin to be strictly non-blocking
-    import fcntl
-    fl = fcntl.fcntl(fd, fcntl.F_GETFL)
-    fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
-    
-    try:
-        tty.setcbreak(fd)
-        key_buffer = b""
-        
-        while current_state == "menu":
-            if select.select([sys.stdin], [], [], 0.1)[0]:
-                try:
-                    chunk = os.read(fd, 1024)
-                    if chunk:
-                        key_buffer += chunk
-                except BlockingIOError:
-                    pass
-            
-            if not key_buffer:
-                continue
-                
-            ch = key_buffer.decode('utf-8', errors='ignore')
-            key_processed = False
-            
-            if '\x1b[A' in ch or '\x1bOA' in ch: # Arriba
-                key_buffer = b""
-                if active_pane == "left":
-                    cat_idx = max(0, cat_idx - 1)
-                    item_idx = 0
-                else:
-                    item_idx = max(0, item_idx - 3)
-                key_processed = True
-            elif '\x1b[B' in ch or '\x1bOB' in ch: # Abajo
-                key_buffer = b""
-                if active_pane == "left":
-                    cat_idx = min(len(menu_data) - 1, cat_idx + 1)
-                    item_idx = 0
-                else:
-                    item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 3)
-                key_processed = True
-            elif '\x1b[C' in ch or '\x1bOC' in ch: # Derecha
-                key_buffer = b""
-                if active_pane == "left":
-                    active_pane = "right"
-                else:
-                    item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 1)
-                key_processed = True
-            elif '\x1b[D' in ch or '\x1bOD' in ch: # Izquierda
-                key_buffer = b""
-                if active_pane == "right":
-                    if item_idx % 3 == 0:
-                        active_pane = "left"
-                    else:
-                        item_idx = max(0, item_idx - 1)
-                key_processed = True
-            elif ' ' in ch:
-                key_buffer = b""
-                if active_pane == "right":
-                    item = menu_data[cat_idx]["items"][item_idx]
-                    if item["type"] == "toggle":
-                        item["selected"] = not item.get("selected", False)
-                key_processed = True
-            elif '\r' in ch or '\n' in ch:
-                key_buffer = b""
-                if active_pane == "right":
-                    item = menu_data[cat_idx]["items"][item_idx]
-                    if item["type"] == "action":
-                        for c in menu_data:
-                            for i in c["items"]:
-                                if i.get("selected"):
-                                    user_choices["packages"].extend(i.get("pkg", []))
-                                    if "NVIDIA" in i["label"]:
-                                        user_choices["drivers"] = "NVIDIA (Privativo)"
-                        if "NVIDIA" not in user_choices["drivers"]:
-                            user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"])
-                        current_state = "transition"
-                    else:
-                        item["selected"] = not item.get("selected", False)
-                else:
-                    active_pane = "right"
-                key_processed = True
-            elif '\x03' in ch: # Ctrl+C
-                key_buffer = b""
-                install_error = "Instalación abortada por el usuario (Ctrl+C)."
-                install_done = True
-                key_processed = True
-                break
-            else:
-                if len(key_buffer) > 10:
-                    key_buffer = b""
-                    
-            if key_processed and live_instance:
-                live_instance.update(update_ui())
-                live_instance.refresh()
-    finally:
-        # Avoid tcsetattr here to prevent terminal destruction mid-installation, 
-        # let rich.Live handle the restoration on exit.
-        pass
-        
-    if current_state == "transition":
-        global transition_text
-        transition_text = "Cargando Secuencia de Lanzamiento..."
-        time.sleep(0.7)
-        transition_text = "Verificando Sistemas Vitales..."
-        time.sleep(0.7)
-        transition_text = "Desplegando Motor X64-Omarchy..."
-        time.sleep(0.8)
-        current_state = "working"
+
 
 def setup_plymouth_bootloader(has_nvidia_gpu=False):
     log_lines.append("[yellow]Aplicando tema de Plymouth...[/yellow]")
@@ -878,10 +766,7 @@ user = "greeter"
         install_done = True
         current_state = "error" if install_error else "done"
 
-def precache_worker():
-    subprocess.run("sudo pacman -Sy --noconfirm --needed libeatmydata", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-# --- Hardware Auto-Detect ---
 def detect_gpu_and_update_menu():
     global is_legacy_nvidia
     try:
@@ -915,10 +800,6 @@ def detect_gpu_and_update_menu():
     except Exception:
         pass
 
-# Iniciar la Sincronización Fantasma inmediatamente en background
-threading.Thread(target=precache_worker, daemon=True).start()
-
-# --- Launch Sequence ---
 with open(LOG_FILE, "w") as f:
     f.write("=== Inicio de Instalación X64-Omarchy (Mega Dashboard) ===\n")
 
@@ -927,33 +808,120 @@ detect_gpu_and_update_menu()
 live_instance = None
 
 try:
-    with Live(update_ui(), refresh_per_second=4, screen=True) as live:
-        live_instance = live
-        # Arrancar el keyboard_worker DENTRO del Live para evitar conflictos de terminal
-        k_worker = threading.Thread(target=keyboard_worker, daemon=True)
-        k_worker.start()
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    
+    import fcntl
+    fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+    fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+    
+    installer_started = False
+    
+    with Live(update_ui(), auto_refresh=False, screen=True) as live:
+        tty.setcbreak(fd)
         
         while not install_done:
-            time.sleep(0.25)
-            
-            # Manejar errores silenciosamente: auto-reintentar sin romper el terminal
-            if current_state == "error" and error_prompt:
+            if current_state == "menu":
+                r, _, _ = select.select([sys.stdin], [], [], 0.25)
+                if r:
+                    try:
+                        chunk = os.read(fd, 10)
+                        if chunk:
+                            ch = chunk.decode('utf-8', errors='ignore')
+                            if '\x1b[A' in ch or '\x1bOA' in ch:
+                                if active_pane == "left":
+                                    cat_idx = max(0, cat_idx - 1)
+                                    item_idx = 0
+                                else:
+                                    item_idx = max(0, item_idx - 3)
+                            elif '\x1b[B' in ch or '\x1bOB' in ch:
+                                if active_pane == "left":
+                                    cat_idx = min(len(menu_data) - 1, cat_idx + 1)
+                                    item_idx = 0
+                                else:
+                                    item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 3)
+                            elif '\x1b[C' in ch or '\x1bOC' in ch:
+                                if active_pane == "left":
+                                    active_pane = "right"
+                                else:
+                                    item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 1)
+                            elif '\x1b[D' in ch or '\x1bOD' in ch:
+                                if active_pane == "right":
+                                    if item_idx % 3 == 0:
+                                        active_pane = "left"
+                                    else:
+                                        item_idx = max(0, item_idx - 1)
+                            elif ' ' in ch:
+                                if active_pane == "right":
+                                    item = menu_data[cat_idx]["items"][item_idx]
+                                    if item["type"] == "toggle":
+                                        item["selected"] = not item.get("selected", False)
+                            elif '\r' in ch or '\n' in ch:
+                                if active_pane == "right":
+                                    item = menu_data[cat_idx]["items"][item_idx]
+                                    if item["type"] == "action":
+                                        for c in menu_data:
+                                            for i in c["items"]:
+                                                if i.get("selected"):
+                                                    user_choices["packages"].extend(i.get("pkg", []))
+                                                    if "NVIDIA" in i["label"]:
+                                                        user_choices["drivers"] = "NVIDIA (Privativo)"
+                                        if "NVIDIA" not in user_choices["drivers"]:
+                                            user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"])
+                                        
+                                        current_state = "transition"
+                                        # Set up transition animation state
+                                        transition_text = "Cargando Secuencia de Lanzamiento..."
+                                    else:
+                                        item["selected"] = not item.get("selected", False)
+                                else:
+                                    active_pane = "right"
+                            elif '\x03' in ch:
+                                install_error = "Instalación abortada por el usuario (Ctrl+C)."
+                                install_done = True
+                                break
+                    except BlockingIOError:
+                        pass
+            elif current_state == "transition":
+                # Handle transition animation inside the main thread loop
+                live.update(update_ui())
+                live.refresh()
+                time.sleep(0.7)
+                transition_text = "Verificando Sistemas Vitales..."
+                live.update(update_ui())
+                live.refresh()
+                time.sleep(0.7)
+                transition_text = "Desplegando Motor X64-Omarchy..."
+                live.update(update_ui())
+                live.refresh()
+                time.sleep(0.8)
+                current_state = "working"
+            elif current_state == "error" and error_prompt:
                 log(f"Error detectado, auto-reintentando: {error_prompt['msg']}")
                 error_response = "Reintentar"
                 error_prompt = None
-            elif current_state == "working" and not start_time:
+            elif current_state == "working" and not installer_started:
                 start_time = time.time()
+                installer_started = True
                 worker = threading.Thread(target=installer_worker, daemon=True)
                 worker.start()
-                
+            
+            # --- UPDATE UI SYNCHRONOUSLY ---
             live.update(update_ui())
+            live.refresh()
+            
+            if current_state != "menu" and current_state != "transition":
+                time.sleep(0.25)
                 
         end_time = time.time()
         live.update(update_ui())
         time.sleep(2)
+
 except KeyboardInterrupt:
     install_error = "Instalación abortada por el usuario (Ctrl+C)."
     install_done = True
+finally:
+    termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
 print("\n")
 if not install_error:
