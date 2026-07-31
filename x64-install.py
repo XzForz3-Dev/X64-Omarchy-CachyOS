@@ -759,6 +759,18 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             set -a cmds "exec startx /usr/bin/awesome"
             set idx (math $idx + 1)
         end
+        if type -q bspwm
+            echo " [$idx] Bspwm"
+            set -a options $idx
+            set -a cmds "exec startx /usr/bin/bspwm"
+            set idx (math $idx + 1)
+        end
+        if type -q i3
+            echo " [$idx] I3WM"
+            set -a options $idx
+            set -a cmds "exec startx /usr/bin/i3"
+            set idx (math $idx + 1)
+        end
         
         echo ""
         echo " [C] Consola Pura (Mantenimiento)"
