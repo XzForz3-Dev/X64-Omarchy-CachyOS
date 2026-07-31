@@ -613,6 +613,9 @@ def installer_worker():
         # Batch de paquetes críticos de sistema
         pkgs.extend(["plymouth", "xorg-xinit", "xorg-server"])
         pkgs.extend(user_choices["packages"])
+        pkgs = list(set(pkgs))
+        if "swayfx" in pkgs and "sway" in pkgs:
+            pkgs.remove("sway")
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
         
         chk = subprocess.run(f"pacman -T {pkg_str}", shell=True, stdout=subprocess.PIPE, text=True)
