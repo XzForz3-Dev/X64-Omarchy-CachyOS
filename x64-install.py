@@ -406,12 +406,6 @@ def update_ui():
                 cat_text += f"  [{style}]{c['cat']}[/{style}]\n\n"
         
         # --- NUEVO LAYOUT COMPLETO ESTILO IDE ---
-        nav_panel = Panel(
-            Align.center(Text.from_markup("[bold cyan]NAVEGACIÓN:[/bold cyan] Flechas [bold yellow]← →[/bold yellow] cambian panel. Flechas [bold yellow]↑ ↓[/bold yellow] mueven selector. [bold yellow]ESPACIO[/bold yellow] alterna.", justify="center"), vertical="middle"),
-            title=f"[bold magenta]Configuración Pre-Vuelo[/bold magenta]",
-            border_style=border_color
-        )
-        
         cat_border = "cyan" if active_pane == "left" else "dim white"
         item_border = "green" if active_pane == "right" else "dim white"
         
@@ -441,14 +435,13 @@ def update_ui():
         )
         
         total_selected = sum(1 for c in menu_data for i in c["items"] if i.get("selected"))
-        hud_text = Text.from_markup(f"[bold green]✓ Paquetes marcados para instalación:[/bold green] [bold white]{total_selected}[/bold white]   |   [dim]Presiona ENTER sobre [Iniciar Instalación] para proceder.[/dim]", style="white", justify="center")
-        hud_panel = Panel(Align.center(hud_text, vertical="middle"), title="[bold cyan]ESTADO GLOBAL DEL SISTEMA[/bold cyan]", border_style="magenta", height=5, box=box.ROUNDED)
+        hud_text = Text.from_markup(f"[bold cyan]Navegación:[/bold cyan] Flechas [bold yellow]←↑↓→[/bold yellow] | [bold yellow]ESPACIO[/bold yellow] Alternar | [bold green]✓ Seleccionados:[/bold green] [bold white]{total_selected}[/bold white] | [dim]ENTER sobre [Iniciar] para instalar[/dim]", style="white", justify="center")
+        hud_panel = Panel(Align.center(hud_text, vertical="middle"), title="[bold cyan]ESTADO GLOBAL DEL SISTEMA[/bold cyan]", border_style="magenta", height=3, box=box.ROUNDED)
         
         main_layout = Layout()
         main_layout.split_column(
-            Layout(nav_panel, size=3),
             Layout(menu_layout, ratio=1),
-            Layout(hud_panel, size=5)
+            Layout(hud_panel, size=3)
         )
         layout["right"].update(main_layout)
 
@@ -482,39 +475,43 @@ def keyboard_worker():
                 time.sleep(0.5)
                 continue
             if select.select([sys.stdin], [], [], 0.1)[0]:
-                ch = sys.stdin.read(1)
-                if ch == '\x1b':
-                    ch += sys.stdin.read(2)
+                try:
+                    data = os.read(fd, 1024)
+                    if not data:
+                        continue
+                    ch = data.decode('utf-8', errors='ignore')
+                except BlockingIOError:
+                    continue
                 
-                if ch == '\x1b[A': # Arriba
+                if '\x1b[A' in ch or '\x1bOA' in ch: # Arriba
                     if active_pane == "left":
                         cat_idx = max(0, cat_idx - 1)
                         item_idx = 0
                     else:
                         item_idx = max(0, item_idx - 3)
-                elif ch == '\x1b[B': # Abajo
+                elif '\x1b[B' in ch or '\x1bOB' in ch: # Abajo
                     if active_pane == "left":
                         cat_idx = min(len(menu_data) - 1, cat_idx + 1)
                         item_idx = 0
                     else:
                         item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 3)
-                elif ch == '\x1b[C': # Derecha
+                elif '\x1b[C' in ch or '\x1bOC' in ch: # Derecha
                     if active_pane == "left":
                         active_pane = "right"
                     else:
                         item_idx = min(len(menu_data[cat_idx]["items"]) - 1, item_idx + 1)
-                elif ch == '\x1b[D': # Izquierda
+                elif '\x1b[D' in ch or '\x1bOD' in ch: # Izquierda
                     if active_pane == "right":
                         if item_idx % 3 == 0:
                             active_pane = "left"
                         else:
                             item_idx = max(0, item_idx - 1)
-                elif ch == ' ':
+                elif ' ' in ch:
                     if active_pane == "right":
                         item = menu_data[cat_idx]["items"][item_idx]
                         if item["type"] == "toggle":
                             item["selected"] = not item.get("selected", False)
-                elif ch == '\r' or ch == '\n':
+                elif '\r' in ch or '\n' in ch:
                     if active_pane == "right":
                         item = menu_data[cat_idx]["items"][item_idx]
                         if item["type"] == "action":
@@ -531,7 +528,7 @@ def keyboard_worker():
                             item["selected"] = not item.get("selected", False)
                     else:
                         active_pane = "right"
-                elif ch == '\x03': # Ctrl+C
+                elif '\x03' in ch: # Ctrl+C
                     install_error = "Instalación abortada por el usuario (Ctrl+C)."
                     install_done = True
                     break
@@ -890,7 +887,7 @@ with open(LOG_FILE, "w") as f:
 detect_gpu_and_update_menu()
 
 try:
-    with Live(update_ui(), refresh_per_second=4) as live:
+    with Live(update_ui(), refresh_per_second=2, screen=True) as live:
         # Arrancar el keyboard_worker DENTRO del Live para evitar conflictos de terminal
         k_worker = threading.Thread(target=keyboard_worker, daemon=True)
         k_worker.start()
