@@ -600,7 +600,10 @@ def installer_worker():
         progress.update(t_sync, description="[yellow]Instalando Cabeceras del Kernel (Para DKMS)...", advance=5)
         run_cmd_live("sudo bash -c 'pacman -S --noconfirm --needed $(pacman -Qq | grep \"^linux\" | grep -v \"headers\" | grep -v \"firmware\" | awk \"{print \\$1\\\"-headers\\\"}\")' 2>/dev/null", check=False)
 
-        progress.update(t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=5)
+        progress.update(t_sync, description="[yellow]Optimizando Servidores (Evitando 404s)...", advance=2)
+        run_cmd_live("sudo cachyos-rate-mirrors 2>/dev/null", check=False)
+
+        progress.update(t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=3)
         res = run_cmd_live("sudo pacman -Syu --noconfirm", check=False)
         if res != 0:
             log_lines.append("[bold red]Fallo detectado. Reparando Llavero GPG...[/bold red]")
