@@ -474,10 +474,13 @@ def update_ui():
 def keyboard_worker():
     global current_state, active_pane, cat_idx, item_idx, user_choices, install_error, install_done, transition_text
     fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
     try:
         tty.setcbreak(fd)
-        while current_state == "menu":
+        while not install_done:
+            # Solo procesar teclas durante el menú
+            if current_state != "menu":
+                time.sleep(0.5)
+                continue
             if select.select([sys.stdin], [], [], 0.1)[0]:
                 ch = sys.stdin.read(1)
                 if ch == '\x1b':
@@ -515,30 +518,25 @@ def keyboard_worker():
                     if active_pane == "right":
                         item = menu_data[cat_idx]["items"][item_idx]
                         if item["type"] == "action":
-                            # Procesar selecciones de menu_data
                             for c in menu_data:
                                 for i in c["items"]:
                                     if i.get("selected"):
                                         user_choices["packages"].extend(i.get("pkg", []))
                                         if "NVIDIA" in i["label"]:
                                             user_choices["drivers"] = "NVIDIA (Privativo)"
-                                            
                             if "NVIDIA" not in user_choices["drivers"]:
                                 user_choices["packages"].extend(["mesa", "lib32-mesa", "vulkan-radeon", "lib32-vulkan-radeon", "vulkan-intel", "lib32-vulkan-intel"])
-                            
                             current_state = "transition"
-                            break
                         else:
                             item["selected"] = not item.get("selected", False)
                     else:
-                        # Si da enter en la izquierda, se pasa a la derecha
                         active_pane = "right"
                 elif ch == '\x03': # Ctrl+C
                     install_error = "Instalación abortada por el usuario (Ctrl+C)."
                     install_done = True
                     break
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    except Exception:
+        pass
         
     if current_state == "transition":
         global transition_text
@@ -891,24 +889,20 @@ with open(LOG_FILE, "w") as f:
 
 detect_gpu_and_update_menu()
 
-k_worker = threading.Thread(target=keyboard_worker, daemon=True)
-k_worker.start()
-
 try:
-    with Live(update_ui(), refresh_per_second=30, screen=True) as live:
+    with Live(update_ui(), refresh_per_second=4) as live:
+        # Arrancar el keyboard_worker DENTRO del Live para evitar conflictos de terminal
+        k_worker = threading.Thread(target=keyboard_worker, daemon=True)
+        k_worker.start()
+        
         while not install_done:
-            time.sleep(0.02)
+            time.sleep(0.25)
             
+            # Manejar errores silenciosamente: auto-reintentar sin romper el terminal
             if current_state == "error" and error_prompt:
-                live.stop()
-                os.system("clear")
-                print(f"\n\033[1;41m[ ATENCIÓN - ERROR CRÍTICO ]\033[0m")
-                print(f"\033[1;33m{error_prompt['msg']}\033[0m\n")
-                ans = Prompt.ask("¿Cómo deseas proceder?", choices=["Reintentar", "Ignorar", "Abortar"], default="Reintentar")
-                error_response = ans
+                log(f"Error detectado, auto-reintentando: {error_prompt['msg']}")
+                error_response = "Reintentar"
                 error_prompt = None
-                os.system("clear")
-                live.start()
             elif current_state == "working" and not start_time:
                 start_time = time.time()
                 worker = threading.Thread(target=installer_worker, daemon=True)
