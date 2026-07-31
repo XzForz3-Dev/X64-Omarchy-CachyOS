@@ -608,7 +608,7 @@ def installer_worker():
                 pkgs.extend(f2.read().splitlines())
         
         # Batch de paquetes críticos de sistema
-        pkgs.extend(["plymouth", "greetd", "greetd-tuigreet"])
+        pkgs.extend(["plymouth"])
         pkgs.extend(user_choices["packages"])
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
         
@@ -652,42 +652,130 @@ def installer_worker():
         progress.update(t_config, description="[yellow]Configurando Pantalla de Arranque (Plymouth)...", advance=5)
         setup_plymouth_bootloader(has_nvidia)
         
-        progress.update(t_config, description="[yellow]Desplegando Gestor TUI (Tuigreet)...", advance=5)
+        progress.update(t_config, description="[yellow]Desplegando Selector TTY1...", advance=5)
         
-        # --- Configurar Greetd + Tuigreet (Los paquetes ya se instalaron en el Batch Maestro) ---
-        run_cmd_live("sudo mkdir -p /etc/greetd", check=False)
-        
-        # Parche de seguridad para evitar que Plymouth congele la TTY1 tapando a Tuigreet
+        # --- Configurar Sesiones en TTY Pura (Eliminación Total de Display Managers) ---
         run_cmd_live("sudo mkdir -p /etc/systemd/system/greetd.service.d", check=False)
         with open("/tmp/plymouth-fix.conf", "w") as f:
             f.write("[Service]\nExecStartPre=-/usr/bin/plymouth quit\n")
         run_cmd_live("sudo mv /tmp/plymouth-fix.conf /etc/systemd/system/greetd.service.d/plymouth-fix.conf", check=False)
-        
-        # --- Configurar Sesiones ---
-        greetd_config = """[terminal]
-vt = 1
-[default_session]
-command = "tuigreet --cmd 'uwsm start hyprland-uwsm.desktop' --asterisks --time --greeting 'Bienvenido a Omarchy Cyberpunk Environment' --remember --remember-user-session --sessions /usr/share/wayland-sessions"
-user = "greeter"
+
+        # 1. Arte ASCII para TTY1 (Antes de Loguearse)
+        issue_omarchy = """\\e[2J\\e[H
+
+\\e[38;2;0;255;255m╭───────────────────────────────────────────────────────────────────╮\\e[0m
+\\e[38;2;0;230;255m│\\e[0m  \\e[38;2;0;230;255m ██████╗ ███╗   ███╗ █████╗ ██████╗  ██████╗██╗  ██╗██╗   ██╗\\e[0m \\e[38;2;0;230;255m│\\e[0m
+\\e[38;2;0;200;255m│\\e[0m  \\e[38;2;0;200;255m██╔═══██╗████╗ ████║██╔══██╗██╔══██╗██╔════╝██║  ██║╚██╗ ██╔╝\\e[0m \\e[38;2;0;200;255m│\\e[0m
+\\e[38;2;150;0;255m│\\e[0m  \\e[38;2;150;0;255m██║   ██║██╔████╔██║███████║██████╔╝██║     ███████║ ╚████╔╝\\e[0m  \\e[38;2;150;0;255m│\\e[0m
+\\e[38;2;255;0;200m│\\e[0m  \\e[38;2;255;0;200m██║   ██║██║╚██╔╝██║██╔══██║██╔══██╗██║     ██╔══██║  ╚██╔╝\\e[0m   \\e[38;2;255;0;200m│\\e[0m
+\\e[38;2;255;0;100m│\\e[0m  \\e[38;2;255;0;100m╚██████╔╝██║ ╚═╝ ██║██║  ██║██║  ██║╚██████╗██║  ██║   ██║\\e[0m     \\e[38;2;255;0;100m│\\e[0m
+\\e[38;2;255;0;50m╰───────────────────────────────────────────────────────────────────╯\\e[0m
+
+\\e[1;36m[\\e[0m \\e[1;37m\\S \\m\\e[0m \\e[1;36m]\\e[0m   \\e[1;35m[\\e[0m \\e[1;37m\\r\\e[0m \\e[1;35m]\\e[0m
+\\e[1;36m[\\e[0m \\e[1;37m\\n (\\l)\\e[0m \\e[1;36m]\\e[0m   \\e[1;35m[\\e[0m \\e[1;37m\\d - \\t\\e[0m \\e[1;35m]\\e[0m
+
+\\e[1;32m>>> MODO GRÁFICO (PORTAL PRINCIPAL) <<<\\e[0m
+\\e[1;37mEstás en la \\e[1;33mTTY1\\e[1;37m. Ingresa tu usuario y contraseña aquí para 
+entrar al selector interactivo de escritorios de Omarchy.\\e[0m
+
+\\e[38;2;0;255;150m> INGRESA TUS CREDENCIALES ABAJO:\\e[0m
+
 """
-        with open("/tmp/greetd_config.toml", "w") as f:
-            f.write(greetd_config)
-        run_cmd_live("sudo mv /tmp/greetd_config.toml /etc/greetd/config.toml", check=False)
+        with open("/tmp/issue.omarchy", "w", encoding="utf-8") as f:
+            f.write(issue_omarchy)
+        run_cmd_live("sudo mv /tmp/issue.omarchy /etc/issue.omarchy", check=False)
+        run_cmd_live("sudo bash -c 'echo -e \"\\\\S \\\\r (\\\\l)\\\\n\" > /etc/issue'", check=False)
+        
+        run_cmd_live("sudo mkdir -p /etc/systemd/system/getty@tty1.service.d/", check=False)
+        getty_override = "[Service]\nExecStart=\nExecStart=-/sbin/agetty -o '-p -- \\u' --noclear --issue-file /etc/issue.omarchy %I $TERM\n"
+        with open("/tmp/issue.conf", "w") as f:
+            f.write(getty_override)
+        run_cmd_live("sudo mv /tmp/issue.conf /etc/systemd/system/getty@tty1.service.d/issue.conf", check=False)
+
+        # 2. Selector Interactivo de Entornos para Fish (Después de Loguearse)
+        fish_selector = """if status is-login
+    if test (tty) = /dev/tty1
+        echo -e "\\e[1;32m>>> SELECTOR DE ESCRITORIOS X64-OMARCHY <<<\\e[0m"
+        set idx 1
+        set options
+        set cmds
+        
+        if type -q Hyprland
+            echo " [$idx] Hyprland (Omarchy Cyberpunk)"
+            set -a options $idx
+            set -a cmds "uwsm start hyprland-uwsm.desktop"
+            set idx (math $idx + 1)
+        end
+        if type -q startplasma-wayland
+            echo " [$idx] KDE Plasma 6"
+            set -a options $idx
+            set -a cmds "uwsm start plasma-wayland.desktop"
+            set idx (math $idx + 1)
+        end
+        if type -q gnome-session
+            echo " [$idx] GNOME"
+            set -a options $idx
+            set -a cmds "uwsm start gnome-wayland.desktop"
+            set idx (math $idx + 1)
+        end
+        if type -q startxfce4
+            echo " [$idx] XFCE4"
+            set -a options $idx
+            set -a cmds "startxfce4"
+            set idx (math $idx + 1)
+        end
+        if type -q cosmic-session
+            echo " [$idx] Cosmic"
+            set -a options $idx
+            set -a cmds "uwsm start cosmic-wayland.desktop"
+            set idx (math $idx + 1)
+        end
+        if type -q sway
+            echo " [$idx] Sway"
+            set -a options $idx
+            set -a cmds "uwsm start sway-wayland.desktop"
+            set idx (math $idx + 1)
+        end
+        
+        echo ""
+        echo " [C] Consola Pura (Mantenimiento)"
+        echo ""
+        
+        while true
+            read -p 'echo -n "❯ Elige una opción: "' choice
+            if test "$choice" = "C" -o "$choice" = "c"
+                break
+            end
+            
+            set list_idx 0
+            for i in (seq (count $options))
+                if test "$choice" = "$options[$i]"
+                    set list_idx $i
+                    break
+                end
+            end
+            
+            if test $list_idx -gt 0
+                eval $cmds[$list_idx]
+                break
+            else
+                echo -e "\\e[31mOpción inválida.\\e[0m"
+            end
+        end
+    end
+end
+"""
+        run_cmd_live("mkdir -p ~/.config/fish/conf.d", check=False)
+        with open(os.path.expanduser("~/.config/fish/conf.d/omarchy_selector.fish"), "w") as f:
+            f.write(fish_selector)
 
         # --- Batch Shelling para Servicios y Entornos ---
         progress.update(t_config, description="[yellow]Aplicando configuraciones finales (Batch Shell)...", advance=10)
         services_script = "#!/bin/bash\\n"
         
-        if not is_legacy_nvidia:
-            services_script += "mkdir -p /usr/share/sddm/themes/omarchy /etc/sddm.conf.d\\n"
-            services_script += "cp -r default/sddm/omarchy/* /usr/share/sddm/themes/omarchy/ 2>/dev/null\\n"
-            services_script += "echo -e \\\"[Theme]\\\\nCurrent=omarchy\\\" > /etc/sddm.conf.d/omarchy.conf\\n"
-            services_script += "systemctl disable greetd.service 2>/dev/null\\n"
-            services_script += "systemctl enable sddm.service --now\\n"
-        else:
-            services_script += "systemctl disable sddm.service 2>/dev/null\\n"
-            services_script += "systemctl disable greetd.service 2>/dev/null\\n"
-            services_script += "systemctl enable getty@tty1.service --now\\n"
+        services_script += "systemctl disable sddm.service 2>/dev/null\\n"
+        services_script += "systemctl disable greetd.service 2>/dev/null\\n"
+        services_script += "systemctl enable getty@tty1.service --now\\n"
 
         services_script += "systemctl enable bluetooth.service\\n"
         
@@ -716,10 +804,6 @@ user = "greeter"
         
         progress.update(t_config, description="[green]Sistema Listo", completed=100)
         
-        if is_legacy_nvidia:
-            run_cmd_live("echo -e '\n\033[1;41m[ ALERTA NVIDIA LEGACY ]\033[0m\nHardware antiguo detectado. El protocolo de rescate se ha inyectado. Por favor, inicia sesión escribiendo: \033[1;33mHyprland\033[0m (No uses UWSM ni el display manager).'", check=False)
-            time.sleep(5)
-            
     except Exception as e:
         install_error = str(e)
     finally:
