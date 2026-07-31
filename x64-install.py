@@ -318,6 +318,7 @@ t_sync = progress.add_task("[white]Sincronizando Sistema...", total=100)
 t_pkg = progress.add_task("[white]Instalando X64-Omarchy...", total=100)
 t_backup = progress.add_task("[white]Creando Respaldo...", total=100)
 t_config = progress.add_task("[white]Aplicando Configuración...", total=100)
+t_final = progress.add_task("[white]Finalizando Instalación...", total=100)
 
 def update_ui():
     global ui_transitioned
