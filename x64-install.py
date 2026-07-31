@@ -58,6 +58,7 @@ ui_transitioned = False
 
 error_prompt = None
 error_response = None
+error_idx = 0
 
 # --- Unified Menu State ---
 with open("core/menu_data.json", "r", encoding="utf-8") as f:
@@ -130,6 +131,7 @@ def run_cmd_live(cmd, check=True):
                     
                 resp = error_response
                 error_response = None
+                error_prompt = None
                 current_state = "working"
                 
                 if resp == "Reintentar":
@@ -451,6 +453,19 @@ def update_ui():
         )
         layout["right"].update(main_layout)
 
+    elif current_state == "error" and error_prompt:
+        error_text = Text.from_markup(f"\n[bold red blink]⚠️  ERROR CRÍTICO DETECTADO  ⚠️[/bold red blink]\n\n[bold yellow]{error_prompt['msg']}[/bold yellow]\n\n[cyan]Elige cómo proceder (Usa las flechas ← y →, presiona ENTER para confirmar):[/cyan]\n", justify="center")
+        
+        opt1 = "[bold black on white] > REINTENTAR < [/]" if error_idx == 0 else "  Reintentar  "
+        opt2 = "[bold black on white] > IGNORAR < [/]" if error_idx == 1 else "  Ignorar  "
+        opt3 = "[bold black on white] > ABORTAR < [/]" if error_idx == 2 else "  Abortar  "
+        
+        opts = Text.from_markup(f"\n{opt1}    {opt2}    {opt3}\n", justify="center")
+        
+        from rich.console import Group
+        panel = Panel(Align.center(Group(error_text, opts), vertical="middle"), border_style="red", title="[bold red]ATENCIÓN[/bold red]")
+        layout["right"].update(panel)
+        
     elif current_state == "transition":
         layout["right"].update(Panel(Align.center(f"\n\n\n\n\n\n[bold yellow]{transition_text}[/bold yellow]"), title="[bold yellow]Inicializando Sistema...[/bold yellow]", border_style="yellow"))
     else:
@@ -900,9 +915,21 @@ try:
                 time.sleep(0.8)
                 current_state = "working"
             elif current_state == "error" and error_prompt:
-                log(f"Error detectado, auto-reintentando: {error_prompt['msg']}")
-                error_response = "Reintentar"
-                error_prompt = None
+                r, _, _ = select.select([sys.stdin], [], [], 0.25)
+                if r:
+                    try:
+                        chunk = os.read(fd, 10)
+                        if chunk:
+                            ch = chunk.decode('utf-8', errors='ignore')
+                            if '\x1b[C' in ch or '\x1bOC' in ch:
+                                error_idx = min(2, error_idx + 1)
+                            elif '\x1b[D' in ch or '\x1bOD' in ch:
+                                error_idx = max(0, error_idx - 1)
+                            elif '\r' in ch or '\n' in ch:
+                                error_response = ["Reintentar", "Ignorar", "Abortar"][error_idx]
+                                # Note: the installer_worker will reset error_prompt and current_state
+                    except BlockingIOError:
+                        pass
             elif current_state == "working" and not installer_started:
                 start_time = time.time()
                 installer_started = True
