@@ -134,8 +134,7 @@
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "openbox",
-                    "cachyos-openbox-settings"
+                    "openbox"
                 ],
                 "desc": "Gestor de ventanas clásico, ultraligero y altamente configurable (X11) tuneado por CachyOS."
             }
