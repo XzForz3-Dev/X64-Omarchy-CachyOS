@@ -6,4 +6,4 @@
 export X64_STUDIOS_SESSION=1
 
 # Lanzar Hyprland usando el archivo de configuración aislado del usuario actual
-exec Hyprland -c "$HOME/.config/hypr-x64/hyprland.lua"
+exec Hyprland -c "$HOME/.config/hypr-x64/hyprland.lua" > "$HOME/x64-hyprland-crash.log" 2>&1
