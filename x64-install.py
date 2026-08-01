@@ -624,7 +624,7 @@ def installer_worker():
             if "cachyos-kde-settings" in pkgs:
                 run_cmd_live("sudo pacman -Rdd --noconfirm cachyos-hyprland-settings cachyos-desktop-settings", check=False)
 
-            run_cmd_live(f"sudo pacman -S --noconfirm {' '.join(missing_pkgs)}")
+            run_cmd_live(f"sudo pacman -S --noconfirm --needed {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
 
         progress.update(t_backup, description="[yellow]Comprimiendo ~/.config...", advance=50)
