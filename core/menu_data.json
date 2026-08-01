@@ -51,16 +51,6 @@
                     "cinnamon"
                 ],
                 "desc": "Entorno clásico tradicional, amigable y muy estable (creado por Linux Mint)."
-            },
-
-            {
-                "label": "MangoWM",
-                "type": "toggle",
-                "selected": false,
-                "pkg": [
-                    "mangowm"
-                ],
-                "desc": "Window manager tiling y minimalista (estética CachyOS)."
             }
         ]
     },

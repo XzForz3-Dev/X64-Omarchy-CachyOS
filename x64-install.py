@@ -741,12 +741,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             set idx (math $idx + 1)
         end
 
-        if type -q mangowm
-            echo " [$idx] MangoWM"
-            set -a options $idx
-            set -a cmds "exec mangowm"
-            set idx (math $idx + 1)
-        end
+
 
         
         echo ""
