@@ -3,7 +3,7 @@
         "cat": "1. Entornos (Desktop)",
         "items": [
             {
-                "label": "Hyprland (Tokyo Night)",
+                "label": "Hyprland (Omarchy Oficial)",
                 "type": "toggle",
                 "selected": true,
                 "pkg": [
@@ -26,15 +26,14 @@
                 "desc": "El entorno Hyprland exclusivo y personalizado por X64 Studios."
             },
             {
-                "label": "KDE Plasma 6",
+                "label": "Plasma Desktop",
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
                     "plasma-meta",
-                    "konsole",
-                    "dolphin"
+                    "cachyos-kde-settings"
                 ],
-                "desc": "Entorno moderno y altamente personalizable, con todas las herramientas nativas del ecosistema KDE."
+                "desc": "Entorno moderno de KDE, altamente personalizable, con estética oficial de CachyOS."
             },
             {
                 "label": "GNOME",
@@ -42,38 +41,28 @@
                 "selected": false,
                 "pkg": [
                     "gnome",
-                    "gnome-extra"
+                    "cachyos-gnome-settings"
                 ],
-                "desc": "Interfaz enfocada en gestos táctiles, minimalismo y un flujo de trabajo centrado en el teclado."
+                "desc": "Interfaz enfocada en gestos táctiles y minimalismo, tuneada por CachyOS."
             },
             {
-                "label": "XFCE4",
-                "type": "toggle",
-                "selected": false,
-                "pkg": [
-                    "xfce4",
-                    "xfce4-goodies"
-                ],
-                "desc": "El entorno clásico y ultraligero por excelencia. Ideal para hardware antiguo o minimalismo extremo."
-            },
-            {
-                "label": "Cosmic (System76)",
+                "label": "Cosmic",
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
                     "cosmic-session"
                 ],
-                "desc": "El nuevo y moderno entorno de escritorio de Pop!_OS escrito en Rust (Alpha)."
+                "desc": "El nuevo y moderno entorno de escritorio de Pop!_OS escrito en Rust."
             },
             {
-                "label": "MATE",
+                "label": "Niri",
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "mate",
-                    "mate-extra"
+                    "niri",
+                    "cachyos-niri-settings"
                 ],
-                "desc": "Entorno clásico, ligero e intuitivo (continuación de GNOME 2)."
+                "desc": "Tiling scroll-infinito ultra moderno, configurado por CachyOS."
             },
             {
                 "label": "Cinnamon",
@@ -85,24 +74,70 @@
                 "desc": "Entorno clásico tradicional, amigable y muy estable (creado por Linux Mint)."
             },
             {
-                "label": "Niri + Noctalia",
+                "label": "MATE",
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "niri",
-                    "noctalia",
-                    "cachyos-niri-noctalia"
+                    "mate"
                 ],
-                "desc": "Tiling scroll-infinito ultra moderno (Niri) acompañado del elegante Shell Noctalia."
+                "desc": "Entorno clásico, ligero e intuitivo (continuación de GNOME 2)."
             },
             {
-                "label": "LXQt",
+                "label": "Xfce4",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "xfce4",
+                    "cachyos-xfce-settings"
+                ],
+                "desc": "El entorno clásico y ultraligero, con estética mejorada por CachyOS."
+            },
+            {
+                "label": "LXQT",
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
                     "lxqt"
                 ],
                 "desc": "Entorno de escritorio ligero, rápido y clásico basado en Qt."
+            },
+            {
+                "label": "LXDE",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "lxde"
+                ],
+                "desc": "Entorno extremadamente ligero para hardware antiguo (basado en GTK)."
+            },
+            {
+                "label": "MangoWM",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "mangowm"
+                ],
+                "desc": "Window manager tiling y minimalista (estética CachyOS)."
+            },
+            {
+                "label": "Wayfire",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "wayfire",
+                    "cachyos-wayfire-settings"
+                ],
+                "desc": "Compositor de Wayland inspirado en Compiz con efectos 3D fluidos y diseño CachyOS."
+            },
+            {
+                "label": "Openbox",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "openbox",
+                    "cachyos-openbox-settings"
+                ],
+                "desc": "Gestor de ventanas clásico, ultraligero y altamente configurable (X11) tuneado por CachyOS."
             }
         ]
     },
