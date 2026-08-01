@@ -15,24 +15,14 @@
                 "desc": "Entorno base (Wayland) con estética hacker/cyberpunk, animaciones fluidas y bajo consumo de recursos."
             },
             {
-                "label": "Hyprland (X64 Studios Edition)",
+                "label": "KDE Plasma (X64 Studios Edition)",
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "hyprland",
-                    "cachyos-hyprland-settings",
-                    "waybar"
+                    "plasma-meta",
+                    "cachyos-kde-settings"
                 ],
-                "desc": "El entorno Hyprland exclusivo y personalizado por X64 Studios."
-            },
-            {
-                "label": "Plasma Desktop",
-                "type": "toggle",
-                "selected": false,
-                "pkg": [
-                    "plasma-meta"
-                ],
-                "desc": "Entorno moderno de KDE, altamente personalizable, con estética oficial de CachyOS."
+                "desc": "El entorno de escritorio KDE Plasma con la configuración base oficial de CachyOS, listo para ser personalizado por X64 Studios."
             },
             {
                 "label": "GNOME",

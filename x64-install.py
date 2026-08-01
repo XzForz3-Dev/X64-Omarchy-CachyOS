@@ -651,7 +651,6 @@ def installer_worker():
                     
         shutil.copytree("bin", os.path.expanduser("~/.local/bin"), dirs_exist_ok=True)
         shutil.copytree("themes", os.path.expanduser("~/.local/share/themes"), dirs_exist_ok=True)
-        shutil.copytree("config/hypr-x64", os.path.expanduser("~/.config/hypr-x64"), dirs_exist_ok=True)
         run_cmd_live("chmod +x ~/.local/bin/*", check=False)
         
         progress.update(t_config, description="[yellow]Configurando Pantalla de Arranque (Plymouth)...", advance=5)
@@ -713,13 +712,8 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             set -a cmds "exec Hyprland"
             set idx (math $idx + 1)
             
-            echo " [$idx] Hyprland (X64 Studios Edition)"
-            set -a options $idx
-            set -a cmds "exec Hyprland -c ~/.config/hypr-x64/hyprland.lua"
-            set idx (math $idx + 1)
-        end
         if type -q startplasma-wayland
-            echo " [$idx] Plasma Desktop"
+            echo " [$idx] KDE Plasma (X64 Studios Edition)"
             set -a options $idx
             set -a cmds "exec dbus-run-session startplasma-wayland"
             set idx (math $idx + 1)
