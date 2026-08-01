@@ -715,7 +715,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             
             echo " [$idx] Hyprland (X64 Studios Edition)"
             set -a options $idx
-            set -a cmds "exec Hyprland -c ~/.config/hypr-x64/hyprland.conf"
+            set -a cmds "exec Hyprland -c ~/.config/hypr-x64/hyprland.lua"
             set idx (math $idx + 1)
         end
         if type -q startplasma-wayland
