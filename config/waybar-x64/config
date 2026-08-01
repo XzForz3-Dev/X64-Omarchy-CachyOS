@@ -1,0 +1,14 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 30,
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right": ["tray", "custom/x64-updater"],
+    
+    "custom/x64-updater": {
+        "format": "✨ X64 Update",
+        "on-click": "x64-update",
+        "tooltip": false
+    }
+}

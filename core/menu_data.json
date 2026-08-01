@@ -15,6 +15,17 @@
                 "desc": "Entorno base (Wayland) con estética hacker/cyberpunk, animaciones fluidas y bajo consumo de recursos."
             },
             {
+                "label": "Hyprland (X64 Studios Edition)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "hyprland",
+                    "cachyos-hyprland-settings",
+                    "waybar"
+                ],
+                "desc": "El entorno Hyprland exclusivo y personalizado por X64 Studios."
+            },
+            {
                 "label": "KDE Plasma 6",
                 "type": "toggle",
                 "selected": false,

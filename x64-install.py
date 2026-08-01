@@ -638,7 +638,7 @@ def installer_worker():
         run_cmd_live("sudo chmod -R 755 /usr/share/omarchy")
         
         run_cmd_live("sudo mkdir -p /usr/share/wayland-sessions")
-        run_cmd_live("sudo cp default/wayland-sessions/omarchy.desktop /usr/share/wayland-sessions/", check=False)
+        run_cmd_live("sudo cp default/wayland-sessions/*.desktop /usr/share/wayland-sessions/", check=False)
         run_cmd_live("sudo mkdir -p /usr/share/xdg-terminal-exec")
         run_cmd_live("sudo cp default/xdg-terminal-exec/hyprland-xdg-terminals.list /usr/share/xdg-terminal-exec/", check=False)
         
@@ -707,9 +707,14 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         set cmds
         
         if type -q Hyprland
-            echo " [$idx] Hyprland (Omarchy Cyberpunk)"
+            echo " [$idx] Hyprland (Omarchy Official)"
             set -a options $idx
             set -a cmds "exec Hyprland"
+            set idx (math $idx + 1)
+            
+            echo " [$idx] Hyprland (X64 Studios Edition)"
+            set -a options $idx
+            set -a cmds "exec Hyprland -c ~/.config/hypr-x64/hyprland.conf"
             set idx (math $idx + 1)
         end
         if type -q startplasma-wayland
