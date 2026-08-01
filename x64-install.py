@@ -731,7 +731,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q niri-session
             echo " [$idx] Niri"
             set -a options $idx
-            set -a cmds "exec niri-session"
+            set -a cmds "exec dbus-run-session niri"
             set idx (math $idx + 1)
         end
         if type -q cinnamon-session
