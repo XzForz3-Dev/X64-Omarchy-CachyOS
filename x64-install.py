@@ -713,6 +713,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             set -a options $idx
             set -a cmds "exec Hyprland"
             set idx (math $idx + 1)
+        end
             
         if type -q startplasma-wayland
             echo " [$idx] KDE Plasma (X64 Studios Edition)"
