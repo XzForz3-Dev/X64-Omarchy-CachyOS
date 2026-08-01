@@ -30,8 +30,7 @@
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "plasma-meta",
-                    "cachyos-kde-settings"
+                    "plasma-meta"
                 ],
                 "desc": "Entorno moderno de KDE, altamente personalizable, con estética oficial de CachyOS."
             },
