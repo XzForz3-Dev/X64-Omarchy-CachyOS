@@ -727,12 +727,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             set -a cmds "exec env XDG_SESSION_TYPE=wayland dbus-run-session gnome-shell --display-server --wayland"
             set idx (math $idx + 1)
         end
-        if type -q cosmic-session
-            echo " [$idx] Cosmic"
-            set -a options $idx
-            set -a cmds "exec cosmic-session"
-            set idx (math $idx + 1)
-        end
+
         if type -q niri-session
             echo " [$idx] Niri"
             set -a options $idx
@@ -745,48 +740,14 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             set -a cmds "exec dbus-run-session startx /usr/bin/cinnamon-session"
             set idx (math $idx + 1)
         end
-        if type -q mate-session
-            echo " [$idx] MATE"
-            set -a options $idx
-            set -a cmds "exec dbus-run-session startx /usr/bin/mate-session"
-            set idx (math $idx + 1)
-        end
-        if type -q startxfce4
-            echo " [$idx] Xfce4"
-            set -a options $idx
-            set -a cmds "exec startxfce4"
-            set idx (math $idx + 1)
-        end
-        if type -q startlxqt
-            echo " [$idx] LXQT"
-            set -a options $idx
-            set -a cmds "exec startx /usr/bin/startlxqt"
-            set idx (math $idx + 1)
-        end
-        if type -q startlxde
-            echo " [$idx] LXDE"
-            set -a options $idx
-            set -a cmds "exec startx /usr/bin/startlxde"
-            set idx (math $idx + 1)
-        end
+
         if type -q mangowm
             echo " [$idx] MangoWM"
             set -a options $idx
             set -a cmds "exec mangowm"
             set idx (math $idx + 1)
         end
-        if type -q wayfire
-            echo " [$idx] Wayfire"
-            set -a options $idx
-            set -a cmds "exec wayfire"
-            set idx (math $idx + 1)
-        end
-        if type -q openbox-session
-            echo " [$idx] Openbox"
-            set -a options $idx
-            set -a cmds "exec startx /usr/bin/openbox-session"
-            set idx (math $idx + 1)
-        end
+
         
         echo ""
         echo " [C] Consola Pura (Mantenimiento)"

@@ -33,15 +33,7 @@
                 ],
                 "desc": "Interfaz enfocada en gestos táctiles y minimalismo, tuneada por CachyOS."
             },
-            {
-                "label": "Cosmic",
-                "type": "toggle",
-                "selected": false,
-                "pkg": [
-                    "cosmic-session"
-                ],
-                "desc": "El nuevo y moderno entorno de escritorio de Pop!_OS escrito en Rust."
-            },
+
             {
                 "label": "Niri",
                 "type": "toggle",
@@ -60,42 +52,7 @@
                 ],
                 "desc": "Entorno clásico tradicional, amigable y muy estable (creado por Linux Mint)."
             },
-            {
-                "label": "MATE",
-                "type": "toggle",
-                "selected": false,
-                "pkg": [
-                    "mate"
-                ],
-                "desc": "Entorno clásico, ligero e intuitivo (continuación de GNOME 2)."
-            },
-            {
-                "label": "Xfce4",
-                "type": "toggle",
-                "selected": false,
-                "pkg": [
-                    "xfce4"
-                ],
-                "desc": "El entorno clásico y ultraligero, con estética mejorada por CachyOS."
-            },
-            {
-                "label": "LXQT",
-                "type": "toggle",
-                "selected": false,
-                "pkg": [
-                    "lxqt"
-                ],
-                "desc": "Entorno de escritorio ligero, rápido y clásico basado en Qt."
-            },
-            {
-                "label": "LXDE",
-                "type": "toggle",
-                "selected": false,
-                "pkg": [
-                    "lxde"
-                ],
-                "desc": "Entorno extremadamente ligero para hardware antiguo (basado en GTK)."
-            },
+
             {
                 "label": "MangoWM",
                 "type": "toggle",
@@ -104,24 +61,6 @@
                     "mangowm"
                 ],
                 "desc": "Window manager tiling y minimalista (estética CachyOS)."
-            },
-            {
-                "label": "Wayfire",
-                "type": "toggle",
-                "selected": false,
-                "pkg": [
-                    "wayfire"
-                ],
-                "desc": "Compositor de Wayland inspirado en Compiz con efectos 3D fluidos y diseño CachyOS."
-            },
-            {
-                "label": "Openbox",
-                "type": "toggle",
-                "selected": false,
-                "pkg": [
-                    "openbox"
-                ],
-                "desc": "Gestor de ventanas clásico, ultraligero y altamente configurable (X11) tuneado por CachyOS."
             }
         ]
     },
