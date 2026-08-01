@@ -651,6 +651,7 @@ def installer_worker():
                     
         shutil.copytree("bin", os.path.expanduser("~/.local/bin"), dirs_exist_ok=True)
         shutil.copytree("themes", os.path.expanduser("~/.local/share/themes"), dirs_exist_ok=True)
+        shutil.copytree("config/hypr-x64", os.path.expanduser("~/.config/hypr-x64"), dirs_exist_ok=True)
         run_cmd_live("chmod +x ~/.local/bin/*", check=False)
         
         progress.update(t_config, description="[yellow]Configurando Pantalla de Arranque (Plymouth)...", advance=5)
