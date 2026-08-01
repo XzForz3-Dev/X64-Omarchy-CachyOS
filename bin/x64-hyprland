@@ -1,9 +1,0 @@
-#!/bin/bash
-# Wrapper script for Hyprland (X64 Studios Edition)
-# Ensures variables like $HOME are expanded properly regardless of the Display Manager
-
-# Establecer variable de entorno para identificar la sesión (útil para scripts futuros)
-export X64_STUDIOS_SESSION=1
-
-# Lanzar Hyprland usando el archivo de configuración aislado del usuario actual
-exec Hyprland -c "$HOME/.config/hypr-x64/hyprland.lua" > "$HOME/x64-hyprland-crash.log" 2>&1

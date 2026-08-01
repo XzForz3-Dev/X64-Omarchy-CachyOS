@@ -70,14 +70,8 @@ def main():
 
     cmd = selected[1]
     
-    # Handle uwsm specific executions properly
-    if cmd.startswith("uwsm start"):
-        # Just pass it to bash
-        os.execvp("bash", ["bash", "-c", cmd])
-    else:
-        # Standard execution
-        parts = cmd.split()
-        os.execvp(parts[0], parts)
+    # Execute via bash to support shell expansion and quoted arguments
+    os.execvp("bash", ["bash", "-c", cmd])
 
 if __name__ == "__main__":
     main()

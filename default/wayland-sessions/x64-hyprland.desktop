@@ -1,5 +1,5 @@
 [Desktop Entry]
 Name=Hyprland (X64 Studios)
 Comment=An intelligent dynamic tiling Wayland compositor (X64 Studios Edition)
-Exec=/usr/share/omarchy/bin/x64-hyprland
+Exec=Hyprland -c ~/.config/hypr-x64/hyprland.lua
 Type=Application
