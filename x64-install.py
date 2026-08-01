@@ -754,28 +754,10 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             set -a cmds "exec dbus-run-session startx /usr/bin/cinnamon-session"
             set idx (math $idx + 1)
         end
-        if type -q budgie-desktop
-            echo " [$idx] Budgie"
+        if type -q niri-session
+            echo " [$idx] Niri + Noctalia"
             set -a options $idx
-            set -a cmds "exec env XDG_CURRENT_DESKTOP=Budgie:GNOME XDG_MENU_PREFIX=budgie- dbus-run-session startx /usr/bin/budgie-desktop"
-            set idx (math $idx + 1)
-        end
-        if type -q awesome
-            echo " [$idx] AwesomeWM"
-            set -a options $idx
-            set -a cmds "exec startx /usr/bin/awesome"
-            set idx (math $idx + 1)
-        end
-        if type -q bspwm
-            echo " [$idx] Bspwm"
-            set -a options $idx
-            set -a cmds "exec startx /usr/bin/bspwm"
-            set idx (math $idx + 1)
-        end
-        if type -q i3
-            echo " [$idx] I3WM"
-            set -a options $idx
-            set -a cmds "exec startx /usr/bin/i3"
+            set -a cmds "exec niri-session"
             set idx (math $idx + 1)
         end
         

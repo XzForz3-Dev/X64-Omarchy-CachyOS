@@ -74,13 +74,15 @@
                 "desc": "Entorno clásico tradicional, amigable y muy estable (creado por Linux Mint)."
             },
             {
-                "label": "Budgie",
+                "label": "Niri + Noctalia",
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "budgie-desktop"
+                    "niri",
+                    "noctalia",
+                    "cachyos-niri-noctalia"
                 ],
-                "desc": "Entorno moderno y enfocado en la simplicidad."
+                "desc": "Tiling scroll-infinito ultra moderno (Niri) acompañado del elegante Shell Noctalia."
             },
             {
                 "label": "LXQt",
@@ -90,38 +92,6 @@
                     "lxqt"
                 ],
                 "desc": "Entorno de escritorio ligero, rápido y clásico basado en Qt."
-            },
-            {
-                "label": "AwesomeWM",
-                "type": "toggle",
-                "selected": false,
-                "pkg": [
-                    "awesome",
-                    "picom"
-                ],
-                "desc": "Gestor de ventanas clásico Tiling en X11 configurable en Lua."
-            },
-            {
-                "label": "Bspwm",
-                "type": "toggle",
-                "selected": false,
-                "pkg": [
-                    "bspwm",
-                    "sxhkd",
-                    "picom"
-                ],
-                "desc": "Tiling puro en X11 basado en nodos binarios."
-            },
-            {
-                "label": "I3WM",
-                "type": "toggle",
-                "selected": false,
-                "pkg": [
-                    "i3-wm",
-                    "i3status",
-                    "picom"
-                ],
-                "desc": "El Tiling window manager más famoso y estable en X11."
             }
         ]
     },
