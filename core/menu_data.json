@@ -40,8 +40,7 @@
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "gnome",
-                    "cachyos-gnome-settings"
+                    "gnome"
                 ],
                 "desc": "Interfaz enfocada en gestos táctiles y minimalismo, tuneada por CachyOS."
             },
@@ -59,8 +58,7 @@
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "niri",
-                    "cachyos-niri-settings"
+                    "niri"
                 ],
                 "desc": "Tiling scroll-infinito ultra moderno, configurado por CachyOS."
             },
@@ -87,8 +85,7 @@
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "xfce4",
-                    "cachyos-xfce-settings"
+                    "xfce4"
                 ],
                 "desc": "El entorno clásico y ultraligero, con estética mejorada por CachyOS."
             },
@@ -124,8 +121,7 @@
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "wayfire",
-                    "cachyos-wayfire-settings"
+                    "wayfire"
                 ],
                 "desc": "Compositor de Wayland inspirado en Compiz con efectos 3D fluidos y diseño CachyOS."
             },
