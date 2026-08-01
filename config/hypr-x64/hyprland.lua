@@ -16,11 +16,11 @@ require("default.hypr.omarchy")
 -- Put your personal overrides in these files. They're loaded after Omarchy's
 -- defaults so package updates can improve the defaults without rewriting your
 -- ~/.config/hypr files.
-require("hypr.monitors")
-require("hypr.input")
-require("hypr.bindings")
-require("hypr.looknfeel")
-require("hypr.autostart")
+require("hypr-x64.monitors")
+require("hypr-x64.input")
+require("hypr-x64.bindings")
+require("hypr-x64.looknfeel")
+require("hypr-x64.autostart")
 
 -- Toggle config flags dynamically.
 require("default.hypr.toggles")
