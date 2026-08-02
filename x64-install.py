@@ -736,13 +736,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             set -a cmds "exec dbus-run-session startplasma-wayland"
             set idx (math $idx + 1)
         end\n"""
-                elif "GNOME" in label:
-                    fish_selector += """        if type -q gnome-session
-            echo " [$idx] GNOME"
-            set -a options $idx
-            set -a cmds "exec env XDG_SESSION_TYPE=wayland GBM_BACKEND=nvidia-drm __GLX_VENDOR_LIBRARY_NAME=nvidia dbus-run-session sh -c 'omarchy-gnome-session-mock & exec gnome-shell --wayland'"
-            set idx (math $idx + 1)
-        end\n"""
+
                 elif "Niri" in label:
                     fish_selector += """        if type -q niri-session
             echo " [$idx] Niri"
