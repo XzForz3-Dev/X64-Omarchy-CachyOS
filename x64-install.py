@@ -711,12 +711,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         set options
         set cmds
         
-        if type -q Hyprland
-            echo " [$idx] Hyprland (Omarchy Official)"
-            set -a options $idx
-            set -a cmds "exec Hyprland"
-            set idx (math $idx + 1)
-        end
+
         if type -q Hyprland
             echo " [$idx] Hyprland (X64 Studios)"
             set -a options $idx
