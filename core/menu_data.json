@@ -39,7 +39,8 @@
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "niri"
+                    "niri",
+                    "cachyos-niri-settings"
                 ],
                 "desc": "Tiling scroll-infinito ultra moderno, configurado por CachyOS."
             },
