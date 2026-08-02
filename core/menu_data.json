@@ -23,7 +23,9 @@
                     "waybar",
                     "wofi",
                     "swaylock-effects",
-                    "wlogout"
+                    "wlogout",
+                    "swaybg",
+                    "cachyos-wallpapers"
                 ],
                 "desc": "El hermoso entorno Hyprland oscuro oficial de CachyOS (Tema Noctalia)."
             },
@@ -53,6 +55,7 @@
                 "pkg": [
                     "niri",
                     "noctalia-shell",
+                    "noctalia-qs",
                     "polkit-kde-agent"
                 ],
                 "desc": "Tiling scroll-infinito ultra moderno, configurado por X64 Studios."
