@@ -54,7 +54,7 @@
                 "selected": false,
                 "pkg": [
                     "niri",
-                    "noctalia-shell",
+                    "noctalia",
                     "polkit-kde-agent",
                     "adw-gtk-theme",
                     "capitaine-cursors"
