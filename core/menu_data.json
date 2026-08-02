@@ -55,8 +55,9 @@
                 "pkg": [
                     "niri",
                     "noctalia-shell",
-                    "noctalia-qs",
-                    "polkit-kde-agent"
+                    "polkit-kde-agent",
+                    "adw-gtk-theme",
+                    "capitaine-cursors"
                 ],
                 "desc": "Tiling scroll-infinito ultra moderno, configurado por X64 Studios."
             },
