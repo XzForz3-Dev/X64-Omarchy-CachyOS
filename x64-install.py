@@ -112,7 +112,7 @@ def run_cmd_live(cmd, check=True):
                             last_lines.pop(0)
                         # Mitigación I/O: Reducir drásticamente la basura visual. Solo alertar de errores críticos.
                         lower_line = line_clean.lower()
-                        if "fatal" in lower_line or "error " in lower_line or " failed" in lower_line:
+                        if "fatal" in lower_line or "error" in lower_line or "failed" in lower_line or "warning" in lower_line:
                             safe_line = escape(line_clean)
                             log_lines.append(f"[dim red]{safe_line}[/dim red]")
                         
