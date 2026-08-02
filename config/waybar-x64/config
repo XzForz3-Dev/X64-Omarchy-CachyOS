@@ -300,7 +300,7 @@
     /*"custom/keyboard": {
         "format": " {}",
         "interval": 1,
-        "exec": "$HOME/.config/waybar/get_kbdlayout.sh"
+        "exec": "$HOME/.config/waybar-x64/get_kbdlayout.sh"
     },*/
 
     "hyprland/workspaces": {

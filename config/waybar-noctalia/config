@@ -294,7 +294,7 @@
     /*"custom/keyboard": {
         "format": " {}",
         "interval": 1,
-        "exec": "$HOME/.config/waybar/get_kbdlayout.sh"
+        "exec": "$HOME/.config/waybar-noctalia/get_kbdlayout.sh"
     },*/
 
     "hyprland/workspaces": {

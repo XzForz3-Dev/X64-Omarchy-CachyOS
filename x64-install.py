@@ -621,7 +621,7 @@ def installer_worker():
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             progress.update(t_pkg, description="[cyan]Descargando e Instalando Paquetes (Puede tardar varios minutos)...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm jack2", check=False)
-
+            run_cmd_live("sudo pacman -Rdd --noconfirm noctalia-shell noctalia-qs cachyos-niri-settings 2>/dev/null", check=False)
 
             run_cmd_live(f"sudo pacman -S --noconfirm --needed {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
@@ -713,7 +713,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             set -a cmds "exec Hyprland"
             set idx (math $idx + 1)
         end
-        if type -q Hyprland
+        if type -q Hyprland; and type -q wlogout
             echo " [$idx] Hyprland (X64 Studios Noctalia)"
             set -a options $idx
             set -a cmds "exec env HYPRLAND_CONFIG=~/.config/hypr-noctalia/hyprland.conf Hyprland"
