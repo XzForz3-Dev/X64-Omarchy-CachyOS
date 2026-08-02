@@ -1,0 +1,87 @@
+* {
+    /* Glassmorphism Color Palette */
+    bg-base:        rgba(10, 15, 25, 0.7);
+    bg-alt:         rgba(30, 41, 59, 0.6);
+    bg-selected:    rgba(255, 255, 255, 0.15);
+    border-color:   rgba(255, 255, 255, 0.1);
+    border-focus:   rgba(255, 255, 255, 0.4);
+    text-color:     #e2e8f0;
+    text-muted:     #94a3b8;
+
+    font: "Inter 12";
+    background-color: transparent;
+    text-color: @text-color;
+    margin: 0px;
+    padding: 0px;
+    spacing: 0px;
+}
+
+window {
+    width: 600px;
+    background-color: @bg-base;
+    border-radius: 20px;
+    border: 1px solid @border-color;
+    padding: 20px;
+}
+
+mainbox {
+    background-color: transparent;
+    spacing: 15px;
+}
+
+inputbar {
+    background-color: @bg-alt;
+    border-radius: 12px;
+    padding: 12px;
+    spacing: 10px;
+    border: 1px solid @border-color;
+    children: [ prompt, entry ];
+}
+
+prompt {
+    text-color: @text-muted;
+    font: "JetBrainsMono Nerd Font 12";
+}
+
+entry {
+    placeholder: "Search applications...";
+    placeholder-color: @text-muted;
+}
+
+listview {
+    background-color: transparent;
+    columns: 2;
+    lines: 8;
+    spacing: 10px;
+    cycle: true;
+    dynamic: true;
+    scrollbar: false;
+}
+
+element {
+    background-color: transparent;
+    padding: 10px;
+    border-radius: 12px;
+    spacing: 15px;
+    border: 1px solid transparent;
+}
+
+element-icon {
+    size: 24px;
+    background-color: transparent;
+}
+
+element-text {
+    vertical-align: 0.5;
+    background-color: transparent;
+}
+
+element selected.normal {
+    background-color: @bg-selected;
+    border: 1px solid @border-focus;
+    text-color: #ffffff;
+}
+
+element alternate.normal {
+    background-color: transparent;
+}
