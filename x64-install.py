@@ -726,7 +726,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
                     fish_selector += """        if type -q Hyprland
             echo " [$idx] Hyprland (X64 Studios)"
             set -a options $idx
-            set -a cmds "exec env XDG_SESSION_TYPE=wayland HYPRLAND_CONFIG=~/.config/hypr-x64/hyprland.lua Hyprland"
+            set -a cmds "exec env XDG_SESSION_TYPE=wayland Hyprland -c $HOME/.config/hypr-x64/hyprland.lua"
             set idx (math $idx + 1)
         end\n"""
                 elif "KDE" in label:
