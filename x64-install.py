@@ -716,7 +716,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q Hyprland
             echo " [$idx] Hyprland (X64 Studios)"
             set -a options $idx
-            set -a cmds "exec env HYPRLAND_CONFIG=~/.config/hypr-x64/hyprland.conf Hyprland"
+            set -a cmds "exec env HYPRLAND_CONFIG=~/.config/hypr-x64/hyprland.lua Hyprland"
             set idx (math $idx + 1)
         end
             
