@@ -1,0 +1,39 @@
+* {
+    font-family: "JetBrainsMono Nerd Font", "Inter", sans-serif;
+    background-image: none;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+window {
+    background-color: rgba(10, 15, 25, 0.7); /* Dark translucent background */
+}
+
+button {
+    color: #e2e8f0;
+    background-color: rgba(30, 41, 59, 0.6); /* Glassmorphism buttons */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    margin: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 25%;
+}
+
+button:focus, button:active, button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    outline-style: none;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* We don't have SVGs yet in the repo, so we rely on text labels for now. 
+   Usually wlogout requires icons. I will add standard padding so text looks good */
+
+#lock { margin: 10px; }
+#logout { margin: 10px; }
+#suspend { margin: 10px; }
+#hibernate { margin: 10px; }
+#shutdown { margin: 10px; }
+#reboot { margin: 10px; }
