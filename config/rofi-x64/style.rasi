@@ -3,14 +3,14 @@
     bg-base:        rgba(10, 15, 25, 0.7);
     bg-alt:         rgba(30, 41, 59, 0.6);
     bg-selected:    rgba(255, 255, 255, 0.15);
-    border-color:   rgba(255, 255, 255, 0.1);
-    border-focus:   rgba(255, 255, 255, 0.4);
-    text-color:     #e2e8f0;
-    text-muted:     #94a3b8;
+    b-color:        rgba(255, 255, 255, 0.1);
+    b-focus:        rgba(255, 255, 255, 0.4);
+    t-color:        #e2e8f0;
+    t-muted:        #94a3b8;
 
     font: "Inter 12";
     background-color: transparent;
-    text-color: @text-color;
+    text-color: @t-color;
     margin: 0px;
     padding: 0px;
     spacing: 0px;
@@ -20,7 +20,7 @@ window {
     width: 600px;
     background-color: @bg-base;
     border-radius: 20px;
-    border: 1px solid @border-color;
+    border: 1px solid @b-color;
     padding: 20px;
 }
 
@@ -34,18 +34,19 @@ inputbar {
     border-radius: 12px;
     padding: 12px;
     spacing: 10px;
-    border: 1px solid @border-color;
+    border: 1px solid @b-color;
     children: [ prompt, entry ];
 }
 
 prompt {
-    text-color: @text-muted;
+    text-color: @t-muted;
     font: "JetBrainsMono Nerd Font 12";
 }
 
 entry {
     placeholder: "Search applications...";
-    placeholder-color: @text-muted;
+    placeholder-color: @t-muted;
+    text-color: @t-color;
 }
 
 listview {
@@ -74,11 +75,12 @@ element-icon {
 element-text {
     vertical-align: 0.5;
     background-color: transparent;
+    text-color: inherit;
 }
 
 element selected.normal {
     background-color: @bg-selected;
-    border: 1px solid @border-focus;
+    border: 1px solid @b-focus;
     text-color: #ffffff;
 }
 
