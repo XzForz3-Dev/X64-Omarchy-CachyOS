@@ -621,8 +621,9 @@ def installer_worker():
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             progress.update(t_pkg, description="[cyan]Descargando e Instalando Paquetes (Puede tardar varios minutos)...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm jack2", check=False)
-            if "cachyos-kde-settings" in pkgs:
-                run_cmd_live("sudo pacman -Rdd --noconfirm cachyos-hyprland-settings cachyos-desktop-settings", check=False)
+            settings_pkgs = [p for p in pkgs if p.startswith("cachyos-") and p.endswith("-settings")]
+            if settings_pkgs:
+                run_cmd_live("sudo pacman -Rdd --noconfirm cachyos-hyprland-settings cachyos-desktop-settings cachyos-kde-settings cachyos-niri-settings cachyos-gnome-settings", check=False)
 
             run_cmd_live(f"sudo pacman -S --noconfirm --needed {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
