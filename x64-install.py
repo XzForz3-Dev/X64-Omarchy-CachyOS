@@ -110,10 +110,11 @@ def run_cmd_live(cmd, check=True):
                         last_lines.append(line_clean)
                         if len(last_lines) > 5:
                             last_lines.pop(0)
-                        # Mitigación I/O: Solo enviamos al UI render las líneas importantes o espaciadas
-                        if "error" in line_clean.lower() or "warning" in line_clean.lower() or len(line_clean) > 10:
+                        # Mitigación I/O: Reducir drásticamente la basura visual. Solo alertar de errores críticos.
+                        lower_line = line_clean.lower()
+                        if "fatal" in lower_line or "error " in lower_line or " failed" in lower_line:
                             safe_line = escape(line_clean)
-                            log_lines.append(f"[dim white]{safe_line}[/dim white]")
+                            log_lines.append(f"[dim red]{safe_line}[/dim red]")
                         
             await process.wait()
             
@@ -629,7 +630,7 @@ def installer_worker():
         progress.update(t_backup, description="[yellow]Comprimiendo ~/.config...", advance=50)
         home = os.path.expanduser("~")
         backup_name = f"x64-backup-{datetime.now().strftime('%Y%m%d_%H%M%S')}.tar.gz"
-        run_cmd_live(f"tar -czf {backup_name} -C {home} .config", check=False)
+        run_cmd_live(f"tar -czf {backup_name} -C {home} .config 2>/dev/null", check=False)
         progress.update(t_backup, description="[green]Respaldo Completado", completed=100)
 
         progress.update(t_config, description="[yellow]Desplegando escudo de sistema...", advance=20)
@@ -716,7 +717,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q Hyprland
             echo " [$idx] Hyprland (X64 Studios)"
             set -a options $idx
-            set -a cmds "exec env HYPRLAND_CONFIG=~/.config/hypr-x64/hyprland.lua Hyprland"
+            set -a cmds "exec env XDG_SESSION_TYPE=wayland HYPRLAND_CONFIG=~/.config/hypr-x64/hyprland.lua Hyprland"
             set idx (math $idx + 1)
         end
             
