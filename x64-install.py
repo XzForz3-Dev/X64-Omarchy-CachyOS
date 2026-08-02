@@ -714,7 +714,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             set idx (math $idx + 1)
         end
         if type -q Hyprland
-            echo " [$idx] Hyprland (X64 Noctalia)"
+            echo " [$idx] Hyprland (X64 Studios Noctalia)"
             set -a options $idx
             set -a cmds "exec env HYPRLAND_CONFIG=~/.config/hypr-noctalia/hyprland.conf Hyprland"
             set idx (math $idx + 1)

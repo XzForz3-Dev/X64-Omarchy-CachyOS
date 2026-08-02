@@ -15,7 +15,7 @@
                 "desc": "Entorno base (Wayland) con estética hacker/cyberpunk, animaciones fluidas y bajo consumo de recursos."
             },
             {
-                "label": "Hyprland (X64 Noctalia)",
+                "label": "Hyprland (X64 Studios Noctalia)",
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
