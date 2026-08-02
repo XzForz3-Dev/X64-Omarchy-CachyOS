@@ -394,7 +394,7 @@ def update_ui():
                 is_active = (actual_i == item_idx and active_pane == "right")
                 cursor = "[bold yellow]➤[/bold yellow] " if is_active else "  "
                 
-                if menu_data[cat_idx]["cat"] == "Escritorios":
+                if "Entornos" in menu_data[cat_idx]["cat"]:
                     chk_box = "[bold green]( ◉ ) ON  [/bold green]" if item.get("selected", False) else "[bold bright_black]( ◯ ) OFF [/bold bright_black]"
                 else:
                     chk_box = "[bold green][████] ON [/bold green]" if item.get("selected", False) else "[bold bright_black][░░░░] OFF[/bold bright_black]"
@@ -865,7 +865,7 @@ try:
                                     category = menu_data[cat_idx]
                                     item = category["items"][item_idx]
                                     if item["type"] == "toggle":
-                                        if category["cat"] == "Escritorios":
+                                        if "Entornos" in category["cat"]:
                                             for i in category["items"]:
                                                 i["selected"] = False
                                             item["selected"] = True
@@ -884,7 +884,13 @@ try:
                                         # Set up transition animation state
                                         transition_text = "Cargando Secuencia de Lanzamiento..."
                                     else:
-                                        item["selected"] = not item.get("selected", False)
+                                        category = menu_data[cat_idx]
+                                        if "Entornos" in category["cat"]:
+                                            for i in category["items"]:
+                                                i["selected"] = False
+                                            item["selected"] = True
+                                        else:
+                                            item["selected"] = not item.get("selected", False)
                                 else:
                                     active_pane = "right"
                             elif '\x03' in ch:
