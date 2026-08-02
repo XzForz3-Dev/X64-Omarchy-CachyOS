@@ -32,15 +32,7 @@
                 ],
                 "desc": "El entorno de escritorio KDE Plasma (X64 Studios Edition) con configuración propia."
             },
-            {
-                "label": "GNOME",
-                "type": "toggle",
-                "selected": false,
-                "pkg": [
-                    "gnome"
-                ],
-                "desc": "Interfaz enfocada en gestos táctiles y minimalismo, tuneada por CachyOS."
-            },
+
 
             {
                 "label": "Niri",
