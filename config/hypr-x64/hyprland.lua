@@ -86,7 +86,7 @@ hl.bind("SUPER + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind("SUPER + D", hl.dsp.exec_cmd(launcher))
 hl.bind("SUPER + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
 hl.bind("SUPER + L", hl.dsp.exec_cmd("hyprlock -c $HOME/.config/hypr-x64/hyprlock.conf"))
-hl.bind("SUPER + Escape", hl.dsp.exec_cmd("wlogout -b 5 -c 0 -r 0 -m 0 --layout $HOME/.config/wlogout/layout --css $HOME/.config/wlogout/style.css"))
+hl.bind("SUPER + Escape", hl.dsp.exec_cmd("wlogout -b 3 -c 0 -r 0 -m 0"))
 
 -- Workspaces
 hl.bind("SUPER + 1", hl.dsp.focus({ workspace = 1 }))
