@@ -56,9 +56,17 @@ listview {
     columns: 2;
     lines: 8;
     spacing: 10px;
-    cycle: true;
+    cycle: false;
     dynamic: true;
-    scrollbar: false;
+    scrollbar: true;
+}
+
+scrollbar {
+    background-color: @bg-alt;
+    handle-color: @b-focus;
+    handle-width: 4px;
+    border-radius: 4px;
+    margin: 0px 0px 0px 5px;
 }
 
 element {
