@@ -394,7 +394,10 @@ def update_ui():
                 is_active = (actual_i == item_idx and active_pane == "right")
                 cursor = "[bold yellow]➤[/bold yellow] " if is_active else "  "
                 
-                chk_box = "[bold green][████] ON [/bold green]" if item.get("selected", False) else "[bold bright_black][░░░░] OFF[/bold bright_black]"
+                if menu_data[cat_idx]["cat"] == "Escritorios":
+                    chk_box = "[bold green]( ◉ ) ON  [/bold green]" if item.get("selected", False) else "[bold bright_black]( ◯ ) OFF [/bold bright_black]"
+                else:
+                    chk_box = "[bold green][████] ON [/bold green]" if item.get("selected", False) else "[bold bright_black][░░░░] OFF[/bold bright_black]"
                 style = "bold white" if is_active else "dim white"
                 if not is_active:
                     chk_box = chk_box.replace("bold", "dim")
@@ -883,9 +886,15 @@ try:
                                         item_idx = max(0, item_idx - 1)
                             elif ' ' in ch:
                                 if active_pane == "right":
-                                    item = menu_data[cat_idx]["items"][item_idx]
+                                    category = menu_data[cat_idx]
+                                    item = category["items"][item_idx]
                                     if item["type"] == "toggle":
-                                        item["selected"] = not item.get("selected", False)
+                                        if category["cat"] == "Escritorios":
+                                            for i in category["items"]:
+                                                i["selected"] = False
+                                            item["selected"] = True
+                                        else:
+                                            item["selected"] = not item.get("selected", False)
                             elif '\r' in ch or '\n' in ch:
                                 if active_pane == "right":
                                     item = menu_data[cat_idx]["items"][item_idx]
