@@ -73,12 +73,14 @@ hl.config({
 -- Keybindings
 local terminal = "alacritty"
 local fileManager = "dolphin"
+local launcher = "rofi -show drun"
 
 hl.bind("SUPER + Return", hl.dsp.exec_cmd(terminal))
 hl.bind("SUPER + Q", hl.dsp.window.close())
 hl.bind("SUPER + M", hl.dsp.exit())
 hl.bind("SUPER + E", hl.dsp.exec_cmd(fileManager))
 hl.bind("SUPER + V", hl.dsp.window.float({ action = "toggle" }))
+hl.bind("SUPER + D", hl.dsp.exec_cmd(launcher))
 
 -- Workspaces
 hl.bind("SUPER + 1", hl.dsp.focus({ workspace = 1 }))
