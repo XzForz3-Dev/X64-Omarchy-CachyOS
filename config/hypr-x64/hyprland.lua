@@ -17,7 +17,7 @@ hl.config({
     gaps_in = 5,
     gaps_out = 20,
     border_size = 2,
-    ["col.active_border"] = "rgba(33ccffee) rgba(00ff99ee) 45deg",
+    ["col.active_border"] = "rgba(33ccffee)",
     ["col.inactive_border"] = "rgba(595959aa)",
     resize_on_border = false,
     allow_tearing = false,
@@ -67,19 +67,19 @@ hl.config({
 local terminal = "alacritty"
 local fileManager = "dolphin"
 
-hl.bind("SUPER", "Return", "exec", terminal)
-hl.bind("SUPER", "Q", "killactive")
-hl.bind("SUPER", "M", "exit")
-hl.bind("SUPER", "E", "exec", fileManager)
-hl.bind("SUPER", "V", "togglefloating")
+hl.bind("SUPER + Return", hl.dsp.exec_cmd(terminal))
+hl.bind("SUPER + Q", hl.dsp.window.close())
+hl.bind("SUPER + M", hl.dsp.exit())
+hl.bind("SUPER + E", hl.dsp.exec_cmd(fileManager))
+hl.bind("SUPER + V", hl.dsp.window.float({ action = "toggle" }))
 
 -- Workspaces
-hl.bind("SUPER", "1", "workspace", "1")
-hl.bind("SUPER", "2", "workspace", "2")
-hl.bind("SUPER", "3", "workspace", "3")
-hl.bind("SUPER", "4", "workspace", "4")
+hl.bind("SUPER + 1", hl.dsp.focus({ workspace = 1 }))
+hl.bind("SUPER + 2", hl.dsp.focus({ workspace = 2 }))
+hl.bind("SUPER + 3", hl.dsp.focus({ workspace = 3 }))
+hl.bind("SUPER + 4", hl.dsp.focus({ workspace = 4 }))
 
-hl.bind("SUPER SHIFT", "1", "movetoworkspace", "1")
-hl.bind("SUPER SHIFT", "2", "movetoworkspace", "2")
-hl.bind("SUPER SHIFT", "3", "movetoworkspace", "3")
-hl.bind("SUPER SHIFT", "4", "movetoworkspace", "4")
+hl.bind("SUPER + SHIFT + 1", hl.dsp.window.move({ workspace = 1 }))
+hl.bind("SUPER + SHIFT + 2", hl.dsp.window.move({ workspace = 2 }))
+hl.bind("SUPER + SHIFT + 3", hl.dsp.window.move({ workspace = 3 }))
+hl.bind("SUPER + SHIFT + 4", hl.dsp.window.move({ workspace = 4 }))
