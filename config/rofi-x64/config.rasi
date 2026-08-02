@@ -9,4 +9,4 @@ configuration {
     me-accept-entry: "MousePrimary";
 }
 
-@theme "style.rasi"
+@theme "~/.config/rofi-x64/style.rasi"
