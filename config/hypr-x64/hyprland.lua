@@ -1,8 +1,6 @@
 -- ----------------------------------------------------- 
 -- Hyprland X64 Studios (Barebones Base en Lua)
 -- ----------------------------------------------------- 
--- Omarchy's bootstrap para inyectar el entorno
-dofile((os.getenv("OMARCHY_PATH") or "/usr/share/omarchy") .. "/default/hypr/bootstrap.lua")
 
 -- Variables de Entorno Base
 hl.env("XCURSOR_SIZE", "24")
