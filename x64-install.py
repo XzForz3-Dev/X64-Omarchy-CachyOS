@@ -716,17 +716,47 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             if item.get("selected"):
                 label = item["label"]
                 if "Omarchy Oficial" in label:
-                    fish_selector += '        if type -q Hyprland\\n            echo " [$idx] Hyprland (Omarchy Oficial)"\\n            set -a options $idx\\n            set -a cmds "exec Hyprland"\\n            set idx (math $idx + 1)\\n        end\\n'
+                    fish_selector += """        if type -q Hyprland
+            echo " [$idx] Hyprland (Omarchy Oficial)"
+            set -a options $idx
+            set -a cmds "exec Hyprland"
+            set idx (math $idx + 1)
+        end\n"""
                 elif "X64 Studios" in label and "Hyprland" in label:
-                    fish_selector += '        if type -q Hyprland\\n            echo " [$idx] Hyprland (X64 Studios)"\\n            set -a options $idx\\n            set -a cmds "exec env XDG_SESSION_TYPE=wayland HYPRLAND_CONFIG=~/.config/hypr-x64/hyprland.lua Hyprland"\\n            set idx (math $idx + 1)\\n        end\\n'
+                    fish_selector += """        if type -q Hyprland
+            echo " [$idx] Hyprland (X64 Studios)"
+            set -a options $idx
+            set -a cmds "exec env XDG_SESSION_TYPE=wayland HYPRLAND_CONFIG=~/.config/hypr-x64/hyprland.lua Hyprland"
+            set idx (math $idx + 1)
+        end\n"""
                 elif "KDE" in label:
-                    fish_selector += '        if type -q startplasma-wayland\\n            echo " [$idx] KDE Plasma"\\n            set -a options $idx\\n            set -a cmds "exec dbus-run-session startplasma-wayland"\\n            set idx (math $idx + 1)\\n        end\\n'
+                    fish_selector += """        if type -q startplasma-wayland
+            echo " [$idx] KDE Plasma"
+            set -a options $idx
+            set -a cmds "exec dbus-run-session startplasma-wayland"
+            set idx (math $idx + 1)
+        end\n"""
                 elif "GNOME" in label:
-                    fish_selector += '        if type -q gnome-session\\n            echo " [$idx] GNOME"\\n            set -a options $idx\\n            set -a cmds "exec env XDG_SESSION_TYPE=wayland dbus-run-session gnome-session --session=gnome"\\n            set idx (math $idx + 1)\\n        end\\n'
+                    fish_selector += """        if type -q gnome-session
+            echo " [$idx] GNOME"
+            set -a options $idx
+            set -a cmds "exec env XDG_SESSION_TYPE=wayland dbus-run-session gnome-session --session=gnome"
+            set idx (math $idx + 1)
+        end\n"""
                 elif "Niri" in label:
-                    fish_selector += '        if type -q niri-session\\n            echo " [$idx] Niri"\\n            set -a options $idx\\n            set -a cmds "exec dbus-run-session niri"\\n            set idx (math $idx + 1)\\n        end\\n'
+                    fish_selector += """        if type -q niri-session
+            echo " [$idx] Niri"
+            set -a options $idx
+            set -a cmds "exec dbus-run-session niri"
+            set idx (math $idx + 1)
+        end\n"""
                 elif "Cinnamon" in label:
-                    fish_selector += '        if type -q cinnamon-session\\n            echo " [$idx] Cinnamon"\\n            set -a options $idx\\n            set -a cmds "exec dbus-run-session startx /usr/bin/cinnamon-session"\\n            set idx (math $idx + 1)\\n        end\\n'
+                    fish_selector += """        if type -q cinnamon-session
+            echo " [$idx] Cinnamon"
+            set -a options $idx
+            set -a cmds "exec dbus-run-session startx /usr/bin/cinnamon-session"
+            set idx (math $idx + 1)
+        end\n"""
 
         fish_selector += """        
         echo ""
