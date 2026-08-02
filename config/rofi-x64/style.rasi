@@ -1,7 +1,7 @@
 * {
     /* Glassmorphism Color Palette */
-    bg-base:        rgba(10, 15, 25, 0.7);
-    bg-alt:         rgba(30, 41, 59, 0.6);
+    bg-base:        rgba(10, 15, 25, 0.95);
+    bg-alt:         rgba(30, 41, 59, 0.85);
     bg-selected:    rgba(255, 255, 255, 0.15);
     b-color:        rgba(255, 255, 255, 0.1);
     b-focus:        rgba(255, 255, 255, 0.4);
