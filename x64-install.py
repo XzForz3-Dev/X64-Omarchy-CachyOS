@@ -740,7 +740,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
                     fish_selector += """        if type -q gnome-session
             echo " [$idx] GNOME"
             set -a options $idx
-            set -a cmds "exec gnome-session"
+            set -a cmds "exec env XDG_SESSION_TYPE=wayland GBM_BACKEND=nvidia-drm __GLX_VENDOR_LIBRARY_NAME=nvidia dbus-run-session gnome-session --session=gnome"
             set idx (math $idx + 1)
         end\n"""
                 elif "Niri" in label:
