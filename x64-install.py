@@ -621,7 +621,7 @@ def installer_worker():
         if chk.returncode != 0:
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             progress.update(t_pkg, description="[cyan]Descargando e Instalando Paquetes (Puede tardar varios minutos)...", advance=40)
-            run_cmd_live("sudo pacman -Rdd --noconfirm jack2", check=False)
+            run_cmd_live("sudo pacman -Rdd --noconfirm jack2 2>/dev/null", check=False)
             run_cmd_live("sudo pacman -Rdd --noconfirm noctalia-shell noctalia-qs cachyos-niri-settings 2>/dev/null", check=False)
 
             run_cmd_live(f"sudo pacman -S --noconfirm --needed {' '.join(missing_pkgs)}")
