@@ -3,6 +3,18 @@
         "cat": "1. Entornos (Desktop)",
         "items": [
             {
+                "label": "Hyprland (Omarchy Oficial)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "hyprland",
+                    "waybar",
+                    "swaybg",
+                    "wofi"
+                ],
+                "desc": "Entorno base (Wayland) con estética hacker/cyberpunk, animaciones fluidas y bajo consumo de recursos."
+            },
+            {
                 "label": "Hyprland (X64 Studios)",
                 "type": "toggle",
                 "selected": true,
