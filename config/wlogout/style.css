@@ -31,9 +31,26 @@ button:focus, button:active, button:hover {
 /* We don't have SVGs yet in the repo, so we rely on text labels for now. 
    Usually wlogout requires icons. I will add standard padding so text looks good */
 
-#lock { margin: 10px; }
-#logout { margin: 10px; }
-#suspend { margin: 10px; }
-#hibernate { margin: 10px; }
-#shutdown { margin: 10px; }
-#reboot { margin: 10px; }
+#lock {
+    background-image: image(url("/usr/share/wlogout/icons/lock.png"));
+}
+
+#logout {
+    background-image: image(url("/usr/share/wlogout/icons/logout.png"));
+}
+
+#suspend {
+    background-image: image(url("/usr/share/wlogout/icons/suspend.png"));
+}
+
+#hibernate {
+    background-image: image(url("/usr/share/wlogout/icons/hibernate.png"));
+}
+
+#shutdown {
+    background-image: image(url("/usr/share/wlogout/icons/shutdown.png"));
+}
+
+#reboot {
+    background-image: image(url("/usr/share/wlogout/icons/reboot.png"));
+}
