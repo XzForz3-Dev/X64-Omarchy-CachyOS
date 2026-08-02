@@ -10,21 +10,24 @@ window {
 
 button {
     color: #e2e8f0;
+    font-size: 24px; /* Increase text size if visible */
+    font-weight: bold;
     background-color: rgba(30, 41, 59, 0.6); /* Glassmorphism buttons */
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    margin: 10px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 40px; /* More rounded */
+    margin: 30px; /* More spacing between buttons */
+    padding: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 25%;
+    background-size: 35%; /* Larger icons */
 }
 
 button:focus, button:active, button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.25);
     outline-style: none;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.6);
 }
 
 /* We don't have SVGs yet in the repo, so we rely on text labels for now. 
