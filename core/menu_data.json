@@ -51,7 +51,9 @@
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "niri"
+                    "niri",
+                    "noctalia-shell",
+                    "polkit-kde-agent"
                 ],
                 "desc": "Tiling scroll-infinito ultra moderno, configurado por X64 Studios."
             },
