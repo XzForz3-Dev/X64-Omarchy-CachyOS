@@ -713,10 +713,10 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             set -a cmds "exec Hyprland"
             set idx (math $idx + 1)
         end
-        if type -q Hyprland; and type -q wlogout
-            echo " [$idx] Hyprland (X64 Studios Noctalia)"
+        if type -q Hyprland
+            echo " [$idx] Hyprland (X64 Studios)"
             set -a options $idx
-            set -a cmds "exec env HYPRLAND_CONFIG=~/.config/hypr-noctalia/hyprland.conf Hyprland"
+            set -a cmds "exec env HYPRLAND_CONFIG=~/.config/hypr-x64/hyprland.conf Hyprland"
             set idx (math $idx + 1)
         end
             
@@ -729,7 +729,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q gnome-session
             echo " [$idx] GNOME"
             set -a options $idx
-            set -a cmds "exec env XDG_SESSION_TYPE=wayland dbus-run-session gnome-session"
+            set -a cmds "exec env XDG_SESSION_TYPE=wayland dbus-run-session gnome-session --session=gnome"
             set idx (math $idx + 1)
         end
 

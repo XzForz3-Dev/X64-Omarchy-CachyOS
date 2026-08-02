@@ -15,19 +15,13 @@
                 "desc": "Entorno base (Wayland) con estética hacker/cyberpunk, animaciones fluidas y bajo consumo de recursos."
             },
             {
-                "label": "Hyprland (X64 Studios Noctalia)",
+                "label": "Hyprland (X64 Studios)",
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "hyprland",
-                    "waybar",
-                    "wofi",
-                    "swaylock-effects",
-                    "wlogout",
-                    "swaybg",
-                    "cachyos-wallpapers"
+                    "hyprland"
                 ],
-                "desc": "El hermoso entorno Hyprland oscuro oficial de CachyOS (Tema Noctalia)."
+                "desc": "Lienzo en blanco (Barebones) para construir tu propio entorno Hyprland desde cero paso a paso."
             },
             {
                 "label": "KDE Plasma (X64 Studios Edition)",
