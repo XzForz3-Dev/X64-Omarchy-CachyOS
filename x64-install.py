@@ -698,7 +698,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         run_cmd_live("sudo bash -c 'echo -e \"\\\\S \\\\r (\\\\l)\\\\n\" > /etc/issue'", check=False)
         
         run_cmd_live("sudo mkdir -p /etc/systemd/system/getty@tty1.service.d/", check=False)
-        getty_override = "[Service]\nEnvironment=XDG_SESSION_TYPE=wayland\nExecStart=\nExecStart=-/sbin/agetty -o '-p -- \\u' --noclear --issue-file /etc/issue.omarchy %I $TERM\n"
+        getty_override = "[Service]\nExecStart=\nExecStart=-/sbin/agetty -o '-p -- \\u' --noclear --issue-file /etc/issue.omarchy %I $TERM\n"
         with open("/tmp/issue.conf", "w") as f:
             f.write(getty_override)
         run_cmd_live("sudo mv /tmp/issue.conf /etc/systemd/system/getty@tty1.service.d/issue.conf", check=False)
