@@ -8,5 +8,3 @@ configuration {
     me-select-entry: "";
     me-accept-entry: "MousePrimary";
 }
-
-@theme "~/.config/rofi-x64/style.rasi"
