@@ -729,7 +729,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         if type -q gnome-session
             echo " [$idx] GNOME"
             set -a options $idx
-            set -a cmds "exec env XDG_SESSION_TYPE=wayland dbus-run-session gnome-shell --display-server --wayland"
+            set -a cmds "exec env XDG_SESSION_TYPE=wayland dbus-run-session gnome-session"
             set idx (math $idx + 1)
         end
 
