@@ -7,9 +7,11 @@ hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
 
 -- Autostart (Servicios Críticos)
-hl.keyword("exec-once", "/usr/lib/polkit-kde-authentication-agent-1")
-hl.keyword("exec-once", "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
-hl.keyword("exec-once", "mako")
+hl.on("hyprland.start", function()
+  hl.exec_cmd("/usr/lib/polkit-kde-authentication-agent-1")
+  hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+  hl.exec_cmd("mako")
+end)
 
 -- Monitor
 hl.config({
