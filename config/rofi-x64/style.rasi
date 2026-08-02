@@ -59,6 +59,7 @@ listview {
     cycle: false;
     dynamic: true;
     scrollbar: true;
+    scroll-method: 1;
 }
 
 scrollbar {
