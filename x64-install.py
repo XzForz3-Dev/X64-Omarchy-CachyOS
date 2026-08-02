@@ -621,9 +621,7 @@ def installer_worker():
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             progress.update(t_pkg, description="[cyan]Descargando e Instalando Paquetes (Puede tardar varios minutos)...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm jack2", check=False)
-            settings_pkgs = [p for p in pkgs if p.startswith("cachyos-") and p.endswith("-settings")]
-            if settings_pkgs:
-                run_cmd_live("sudo pacman -Rdd --noconfirm cachyos-hyprland-settings cachyos-desktop-settings cachyos-kde-settings cachyos-niri-settings cachyos-gnome-settings", check=False)
+
 
             run_cmd_live(f"sudo pacman -S --noconfirm --needed {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
@@ -713,6 +711,12 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             echo " [$idx] Hyprland (Omarchy Official)"
             set -a options $idx
             set -a cmds "exec Hyprland"
+            set idx (math $idx + 1)
+        end
+        if type -q Hyprland
+            echo " [$idx] Hyprland (X64 Noctalia)"
+            set -a options $idx
+            set -a cmds "exec env HYPRLAND_CONFIG=~/.config/hypr-noctalia/hyprland.conf Hyprland"
             set idx (math $idx + 1)
         end
             

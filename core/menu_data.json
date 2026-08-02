@@ -15,14 +15,26 @@
                 "desc": "Entorno base (Wayland) con estética hacker/cyberpunk, animaciones fluidas y bajo consumo de recursos."
             },
             {
+                "label": "Hyprland (X64 Noctalia)",
+                "type": "toggle",
+                "selected": false,
+                "pkg": [
+                    "hyprland",
+                    "waybar",
+                    "wofi",
+                    "swaylock-effects",
+                    "wlogout"
+                ],
+                "desc": "El hermoso entorno Hyprland oscuro oficial de CachyOS (Tema Noctalia)."
+            },
+            {
                 "label": "KDE Plasma (X64 Studios Edition)",
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "plasma-meta",
-                    "cachyos-kde-settings"
+                    "plasma-meta"
                 ],
-                "desc": "El entorno de escritorio KDE Plasma con la configuración base oficial de CachyOS, listo para ser personalizado por X64 Studios."
+                "desc": "El entorno de escritorio KDE Plasma (X64 Studios Edition) con configuración propia."
             },
             {
                 "label": "GNOME",
@@ -39,10 +51,9 @@
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "niri",
-                    "cachyos-niri-settings"
+                    "niri"
                 ],
-                "desc": "Tiling scroll-infinito ultra moderno, configurado por CachyOS."
+                "desc": "Tiling scroll-infinito ultra moderno, configurado por X64 Studios."
             },
             {
                 "label": "Cinnamon",
