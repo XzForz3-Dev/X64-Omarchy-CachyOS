@@ -20,7 +20,8 @@ window {
     width: 600px;
     background-color: @bg-base;
     border-radius: 20px;
-    border: 1px solid @b-color;
+    border: 1px;
+    border-color: @b-color;
     padding: 20px;
 }
 
@@ -34,7 +35,8 @@ inputbar {
     border-radius: 12px;
     padding: 12px;
     spacing: 10px;
-    border: 1px solid @b-color;
+    border: 1px;
+    border-color: @b-color;
     children: [ prompt, entry ];
 }
 
@@ -64,7 +66,8 @@ element {
     padding: 10px;
     border-radius: 12px;
     spacing: 15px;
-    border: 1px solid transparent;
+    border: 1px;
+    border-color: transparent;
 }
 
 element-icon {
@@ -80,7 +83,8 @@ element-text {
 
 element selected.normal {
     background-color: @bg-selected;
-    border: 1px solid @b-focus;
+    border: 1px;
+    border-color: @b-focus;
     text-color: #ffffff;
 }
 
