@@ -684,7 +684,6 @@ def installer_worker():
 
         # Auto-configurar teclado leyendo localectl
         try:
-            import subprocess
             res = subprocess.run(["localectl", "status"], capture_output=True, text=True)
             kb_layout = "us"
             for line in res.stdout.splitlines():
