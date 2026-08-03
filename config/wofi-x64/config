@@ -1,7 +1,7 @@
 # Wofi Configuration
 show=drun
-width=600
-height=400
+width=650
+height=750
 prompt=Search applications...
 filter_rate=100
 allow_markup=true
