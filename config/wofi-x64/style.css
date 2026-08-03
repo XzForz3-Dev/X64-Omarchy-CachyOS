@@ -59,19 +59,8 @@ window {
     border-left: 4px solid transparent; 
 }
 
-/* Hover Animation (Pops out visually without moving selection) */
-#entry:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    border-left: 4px solid rgba(167, 139, 250, 0.8); /* Purple accent on hover */
-}
-
-#entry:hover #text {
-    color: #f1f5f9;
-}
-
-/* Selected Entry (Aggressive Neon) */
+/* Hover and Selected states look identical */
+#entry:hover,
 #entry:selected {
     background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(0, 212, 255, 0.3);
@@ -79,6 +68,7 @@ window {
     box-shadow: 0 5px 20px rgba(0, 212, 255, 0.2), inset 0 0 15px rgba(0, 212, 255, 0.05);
 }
 
+#entry:hover #text,
 #entry:selected #text {
     color: #ffffff;
     font-weight: 700;
