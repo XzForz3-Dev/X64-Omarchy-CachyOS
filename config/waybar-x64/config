@@ -17,7 +17,7 @@
     "spacing": 5, // Gaps between modules (4px)
 
     "modules-left": [
-        //"custom/rofi",
+        "custom/launcher",
         "hyprland/workspaces",
         //"hyprland/submap",
         "temperature",
@@ -60,12 +60,11 @@
     },
 
 
-    "custom/rofi": {
-        "format": "",
+    "custom/launcher": {
+        "format": "󰣇 X64",
         "tooltip": false,
-        "on-click-right": "nwg-drawer",
-        "on-click": "wofi --show run",
-        "on-click-middle": "pkill -9 wofi"
+        "on-click": "pkill wofi || wofi --show drun",
+        "on-click-right": "nwg-drawer"
     },
     "custom/screenshot_t":{
         "format":" ",
@@ -306,18 +305,11 @@
 
     "hyprland/workspaces": {
         "all-outputs": true,
-        "format": "{name}",
+        "format": "{icon}",
         "format-icons": {
-            "1": "一",
-            "2": "二",
-            "3": "三",
-            "4": "四",
-            "5": "五",
-            "6": "六",
-            "7": "七",
-            "8": "八",
-            "9": "九",
-            "10": "十",
+            "active": "",
+            "default": "",
+            "empty": ""
         },
         "on-scroll-up": "hyprctl dispatch workspace e+1 1>/dev/null",
         "on-scroll-down": "hyprctl dispatch workspace e-1 1>/dev/null",
