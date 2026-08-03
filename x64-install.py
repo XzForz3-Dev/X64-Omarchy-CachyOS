@@ -60,6 +60,10 @@ error_prompt = None
 error_response = None
 error_idx = 0
 
+plymouth_modal_idx = 0
+install_plymouth_flag = False
+install_plymouth_theme_name = "omarchy"
+
 # --- Unified Menu State ---
 with open("core/menu_data.json", "r", encoding="utf-8") as f:
     menu_data = json.load(f)
@@ -462,6 +466,25 @@ def update_ui():
         )
         layout["right"].update(main_layout)
 
+    elif current_state == "plymouth_modal":
+        theme_name = "Omarchy Oficial"
+        for c in menu_data:
+            if "Entornos" in c["cat"]:
+                for i in c["items"]:
+                    if i.get("selected") and "X64 Studios" in i["label"]:
+                        theme_name = "X64 Studios"
+                        break
+        
+        modal_text = Text.from_markup(f"\n[bold yellow]¿Deseas instalar la Pantalla de Carga Animada (Plymouth)?[/bold yellow]\n\nEsta opción inyectará el logotipo animado de [bold cyan]{theme_name}[/bold cyan] al encender tu PC, dándote un inicio premium.\nSin embargo, este proceso requiere reconstruir el núcleo del sistema, lo que [bold red]añadirá varios minutos extra[/bold red] al tiempo de instalación.\n\n", justify="center")
+        
+        if plymouth_modal_idx == 0:
+            btn_text = Text.from_markup("[bold reverse green] > SÍ, INSTALAR < [/bold reverse green]      [bold white]   NO, OMITIR   [/bold white]", justify="center")
+        else:
+            btn_text = Text.from_markup("[bold white]   SÍ, INSTALAR   [/bold white]      [bold reverse red] > NO, OMITIR < [/bold reverse red]", justify="center")
+            
+        modal_content = Group(modal_text, btn_text)
+        layout["right"].update(Panel(Align.center(modal_content, vertical="middle"), title="[bold white]Ajuste de Inicio del Sistema[/bold white]", border_style="yellow"))
+
     elif current_state == "error" and error_prompt:
         global ui_transitioned
         ui_transitioned = False
@@ -499,11 +522,16 @@ def update_ui():
 
 
 
-def setup_plymouth_bootloader(has_nvidia_gpu=False):
-    log_lines.append("[yellow]Aplicando tema de Plymouth...[/yellow]")
-    run_cmd_live("sudo mkdir -p /usr/share/plymouth/themes/omarchy", check=False)
-    run_cmd_live("sudo cp -r default/plymouth/* /usr/share/plymouth/themes/omarchy/ 2>/dev/null", check=False)
-    run_cmd_live("sudo plymouth-set-default-theme omarchy", check=False)
+def setup_plymouth_bootloader(has_nvidia_gpu=False, theme_name="omarchy"):
+    log_lines.append(f"[yellow]Aplicando tema de Plymouth ({theme_name})...[/yellow]")
+    if theme_name == "x64-studios":
+        run_cmd_live("sudo mkdir -p /usr/share/plymouth/themes/x64-studios", check=False)
+        run_cmd_live("sudo cp -r default/plymouth-x64/* /usr/share/plymouth/themes/x64-studios/ 2>/dev/null", check=False)
+        run_cmd_live("sudo plymouth-set-default-theme x64-studios", check=False)
+    else:
+        run_cmd_live("sudo mkdir -p /usr/share/plymouth/themes/omarchy", check=False)
+        run_cmd_live("sudo cp -r default/plymouth/* /usr/share/plymouth/themes/omarchy/ 2>/dev/null", check=False)
+        run_cmd_live("sudo plymouth-set-default-theme omarchy", check=False)
     
     log_lines.append("[yellow]Configurando mkinitcpio (HOOKS & KMS)...[/yellow]")
     # Soporte para mkinitcpio clásico (udev) y moderno (systemd)
@@ -615,7 +643,7 @@ def installer_worker():
                 pkgs.extend(f2.read().splitlines())
         
         # Batch de paquetes críticos de sistema
-        pkgs.extend(["plymouth", "xorg-xinit", "xorg-server", "nwg-displays", "waypaper", "firefox", "python-pyqt6"])
+        pkgs.extend(["xorg-xinit", "xorg-server", "nwg-displays", "waypaper", "firefox", "python-pyqt6"])
         pkgs.extend(user_choices["packages"])
         pkgs = list(set(pkgs))
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
@@ -658,8 +686,9 @@ def installer_worker():
         shutil.copytree("themes", os.path.expanduser("~/.local/share/themes"), dirs_exist_ok=True)
         run_cmd_live("chmod +x ~/.local/bin/*", check=False)
         
-        progress.update(t_config, description="[yellow]Configurando Pantalla de Arranque (Plymouth)...", advance=5)
-        setup_plymouth_bootloader(has_nvidia)
+        if install_plymouth_flag:
+            progress.update(t_config, description=f"[yellow]Configurando Pantalla de Arranque ({install_plymouth_theme_name})...", advance=5)
+            setup_plymouth_bootloader(has_nvidia, install_plymouth_theme_name)
         
         progress.update(t_config, description="[yellow]Desplegando Selector TTY1...", advance=5)
         
@@ -904,9 +933,8 @@ try:
                                                 if i.get("selected"):
                                                     user_choices["packages"].extend(i.get("pkg", []))
                                         
-                                        current_state = "transition"
-                                        # Set up transition animation state
-                                        transition_text = "Cargando Secuencia de Lanzamiento..."
+                                        current_state = "plymouth_modal"
+                                        plymouth_modal_idx = 0
                                     else:
                                         category = menu_data[cat_idx]
                                         if "Entornos" in category["cat"]:
@@ -921,6 +949,37 @@ try:
                                 install_error = "Instalación abortada por el usuario (Ctrl+C)."
                                 install_done = True
                                 break
+                    except BlockingIOError:
+                        pass
+            elif current_state == "plymouth_modal":
+                r, _, _ = select.select([sys.stdin], [], [], 0.05)
+                if r:
+                    try:
+                        chunk = os.read(fd, 10)
+                        if chunk:
+                            ch = chunk.decode('utf-8', errors='ignore')
+                            if '\x1b[C' in ch or '\x1bOC' in ch:
+                                plymouth_modal_idx = 1
+                            elif '\x1b[D' in ch or '\x1bOD' in ch:
+                                plymouth_modal_idx = 0
+                            elif '\r' in ch or '\n' in ch:
+                                if plymouth_modal_idx == 0:
+                                    user_choices["packages"].append("plymouth")
+                                    install_plymouth_flag = True
+                                else:
+                                    install_plymouth_flag = False
+                                
+                                theme_name = "omarchy"
+                                for c in menu_data:
+                                    if "Entornos" in c["cat"]:
+                                        for i in c["items"]:
+                                            if i.get("selected") and "X64 Studios" in i["label"]:
+                                                theme_name = "x64-studios"
+                                                break
+                                install_plymouth_theme_name = theme_name
+                                
+                                current_state = "transition"
+                                transition_text = "Cargando Secuencia de Lanzamiento..."
                     except BlockingIOError:
                         pass
             elif current_state == "transition":
