@@ -13,6 +13,7 @@
                     "wofi"
                 ],
                 "desc": "Entorno base (Wayland) con estética hacker/cyberpunk, animaciones fluidas y bajo consumo de recursos."
+            },
             {
                 "label": "KDE Plasma (X64 Studios Edition)",
                 "type": "toggle",
