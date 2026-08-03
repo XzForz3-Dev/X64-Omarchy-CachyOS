@@ -722,99 +722,99 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
 \\e[38;2;0;255;150m> INGRESA TUS CREDENCIALES ABAJO:\\e[0m
 
 """
-        with open("/tmp/issue.omarchy", "w", encoding="utf-8") as f:
-            f.write(issue_omarchy)
-        run_cmd_live("sudo mv /tmp/issue.omarchy /etc/issue.omarchy", check=False)
-        run_cmd_live("sudo bash -c 'echo -e \"\\\\S \\\\r (\\\\l)\\\\n\" > /etc/issue'", check=False)
+            with open("/tmp/issue.omarchy", "w", encoding="utf-8") as f:
+                f.write(issue_omarchy)
+            run_cmd_live("sudo mv /tmp/issue.omarchy /etc/issue.omarchy", check=False)
+            run_cmd_live("sudo bash -c 'echo -e \"\\\\S \\\\r (\\\\l)\\\\n\" > /etc/issue'", check=False)
         
-        run_cmd_live("sudo mkdir -p /etc/systemd/system/getty@tty1.service.d/", check=False)
-        getty_override = "[Service]\nExecStart=\nExecStart=-/sbin/agetty -o '-p -- \\u' --noclear --issue-file /etc/issue.omarchy %I $TERM\n"
-        with open("/tmp/issue.conf", "w") as f:
-            f.write(getty_override)
-        run_cmd_live("sudo mv /tmp/issue.conf /etc/systemd/system/getty@tty1.service.d/issue.conf", check=False)
+            run_cmd_live("sudo mkdir -p /etc/systemd/system/getty@tty1.service.d/", check=False)
+            getty_override = "[Service]\nExecStart=\nExecStart=-/sbin/agetty -o '-p -- \\u' --noclear --issue-file /etc/issue.omarchy %I $TERM\n"
+            with open("/tmp/issue.conf", "w") as f:
+                f.write(getty_override)
+            run_cmd_live("sudo mv /tmp/issue.conf /etc/systemd/system/getty@tty1.service.d/issue.conf", check=False)
 
-        # 2. Selector Interactivo de Entornos para Fish (Después de Loguearse)
-        fish_selector = """if status is-login
-    if test (tty) = /dev/tty1
-        echo -e "\\e[1;32m>>> SELECTOR DE ESCRITORIOS X64-OMARCHY <<<\\e[0m"
-        set idx 1
-        set options
-        set cmds
+            # 2. Selector Interactivo de Entornos para Fish (Después de Loguearse)
+            fish_selector = """if status is-login
+        if test (tty) = /dev/tty1
+            echo -e "\\e[1;32m>>> SELECTOR DE ESCRITORIOS X64-OMARCHY <<<\\e[0m"
+            set idx 1
+            set options
+            set cmds
         
-"""
-        for item in menu_data[0]["items"]:
-            if item.get("selected"):
-                label = item["label"]
-                if "Omarchy Oficial" in label:
-                    fish_selector += """        if type -q Hyprland
-            echo " [$idx] Hyprland (Omarchy Oficial)"
-            set -a options $idx
-            set -a cmds "exec Hyprland"
-            set idx (math $idx + 1)
-        end\n"""
-                elif "X64 Studios" in label and "Hyprland" in label:
-                    fish_selector += """        if type -q Hyprland
-            echo " [$idx] Hyprland (X64 Studios)"
-            set -a options $idx
-            set -a cmds "exec env XDG_SESSION_TYPE=wayland Hyprland -c $HOME/.config/hypr-x64/hyprland.lua"
-            set idx (math $idx + 1)
-        end\n"""
-                elif "KDE" in label:
-                    fish_selector += """        if type -q startplasma-wayland
-            echo " [$idx] KDE Plasma"
-            set -a options $idx
-            set -a cmds "exec dbus-run-session startplasma-wayland"
-            set idx (math $idx + 1)
-        end\n"""
+    """
+            for item in menu_data[0]["items"]:
+                if item.get("selected"):
+                    label = item["label"]
+                    if "Omarchy Oficial" in label:
+                        fish_selector += """        if type -q Hyprland
+                echo " [$idx] Hyprland (Omarchy Oficial)"
+                set -a options $idx
+                set -a cmds "exec Hyprland"
+                set idx (math $idx + 1)
+            end\n"""
+                    elif "X64 Studios" in label and "Hyprland" in label:
+                        fish_selector += """        if type -q Hyprland
+                echo " [$idx] Hyprland (X64 Studios)"
+                set -a options $idx
+                set -a cmds "exec env XDG_SESSION_TYPE=wayland Hyprland -c $HOME/.config/hypr-x64/hyprland.lua"
+                set idx (math $idx + 1)
+            end\n"""
+                    elif "KDE" in label:
+                        fish_selector += """        if type -q startplasma-wayland
+                echo " [$idx] KDE Plasma"
+                set -a options $idx
+                set -a cmds "exec dbus-run-session startplasma-wayland"
+                set idx (math $idx + 1)
+            end\n"""
 
-                elif "Niri" in label:
-                    fish_selector += """        if type -q niri-session
-            echo " [$idx] Niri"
-            set -a options $idx
-            set -a cmds "exec dbus-run-session niri"
-            set idx (math $idx + 1)
-        end\n"""
-                elif "Cinnamon" in label:
-                    fish_selector += """        if type -q cinnamon-session
-            echo " [$idx] Cinnamon"
-            set -a options $idx
-            set -a cmds "exec dbus-run-session startx /usr/bin/cinnamon-session"
-            set idx (math $idx + 1)
-        end\n"""
+                    elif "Niri" in label:
+                        fish_selector += """        if type -q niri-session
+                echo " [$idx] Niri"
+                set -a options $idx
+                set -a cmds "exec dbus-run-session niri"
+                set idx (math $idx + 1)
+            end\n"""
+                    elif "Cinnamon" in label:
+                        fish_selector += """        if type -q cinnamon-session
+                echo " [$idx] Cinnamon"
+                set -a options $idx
+                set -a cmds "exec dbus-run-session startx /usr/bin/cinnamon-session"
+                set idx (math $idx + 1)
+            end\n"""
 
-        fish_selector += """        
-        echo ""
-        echo " [C] Consola Pura (Mantenimiento)"
-        echo ""
+            fish_selector += """        
+            echo ""
+            echo " [C] Consola Pura (Mantenimiento)"
+            echo ""
         
-        while true
-            read -p 'echo -n "❯ Elige una opción: "' choice
-            if test "$choice" = "C" -o "$choice" = "c"
-                break
-            end
-            
-            set list_idx 0
-            for i in (seq (count $options))
-                if test "$choice" = "$options[$i]"
-                    set list_idx $i
+            while true
+                read -p 'echo -n "❯ Elige una opción: "' choice
+                if test "$choice" = "C" -o "$choice" = "c"
                     break
                 end
-            end
             
-            if test $list_idx -gt 0
-                eval $cmds[$list_idx]
-                break
-            else
-                echo -e "\\e[31mOpción inválida.\\e[0m"
+                set list_idx 0
+                for i in (seq (count $options))
+                    if test "$choice" = "$options[$i]"
+                        set list_idx $i
+                        break
+                    end
+                end
+            
+                if test $list_idx -gt 0
+                    eval $cmds[$list_idx]
+                    break
+                else
+                    echo -e "\\e[31mOpción inválida.\\e[0m"
+                end
             end
         end
     end
-end
-"""
-        run_cmd_live("mkdir -p ~/.config/fish/conf.d", check=False)
-        run_cmd_live("rm -f ~/.config/fish/conf.d/hyprland_autostart.fish", check=False)
-        with open(os.path.expanduser("~/.config/fish/conf.d/omarchy_selector.fish"), "w") as f:
-            f.write(fish_selector)
+    """
+            run_cmd_live("mkdir -p ~/.config/fish/conf.d", check=False)
+            run_cmd_live("rm -f ~/.config/fish/conf.d/hyprland_autostart.fish", check=False)
+            with open(os.path.expanduser("~/.config/fish/conf.d/omarchy_selector.fish"), "w") as f:
+                f.write(fish_selector)
 
         # --- Batch Shelling para Servicios y Entornos ---
         progress.update(t_config, description="[yellow]Aplicando configuraciones finales (Batch Shell)...", advance=10)
