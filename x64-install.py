@@ -615,7 +615,7 @@ def installer_worker():
                 pkgs.extend(f2.read().splitlines())
         
         # Batch de paquetes críticos de sistema
-        pkgs.extend(["plymouth", "xorg-xinit", "xorg-server", "nwg-displays"])
+        pkgs.extend(["plymouth", "xorg-xinit", "xorg-server", "nwg-displays", "waypaper"])
         pkgs.extend(user_choices["packages"])
         pkgs = list(set(pkgs))
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
