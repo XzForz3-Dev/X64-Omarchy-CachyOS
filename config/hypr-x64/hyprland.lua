@@ -13,7 +13,7 @@ hl.on("hyprland.start", function()
   hl.exec_cmd("swaync -s $HOME/.config/swaync/style.css -c $HOME/.config/swaync/config.json")
   hl.exec_cmd("swayosd-server")
   hl.exec_cmd("waybar -c $HOME/.config/waybar-x64/config -s $HOME/.config/waybar-x64/style.css")
-  hl.exec_cmd("hyprpaper -c $HOME/.config/hypr-x64/hyprpaper.conf")
+  hl.exec_cmd("swaybg -i $HOME/.config/hypr-x64/background.png -m fill")
 end)
 
 -- Monitor
