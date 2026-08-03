@@ -1,30 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# x64-dock-settings: Interfaz Gráfica Premium para el Dock de X64 Studios
+# x64-dock-settings: Interfaz Gráfica Premium para el Dock de X64 Studios con Autodescubrimiento
 
 import sys
 import os
+import glob
 import json
 import subprocess
 
 try:
     from PyQt6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout, 
-                                 QCheckBox, QPushButton, QLabel, QMessageBox)
+                                 QCheckBox, QPushButton, QLabel, QMessageBox, QLineEdit,
+                                 QScrollArea, QFrame)
     from PyQt6.QtCore import Qt
 except ImportError:
     print("Error: PyQt6 no está instalado. Ejecuta: sudo pacman -S python-pyqt6")
     sys.exit(1)
-
-# Datos de aplicaciones disponibles
-APPS = [
-    {"id": "firefox", "name": "Navegador Web (Firefox)", "icon": "󰈹", "cmd": "firefox"},
-    {"id": "alacritty", "name": "Terminal (Alacritty)", "icon": "", "cmd": "alacritty"},
-    {"id": "dolphin", "name": "Gestor de Archivos", "icon": "", "cmd": "dolphin"},
-    {"id": "x64-projects", "name": "Proyectos X64 Studios", "icon": "󰖟", "cmd": "firefox --new-window https://x64studios.com/proyectos"},
-    {"id": "spotify", "name": "Spotify", "icon": "", "cmd": "spotify"},
-    {"id": "code", "name": "VS Code", "icon": "󰨞", "cmd": "code"},
-    {"id": "discord", "name": "Discord", "icon": "", "cmd": "discord"},
-]
 
 DOCK_CONF = os.path.expanduser("~/.config/waybar-x64/modules/dock.json")
 
@@ -42,9 +33,40 @@ QLabel#title {
     color: #00d4ff;
     padding-bottom: 5px;
 }
+QLineEdit {
+    background-color: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 15px;
+    color: #00d4ff;
+    margin-bottom: 10px;
+}
+QLineEdit:focus {
+    border: 2px solid #00d4ff;
+}
+QScrollArea {
+    border: 1px solid #334155;
+    border-radius: 8px;
+    background-color: #1e293b;
+}
+QScrollBar:vertical {
+    border: none;
+    background: #0f172a;
+    width: 10px;
+    border-radius: 5px;
+}
+QScrollBar::handle:vertical {
+    background: #334155;
+    min-height: 20px;
+    border-radius: 5px;
+}
+QScrollBar::handle:vertical:hover {
+    background: #00d4ff;
+}
 QCheckBox {
     padding: 10px;
-    font-size: 16px;
+    font-size: 15px;
     border-radius: 8px;
     margin-bottom: 2px;
 }
@@ -52,8 +74,8 @@ QCheckBox:hover {
     background-color: rgba(0, 212, 255, 0.08);
 }
 QCheckBox::indicator {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     border-radius: 6px;
     border: 2px solid #334155;
     background-color: #1e293b;
@@ -61,7 +83,7 @@ QCheckBox::indicator {
 QCheckBox::indicator:checked {
     background-color: #00d4ff;
     border: 2px solid #00d4ff;
-    image: url(); /* Hack for PyQt6 to just fill the color without default image */
+    image: url(); 
 }
 QPushButton {
     background-color: transparent;
@@ -81,40 +103,164 @@ QPushButton:pressed {
 }
 """
 
+def get_icon_for_app(name, exec_cmd):
+    """ Diccionario Heurístico de Iconos Nerd Font para X64 Studios """
+    n = name.lower()
+    c = exec_cmd.lower()
+    
+    # Navegadores
+    if 'firefox' in n or 'firefox' in c: return '󰈹'
+    if 'chrome' in n or 'brave' in n or 'edge' in n or 'browser' in c: return '󰊯'
+    if 'tor' in n: return ''
+    
+    # Terminales
+    if 'terminal' in n or 'alacritty' in c or 'kitty' in c or 'konsole' in c: return ''
+    
+    # Archivos
+    if 'file' in n or 'archivo' in n or 'dolphin' in c or 'thunar' in c or 'nautilus' in c: return ''
+    
+    # Mensajería / Social
+    if 'discord' in n: return ''
+    if 'telegram' in n: return ''
+    if 'whatsapp' in n: return ''
+    if 'slack' in n: return ''
+    
+    # Desarrollo
+    if 'code' in n or 'vscode' in c or 'visual studio' in n: return '󰨞'
+    if 'vim' in n or 'nvim' in c: return ''
+    if 'github' in n: return ''
+    if 'docker' in n: return ''
+    
+    # Multimedia
+    if 'spotify' in n: return ''
+    if 'vlc' in n: return '󰕼'
+    if 'obs' in n or 'studio' in n: return '󰑋'
+    if 'gimp' in n or 'krita' in n: return ''
+    if 'music' in n or 'audio' in n: return '󰝚'
+    
+    # Juegos
+    if 'steam' in n: return ''
+    if 'game' in n or 'lutris' in n or 'heroic' in n: return '󰊖'
+    
+    # Sistema / Ajustes
+    if 'setting' in n or 'ajuste' in n or 'config' in n: return ''
+    if 'monitor' in n or 'htop' in c or 'task' in n: return '󰆚'
+    if 'calc' in n: return ''
+    if 'mail' in n or 'correo' in n or 'thunderbird' in n: return ''
+    
+    # Icono genérico X64 para apps desconocidas
+    return '󰀻'
+
+def get_installed_apps():
+    """ Escanea el sistema operativo en busca de archivos .desktop """
+    apps = []
+    # Siempre incluir el acceso web de X64 Studios
+    apps.append({
+        "id": "x64-projects", 
+        "name": "Proyectos X64 Studios (Web)", 
+        "icon": "󰖟", 
+        "cmd": "firefox --new-window https://x64studios.com/proyectos"
+    })
+    
+    paths = ['/usr/share/applications', os.path.expanduser('~/.local/share/applications')]
+    seen_execs = set()
+    
+    for path in paths:
+        if os.path.exists(path):
+            for file in glob.glob(os.path.join(path, '*.desktop')):
+                try:
+                    with open(file, 'r', encoding='utf-8', errors='ignore') as f:
+                        name = None
+                        exec_cmd = None
+                        for line in f:
+                            if line.startswith('Name=') and not name:
+                                name = line.split('=', 1)[1].strip()
+                            elif line.startswith('Exec=') and not exec_cmd:
+                                # Limpiar el comando (quitar %U, %f, etc)
+                                raw_cmd = line.split('=', 1)[1].strip()
+                                exec_cmd = raw_cmd.split(' %')[0].strip()
+                                
+                        if name and exec_cmd:
+                            # Evitar duplicados exactos
+                            if exec_cmd not in seen_execs:
+                                seen_execs.add(exec_cmd)
+                                app_id = os.path.basename(file).replace('.desktop', '').replace(' ', '_').lower()
+                                icon = get_icon_for_app(name, exec_cmd)
+                                apps.append({
+                                    "id": app_id,
+                                    "name": name,
+                                    "icon": icon,
+                                    "cmd": exec_cmd
+                                })
+                except Exception:
+                    pass
+                    
+    # Ordenar alfabéticamente ignorando mayúsculas, pero dejar x64-projects primero
+    x64_app = apps.pop(0)
+    apps.sort(key=lambda x: x['name'].lower())
+    apps.insert(0, x64_app)
+    
+    return apps
+
 class DockSettings(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Configurador de Dock - X64 Studios")
-        self.resize(420, 550)
+        self.setWindowTitle("Autodescubrimiento Dock - X64 Studios")
+        self.resize(500, 650)
         self.setStyleSheet(QSS)
+        self.apps = get_installed_apps()
         self.checkboxes = {}
         self.init_ui()
         self.load_current()
 
     def init_ui(self):
-        layout = QVBoxLayout()
-        layout.setContentsMargins(35, 35, 35, 35)
-        layout.setSpacing(8)
+        main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(30, 30, 30, 30)
+        main_layout.setSpacing(15)
 
-        title = QLabel("X64 Dock Setup")
+        title = QLabel("Lanzadores X64")
         title.setObjectName("title")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(title)
+        main_layout.addWidget(title)
 
-        subtitle = QLabel("Selecciona las aplicaciones que deseas anclar en tu barra de acceso rápido:")
+        subtitle = QLabel("Busca y selecciona cualquier aplicación instalada en tu sistema:")
         subtitle.setWordWrap(True)
         subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        subtitle.setStyleSheet("color: #94a3b8; padding-bottom: 20px; font-size: 13px;")
-        layout.addWidget(subtitle)
+        subtitle.setStyleSheet("color: #94a3b8; font-size: 13px;")
+        main_layout.addWidget(subtitle)
 
-        for app in APPS:
-            # Using multiple spaces to separate the nerd font icon from the text
+        # Buscador en tiempo real
+        self.search_input = QLineEdit()
+        self.search_input.setPlaceholderText("🔍 Buscar aplicación...")
+        self.search_input.textChanged.connect(self.filter_apps)
+        main_layout.addWidget(self.search_input)
+
+        # Área de Scroll
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setFrameShape(QFrame.Shape.NoFrame)
+        
+        self.scroll_content = QWidget()
+        self.scroll_layout = QVBoxLayout(self.scroll_content)
+        self.scroll_layout.setSpacing(4)
+        
+        # Llenar la lista
+        for app in self.apps:
+            # Separación entre icono nerd font y nombre
             cb = QCheckBox(f"{app['icon']}      {app['name']}")
             cb.setCursor(Qt.CursorShape.PointingHandCursor)
+            
+            # Guardamos la app_id como propiedad para poder identificarla luego
+            cb.setProperty("app_id", app['id'])
+            cb.setProperty("app_cmd", app['cmd'])
+            cb.setProperty("app_icon", app['icon'])
+            
             self.checkboxes[app['id']] = cb
-            layout.addWidget(cb)
-
-        layout.addStretch()
+            self.scroll_layout.addWidget(cb)
+            
+        self.scroll_layout.addStretch()
+        self.scroll_area.setWidget(self.scroll_content)
+        main_layout.addWidget(self.scroll_area)
 
         btn_save = QPushButton("Guardar y Aplicar")
         btn_save.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -125,16 +271,25 @@ class DockSettings(QWidget):
         btn_layout.addWidget(btn_save)
         btn_layout.addStretch()
         
-        layout.addLayout(btn_layout)
-        self.setLayout(layout)
+        main_layout.addLayout(btn_layout)
+        self.setLayout(main_layout)
+
+    def filter_apps(self, text):
+        query = text.lower()
+        for app_id, cb in self.checkboxes.items():
+            if query in cb.text().lower():
+                cb.show()
+            else:
+                cb.hide()
 
     def load_current(self):
         if not os.path.exists(DOCK_CONF):
-            # Cargar los que consideramos predeterminados si no hay archivo
+            # Default pre-seleccionados
             defaults = ["firefox", "alacritty", "dolphin", "x64-projects"]
             for d in defaults:
-                if d in self.checkboxes:
-                    self.checkboxes[d].setChecked(True)
+                for app_id, cb in self.checkboxes.items():
+                    if d in app_id.lower():
+                        cb.setChecked(True)
             return
             
         try:
@@ -143,31 +298,30 @@ class DockSettings(QWidget):
                 
             group_mods = data.get("group/dock", {}).get("modules", [])
             for mod in group_mods:
-                app_id = mod.replace("custom/dock-", "")
-                if app_id in self.checkboxes:
-                    self.checkboxes[app_id].setChecked(True)
+                mod_app_id = mod.replace("custom/dock-", "")
+                if mod_app_id in self.checkboxes:
+                    self.checkboxes[mod_app_id].setChecked(True)
         except Exception as e:
             print(f"Error al cargar la configuración existente: {e}")
 
     def save_and_apply(self):
-        selected = []
-        for app in APPS:
-            if self.checkboxes[app['id']].isChecked():
-                selected.append(app)
-                
-        # Construir la estructura JSON
         data = {}
         module_names = []
         
-        for app in selected:
-            mod_name = f"custom/dock-{app['id']}"
-            module_names.append(mod_name)
-            data[mod_name] = {
-                "format": app['icon'],
-                "on-click": f"pkill wofi; {app['cmd']}",
-                "tooltip": False
-            }
-            
+        for app_id, cb in self.checkboxes.items():
+            if cb.isChecked():
+                mod_name = f"custom/dock-{app_id}"
+                module_names.append(mod_name)
+                
+                cmd = cb.property("app_cmd")
+                icon = cb.property("app_icon")
+                
+                data[mod_name] = {
+                    "format": icon,
+                    "on-click": f"pkill wofi; {cmd}",
+                    "tooltip": False
+                }
+                
         data["group/dock"] = {
             "orientation": "inherit",
             "modules": module_names
@@ -178,13 +332,11 @@ class DockSettings(QWidget):
             with open(DOCK_CONF, "w", encoding='utf-8') as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
                 
-            # Recargar Waybar silenciosamente
             subprocess.run(["killall", "-SIGUSR2", "waybar"], stderr=subprocess.DEVNULL)
             
-            # Message box custom styling
             msg = QMessageBox(self)
             msg.setWindowTitle("Éxito")
-            msg.setText("El Dock ha sido configurado y la barra se ha recargado automáticamente.")
+            msg.setText(f"Se han anclado {len(module_names)} aplicaciones al Dock.\nWaybar ha sido recargado.")
             msg.setStyleSheet("background-color: #0f172a; color: #00d4ff;")
             msg.exec()
             
