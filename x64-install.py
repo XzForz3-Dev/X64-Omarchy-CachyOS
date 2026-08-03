@@ -839,10 +839,20 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         progress.update(t_config, description="[yellow]Aplicando configuraciones finales (Batch Shell)...", advance=10)
         services_script = "#!/bin/bash\n"
         
+        is_omarchy_oficial = False
+        for item in menu_data[0]["items"]:
+            if item.get("selected") and "Omarchy Oficial" in item["label"]:
+                is_omarchy_oficial = True
+                break
+
         if not is_legacy_nvidia:
-            services_script += "mkdir -p /usr/share/sddm/themes/omarchy /etc/sddm.conf.d\n"
-            services_script += "cp -r default/sddm/omarchy/* /usr/share/sddm/themes/omarchy/ 2>/dev/null\n"
-            services_script += "echo -e \"[Theme]\\nCurrent=omarchy\" > /etc/sddm.conf.d/omarchy.conf\n"
+            if is_omarchy_oficial:
+                services_script += "mkdir -p /usr/share/sddm/themes/omarchy /etc/sddm.conf.d\n"
+                services_script += "cp -r default/sddm/omarchy/* /usr/share/sddm/themes/omarchy/ 2>/dev/null\n"
+                services_script += "echo -e \"[Theme]\\nCurrent=omarchy\" > /etc/sddm.conf.d/omarchy.conf\n"
+            else:
+                services_script += "rm -f /etc/sddm.conf.d/omarchy.conf\n"
+
             services_script += "systemctl disable greetd.service 2>/dev/null\n"
             services_script += "systemctl enable sddm.service --now\n"
         else:
