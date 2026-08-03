@@ -240,3 +240,20 @@ tooltip label {
     box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
     text-shadow: 0 0 8px rgba(0, 212, 255, 0.8);
 }
+
+#custom-dock-settings {
+    padding: 0 10px;
+    margin: 2px 4px;
+    font-size: 16px;
+    color: #475569; /* Even dimmer slate */
+    background: transparent;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+#custom-dock-settings:hover {
+    color: #f472b6; /* Pink hover to distinguish it from cyan apps */
+    background-color: rgba(244, 114, 182, 0.15);
+    box-shadow: 0 0 10px rgba(244, 114, 182, 0.3);
+    text-shadow: 0 0 8px rgba(244, 114, 182, 0.8);
+}

@@ -20,6 +20,7 @@
         "custom/launcher",
         "hyprland/workspaces",
         "group/dock",
+        "custom/dock-settings",
         //"hyprland/submap",
         //"idle_inhibitor",
         //"mpd"
@@ -66,6 +67,12 @@
         "tooltip": false,
         "on-click": "pkill wofi || wofi --conf $HOME/.config/wofi-x64/config --style $HOME/.config/wofi-x64/style.css --show drun",
         "on-click-right": "nwg-drawer"
+    },
+    "custom/dock-settings": {
+        "format": "",
+        "tooltip": true,
+        "tooltip-format": "Configurar Dock X64",
+        "on-click": "alacritty -e bash -c 'x64-dock-settings || ~/.local/bin/x64-dock-settings'"
     },
     "custom/screenshot_t":{
         "format":" ",
