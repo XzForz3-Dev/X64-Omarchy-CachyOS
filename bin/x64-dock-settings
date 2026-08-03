@@ -1,0 +1,90 @@
+#!/bin/bash
+# x64-dock-settings: Script interactivo para configurar el Dock de Waybar (X64 Studios)
+
+DOCK_CONF="$HOME/.config/waybar-x64/modules/dock.json"
+mkdir -p "$(dirname "$DOCK_CONF")"
+
+# Usar whiptail para selección interactiva
+CHOICES=$(whiptail --title "X64 Dock Setup" --checklist \
+"Selecciona las aplicaciones que deseas en tu Dock (Usa ESPACIO para marcar/desmarcar, ENTER para guardar):" 20 70 10 \
+"firefox" "Navegador Web" ON \
+"alacritty" "Terminal" ON \
+"dolphin" "Gestor de Archivos" ON \
+"x64-projects" "Proyectos X64 Studios (Web)" ON \
+"spotify" "Spotify" OFF \
+"code" "VS Code" OFF \
+"discord" "Discord" OFF 3>&1 1>&2 2>&3)
+
+if [ $? -ne 0 ]; then
+    echo "Configuración cancelada por el usuario."
+    exit 0
+fi
+
+# Eliminar comillas de la salida de whiptail
+CHOICES=$(echo "$CHOICES" | tr -d '"')
+
+# Iniciar JSON
+JSON="{\n"
+MODULES=""
+
+for app in $CHOICES; do
+    case $app in
+        "firefox")
+            ICON="󰈹"
+            CMD="firefox"
+            ;;
+        "alacritty")
+            ICON=""
+            CMD="alacritty"
+            ;;
+        "dolphin")
+            ICON=""
+            CMD="dolphin"
+            ;;
+        "x64-projects")
+            ICON="󰖟"
+            CMD="firefox --new-window https://x64studios.com/proyectos"
+            ;;
+        "spotify")
+            ICON=""
+            CMD="spotify"
+            ;;
+        "code")
+            ICON="󰨞"
+            CMD="code"
+            ;;
+        "discord")
+            ICON=""
+            CMD="discord"
+            ;;
+    esac
+
+    MOD_NAME="custom/dock-$app"
+    MODULES="$MODULES\"$MOD_NAME\", "
+    
+    JSON="$JSON    \"$MOD_NAME\": {\n"
+    JSON="$JSON        \"format\": \"$ICON\",\n"
+    JSON="$JSON        \"on-click\": \"pkill wofi; $CMD\",\n"
+    JSON="$JSON        \"tooltip\": false\n"
+    JSON="$JSON    },\n"
+done
+
+# Eliminar la coma final de MODULES
+MODULES=${MODULES%, }
+
+# Agregar el contenedor group/dock
+JSON="$JSON    \"group/dock\": {\n"
+JSON="$JSON        \"orientation\": \"inherit\",\n"
+JSON="$JSON        \"modules\": [\n"
+JSON="$JSON            $MODULES\n"
+JSON="$JSON        ]\n"
+JSON="$JSON    }\n"
+JSON="$JSON}"
+
+# Escribir a disco
+echo -e "$JSON" > "$DOCK_CONF"
+
+# Recargar Waybar suavemente enviándole la señal SIGUSR2
+killall -SIGUSR2 waybar 2>/dev/null
+
+whiptail --title "Éxito" --msgbox "El Dock ha sido configurado y la barra se ha recargado automáticamente." 8 50

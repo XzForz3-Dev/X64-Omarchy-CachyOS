@@ -4,7 +4,7 @@
     // -------------------------------------------------------------------------
 
     "layer": "top",
-
+    "include": ["~/.config/waybar-x64/modules/dock.json"],
     "position": "top",
 
     //"height": 20,
@@ -19,6 +19,7 @@
     "modules-left": [
         "custom/launcher",
         "hyprland/workspaces",
+        "group/dock",
         //"hyprland/submap",
         //"idle_inhibitor",
         //"mpd"

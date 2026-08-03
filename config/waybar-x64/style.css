@@ -208,3 +208,35 @@ tooltip label {
 #custom-x64-update {
     color: #8b5cf6;
 }
+
+/* ========================================================
+   DOCK STYLES
+======================================================== */
+#custom-dock-firefox,
+#custom-dock-alacritty,
+#custom-dock-dolphin,
+#custom-dock-x64-projects,
+#custom-dock-spotify,
+#custom-dock-code,
+#custom-dock-discord {
+    padding: 0 10px;
+    margin: 2px 4px;
+    font-size: 18px; /* Big icons */
+    color: #94a3b8; /* Slate dim */
+    background: transparent;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+#custom-dock-firefox:hover,
+#custom-dock-alacritty:hover,
+#custom-dock-dolphin:hover,
+#custom-dock-x64-projects:hover,
+#custom-dock-spotify:hover,
+#custom-dock-code:hover,
+#custom-dock-discord:hover {
+    color: #00d4ff;
+    background-color: rgba(0, 212, 255, 0.15);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.8);
+}
