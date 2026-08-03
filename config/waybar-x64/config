@@ -72,7 +72,7 @@
         "format": "",
         "tooltip": true,
         "tooltip-format": "Configurar Dock X64",
-        "on-click": "alacritty -e bash -c 'x64-dock-settings || ~/.local/bin/x64-dock-settings'"
+        "on-click": "x64-dock-settings || ~/.local/bin/x64-dock-settings"
     },
     "custom/screenshot_t":{
         "format":" ",

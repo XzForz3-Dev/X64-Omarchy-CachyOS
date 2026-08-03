@@ -1,90 +1,203 @@
-#!/bin/bash
-# x64-dock-settings: Script interactivo para configurar el Dock de Waybar (X64 Studios)
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# x64-dock-settings: Interfaz Gráfica Premium para el Dock de X64 Studios
 
-DOCK_CONF="$HOME/.config/waybar-x64/modules/dock.json"
-mkdir -p "$(dirname "$DOCK_CONF")"
+import sys
+import os
+import json
+import subprocess
 
-# Usar whiptail para selección interactiva
-CHOICES=$(whiptail --title "X64 Dock Setup" --checklist \
-"Selecciona las aplicaciones que deseas en tu Dock (Usa ESPACIO para marcar/desmarcar, ENTER para guardar):" 20 70 10 \
-"firefox" "Navegador Web" ON \
-"alacritty" "Terminal" ON \
-"dolphin" "Gestor de Archivos" ON \
-"x64-projects" "Proyectos X64 Studios (Web)" ON \
-"spotify" "Spotify" OFF \
-"code" "VS Code" OFF \
-"discord" "Discord" OFF 3>&1 1>&2 2>&3)
+try:
+    from PyQt6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout, 
+                                 QCheckBox, QPushButton, QLabel, QMessageBox)
+    from PyQt6.QtCore import Qt
+except ImportError:
+    print("Error: PyQt6 no está instalado. Ejecuta: sudo pacman -S python-pyqt6")
+    sys.exit(1)
 
-if [ $? -ne 0 ]; then
-    echo "Configuración cancelada por el usuario."
-    exit 0
-fi
+# Datos de aplicaciones disponibles
+APPS = [
+    {"id": "firefox", "name": "Navegador Web (Firefox)", "icon": "󰈹", "cmd": "firefox"},
+    {"id": "alacritty", "name": "Terminal (Alacritty)", "icon": "", "cmd": "alacritty"},
+    {"id": "dolphin", "name": "Gestor de Archivos", "icon": "", "cmd": "dolphin"},
+    {"id": "x64-projects", "name": "Proyectos X64 Studios", "icon": "󰖟", "cmd": "firefox --new-window https://x64studios.com/proyectos"},
+    {"id": "spotify", "name": "Spotify", "icon": "", "cmd": "spotify"},
+    {"id": "code", "name": "VS Code", "icon": "󰨞", "cmd": "code"},
+    {"id": "discord", "name": "Discord", "icon": "", "cmd": "discord"},
+]
 
-# Eliminar comillas de la salida de whiptail
-CHOICES=$(echo "$CHOICES" | tr -d '"')
+DOCK_CONF = os.path.expanduser("~/.config/waybar-x64/modules/dock.json")
 
-# Iniciar JSON
-JSON="{\n"
-MODULES=""
+# Diseño CSS/QSS Cyberpunk de X64
+QSS = """
+QWidget {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    font-family: "Inter", "Roboto", sans-serif;
+    font-size: 14px;
+}
+QLabel#title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #00d4ff;
+    padding-bottom: 5px;
+}
+QCheckBox {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    margin-bottom: 2px;
+}
+QCheckBox:hover {
+    background-color: rgba(0, 212, 255, 0.08);
+}
+QCheckBox::indicator {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid #334155;
+    background-color: #1e293b;
+}
+QCheckBox::indicator:checked {
+    background-color: #00d4ff;
+    border: 2px solid #00d4ff;
+    image: url(); /* Hack for PyQt6 to just fill the color without default image */
+}
+QPushButton {
+    background-color: transparent;
+    border: 2px solid #00d4ff;
+    color: #00d4ff;
+    font-weight: bold;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+}
+QPushButton:hover {
+    background-color: rgba(0, 212, 255, 0.15);
+    border: 2px solid #00d4ff;
+}
+QPushButton:pressed {
+    background-color: rgba(0, 212, 255, 0.3);
+}
+"""
 
-for app in $CHOICES; do
-    case $app in
-        "firefox")
-            ICON="󰈹"
-            CMD="firefox"
-            ;;
-        "alacritty")
-            ICON=""
-            CMD="alacritty"
-            ;;
-        "dolphin")
-            ICON=""
-            CMD="dolphin"
-            ;;
-        "x64-projects")
-            ICON="󰖟"
-            CMD="firefox --new-window https://x64studios.com/proyectos"
-            ;;
-        "spotify")
-            ICON=""
-            CMD="spotify"
-            ;;
-        "code")
-            ICON="󰨞"
-            CMD="code"
-            ;;
-        "discord")
-            ICON=""
-            CMD="discord"
-            ;;
-    esac
+class DockSettings(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Configurador de Dock - X64 Studios")
+        self.resize(420, 550)
+        self.setStyleSheet(QSS)
+        self.checkboxes = {}
+        self.init_ui()
+        self.load_current()
 
-    MOD_NAME="custom/dock-$app"
-    MODULES="$MODULES\"$MOD_NAME\", "
-    
-    JSON="$JSON    \"$MOD_NAME\": {\n"
-    JSON="$JSON        \"format\": \"$ICON\",\n"
-    JSON="$JSON        \"on-click\": \"pkill wofi; $CMD\",\n"
-    JSON="$JSON        \"tooltip\": false\n"
-    JSON="$JSON    },\n"
-done
+    def init_ui(self):
+        layout = QVBoxLayout()
+        layout.setContentsMargins(35, 35, 35, 35)
+        layout.setSpacing(8)
 
-# Eliminar la coma final de MODULES
-MODULES=${MODULES%, }
+        title = QLabel("X64 Dock Setup")
+        title.setObjectName("title")
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(title)
 
-# Agregar el contenedor group/dock
-JSON="$JSON    \"group/dock\": {\n"
-JSON="$JSON        \"orientation\": \"inherit\",\n"
-JSON="$JSON        \"modules\": [\n"
-JSON="$JSON            $MODULES\n"
-JSON="$JSON        ]\n"
-JSON="$JSON    }\n"
-JSON="$JSON}"
+        subtitle = QLabel("Selecciona las aplicaciones que deseas anclar en tu barra de acceso rápido:")
+        subtitle.setWordWrap(True)
+        subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        subtitle.setStyleSheet("color: #94a3b8; padding-bottom: 20px; font-size: 13px;")
+        layout.addWidget(subtitle)
 
-# Escribir a disco
-echo -e "$JSON" > "$DOCK_CONF"
+        for app in APPS:
+            # Using multiple spaces to separate the nerd font icon from the text
+            cb = QCheckBox(f"{app['icon']}      {app['name']}")
+            cb.setCursor(Qt.CursorShape.PointingHandCursor)
+            self.checkboxes[app['id']] = cb
+            layout.addWidget(cb)
 
-# Recargar Waybar suavemente enviándole la señal SIGUSR2
-killall -SIGUSR2 waybar 2>/dev/null
+        layout.addStretch()
 
-whiptail --title "Éxito" --msgbox "El Dock ha sido configurado y la barra se ha recargado automáticamente." 8 50
+        btn_save = QPushButton("Guardar y Aplicar")
+        btn_save.setCursor(Qt.CursorShape.PointingHandCursor)
+        btn_save.clicked.connect(self.save_and_apply)
+        
+        btn_layout = QHBoxLayout()
+        btn_layout.addStretch()
+        btn_layout.addWidget(btn_save)
+        btn_layout.addStretch()
+        
+        layout.addLayout(btn_layout)
+        self.setLayout(layout)
+
+    def load_current(self):
+        if not os.path.exists(DOCK_CONF):
+            # Cargar los que consideramos predeterminados si no hay archivo
+            defaults = ["firefox", "alacritty", "dolphin", "x64-projects"]
+            for d in defaults:
+                if d in self.checkboxes:
+                    self.checkboxes[d].setChecked(True)
+            return
+            
+        try:
+            with open(DOCK_CONF, "r", encoding='utf-8') as f:
+                data = json.load(f)
+                
+            group_mods = data.get("group/dock", {}).get("modules", [])
+            for mod in group_mods:
+                app_id = mod.replace("custom/dock-", "")
+                if app_id in self.checkboxes:
+                    self.checkboxes[app_id].setChecked(True)
+        except Exception as e:
+            print(f"Error al cargar la configuración existente: {e}")
+
+    def save_and_apply(self):
+        selected = []
+        for app in APPS:
+            if self.checkboxes[app['id']].isChecked():
+                selected.append(app)
+                
+        # Construir la estructura JSON
+        data = {}
+        module_names = []
+        
+        for app in selected:
+            mod_name = f"custom/dock-{app['id']}"
+            module_names.append(mod_name)
+            data[mod_name] = {
+                "format": app['icon'],
+                "on-click": f"pkill wofi; {app['cmd']}",
+                "tooltip": False
+            }
+            
+        data["group/dock"] = {
+            "orientation": "inherit",
+            "modules": module_names
+        }
+        
+        os.makedirs(os.path.dirname(DOCK_CONF), exist_ok=True)
+        try:
+            with open(DOCK_CONF, "w", encoding='utf-8') as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+                
+            # Recargar Waybar silenciosamente
+            subprocess.run(["killall", "-SIGUSR2", "waybar"], stderr=subprocess.DEVNULL)
+            
+            # Message box custom styling
+            msg = QMessageBox(self)
+            msg.setWindowTitle("Éxito")
+            msg.setText("El Dock ha sido configurado y la barra se ha recargado automáticamente.")
+            msg.setStyleSheet("background-color: #0f172a; color: #00d4ff;")
+            msg.exec()
+            
+            self.close()
+        except Exception as e:
+            err = QMessageBox(self)
+            err.setWindowTitle("Error")
+            err.setText(f"No se pudo guardar la configuración:\n{e}")
+            err.setStyleSheet("background-color: #0f172a; color: #ef4444;")
+            err.exec()
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = DockSettings()
+    window.show()
+    sys.exit(app.exec())
