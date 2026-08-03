@@ -482,6 +482,7 @@ def update_ui():
         else:
             btn_text = Text.from_markup("[bold white]   SÍ, INSTALAR   [/bold white]      [bold reverse red] > NO, OMITIR < [/bold reverse red]", justify="center")
             
+        from rich.console import Group
         modal_content = Group(modal_text, btn_text)
         layout["right"].update(Panel(Align.center(modal_content, vertical="middle"), title="[bold white]Ajuste de Inicio del Sistema[/bold white]", border_style="yellow"))
 
