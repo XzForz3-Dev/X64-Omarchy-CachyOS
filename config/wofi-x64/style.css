@@ -36,8 +36,33 @@ window {
 }
 
 #scroll {
-    margin: 0px;
+    margin: 0px 5px 20px 20px; /* Reduced right margin to make room for scrollbar */
     background-color: transparent;
+}
+
+/* Custom Scrollbar */
+scrollbar {
+    background-color: transparent;
+    min-width: 6px;
+}
+
+scrollbar trough {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+scrollbar slider {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    min-height: 40px;
+}
+
+scrollbar slider:hover {
+    background-color: rgba(0, 212, 255, 0.6);
+}
+
+scrollbar slider:active {
+    background-color: rgba(0, 212, 255, 1);
 }
 
 #inner-box {
@@ -46,14 +71,15 @@ window {
 }
 
 #text {
-    margin: 5px 15px;
+    margin: 5px 20px;
     color: #94a3b8;
+    font-size: 17px; /* Slightly larger text */
 }
 
 #entry {
-    padding: 12px 15px;
-    margin: 4px 10px;
-    border-radius: 16px;
+    padding: 14px 18px; /* More breathing room */
+    margin: 6px 12px;
+    border-radius: 18px; /* Rounder edges for cards */
     background-color: transparent;
     border: 1px solid transparent;
     border-left: 4px solid transparent; 
