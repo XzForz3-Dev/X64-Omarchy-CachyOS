@@ -76,7 +76,7 @@ hl.config({
 -- Keybindings
 local terminal = "alacritty"
 local fileManager = "dolphin"
-local launcher = "rofi -config $HOME/.config/rofi-x64/config.rasi -theme $HOME/.config/rofi-x64/style.rasi -show drun"
+local launcher = "wofi --conf $HOME/.config/wofi-x64/config --style $HOME/.config/wofi-x64/style.css --show drun"
 
 hl.bind("SUPER + Return", hl.dsp.exec_cmd(terminal))
 hl.bind("SUPER + Q", hl.dsp.window.close())

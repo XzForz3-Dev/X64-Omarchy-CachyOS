@@ -1,8 +1,0 @@
-configuration {
-    modi: "drun,run";
-    show-icons: true;
-    display-drun: "  Apps";
-    display-run: "  Run";
-    drun-display-format: "{name}";
-    hover-select: false;
-}
