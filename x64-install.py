@@ -838,32 +838,32 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
 
         # --- Batch Shelling para Servicios y Entornos ---
         progress.update(t_config, description="[yellow]Aplicando configuraciones finales (Batch Shell)...", advance=10)
-        services_script = "#!/bin/bash\\n"
+        services_script = "#!/bin/bash\n"
         
         if not is_legacy_nvidia:
-            services_script += "mkdir -p /usr/share/sddm/themes/omarchy /etc/sddm.conf.d\\n"
-            services_script += "cp -r default/sddm/omarchy/* /usr/share/sddm/themes/omarchy/ 2>/dev/null\\n"
-            services_script += "echo -e \\\"[Theme]\\\\nCurrent=omarchy\\\" > /etc/sddm.conf.d/omarchy.conf\\n"
-            services_script += "systemctl disable greetd.service 2>/dev/null\\n"
-            services_script += "systemctl enable sddm.service --now\\n"
+            services_script += "mkdir -p /usr/share/sddm/themes/omarchy /etc/sddm.conf.d\n"
+            services_script += "cp -r default/sddm/omarchy/* /usr/share/sddm/themes/omarchy/ 2>/dev/null\n"
+            services_script += "echo -e \"[Theme]\\nCurrent=omarchy\" > /etc/sddm.conf.d/omarchy.conf\n"
+            services_script += "systemctl disable greetd.service 2>/dev/null\n"
+            services_script += "systemctl enable sddm.service --now\n"
         else:
-            services_script += "systemctl disable sddm.service 2>/dev/null\\n"
-            services_script += "systemctl disable greetd.service 2>/dev/null\\n"
-            services_script += "systemctl enable getty@tty1.service --now\\n"
+            services_script += "systemctl disable sddm.service 2>/dev/null\n"
+            services_script += "systemctl disable greetd.service 2>/dev/null\n"
+            services_script += "systemctl enable getty@tty1.service --now\n"
 
-        services_script += "systemctl enable bluetooth.service\\n"
+        services_script += "systemctl enable bluetooth.service\n"
         
         if "ananicy-cpp" in user_choices["packages"]:
-            services_script += "systemctl enable ananicy-cpp.service\\n"
+            services_script += "systemctl enable ananicy-cpp.service\n"
         if "zram-generator" in user_choices["packages"]:
-            services_script += "systemctl daemon-reload\\n"
-            services_script += "systemctl restart systemd-zram-setup@zram0.service\\n"
+            services_script += "systemctl daemon-reload\n"
+            services_script += "systemctl restart systemd-zram-setup@zram0.service\n"
         if "uksmd" in user_choices["packages"]:
-            services_script += "systemctl enable uksmd.service\\n"
+            services_script += "systemctl enable uksmd.service\n"
         if "irqbalance" in user_choices["packages"]:
-            services_script += "systemctl enable irqbalance.service\\n"
+            services_script += "systemctl enable irqbalance.service\n"
         if "cups" in user_choices["packages"]:
-            services_script += "systemctl enable cups.service\\n"
+            services_script += "systemctl enable cups.service\n"
             
         with open("/tmp/omarchy-services.sh", "w") as f:
             f.write(services_script)
