@@ -20,7 +20,7 @@ window {
 }
 
 #input {
-    margin: 10px 10px 20px 10px;
+    margin: 10px 100px 20px 100px;
     padding: 15px 25px;
     border-radius: 50px; /* Pill shape */
     background-color: rgba(20, 28, 43, 0.9);
