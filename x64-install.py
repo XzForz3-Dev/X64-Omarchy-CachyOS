@@ -691,13 +691,13 @@ def installer_worker():
                     kb_layout = line.split(":")[1].strip()
                     break
             
-            # Reemplazar en hyprland.lua
-            hypr_conf = os.path.expanduser("~/.config/hypr-x64/hyprland.lua")
-            if os.path.exists(hypr_conf):
-                with open(hypr_conf, "r") as f:
+            # Reemplazar teclado en la configuración de Hyprland (Omarchy)
+            omarchy_input = os.path.expanduser("~/.config/hypr/input.lua")
+            if os.path.exists(omarchy_input):
+                with open(omarchy_input, "r") as f:
                     content = f.read()
-                content = content.replace('kb_layout = "us"', f'kb_layout = "{kb_layout}"')
-                with open(hypr_conf, "w") as f:
+                content = content.replace('--     kb_layout = "us,dk,eu",', f'    kb_layout = "{kb_layout}",')
+                with open(omarchy_input, "w") as f:
                     f.write(content)
         except Exception:
             pass
@@ -771,13 +771,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
                 set -a cmds "exec Hyprland"
                 set idx (math $idx + 1)
             end\n"""
-                    elif "X64 Studios" in label and "Hyprland" in label:
-                        fish_selector += """        if type -q Hyprland
-                echo " [$idx] Hyprland (X64 Studios)"
-                set -a options $idx
-                set -a cmds "exec env XDG_SESSION_TYPE=wayland Hyprland -c $HOME/.config/hypr-x64/hyprland.lua"
-                set idx (math $idx + 1)
-            end\n"""
+
                     elif "KDE" in label:
                         fish_selector += """        if type -q startplasma-wayland
                 echo " [$idx] KDE Plasma"

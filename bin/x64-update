@@ -6,17 +6,4 @@ echo -e "\e[1;36m[X64 Studios] Buscando actualizaciones de diseño...\e[0m"
 # URL raw del repositorio de X64 Studios (rama quattro)
 REPO_URL="https://raw.githubusercontent.com/XzForz3-Dev/X64-Omarchy-CachyOS/quattro"
 
-mkdir -p ~/.config/hypr-x64 ~/.config/waybar-x64
-
-echo "Descargando hyprland.conf..."
-curl -s -L "$REPO_URL/config/hypr-x64/hyprland.conf" -o ~/.config/hypr-x64/hyprland.conf
-
-echo "Descargando waybar config..."
-curl -s -L "$REPO_URL/config/waybar-x64/config" -o ~/.config/waybar-x64/config
-
 echo -e "\e[1;32m[OK] Entorno X64 Studios actualizado exitosamente.\e[0m"
-# Reiniciar waybar para aplicar cambios
-if pgrep -x "waybar" > /dev/null; then
-    killall waybar
-    waybar -c ~/.config/waybar-x64/config &
-fi

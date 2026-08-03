@@ -1,6 +1,6 @@
 {
     "label" : "lock",
-    "action" : "hyprlock -c ~/.config/hypr-x64/hyprlock.conf",
+    "action" : "hyprlock",
     "text" : "Bloquear",
     "keybind" : "l"
 }

@@ -5,7 +5,7 @@
             {
                 "label": "Hyprland (Omarchy Oficial)",
                 "type": "toggle",
-                "selected": false,
+                "selected": true,
                 "pkg": [
                     "hyprland",
                     "waybar",
@@ -13,22 +13,6 @@
                     "wofi"
                 ],
                 "desc": "Entorno base (Wayland) con estética hacker/cyberpunk, animaciones fluidas y bajo consumo de recursos."
-            },
-            {
-                "label": "Hyprland (X64 Studios)",
-                "type": "toggle",
-                "selected": true,
-                "pkg": [
-                    "hyprland",
-                    "waybar",
-                    "swaybg",
-                    "wofi",
-                    "swaync",
-                    "swayosd",
-                    "alacritty"
-                ],
-                "desc": "Lienzo en blanco (Barebones) para construir tu propio entorno Hyprland desde cero paso a paso."
-            },
             {
                 "label": "KDE Plasma (X64 Studios Edition)",
                 "type": "toggle",
