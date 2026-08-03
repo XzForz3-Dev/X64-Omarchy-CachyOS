@@ -61,7 +61,7 @@
 
 
     "custom/launcher": {
-        "format": "󰣇 X64",
+        "format": " X64",
         "tooltip": false,
         "on-click": "pkill wofi || wofi --conf $HOME/.config/wofi-x64/config --style $HOME/.config/wofi-x64/style.css --show drun",
         "on-click-right": "nwg-drawer"
@@ -100,10 +100,8 @@
         "critical-threshold": 80,
         // "format-critical": " {temperatureC}°C",
         "format-critical": "  {temperatureC}°C",
-        "format": "{icon}  {temperatureC}°C",
+        "format": "{icon} {temperatureC}°C",
         "format-icons": ["", "", ""],
-        "max-length": 7,
-        "min-length": 7,
         "on-click": "xsensors"
     },
 
@@ -305,11 +303,12 @@
 
     "hyprland/workspaces": {
         "all-outputs": true,
-        "format": "{icon}",
-        "format-icons": {
-            "active": "",
-            "default": "",
-            "empty": ""
+        "format": "{name}",
+        "persistent-workspaces": {
+            "1": [],
+            "2": [],
+            "3": [],
+            "4": []
         },
         "on-scroll-up": "hyprctl dispatch workspace e+1 1>/dev/null",
         "on-scroll-down": "hyprctl dispatch workspace e-1 1>/dev/null",
