@@ -477,8 +477,36 @@ class DockSettings(QWidget):
         
         os.makedirs(os.path.dirname(DOCK_CONF), exist_ok=True)
         try:
+            DOCK_CSS = os.path.expanduser("~/.config/waybar-x64/modules/dock-styles.css")
+        
             with open(DOCK_CONF, "w", encoding='utf-8') as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
+                
+            # Generar CSS dinámico para garantizar compatibilidad estricta con GTK3
+            if module_names:
+                css_selectors = ",\n".join([f"#{mod.replace('custom/', 'custom-')}" for mod in module_names])
+                css_content = f"""{css_selectors} {{
+    padding: 0 10px;
+    margin: 2px 4px;
+    font-size: 18px; /* Big icons */
+    color: #94a3b8; /* Slate dim */
+    background: transparent;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}}
+
+{",\n".join([f"#{mod.replace('custom/', 'custom-')}:hover" for mod in module_names])} {{
+    color: #00d4ff;
+    background-color: rgba(0, 212, 255, 0.15);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.8);
+}}
+"""
+            else:
+                css_content = ""
+                
+            with open(DOCK_CSS, "w", encoding='utf-8') as f:
+                f.write(css_content)
                 
             subprocess.run(["killall", "-SIGUSR2", "waybar"], stderr=subprocess.DEVNULL)
             
