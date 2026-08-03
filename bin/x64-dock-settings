@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# x64-dock-settings: Interfaz Gráfica Premium para el Dock de X64 Studios con Autodescubrimiento Avanzado e Íconos Reales
+# x64-dock-settings: Interfaz Gráfica Premium para el Dock de X64 Studios con Autodescubrimiento Avanzado
 
 import sys
 import os
@@ -8,20 +8,17 @@ import glob
 import json
 import subprocess
 import uuid
-import shutil
 
 try:
     from PyQt6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout, 
                                  QCheckBox, QPushButton, QLabel, QMessageBox, QLineEdit,
-                                 QListWidget, QListWidgetItem, QAbstractItemView, QFrame, QFileDialog)
+                                 QListWidget, QListWidgetItem, QAbstractItemView, QFrame)
     from PyQt6.QtCore import Qt, QSize
-    from PyQt6.QtGui import QIcon, QPixmap
 except ImportError:
     print("Error: PyQt6 no está instalado. Ejecuta: sudo pacman -S python-pyqt6")
     sys.exit(1)
 
 DOCK_CONF = os.path.expanduser("~/.config/waybar-x64/modules/dock.json")
-ICONS_DIR = os.path.expanduser("~/.config/waybar-x64/modules/icons")
 
 # Diseño CSS/QSS Cyberpunk de X64
 QSS = """
@@ -50,13 +47,12 @@ QLineEdit:focus {
     border: 2px solid #00d4ff;
 }
 QLineEdit#icon_input {
-    font-size: 12px;
+    font-size: 18px;
     padding: 5px;
     margin-bottom: 0px;
     border-radius: 6px;
     background-color: #0f172a;
-    color: #94a3b8;
-    border: 1px solid #334155;
+    color: #00d4ff;
 }
 QLineEdit#name_input {
     font-weight: bold;
@@ -146,17 +142,6 @@ QPushButton#add_btn:hover {
     color: #00d4ff;
     background-color: rgba(0, 212, 255, 0.05);
 }
-QPushButton#browse_btn {
-    border: 1px solid #334155;
-    color: #94a3b8;
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 6px;
-}
-QPushButton#browse_btn:hover {
-    border: 1px solid #00d4ff;
-    color: #00d4ff;
-}
 QPushButton:hover {
     background-color: rgba(0, 212, 255, 0.15);
     border: 2px solid #00d4ff;
@@ -164,11 +149,55 @@ QPushButton:hover {
 QPushButton:pressed {
     background-color: rgba(0, 212, 255, 0.3);
 }
-QLabel#icon_preview {
-    background-color: transparent;
-    border-radius: 8px;
-}
 """
+
+def get_icon_for_app(name, exec_cmd):
+    """ Diccionario Heurístico de Iconos Nerd Font para X64 Studios """
+    n = name.lower()
+    c = exec_cmd.lower()
+    
+    # Navegadores
+    if 'firefox' in n or 'firefox' in c: return '󰈹'
+    if 'chrome' in n or 'brave' in n or 'edge' in n or 'browser' in c: return '󰊯'
+    if 'tor' in n: return ''
+    
+    # Terminales
+    if 'terminal' in n or 'alacritty' in c or 'kitty' in c or 'konsole' in c: return ''
+    
+    # Archivos
+    if 'file' in n or 'archivo' in n or 'dolphin' in c or 'thunar' in c or 'nautilus' in c: return ''
+    
+    # Mensajería / Social
+    if 'discord' in n: return ''
+    if 'telegram' in n: return ''
+    if 'whatsapp' in n: return ''
+    if 'slack' in n: return ''
+    
+    # Desarrollo
+    if 'code' in n or 'vscode' in c or 'visual studio' in n: return '󰨞'
+    if 'vim' in n or 'nvim' in c: return ''
+    if 'github' in n: return ''
+    if 'docker' in n: return ''
+    
+    # Multimedia
+    if 'spotify' in n: return ''
+    if 'vlc' in n: return '󰕼'
+    if 'obs' in n or 'studio' in n: return '󰑋'
+    if 'gimp' in n or 'krita' in n: return ''
+    if 'music' in n or 'audio' in n: return '󰝚'
+    
+    # Juegos
+    if 'steam' in n: return ''
+    if 'game' in n or 'lutris' in n or 'heroic' in n: return '󰊖'
+    
+    # Sistema / Ajustes
+    if 'setting' in n or 'ajuste' in n or 'config' in n: return ''
+    if 'monitor' in n or 'htop' in c or 'task' in n: return '󰆚'
+    if 'calc' in n: return ''
+    if 'mail' in n or 'correo' in n or 'thunderbird' in n: return ''
+    
+    # Icono genérico X64 para apps desconocidas
+    return '󰀻'
 
 def get_installed_apps():
     """ Escanea el sistema operativo en busca de archivos .desktop """
@@ -177,7 +206,7 @@ def get_installed_apps():
     apps.append({
         "id": "x64-projects", 
         "name": "Proyectos X64 Studios (Web)", 
-        "icon": "firefox", 
+        "icon": "󰖟", 
         "cmd": "firefox --new-window https://x64studios.com/proyectos"
     })
     
@@ -191,22 +220,20 @@ def get_installed_apps():
                     with open(file, 'r', encoding='utf-8', errors='ignore') as f:
                         name = None
                         exec_cmd = None
-                        icon = "application-x-executable"
-                        
                         for line in f:
                             if line.startswith('Name=') and not name:
                                 name = line.split('=', 1)[1].strip()
                             elif line.startswith('Exec=') and not exec_cmd:
+                                # Limpiar el comando (quitar %U, %f, etc)
                                 raw_cmd = line.split('=', 1)[1].strip()
                                 exec_cmd = raw_cmd.split(' %')[0].strip()
-                            elif line.startswith('Icon='):
-                                icon = line.split('=', 1)[1].strip()
                                 
                         if name and exec_cmd:
                             # Evitar duplicados exactos
                             if exec_cmd not in seen_execs:
                                 seen_execs.add(exec_cmd)
                                 app_id = os.path.basename(file).replace('.desktop', '').replace(' ', '_').lower()
+                                icon = get_icon_for_app(name, exec_cmd)
                                 apps.append({
                                     "id": app_id,
                                     "name": name,
@@ -243,14 +270,15 @@ class DockAppWidget(QWidget):
         self.checkbox.setCursor(Qt.CursorShape.PointingHandCursor)
         layout.addWidget(self.checkbox)
         
-        # Icon Preview
-        self.icon_preview = QLabel()
-        self.icon_preview.setObjectName("icon_preview")
-        self.icon_preview.setFixedSize(36, 36)
-        self.icon_preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(self.icon_preview)
+        # Icon Input
+        self.icon_input = QLineEdit()
+        self.icon_input.setObjectName("icon_input")
+        self.icon_input.setText(icon)
+        self.icon_input.setFixedWidth(40)
+        self.icon_input.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.icon_input)
         
-        # Name, Command, and Icon path
+        # Name and Command
         v_layout = QVBoxLayout()
         v_layout.setSpacing(2)
         
@@ -259,59 +287,15 @@ class DockAppWidget(QWidget):
         self.name_input.setText(name)
         v_layout.addWidget(self.name_input)
         
-        # Icon input + Browse
-        icon_layout = QHBoxLayout()
-        icon_layout.setSpacing(5)
-        self.icon_input = QLineEdit()
-        self.icon_input.setObjectName("icon_input")
-        self.icon_input.setText(icon)
-        self.icon_input.setPlaceholderText("Nombre del ícono (ej. firefox) o ruta SVG/PNG")
-        self.icon_input.textChanged.connect(self.update_preview)
-        icon_layout.addWidget(self.icon_input)
-        
-        self.browse_btn = QPushButton("📁")
-        self.browse_btn.setObjectName("browse_btn")
-        self.browse_btn.setFixedSize(30, 30)
-        self.browse_btn.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.browse_btn.clicked.connect(self.browse_icon)
-        icon_layout.addWidget(self.browse_btn)
-        
-        v_layout.addLayout(icon_layout)
-        
         self.cmd_input = QLineEdit()
         self.cmd_input.setObjectName("cmd_input")
         self.cmd_input.setText(cmd)
         v_layout.addWidget(self.cmd_input)
         
         layout.addLayout(v_layout)
-        layout.setStretch(3, 1) # stretch the v_layout
+        layout.setStretch(4, 1) # stretch the v_layout
         
         self.setLayout(layout)
-        self.update_preview()
-        
-    def browse_icon(self):
-        file_name, _ = QFileDialog.getOpenFileName(self, "Seleccionar Ícono", "", "Imágenes (*.png *.svg *.jpg)")
-        if file_name:
-            self.icon_input.setText(file_name)
-            
-    def update_preview(self):
-        icon_str = self.icon_input.text()
-        pixmap = None
-        if os.path.isabs(icon_str) and os.path.exists(icon_str):
-            pixmap = QPixmap(icon_str)
-        else:
-            qicon = QIcon.fromTheme(icon_str)
-            if qicon.isNull():
-                qicon = QIcon.fromTheme("application-x-executable")
-            if not qicon.isNull():
-                pixmap = qicon.pixmap(32, 32)
-                
-        if pixmap and not pixmap.isNull():
-            # Scale smoothly
-            pixmap = pixmap.scaled(32, 32, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-            self.icon_preview.setPixmap(pixmap)
-        else:
-            self.icon_preview.setText("?")
         
     def get_data(self):
         return {
@@ -325,12 +309,9 @@ class DockAppWidget(QWidget):
 class DockSettings(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Gestor Visual de Íconos - X64 Studios")
-        self.resize(600, 750)
+        self.setWindowTitle("Configuración Avanzada Dock - X64 Studios")
+        self.resize(550, 700)
         self.setStyleSheet(QSS)
-        # Forzar tema de íconos para que QIcon.fromTheme funcione mejor en algunos entornos
-        QIcon.setThemeName("Papirus") 
-        
         self.apps = get_installed_apps()
         self.init_ui()
         self.load_current()
@@ -340,12 +321,12 @@ class DockSettings(QWidget):
         main_layout.setContentsMargins(30, 30, 30, 30)
         main_layout.setSpacing(15)
 
-        title = QLabel("Lanzadores X64 (Imágenes Reales)")
+        title = QLabel("Lanzadores X64")
         title.setObjectName("title")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(title)
 
-        subtitle = QLabel("Extrae íconos reales de tu sistema. Habilita, cambia rutas o arrastra (☰) para reordenar tu dock:")
+        subtitle = QLabel("Habilita, edita iconos, comandos o arrastra (☰) para reordenar tu dock:")
         subtitle.setWordWrap(True)
         subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
         subtitle.setStyleSheet("color: #94a3b8; font-size: 13px;")
@@ -391,7 +372,8 @@ class DockSettings(QWidget):
         item = QListWidgetItem()
         widget = DockAppWidget(app_id, name, icon, cmd, checked)
         
-        item.setSizeHint(QSize(400, 100))
+        # El tamaño del item depende del tamaño del widget
+        item.setSizeHint(QSize(400, 75))
         
         if insert_at_top:
             self.list_widget.insertItem(0, item)
@@ -404,7 +386,7 @@ class DockSettings(QWidget):
     def add_custom_launcher(self):
         uid = str(uuid.uuid4())[:8]
         custom_id = f"custom-app-{uid}"
-        self.add_app_to_list(custom_id, "Lanzador Personalizado", "application-x-executable", "bash ~/script.sh", True, insert_at_top=True)
+        self.add_app_to_list(custom_id, "Lanzador Personalizado", "󰀻", "bash ~/script.sh", True, insert_at_top=True)
         self.search_input.setText("")
         self.list_widget.scrollToTop()
 
@@ -442,26 +424,23 @@ class DockSettings(QWidget):
             self.list_widget.clear()
             
             for mod in group_mods:
-                # Soporta viejos custom/dock-* y nuevos image#dock-*
-                mod_app_id = mod.replace("custom/dock-", "").replace("image#dock-", "")
+                mod_app_id = mod.replace("custom/dock-", "")
                 
                 if mod_app_id in widget_dict:
                     w = widget_dict.pop(mod_app_id)
                     if mod in data:
+                        custom_icon = data[mod].get("format", w.icon_input.text())
                         custom_cmd = data[mod].get("on-click", "").replace("pkill wofi; ", "")
+                        w.icon_input.setText(custom_icon)
                         w.cmd_input.setText(custom_cmd)
-                        
-                        source = data[mod].get("x64-icon-source")
-                        if source:
-                            w.icon_input.setText(source)
-                            w.update_preview()
-                            
+                    
                     self.add_app_to_list(w.app_id, w.name_input.text(), w.icon_input.text(), w.cmd_input.text(), True)
                 else:
                     if mod in data:
+                        c_icon = data[mod].get("format", "󰀻")
                         c_cmd = data[mod].get("on-click", "").replace("pkill wofi; ", "")
+                        # Try to guess name from ID
                         c_name = mod_app_id.replace("custom-app-", "").replace("_", " ").title()
-                        c_icon = data[mod].get("x64-icon-source", "application-x-executable")
                         if "custom" in c_name.lower(): c_name = "Lanzador Personalizado"
                         self.add_app_to_list(mod_app_id, c_name, c_icon, c_cmd, True)
 
@@ -475,34 +454,19 @@ class DockSettings(QWidget):
         data = {}
         module_names = []
         
-        os.makedirs(ICONS_DIR, exist_ok=True)
-        
         for i in range(self.list_widget.count()):
             item = self.list_widget.item(i)
             widget = self.list_widget.itemWidget(item)
             
             if widget and widget.checkbox.isChecked():
                 w_data = widget.get_data()
-                mod_name = f"image#dock-{w_data['id']}"
+                mod_name = f"custom/dock-{w_data['id']}"
                 module_names.append(mod_name)
                 
-                # Extraer y guardar imagen PNG real
-                icon_str = w_data['icon']
-                icon_path = os.path.join(ICONS_DIR, f"{w_data['id']}.png")
-                
-                if os.path.isabs(icon_str) and os.path.exists(icon_str):
-                    QIcon(icon_str).pixmap(64, 64).save(icon_path, "PNG")
-                else:
-                    qicon = QIcon.fromTheme(icon_str)
-                    if qicon.isNull():
-                        qicon = QIcon.fromTheme("application-x-executable")
-                    qicon.pixmap(64, 64).save(icon_path, "PNG")
-                
                 data[mod_name] = {
-                    "path": icon_path,
-                    "size": 32,
+                    "format": w_data['icon'],
                     "on-click": f"pkill wofi; {w_data['cmd']}",
-                    "x64-icon-source": icon_str, # Metadato privado para que el script lo recupere luego
+                    "class": "x64-dock-item",
                     "tooltip": False
                 }
                 
@@ -518,20 +482,25 @@ class DockSettings(QWidget):
             with open(DOCK_CONF, "w", encoding='utf-8') as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
                 
-            # Generar CSS dinámico. Para Waybar image, el ID es image-dock-*
+            # Generar CSS dinámico para garantizar compatibilidad estricta con GTK3
             if module_names:
-                css_selectors = ",\n".join([f"#{mod.replace('image#', 'image-')}" for mod in module_names])
+                css_selectors = ",\n".join([f"#{mod.replace('custom/', 'custom-')}" for mod in module_names])
                 css_content = f"""{css_selectors} {{
+    font-family: "JetBrainsMono Nerd Font", "Symbols Nerd Font", "Font Awesome 6 Free", sans-serif;
     padding: 0 10px;
     margin: 2px 4px;
+    font-size: 18px; /* Big icons */
+    color: #94a3b8; /* Slate dim */
     background: transparent;
     border-radius: 12px;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }}
 
-{",\n".join([f"#{mod.replace('image#', 'image-')}:hover" for mod in module_names])} {{
+{",\n".join([f"#{mod.replace('custom/', 'custom-')}:hover" for mod in module_names])} {{
+    color: #00d4ff;
     background-color: rgba(0, 212, 255, 0.15);
     box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.8);
 }}
 """
             else:
@@ -544,7 +513,7 @@ class DockSettings(QWidget):
             
             msg = QMessageBox(self)
             msg.setWindowTitle("Éxito")
-            msg.setText(f"Se han anclado {len(module_names)} aplicaciones al Dock.\\nSe usaron íconos reales del sistema (PNG/SVG).")
+            msg.setText(f"Se han anclado {len(module_names)} aplicaciones al Dock.\\nEl orden y los comandos han sido guardados.")
             msg.setStyleSheet("background-color: #0f172a; color: #00d4ff;")
             msg.exec()
             
