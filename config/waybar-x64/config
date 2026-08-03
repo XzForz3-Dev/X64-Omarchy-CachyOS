@@ -20,7 +20,6 @@
         "custom/launcher",
         "hyprland/workspaces",
         //"hyprland/submap",
-        "temperature",
         //"idle_inhibitor",
         //"mpd"
         "custom/spotify"
@@ -36,6 +35,7 @@
         "custom/storage",
         "memory",
         "cpu",
+        "temperature",
         "battery",
         //"pulseaudio",
         "wireplumber",
