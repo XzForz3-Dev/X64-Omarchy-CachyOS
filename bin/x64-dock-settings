@@ -486,6 +486,7 @@ class DockSettings(QWidget):
             if module_names:
                 css_selectors = ",\n".join([f"#{mod.replace('custom/', 'custom-')}" for mod in module_names])
                 css_content = f"""{css_selectors} {{
+    font-family: "JetBrainsMono Nerd Font", "Symbols Nerd Font", "Font Awesome 6 Free", sans-serif;
     padding: 0 10px;
     margin: 2px 4px;
     font-size: 18px; /* Big icons */
