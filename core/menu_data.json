@@ -19,7 +19,13 @@
                 "type": "toggle",
                 "selected": true,
                 "pkg": [
-                    "hyprland"
+                    "hyprland",
+                    "waybar",
+                    "swaybg",
+                    "wofi",
+                    "swaync",
+                    "swayosd",
+                    "alacritty"
                 ],
                 "desc": "Lienzo en blanco (Barebones) para construir tu propio entorno Hyprland desde cero paso a paso."
             },
