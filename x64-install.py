@@ -682,6 +682,26 @@ def installer_worker():
         # Copiado acelerado mediante Python nativo (shutil)
         shutil.copytree("config", os.path.expanduser("~/.config"), dirs_exist_ok=True)
 
+        # Auto-configurar teclado leyendo localectl
+        try:
+            import subprocess
+            res = subprocess.run(["localectl", "status"], capture_output=True, text=True)
+            kb_layout = "us"
+            for line in res.stdout.splitlines():
+                if "X11 Layout:" in line:
+                    kb_layout = line.split(":")[1].strip()
+                    break
+            
+            # Reemplazar en hyprland.lua
+            hypr_conf = os.path.expanduser("~/.config/hypr-x64/hyprland.lua")
+            if os.path.exists(hypr_conf):
+                with open(hypr_conf, "r") as f:
+                    content = f.read()
+                content = content.replace('kb_layout = "us"', f'kb_layout = "{kb_layout}"')
+                with open(hypr_conf, "w") as f:
+                    f.write(content)
+        except Exception:
+            pass
                     
         shutil.copytree("bin", os.path.expanduser("~/.local/bin"), dirs_exist_ok=True)
         shutil.copytree("themes", os.path.expanduser("~/.local/share/themes"), dirs_exist_ok=True)
