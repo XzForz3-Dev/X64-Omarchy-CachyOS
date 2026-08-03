@@ -115,27 +115,32 @@ tooltip label {
     padding: 0;
 }
 #workspaces button {
-    padding: 0 12px;
-    margin: 2px;
-    color: #64748b; /* Dim slate */
-    background: transparent;
-    border-radius: 100px;
-    transition: all 0.3s ease;
+    padding: 0;
+    min-width: 12px;
+    min-height: 12px;
+    margin: 4px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: transparent;
+    font-size: 0px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 #workspaces button:hover {
-    background: rgba(0, 212, 255, 0.1);
-    color: #00d4ff;
+    background-color: rgba(0, 212, 255, 0.5);
+    min-width: 20px;
+    border-radius: 10px;
     box-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
 }
 #workspaces button.active {
-    background: linear-gradient(135deg, #00d4ff, #8b5cf6); /* Cyan to Magenta */
-    color: #ffffff;
+    min-width: 35px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+    color: transparent;
     box-shadow: 0 2px 10px rgba(0, 212, 255, 0.5);
-    font-weight: 800;
 }
 #workspaces button.urgent {
-    background: #ef4444; /* Neon Red */
-    color: #ffffff;
+    background: #ef4444;
+    color: transparent;
     box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
 }
 
