@@ -63,7 +63,7 @@
     "custom/launcher": {
         "format": "󰣇 X64",
         "tooltip": false,
-        "on-click": "pkill wofi || wofi --show drun",
+        "on-click": "pkill wofi || wofi --conf $HOME/.config/wofi-x64/config --style $HOME/.config/wofi-x64/style.css --show drun",
         "on-click-right": "nwg-drawer"
     },
     "custom/screenshot_t":{
