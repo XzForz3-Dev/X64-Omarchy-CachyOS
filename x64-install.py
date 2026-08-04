@@ -648,6 +648,19 @@ def installer_worker():
         pkgs = list(set(pkgs))
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
         
+        env_pkgs_to_remove = []
+        for c in menu_data:
+            if "Entornos" in c["cat"]:
+                for i in c["items"]:
+                    if not i.get("selected"):
+                        env_pkgs_to_remove.extend(i.get("pkg", []))
+        
+        to_remove = set(env_pkgs_to_remove) - set(pkgs)
+        if to_remove:
+            remove_str = " ".join([p for p in to_remove if p and not p.startswith('#')])
+            progress.update(t_pkg, description="[yellow]Purgando entornos anteriores...", advance=5)
+            run_cmd_live(f"sudo bash -c 'installed=$(pacman -Qq {remove_str} 2>/dev/null); if [ -n \"$installed\" ]; then pacman -Rns --noconfirm $installed 2>/dev/null; fi'", check=False)
+        
         chk = subprocess.run(f"pacman -T {pkg_str}", shell=True, stdout=subprocess.PIPE, text=True)
         if chk.returncode != 0:
             missing_pkgs = [p for p in chk.stdout.splitlines()]
