@@ -487,7 +487,6 @@ def update_ui():
         layout["right"].update(Panel(Align.center(modal_content, vertical="middle"), title="[bold white]Ajuste de Inicio del Sistema[/bold white]", border_style="yellow"))
 
     elif current_state == "error" and error_prompt:
-        global ui_transitioned
         ui_transitioned = False
         layout["right"].unsplit()
         
