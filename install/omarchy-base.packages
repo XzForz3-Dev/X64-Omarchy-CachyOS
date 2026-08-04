@@ -1,6 +1,5 @@
 # Omarchy core package list pacstrapped by the ISO.
 # The ISO builder also reads this file when constructing the offline mirror.
-
 aether
 alsa-utils
 asdcontrol
@@ -50,11 +49,6 @@ gum
 gvfs-mtp
 gvfs-nfs
 gvfs-smb
-hyprland
-hyprland-guiutils
-hyprland-preview-share-picker
-hyprpicker
-hyprsunset
 imagemagick
 imv
 inetutils
@@ -104,13 +98,11 @@ python-gobject
 python-poetry-core
 python-terminaltexteffects
 qemu-user-static-binfmt
-quickshell-git
 ripgrep
 ruby
 rust
 tensaku
 sddm
-slurp
 socat
 starship
 sushi
@@ -134,10 +126,8 @@ whois
 wireless-regdb
 wireplumber
 wl-clipboard
-wtype
 woff2-font-awesome
 xdg-desktop-portal-gtk
-xdg-desktop-portal-hyprland
 xdg-terminal-exec
 xournalpp
 yaru-icon-theme

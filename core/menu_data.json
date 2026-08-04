@@ -10,7 +10,15 @@
                     "hyprland",
                     "waybar",
                     "swaybg",
-                    "wofi"
+                    "wofi",
+                    "hyprland-guiutils",
+                    "hyprland-preview-share-picker",
+                    "hyprpicker",
+                    "hyprsunset",
+                    "quickshell-git",
+                    "slurp",
+                    "wtype",
+                    "xdg-desktop-portal-hyprland"
                 ],
                 "desc": "Entorno base (Wayland) con estética hacker/cyberpunk, animaciones fluidas y bajo consumo de recursos."
             },

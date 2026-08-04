@@ -672,9 +672,14 @@ def installer_worker():
         run_cmd_live("sudo chmod -R 755 /usr/share/omarchy")
         
         run_cmd_live("sudo mkdir -p /usr/share/wayland-sessions")
-        run_cmd_live("sudo cp default/wayland-sessions/*.desktop /usr/share/wayland-sessions/", check=False)
-        run_cmd_live("sudo mkdir -p /usr/share/xdg-terminal-exec")
-        run_cmd_live("sudo cp default/xdg-terminal-exec/hyprland-xdg-terminals.list /usr/share/xdg-terminal-exec/", check=False)
+        
+        install_hyprland = "hyprland" in user_choices["packages"]
+        if install_hyprland:
+            run_cmd_live("sudo cp default/wayland-sessions/*.desktop /usr/share/wayland-sessions/", check=False)
+            run_cmd_live("sudo mkdir -p /usr/share/xdg-terminal-exec")
+            run_cmd_live("sudo cp default/xdg-terminal-exec/hyprland-xdg-terminals.list /usr/share/xdg-terminal-exec/", check=False)
+        else:
+            run_cmd_live("sudo rm -f /usr/share/wayland-sessions/omarchy.desktop /usr/share/wayland-sessions/hyprland*.desktop", check=False)
         
         run_cmd_live("sudo bash -c 'echo \"export OMARCHY_PATH=/usr/share/omarchy\" > /etc/profile.d/omarchy.sh'")
         run_cmd_live("sudo chmod +x /etc/profile.d/omarchy.sh")
