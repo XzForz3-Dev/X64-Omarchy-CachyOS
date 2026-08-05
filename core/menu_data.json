@@ -27,7 +27,14 @@
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "plasma-meta"
+                    "plasma-meta",
+                    "konsole",
+                    "dolphin",
+                    "ark",
+                    "kate",
+                    "gwenview",
+                    "spectacle",
+                    "okular"
                 ],
                 "desc": "El entorno de escritorio KDE Plasma (X64 Studios Edition) con configuración propia."
             },
@@ -42,7 +49,13 @@
                     "noctalia",
                     "polkit-kde-agent",
                     "adw-gtk-theme",
-                    "capitaine-cursors"
+                    "capitaine-cursors",
+                    "kitty",
+                    "nautilus",
+                    "file-roller",
+                    "gnome-text-editor",
+                    "loupe",
+                    "evince"
                 ],
                 "desc": "Tiling scroll-infinito ultra moderno, configurado por X64 Studios."
             },
@@ -51,7 +64,14 @@
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
-                    "cinnamon"
+                    "cinnamon",
+                    "gnome-terminal",
+                    "nemo-fileroller",
+                    "file-roller",
+                    "xed",
+                    "xviewer",
+                    "xreader",
+                    "gnome-screenshot"
                 ],
                 "desc": "Entorno clásico tradicional, amigable y muy estable (creado por Linux Mint)."
             }
