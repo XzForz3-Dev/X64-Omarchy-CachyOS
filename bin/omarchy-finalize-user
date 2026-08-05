@@ -152,21 +152,6 @@ if (( first_install )); then
   for migration in "$OMARCHY_PATH"/migrations/*.sh; do
     [[ -f $migration ]] && touch "$state_dir/migrations/$(basename "$migration")"
   done
-  
-  # Inyectar script nativo de Plasma para establecer el fondo de escritorio "zero-delay"
-  if [[ "${XDG_CURRENT_DESKTOP:-}" == *"KDE"* || -d "$HOME/.config/kde.org" || -d "$HOME/.kde4" || -d "$HOME/.local/share/plasma" || -z "${XDG_CURRENT_DESKTOP:-}" ]]; then
-    PLASMA_UPDATES_DIR="$HOME/.local/share/plasma/shells/org.kde.plasma.desktop/updates"
-    mkdir -p "$PLASMA_UPDATES_DIR" 2>/dev/null || true
-    cat <<'EOF' > "$PLASMA_UPDATES_DIR/01-x64-studios-wallpaper.js"
-let allDesktops = desktops();
-for (let i = 0; i < allDesktops.length; i++) {
-    let d = allDesktops[i];
-    d.wallpaperPlugin = "org.kde.image";
-    d.currentConfigGroup = ["Wallpaper", "org.kde.image", "General"];
-    d.writeConfig("Image", "file:///usr/share/omarchy/themes/x64-studios-default/backgrounds/default.png");
-}
-EOF
-  fi
 fi
 
 omarchy-done mark finalize-user
