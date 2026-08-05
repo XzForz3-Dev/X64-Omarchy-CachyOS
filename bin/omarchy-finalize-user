@@ -107,12 +107,12 @@ xdg-user-dirs-update --set PUBLICSHARE "$HOME"
 xdg-user-dirs-update --set DESKTOP "$HOME"
 
 # Limpieza inteligente de carpetas genéricas residuales (en inglés y español)
-for dir in Desktop Downloads Templates Public Documents Music Pictures Videos \
-           Escritorio Descargas Plantillas Público Documentos Música Imágenes Vídeos; do
+for dir in Desktop Downloads Templates Public Documents Music Pictures Videos Projects \
+           Escritorio Descargas Plantillas Público Documentos Música Imágenes Vídeos Proyectos; do
   dir_path="$HOME/$dir"
   if [[ -d "$dir_path" ]]; then
-    # Si la carpeta NO está mapeada en user-dirs.dirs, es un residuo duplicado
-    if ! grep -q "\"$dir_path\"" ~/.config/user-dirs.dirs 2>/dev/null; then
+    # Si la carpeta NO está mapeada en user-dirs.dirs, ni es Projects oficial, es un residuo duplicado
+    if ! grep -q "\"$dir_path\"" ~/.config/user-dirs.dirs 2>/dev/null && [[ "$dir_path" != "$HOME/Projects" ]]; then
       rmdir "$dir_path" 2>/dev/null || true
     fi
   fi
@@ -131,7 +131,9 @@ for b in "$XDG_DOWNLOAD_DIR" "$HOME/Projects" "$XDG_PICTURES_DIR" "$XDG_VIDEOS_D
   fi
 done
 
-source "$OMARCHY_INSTALL/user/all.sh"
+if [[ -f "$OMARCHY_INSTALL/user/all.sh" ]]; then
+  source "$OMARCHY_INSTALL/user/all.sh"
+fi
 
 omarchy-refresh-applications
 env -u BROWSER xdg-settings set default-web-browser chromium.desktop
