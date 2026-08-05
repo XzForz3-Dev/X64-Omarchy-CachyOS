@@ -60,7 +60,7 @@
                 "desc": "Tiling scroll-infinito ultra moderno, configurado por X64 Studios."
             },
             {
-                "label": "Cinnamon",
+                "label": "Cinnamon (X64 Studios Edition)",
                 "type": "toggle",
                 "selected": false,
                 "pkg": [
