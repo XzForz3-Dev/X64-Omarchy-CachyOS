@@ -659,7 +659,7 @@ def installer_worker():
         if to_remove:
             remove_str = " ".join([p for p in to_remove if p and not p.startswith('#')])
             progress.update(t_pkg, description="[yellow]Purgando entornos anteriores...", advance=5)
-            run_cmd_live(f"sudo bash -c 'installed=$(pacman -Qq {remove_str} 2>/dev/null); if [ -n \"$installed\" ]; then pacman -Rns --noconfirm $installed 2>/dev/null; fi'", check=False)
+            run_cmd_live(f"sudo bash -c 'installed=$(pacman -Qq {remove_str} 2>/dev/null); if [ -n \"$installed\" ]; then for pkg in $installed; do pacman -Rns --noconfirm $pkg 2>/dev/null || pacman -R --noconfirm $pkg 2>/dev/null; done; fi'", check=False)
         
         chk = subprocess.run(f"pacman -T {pkg_str}", shell=True, stdout=subprocess.PIPE, text=True)
         if chk.returncode != 0:
