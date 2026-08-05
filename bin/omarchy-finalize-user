@@ -88,8 +88,8 @@ ln -sfn "$OMARCHY_PATH/default/omarchy-skill" ~/.claude/skills/omarchy
 ln -sfn "$OMARCHY_PATH/default/omarchy-skill" ~/.codex/skills/omarchy
 ln -sfn "$OMARCHY_PATH/default/omarchy-skill" ~/.pi/agent/skills/omarchy
 
-# Actualizar los directorios al idioma actual del sistema
-xdg-user-dirs-update
+# Actualizar los directorios al idioma actual del sistema (forzando regeneración para evitar carpetas perdidas)
+xdg-user-dirs-update --force
 
 # Cargar las variables oficiales XDG_*
 if [[ -f ~/.config/user-dirs.dirs ]]; then
@@ -100,6 +100,7 @@ else
   XDG_PICTURES_DIR="$HOME/Pictures"
   XDG_VIDEOS_DIR="$HOME/Videos"
   XDG_DOCUMENTS_DIR="$HOME/Documents"
+  XDG_MUSIC_DIR="$HOME/Music"
 fi
 
 xdg-user-dirs-update --set TEMPLATES "$HOME"
@@ -128,7 +129,7 @@ mkdir -p ~/.config/gtk-3.0
 touch ~/.config/gtk-3.0/bookmarks
 
 # Marcadores dinámicos que respetan el idioma oficial
-for b in "$XDG_DOWNLOAD_DIR" "$PROJECTS_DIR" "$XDG_PICTURES_DIR" "$XDG_VIDEOS_DIR" "$XDG_DOCUMENTS_DIR"; do
+for b in "$XDG_DOWNLOAD_DIR" "$PROJECTS_DIR" "$XDG_PICTURES_DIR" "$XDG_VIDEOS_DIR" "$XDG_DOCUMENTS_DIR" "$XDG_MUSIC_DIR"; do
   if [[ -n "$b" && "$b" != "$HOME" ]]; then
     mkdir -p "$b"
     b_name="$(basename "$b")"
