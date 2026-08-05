@@ -142,8 +142,8 @@ if [[ -f "$OMARCHY_INSTALL/user/all.sh" ]]; then
 fi
 
 omarchy-refresh-applications
-env -u BROWSER xdg-settings set default-web-browser chromium.desktop
-xdg-mime default HEY.desktop x-scheme-handler/mailto
+env -u BROWSER xdg-settings set default-web-browser chromium.desktop 2>/dev/null || true
+xdg-mime default HEY.desktop x-scheme-handler/mailto 2>/dev/null || true
 
 if (( first_install )); then
   mkdir -p "$state_dir/migrations"
