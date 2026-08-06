@@ -85,8 +85,6 @@ nvim
 obs-studio
 obsidian
 omacut
-omawrite
-omarchy-nvim
 pacman-contrib
 pamixer
 pinta
@@ -96,7 +94,6 @@ postgresql-libs
 power-profiles-daemon
 python-gobject
 python-poetry-core
-python-terminaltexteffects
 qemu-user-static-binfmt
 ripgrep
 ruby
@@ -111,7 +108,6 @@ tesseract-data-eng
 tldr
 tree-sitter-cli
 tmux
-tobi-try
 ttf-ia-writer
 ttf-jetbrains-mono-nerd-basic
 tzupdate
