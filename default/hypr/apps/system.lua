@@ -19,7 +19,7 @@ o.window({
 }, { tag = "+floating-window" })
 o.window("com.gabm.satty", { float = true })
 o.window("com.gabm.satty", { center = true })
-o.window("omacalc", { float = true })
+o.window("org.gnome.Calculator", { float = true })
 
 -- Fullscreen screensaver.
 o.window("org.omarchy.screensaver", { fullscreen = true })
