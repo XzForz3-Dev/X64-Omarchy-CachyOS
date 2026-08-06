@@ -44,37 +44,72 @@ Rectangle {
       anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    Text {
-      text: root.currentUser !== "" ? "👤 " + root.currentUser : "Unknown User"
-      color: "#c0caf5"
-      font.family: "JetBrainsMono Nerd Font"
-      font.pixelSize: 20
+    Item {
+      width: entry.width
+      height: entry.height * 2 + 15
       anchors.horizontalCenter: parent.horizontalCenter
-      
-      MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
-          root.userIndex = (root.userIndex + 1) % Math.max(1, userModel.rowCount())
-        }
-      }
-    }
 
-    Row {
-      anchors.horizontalCenter: parent.horizontalCenter
-      spacing: 15
-
-      Image {
-        source: root.loginFailed ? "lock-failed.png" : "lock.png"
-        width: 34
-        height: 38
-        fillMode: Image.PreserveAspectFit
-        anchors.verticalCenter: parent.verticalCenter
-      }
-
+      // Username Field
       Item {
+        id: userContainer
         width: entry.width
         height: entry.height
+        anchors.top: parent.top
+
+        Image {
+          source: "entry.png"
+          anchors.centerIn: parent
+        }
+
+        Image {
+          source: "lock.png"
+          width: 24
+          height: 24
+          fillMode: Image.PreserveAspectFit
+          anchors.left: parent.left
+          anchors.leftMargin: -40
+          anchors.verticalCenter: parent.verticalCenter
+          visible: false // Hidden to keep symmetry but could be a user icon
+        }
+
+        TextInput {
+          id: username
+          anchors.fill: parent
+          anchors.leftMargin: 20
+          anchors.rightMargin: 20
+          verticalAlignment: TextInput.AlignVCenter
+          font.family: "JetBrainsMono Nerd Font"
+          font.pixelSize: 20
+          color: "#c0caf5"
+          text: userModel.lastUser
+          clip: true
+          
+          KeyNavigation.tab: password
+          Keys.onPressed: {
+            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+              password.forceActiveFocus()
+              event.accepted = true
+            }
+          }
+        }
+      }
+
+      // Password Field
+      Item {
+        id: passContainer
+        width: entry.width
+        height: entry.height
+        anchors.bottom: parent.bottom
+
+        Image {
+          source: root.loginFailed ? "lock-failed.png" : "lock.png"
+          width: 34
+          height: 38
+          fillMode: Image.PreserveAspectFit
+          anchors.left: parent.left
+          anchors.leftMargin: -45
+          anchors.verticalCenter: parent.verticalCenter
+        }
 
         Image {
           id: entry
@@ -120,7 +155,7 @@ Rectangle {
 
           Keys.onPressed: {
             if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-              sddm.login(root.currentUser, password.text, root.sessionIndex)
+              sddm.login(username.text, password.text, root.sessionIndex)
               event.accepted = true
             }
           }
