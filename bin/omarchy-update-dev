@@ -21,9 +21,4 @@ if [[ -z $upstream ]]; then
 fi
 
 echo -e "\e[32m\nUpdate Omarchy dev checkout\e[0m"
-OMARCHY_PATH_CLEAN="${OMARCHY_PATH%/}"
-if [[ $OMARCHY_PATH_CLEAN == "/usr/share/omarchy" ]] || [[ $OMARCHY_PATH_CLEAN == /usr/* ]]; then
-  sudo git -C "$OMARCHY_PATH" pull --ff-only
-else
-  git -C "$OMARCHY_PATH" pull --ff-only
-fi
+git -C "$OMARCHY_PATH" pull --ff-only
