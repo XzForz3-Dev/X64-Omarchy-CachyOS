@@ -683,7 +683,7 @@ def installer_worker():
         run_cmd_live("sudo git config --system --add safe.directory /usr/share/omarchy")
         
         # FIX(updater): Ensure the user owns the directory so the GUI can run git pull without sudo
-        run_cmd_live(f"sudo chown -R {USERNAME}:{USERNAME} /usr/share/omarchy")
+        run_cmd_live("sudo chown -R $USER:$USER /usr/share/omarchy")
 
         
         run_cmd_live("sudo mkdir -p /usr/share/wayland-sessions")
