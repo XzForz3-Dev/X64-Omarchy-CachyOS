@@ -4,6 +4,7 @@
 
 set -euo pipefail
 
+: "${OMARCHY_PATH:=/usr/share/omarchy}"
 
 git config --global --add safe.directory "$OMARCHY_PATH" 2>/dev/null || true
 git config --system --add safe.directory "$OMARCHY_PATH" 2>/dev/null || true
