@@ -5,6 +5,8 @@
 set -euo pipefail
 
 
+git config --global --add safe.directory "$OMARCHY_PATH" 2>/dev/null || true
+git config --system --add safe.directory "$OMARCHY_PATH" 2>/dev/null || true
 
 if ! git -C "$OMARCHY_PATH" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   echo "Error: OMARCHY_PATH is not a git checkout: $OMARCHY_PATH" >&2

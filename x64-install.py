@@ -681,7 +681,7 @@ def installer_worker():
         run_cmd_live("mkdir -p ~/.config ~/.local/bin ~/.local/share/themes")
         run_cmd_live("sudo rm -rf /usr/share/omarchy")
         run_cmd_live("sudo git clone -b quattro https://github.com/XzForz3-Dev/X64-Omarchy-CachyOS.git /usr/share/omarchy")
-        run_cmd_live("sudo git config --global --add safe.directory /usr/share/omarchy")
+        run_cmd_live("sudo git config --system --add safe.directory /usr/share/omarchy")
         run_cmd_live("sudo chmod -R 755 /usr/share/omarchy")
         
         run_cmd_live("sudo mkdir -p /usr/share/wayland-sessions")
