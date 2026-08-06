@@ -12,10 +12,9 @@
                     "swaybg",
                     "wofi",
                     "hyprland-guiutils",
-                    "hyprland-preview-share-picker",
                     "hyprpicker",
                     "hyprsunset",
-                    "quickshell-git",
+                    "quickshell",
                     "slurp",
                     "wtype",
                     "xdg-desktop-portal-hyprland"
@@ -1191,7 +1190,7 @@
                 "selected": true,
                 "pkg": [
                     "base-devel",
-                    "p7zip",
+                    "7zip",
                     "unrar",
                     "unzip",
                     "ntfs-3g"
