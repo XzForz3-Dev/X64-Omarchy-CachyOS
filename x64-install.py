@@ -861,9 +861,12 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
 
         if not is_legacy_nvidia:
             if is_omarchy_oficial:
-                services_script += "mkdir -p /usr/share/sddm/themes/omarchy /etc/sddm.conf.d\n"
+                actual_user = os.environ.get("USER", "root")
+                services_script += "mkdir -p /usr/share/sddm/themes/omarchy /etc/sddm.conf.d /var/lib/sddm\n"
                 services_script += "cp -r default/sddm/omarchy/* /usr/share/sddm/themes/omarchy/ 2>/dev/null\n"
                 services_script += "echo -e \"[Theme]\\nCurrent=omarchy\" > /etc/sddm.conf.d/omarchy.conf\n"
+                services_script += f"echo -e \"[Last]\\nSession=/usr/share/wayland-sessions/omarchy.desktop\\nUser={actual_user}\" > /var/lib/sddm/state.conf\n"
+                services_script += "chown -R sddm:sddm /var/lib/sddm\n"
             else:
                 services_script += "rm -f /etc/sddm.conf.d/omarchy.conf\n"
 
