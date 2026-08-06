@@ -679,8 +679,9 @@ def installer_worker():
 
         progress.update(t_config, description="[yellow]Desplegando escudo de sistema...", advance=20)
         run_cmd_live("mkdir -p ~/.config ~/.local/bin ~/.local/share/themes")
-        run_cmd_live("sudo mkdir -p /usr/share/omarchy")
-        run_cmd_live("sudo cp -r --remove-destination bin config default shell themes /usr/share/omarchy/ 2>/dev/null", check=False)
+        run_cmd_live("sudo rm -rf /usr/share/omarchy")
+        run_cmd_live("sudo git clone -b quattro https://github.com/XzForz3-Dev/X64-Omarchy-CachyOS.git /usr/share/omarchy")
+        run_cmd_live("sudo git config --global --add safe.directory /usr/share/omarchy")
         run_cmd_live("sudo chmod -R 755 /usr/share/omarchy")
         
         run_cmd_live("sudo mkdir -p /usr/share/wayland-sessions")
