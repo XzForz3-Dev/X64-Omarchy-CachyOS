@@ -605,6 +605,7 @@ def installer_worker():
             run_cmd_live("sudo rm -f /var/lib/pacman/db.lck")
         
         progress.update(t_repo, description="[yellow]Inyectando Chaotic-AUR...", advance=50)
+        run_cmd_live("sudo sed -i '/\\[chaotic-aur\\]/,+2d' /etc/pacman.conf", check=False)
         run_cmd_live("sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com", check=False)
         run_cmd_live("sudo pacman-key --lsign-key 3056513887B78AEB", check=False)
         run_cmd_live("sudo pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'", check=False)
