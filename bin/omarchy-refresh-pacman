@@ -13,11 +13,12 @@ if [[ $channel != "stable" && $channel != "rc" && $channel != "edge" ]]; then
   exit 1
 fi
 
-echo "Setting channel to $channel"
+echo "Setting channel to $channel (Bypassed pacman overwrite for CachyOS compatibility)"
 echo
 
-sudo cp -f "$OMARCHY_PATH/default/pacman/pacman-$channel.conf" /etc/pacman.conf
-sudo cp -f "$OMARCHY_PATH/default/pacman/mirrorlist-$channel" /etc/pacman.d/mirrorlist
+# FIX(updater): Do not overwrite pacman.conf or mirrorlist on CachyOS
+# sudo cp -f "$OMARCHY_PATH/default/pacman/pacman-$channel.conf" /etc/pacman.conf
+# sudo cp -f "$OMARCHY_PATH/default/pacman/mirrorlist-$channel" /etc/pacman.d/mirrorlist
 
 # Allow user customization of /etc/pacman.conf before the upgrade runs
 omarchy-hook pre-refresh-pacman
