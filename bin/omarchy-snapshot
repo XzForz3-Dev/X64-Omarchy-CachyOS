@@ -28,8 +28,8 @@ create)
   mapfile -t CONFIGS < <(sudo snapper --csvout list-configs | awk -F, 'NR>1 {print $1}')
 
   for config in "${CONFIGS[@]}"; do
-    sudo snapper -c "$config" create -c number -d "$DESC"
-    sudo snapper -c "$config" cleanup number
+    sudo snapper -c "$config" create -c number -d "$DESC" || true
+    sudo snapper -c "$config" cleanup number || true
   done
   echo
   ;;
