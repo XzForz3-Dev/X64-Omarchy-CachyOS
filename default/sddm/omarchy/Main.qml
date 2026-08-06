@@ -43,6 +43,14 @@ Rectangle {
       anchors.horizontalCenter: parent.horizontalCenter
     }
 
+    Text {
+      text: root.currentUser !== "" ? root.currentUser : "Unknown User"
+      color: "#c0caf5"
+      font.family: "JetBrainsMono Nerd Font"
+      font.pixelSize: 20
+      anchors.horizontalCenter: parent.horizontalCenter
+    }
+
     Row {
       anchors.horizontalCenter: parent.horizontalCenter
       spacing: 15
