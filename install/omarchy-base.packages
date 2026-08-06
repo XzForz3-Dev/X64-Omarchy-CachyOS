@@ -93,6 +93,7 @@ python-poetry-core
 qemu-user-static-binfmt
 ripgrep
 ruby
+satty
 sddm
 socat
 starship
