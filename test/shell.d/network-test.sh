@@ -5,7 +5,12 @@ set -euo pipefail
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/base-test.sh"
 
 run_node_test <<'JS'
+const fs = require('fs')
 const network = requireFromRoot('shell/plugins/panels/network/Model.js')
+const panelSource = fs.readFileSync(root + '/shell/plugins/panels/network/Panel.qml', 'utf8')
+
+assert(/IpcHandler[\s\S]*?function toggleNetwork\(\) \{ root\.toggleNetwork\(\) \}/.test(panelSource), 'network exposes the Wi-Fi radio toggle over IPC')
+assert(/manageIpc: false/.test(panelSource), 'network owns its IPC handler so it can extend the target methods')
 
 assertDeepEqual(
   network.parseNetworkStatus('wifi\tCafe WiFi\t78\t5200\n'),
@@ -25,6 +30,17 @@ assertDeepEqual(
   network.parseKeyValue('iface\twlan0\nrx_bytes\t100\ntx_bytes\t50\n'),
   { iface: 'wlan0', rx_bytes: '100', tx_bytes: '50' },
   'network parses detail key values'
+)
+assertEqual(network.decodeIwSsid('Cafe\\xe2\\x80\\x99'), 'Cafe’', 'network decodes UTF-8 SSID bytes')
+assertEqual(network.decodeIwSsid('Smile \\xf0\\x9f\\x98\\x80'), 'Smile 😀', 'network decodes emoji SSID bytes')
+assertEqual(network.decodeIwSsid('\\x20Cafe\\x20'), ' Cafe ', 'network preserves edge spaces in SSIDs')
+assertEqual(network.decodeIwSsid('slash\\x5cname'), 'slash\\name', 'network decodes SSID backslashes once')
+assertEqual(network.decodeIwSsid('invalid\\xff'), 'invalid\\xff', 'network preserves invalid UTF-8 escapes')
+assertEqual(network.decodeIwSsid('already 😀'), 'already 😀', 'network safely preserves unexpected non-BMP input')
+assertDeepEqual(
+  network.parseKeyValue('ssid\tline\\x0abreak\\x09tab\\x00nul\nsignal_dbm\t-40\n'),
+  { ssid: 'line\\x0abreak\\x09tab\\x00nul', signal_dbm: '-40' },
+  'network leaves control-byte escapes safe for single-line display'
 )
 assertDeepEqual(
   network.throughputState({ prevIface: '', prevSampleTime: 0 }, { iface: 'wlan0', rx_bytes: '100', tx_bytes: '50' }, 10),
@@ -69,7 +85,6 @@ assertDeepEqual(
 
 assertEqual(network.formatBytes(1536), '1.5 KB', 'network formats bytes')
 assertEqual(network.formatRate(1536), '1.5 KB/s', 'network formats rates')
-assertEqual(network.formatSpeedMbps('250.4'), '250 Mbps', 'network formats speed test results')
 assertEqual(network.formatPingLatency('2.54'), '2.5 ms', 'network formats low ping with precision')
 assertEqual(network.formatPingLatency('25.4'), '25 ms', 'network formats ping')
 assertEqual(network.formatPingLatency(''), 'Timeout', 'network formats missing ping as timeout')
@@ -89,6 +104,15 @@ const rows = network.sortWifiRows([
 assertDeepEqual(rows.map(row => row.ssid), ['Connected', 'Known', 'Open'], 'network sorts wifi rows by connection and known state')
 assertEqual(network.wifiSectionTitle(rows, 0), 'KNOWN NETWORKS', 'network labels known wifi section')
 assertEqual(network.wifiSectionTitle(rows, 2), 'OTHER NETWORKS', 'network labels other wifi section')
+
+assertDeepEqual(
+  network.parseQrMatrix('010\n111\n010\n'),
+  { rows: ['010', '111', '010'], size: 3 },
+  'network parses a square QR matrix'
+)
+assertDeepEqual(network.parseQrMatrix('01\n111\n'), { rows: [], size: 0 }, 'network rejects ragged QR rows')
+assertDeepEqual(network.parseQrMatrix('010\n101\n'), { rows: [], size: 0 }, 'network rejects a non-square QR matrix')
+assertDeepEqual(network.parseQrMatrix('010\n1x1\n010\n'), { rows: [], size: 0 }, 'network rejects invalid QR modules')
 
 const reasons = { NoSecrets: 1, WifiAuthTimeout: 2, WifiNetworkLost: 3, WifiClientDisconnected: 4, WifiClientFailed: 5 }
 assertEqual(network.networkFailureReason(1, reasons), 'Passphrase required', 'network maps missing passphrase failures')
@@ -118,7 +142,6 @@ assertDeepEqual(
 
 
 
-assertEqual(network.headerDetail({ type: 'wifi', freq: '5745' }), '5ghz', 'network header shows the wifi band when the toggle is hidden')
-assertEqual(network.headerDetail({ type: 'wifi', freq: '5745' }, true), '', 'network header drops the wifi band when the toggle shows it')
-assertEqual(network.headerDetail({ type: 'ethernet', speed: '100' }, true), '100mbit', 'network header keeps ethernet speed regardless of the band toggle')
+assertEqual(network.headerDetail({ type: 'wifi', freq: '5745' }), '', 'network keeps wifi band state out of the hero')
+assertEqual(network.headerDetail({ type: 'ethernet', speed: '100' }), '100mbit', 'network keeps ethernet speed in the hero')
 JS

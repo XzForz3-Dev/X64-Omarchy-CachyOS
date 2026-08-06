@@ -59,10 +59,11 @@ no checkout to delete. Add, Clone, and Remove open a terminal so their warning,
 editor, confirmation, and output stay visible.
 
 Cloning `omarchy.clock`, for example, creates and switches to
-`~/.config/omarchy/plugins/local.clock/`, names it `My Clock`, and preserves
-the built-in IPC identity so existing shortcuts keep working. Saving files in
-a `local.*` clone reloads its code automatically, and removing an active clone
-switches back to its built-in source.
+`~/.config/omarchy/plugins/<username>.clock/` (e.g. `dhh.clock`), names it
+`My Clock`, and preserves the built-in IPC identity so existing shortcuts keep
+working. The username prefix keeps a shared clone from colliding with anyone
+else's. Saving files in any installed plugin reloads its code automatically,
+and removing an active clone switches back to its built-in source.
 
 For a bar widget, on and off means its place in the bar. Everything else is
 loaded by default when it is built in, so `shell.json` records only the
@@ -99,6 +100,7 @@ individual plugins (`bar`, `image-selector`, …).
 | `call <id> <method> <arg>`            | call an already-loaded plugin   |
 | `rescanPlugins`                       | re-walk plugin dirs and hot-reload plugin code |
 | `reloadConfig`                        | reload shell.json               |
+| `toggleBarTransparency`               | flip the bar background between solid and transparent |
 | `setPluginEnabled <id> <"true"\|…>`   | flip enabled bit (`ok` / `unknown`) |
 | `enablePlugin <id> <placementJson>`   | enable and place in one mutation |
 | `moveBarWidget <id> <placementJson>`  | move a configured widget        |

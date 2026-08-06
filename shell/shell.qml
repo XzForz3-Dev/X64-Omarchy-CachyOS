@@ -896,6 +896,14 @@ ShellRoot {
       return "ok"
     }
 
+    function toggleBarTransparency(): string {
+      if (shell.bar && typeof shell.bar.toggleTransparency === "function") {
+        shell.bar.toggleTransparency()
+        return "ok"
+      }
+      return "no-bar"
+    }
+
     function setPluginEnabled(id: string, enabled: string): string {
       return shell.pluginRegistry.setEnabled(id, enabled === "true") ? "ok" : "unknown"
     }
@@ -938,6 +946,8 @@ ShellRoot {
         var isBarOption = Array.isArray(kinds) && kinds.indexOf("bar") !== -1
         var isBarWidget = Array.isArray(kinds) && kinds.indexOf("bar-widget") !== -1
         var active = isBarOption && shell.isActiveBarOption(id)
+        var metadata = plugins[id].omarchy
+        var clonedFrom = Util.isPlainObject(metadata) ? String(metadata.clonedFrom || "") : ""
         out.push({
           id: id,
           name: plugins[id].name,
@@ -952,7 +962,8 @@ ShellRoot {
           // that a caller offering the verbs does not have to read kinds and
           // work it out again.
           canDisable: !isBarOption,
-          firstParty: !!plugins[id].__isFirstParty
+          firstParty: !!plugins[id].__isFirstParty,
+          clonedFrom: clonedFrom
         })
       }
       // Consumers should not each invent their own presentation order.
