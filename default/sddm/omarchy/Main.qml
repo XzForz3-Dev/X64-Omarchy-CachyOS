@@ -7,7 +7,8 @@ Rectangle {
   height: 480
   color: "#1a1b26"
 
-  property string currentUser: userModel.lastUser !== "" ? userModel.lastUser : (userModel.rowCount() > 0 ? userModel.data(userModel.index(0, 0), userModel.NameRole) : "")
+  property int userIndex: userModel.lastIndex >= 0 ? userModel.lastIndex : 0
+  property string currentUser: userModel.rowCount() > 0 ? userModel.data(userModel.index(userIndex, 0), userModel.NameRole) : ""
   property bool loginFailed: false
   property int sessionIndex: {
     for (var i = 0; i < sessionModel.rowCount(); i++) {
@@ -44,11 +45,19 @@ Rectangle {
     }
 
     Text {
-      text: root.currentUser !== "" ? root.currentUser : "Unknown User"
+      text: root.currentUser !== "" ? "👤 " + root.currentUser : "Unknown User"
       color: "#c0caf5"
       font.family: "JetBrainsMono Nerd Font"
       font.pixelSize: 20
       anchors.horizontalCenter: parent.horizontalCenter
+      
+      MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: {
+          root.userIndex = (root.userIndex + 1) % Math.max(1, userModel.rowCount())
+        }
+      }
     }
 
     Row {
