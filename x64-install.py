@@ -586,7 +586,7 @@ def installer_worker():
     global install_error, install_done, current_state
     try:
         progress.update(t_health, description="[yellow]Verificando Red...", advance=30)
-        run_cmd_live("ping -c 1 archlinux.org")
+        run_cmd_live("curl -s -I https://archlinux.org >/dev/null")
         progress.update(t_health, description="[yellow]Verificando Espacio en Disco...", advance=30)
         free_space = shutil.disk_usage("/").free
         if free_space < 15 * 1024 * 1024 * 1024:
