@@ -32,9 +32,9 @@ jobs:
 
       - name: Fusión Inteligente (Priorizar Nuestro Código)
         run: |
-          # Hacemos merge. Si hay conflicto, la estrategia 'ours' mantiene nuestras 
-          # optimizaciones intactas e ignora la versión de upstream para esos archivos.
-          git merge upstream/quattro --strategy-option ours -m "chore: Auto-sync from upstream"
+          # Hacemos merge. Si hay conflicto estructural (ej: nosotros borramos un archivo y ellos lo editaron), 
+          # forzamos la resolución a nuestro favor (mantenerlo borrado) para que el bot no se estrelle.
+          git merge upstream/quattro --strategy-option ours -m "chore: Auto-sync from upstream" || (git status -s | awk '/^DU/ {print $2}' | xargs -r git rm && git commit --no-edit)
 
       - name: Ejecutar Pruebas de Integridad (CI)
         id: run_tests
