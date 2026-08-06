@@ -113,7 +113,12 @@ wireless-regdb
 wireplumber
 wl-clipboard
 woff2-font-awesome
+xclip
 xdg-desktop-portal-gtk
+xdg-desktop-portal-hyprland
+xdg-terminal-exec-git
+xdg-user-dirs
+xorg-xhost
 xournalpp
 yaru-icon-theme
 yay
