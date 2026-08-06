@@ -716,7 +716,10 @@ def installer_worker():
             if os.path.exists(omarchy_input):
                 with open(omarchy_input, "r") as f:
                     content = f.read()
-                content = content.replace('--     kb_layout = "us,dk,eu",', f'    kb_layout = "{kb_layout}",')
+                content = content.replace('-- hl.config({', 'hl.config({', 1)
+                content = content.replace('--   input = {', '  input = {', 1)
+                content = content.replace('--     kb_layout = "us,dk,eu",', f'    kb_layout = "{kb_layout}",', 1)
+                content = content.replace('--   },\n-- })', '  },\n})', 1)
                 with open(omarchy_input, "w") as f:
                     f.write(content)
         except Exception:
