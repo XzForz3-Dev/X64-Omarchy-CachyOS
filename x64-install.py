@@ -608,7 +608,7 @@ def installer_worker():
         run_cmd_live("sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com", check=False)
         run_cmd_live("sudo pacman-key --lsign-key 3056513887B78AEB", check=False)
         run_cmd_live("sudo pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'", check=False)
-        run_cmd_live("sudo bash -c 'grep -q \"chaotic-aur\" /etc/pacman.conf || echo -e \"\\n[chaotic-aur]\\nInclude = /etc/pacman.d/chaotic-mirrorlist\\n\" >> /etc/pacman.conf'")
+        run_cmd_live("sudo bash -c 'if [ -f /etc/pacman.d/chaotic-mirrorlist ]; then grep -q \"chaotic-aur\" /etc/pacman.conf || echo -e \"\\n[chaotic-aur]\\nInclude = /etc/pacman.d/chaotic-mirrorlist\\n\" >> /etc/pacman.conf; fi'")
         progress.update(t_repo, description="[green]Repositorios Listos", completed=100)
 
 
