@@ -1,8 +1,6 @@
 # Omarchy core package list pacstrapped by the ISO.
 # The ISO builder also reads this file when constructing the offline mirror.
-aether
 alsa-utils
-asdcontrol
 avahi
 bash-completion
 bat
@@ -14,7 +12,6 @@ brightnessctl
 btop
 firefox
 clang
-cliamp
 cups
 cups-browsed
 cups-filters
@@ -84,7 +81,6 @@ nss-mdns
 nvim
 obs-studio
 obsidian
-omacut
 pacman-contrib
 pamixer
 pinta
@@ -97,7 +93,6 @@ python-poetry-core
 qemu-user-static-binfmt
 ripgrep
 ruby
-tensaku
 sddm
 socat
 starship
@@ -108,12 +103,8 @@ tesseract-data-eng
 tldr
 tree-sitter-cli
 tmux
-ttf-ia-writer
-ttf-jetbrains-mono-nerd-basic
-tzupdate
 udiskie
 ufw
-ufw-docker
 unzip
 usage
 uwsm
@@ -123,7 +114,6 @@ wireplumber
 wl-clipboard
 woff2-font-awesome
 xdg-desktop-portal-gtk
-xdg-terminal-exec
 xournalpp
 yaru-icon-theme
 yay
