@@ -244,7 +244,7 @@ def main():
                         show_loading_bar(len(password))
                         
                         proc = subprocess.Popen(
-                            ['sudo', '-S', '-v'],
+                            ['sudo', '-k', '-S', '-v'],
                             stdin=subprocess.PIPE,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE
