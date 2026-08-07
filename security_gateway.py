@@ -18,16 +18,14 @@ logo_text = """
 """
 
 welcome_text = [
-    "\033[1;36m✦ BIENVENIDO A LA COMUNIDAD X64 STUDIOS ✦\033[0m",
+    "\033[1;36m✦ X64 MEGA DASHBOARD // CORE OVERRIDE ✦\033[0m",
     "",
-    "\033[1;37mSomos un colectivo élite de desarrolladores, ingenieros y diseñadores dedicados\033[0m",
-    "\033[1;37ma superar los límites del software, desarrollo web y herramientas de última generación.\033[0m",
+    "\033[1;37mEstás a punto de reescribir las reglas de tu hardware. Hemos forjado este ecosistema\033[0m",
+    "\033[1;37mdesde cero no solo para fusionar la estética de Omarchy con el rendimiento\033[0m",
+    "\033[1;37msalvaje de CachyOS, sino para servir como tu centro de control absoluto.\033[0m",
     "",
-    "\033[1;37mNuestra filosofía es inquebrantable: construir ecosistemas digitales donde el rendimiento\033[0m",
-    "\033[1;37mabsoluto converja perfectamente con una estética minimalista y superior.\033[0m",
-    "",
-    "\033[1;90mEste instalador exclusivo ha sido forjado desde cero por X64 Studios para brindarte\033[0m",
-    "\033[1;90muna metamorfosis impecable de tu sistema, fusionando el poder de Omarchy y CachyOS.\033[0m",
+    "\033[1;90mInstaladores avanzados, diagnósticos y optimización extrema. Todo en un solo núcleo.\033[0m",
+    "\033[1;90mTu máquina está lista para evolucionar.\033[0m",
     "",
     "\033[1;33m[ Únete a nuestras filas en Discord para colaborar, aprender y crear con nosotros ]\033[0m",
     "\033[1;33m\"Potenciando ideas, desarrollando el futuro.\"\033[0m"
