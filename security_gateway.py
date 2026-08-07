@@ -27,8 +27,8 @@ welcome_text = [
     "\033[1;90mInstaladores avanzados, diagnósticos y optimización extrema. Todo en un solo núcleo.\033[0m",
     "\033[1;90mTu máquina está lista para evolucionar.\033[0m",
     "",
-    "\033[1;33m[ Únete a nuestras filas en Discord para colaborar, aprender y crear con nosotros ]\033[0m",
-    "\033[1;33m\"Potenciando ideas, desarrollando el futuro.\"\033[0m"
+    "\033[1;33m[ Sigue el desarrollo en github.com/XzForz3-Dev/X64-Omarchy-CachyOS o únete a nuestro Discord ]\033[0m",
+    "\033[1;33m\"El código es la ley. El rendimiento es la meta.\"\033[0m"
 ]
 
 def draw_at(y, x, text):
