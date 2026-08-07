@@ -115,13 +115,9 @@ def draw_static_ui():
     sys.stdout.flush()
     time.sleep(0.02)
     
-    hex_chars = "0123456789ABCDEF"
     for r in range(2, rows):
-        # Add matrix/hex visual detail to borders
-        hex_l = "0x" + "".join(random.choice(hex_chars) for _ in range(4))
-        hex_r = "0x" + "".join(random.choice(hex_chars) for _ in range(4))
-        draw_at(r, 1, color + f"║ \033[1;90m{hex_l}\033[0m")
-        draw_at(r, cols - 9, f"\033[1;90m{hex_r} \033[1;32m║\033[0m")
+        draw_at(r, 1, color + "║\033[0m")
+        draw_at(r, cols, color + "║\033[0m")
         sys.stdout.flush()
         time.sleep(0.002)
         
