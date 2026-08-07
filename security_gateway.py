@@ -121,8 +121,8 @@ def draw_static_ui():
     draw_at(box_y+3, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
     draw_at(box_y+4, box_x, f"\033[1;36m╰{'─'*(box_width-2)}╯\033[0m")
     
-    footer_text = " [ OMARCHY + CACHYOS // CORE SYSTEM OVERRIDE ] "
-    draw_at(rows - 2, max(2, (cols - len(footer_text)) // 2 + 1), f"\033[1;35m{footer_text}\033[0m")
+    footer_text = " [ X64 MEGA DASHBOARD // OMARCHY & CACHYOS ENGINE ] "
+    draw_at(rows - 2, max(2, (cols - len(footer_text)) // 2 + 1), f"\033[1;36m{footer_text}\033[0m")
     
     sys.stdout.flush()
 
