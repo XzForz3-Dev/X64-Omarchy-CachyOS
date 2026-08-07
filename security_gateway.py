@@ -180,13 +180,6 @@ def draw_static_ui():
     draw_at(box_y+3, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
     draw_at(box_y+4, box_x, f"\033[1;36m╰{'─'*(box_width-2)}╯\033[0m")
     
-    # Padlock ASCII 
-    draw_at(box_y, box_x - 10, "\033[1;33m  ╭──╮  \033[0m")
-    draw_at(box_y+1, box_x - 10, "\033[1;33m  │  │  \033[0m")
-    draw_at(box_y+2, box_x - 10, "\033[1;33m ┌┴──┴┐ \033[0m")
-    draw_at(box_y+3, box_x - 10, "\033[1;33m │ [] │ \033[0m")
-    draw_at(box_y+4, box_x - 10, "\033[1;33m └────┘ \033[0m")
-    
     footer_text = " [ OMARCHY + CACHYOS // CORE SYSTEM OVERRIDE ] "
     draw_at(rows - 2, max(2, (cols - len(footer_text)) // 2 + 1), f"\033[1;32m{footer_text}\033[0m")
     
@@ -207,12 +200,6 @@ def update_dynamic_ui(password_len, msg="", scramble_char=None, is_error=False, 
         draw_at(box_y+1, box_x, f"\033[1;31m│\033[0m" + " "*(box_width-2) + f"\033[1;31m│\033[0m")
         draw_at(box_y+3, box_x, f"\033[1;31m│\033[0m" + " "*(box_width-2) + f"\033[1;31m│\033[0m")
         draw_at(box_y+4, box_x, f"\033[1;31m╰{'─'*(box_width-2)}╯\033[0m")
-        # Turn lock red
-        draw_at(box_y, box_x - 10, "\033[1;31m  ╭──╮  \033[0m")
-        draw_at(box_y+1, box_x - 10, "\033[1;31m  │  │  \033[0m")
-        draw_at(box_y+2, box_x - 10, "\033[1;31m ┌┴──┴┐ \033[0m")
-        draw_at(box_y+3, box_x - 10, "\033[1;31m │ [] │ \033[0m")
-        draw_at(box_y+4, box_x - 10, "\033[1;31m └────┘ \033[0m")
     else:
         box_title = "[ SECURITY CLEARANCE REQUIRED ]"
         title_start = (box_width - len(box_title)) // 2
@@ -221,12 +208,6 @@ def update_dynamic_ui(password_len, msg="", scramble_char=None, is_error=False, 
         draw_at(box_y+1, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
         draw_at(box_y+3, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
         draw_at(box_y+4, box_x, f"\033[1;36m╰{'─'*(box_width-2)}╯\033[0m")
-        # Turn lock yellow
-        draw_at(box_y, box_x - 10, "\033[1;33m  ╭──╮  \033[0m")
-        draw_at(box_y+1, box_x - 10, "\033[1;33m  │  │  \033[0m")
-        draw_at(box_y+2, box_x - 10, "\033[1;33m ┌┴──┴┐ \033[0m")
-        draw_at(box_y+3, box_x - 10, "\033[1;33m │ [] │ \033[0m")
-        draw_at(box_y+4, box_x - 10, "\033[1;33m └────┘ \033[0m")
 
     border_char = "\033[1;31m│\033[0m" if is_error else "\033[1;36m│\033[0m"
     prompt = "  > INPUT_KEY: ["
@@ -264,13 +245,6 @@ def show_loading_bar(password_len):
     _, _, _, box_y, _, _, _ = get_layout(rows)
     box_width = 72
     box_x = max(2, (cols - box_width) // 2 + 1)
-    
-    # Unlock icon animation
-    draw_at(box_y, box_x - 10, "\033[1;32m  ╭──╮  \033[0m")
-    draw_at(box_y+1, box_x - 10, "\033[1;32m  │  ╰─┐\033[0m")
-    draw_at(box_y+2, box_x - 10, "\033[1;32m ┌┴──┴┐ \033[0m")
-    draw_at(box_y+3, box_x - 10, "\033[1;32m │ [] │ \033[0m")
-    draw_at(box_y+4, box_x - 10, "\033[1;32m └────┘ \033[0m")
     
     for progress in range(1, 101, random.randint(15, 30)):
         if progress > 100: progress = 100
