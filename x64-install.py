@@ -884,6 +884,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             services_script += "systemctl enable getty@tty1.service --now\n"
 
         services_script += "systemctl enable bluetooth.service\n"
+        services_script += "systemctl enable systemd-oomd.service\n"
         
         if "ananicy-cpp" in user_choices["packages"]:
             services_script += "systemctl enable ananicy-cpp.service\n"
