@@ -96,20 +96,9 @@ def draw_static_ui():
         
     if show_text:
         for i, text_line in enumerate(welcome_text):
-            if not text_line:
-                continue
             clean_line = text_line.replace('\033[1;36m', '').replace('\033[1;37m', '').replace('\033[1;90m', '').replace('\033[1;33m', '').replace('\033[1;32m', '').replace('\033[0m', '')
             x = max(2, (cols - len(clean_line)) // 2 + 1)
-            
-            color_prefix = text_line.split('m')[0] + 'm' if '\033' in text_line else ''
-            draw_at(text_y + i, x, color_prefix)
-            
-            for char in clean_line:
-                sys.stdout.write(char)
-                sys.stdout.flush()
-                time.sleep(0.02)
-            
-            sys.stdout.write('\033[0m')
+            draw_at(text_y + i, x, text_line)
             sys.stdout.flush()
             time.sleep(0.02)
         
