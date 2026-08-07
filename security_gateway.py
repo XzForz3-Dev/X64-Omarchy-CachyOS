@@ -219,6 +219,7 @@ def show_loading_bar(password_len):
     sys.stdout.flush()
 
 def main():
+    subprocess.call(['sudo', '-k'])
     password = ""
     msg = ""
     fd = sys.stdin.fileno()
@@ -244,7 +245,7 @@ def main():
                         show_loading_bar(len(password))
                         
                         proc = subprocess.Popen(
-                            ['sudo', '-k', '-S', '-v'],
+                            ['sudo', '-S', '-v'],
                             stdin=subprocess.PIPE,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE
