@@ -9,7 +9,7 @@ import time
 import random
 
 logo_text = """
-\033[1;36m██╗  ██╗ ██████╗ ██╗  ██╗    ███████╗████████╗██╗   ██╗██████╗ ██╗ ██████╗ ███████╗
+\033[1;32m██╗  ██╗ ██████╗ ██╗  ██╗    ███████╗████████╗██╗   ██╗██████╗ ██╗ ██████╗ ███████╗
 ╚██╗██╔╝██╔════╝ ██║  ██║    ██╔════╝╚══██╔══╝██║   ██║██╔══██╗██║██╔═══██╗██╔════╝
  ╚███╔╝ ███████╗ ███████║    ███████╗   ██║   ██║   ██║██║  ██║██║██║   ██║███████╗
  ██╔██╗ ██╔═══██╗╚════██║    ╚════██║   ██║   ██║   ██║██║  ██║██║██║   ██║╚════██║
@@ -29,8 +29,8 @@ welcome_text = [
     "\033[1;90mEste instalador exclusivo ha sido forjado desde cero por X64 Studios para brindarte\033[0m",
     "\033[1;90muna metamorfosis impecable de tu sistema, fusionando el poder de Omarchy y CachyOS.\033[0m",
     "",
-    "\033[1;33m[ Únete a nuestras filas en Discord para colaborar, aprender y crear con nosotros ]\033[0m",
-    "\033[1;33m\"Potenciando ideas, desarrollando el futuro.\"\033[0m"
+    "\033[1;36m[ Únete a nuestras filas en Discord para colaborar, aprender y crear con nosotros ]\033[0m",
+    "\033[1;36m\"Potenciando ideas, desarrollando el futuro.\"\033[0m"
 ]
 
 def draw_at(y, x, text):
@@ -68,7 +68,7 @@ def draw_static_ui():
     rows, cols = get_term_size()
     sys.stdout.write("\033[2J\033[H")
     
-    color = "\033[1;36m"
+    color = "\033[1;32m" # Emerald green borders
     draw_at(1, 1, color + "╔" + "═"*(cols-2) + "╗\033[0m")
     sys.stdout.flush()
     time.sleep(0.02)
@@ -77,13 +77,13 @@ def draw_static_ui():
         draw_at(r, 1, color + "║\033[0m")
         draw_at(r, cols, color + "║\033[0m")
         sys.stdout.flush()
-        time.sleep(0.003)
+        time.sleep(0.002)
         
     draw_at(rows, 1, color + "╚" + "═"*(cols-2) + "╝\033[0m")
     sys.stdout.flush()
     
     title = "[ X64 SECURE TERMINAL ]"
-    draw_at(1, max(1, (cols - len(title)) // 2 + 1), f"\033[1;33m{title}\033[0m")
+    draw_at(1, max(1, (cols - len(title)) // 2 + 1), f"\033[1;36m{title}\033[0m")
     
     start_y, text_y, box_y, show_text, logo_lines = get_layout(rows)
     logo_width = 83 
@@ -96,9 +96,20 @@ def draw_static_ui():
         
     if show_text:
         for i, text_line in enumerate(welcome_text):
-            clean_line = text_line.replace('\033[1;36m', '').replace('\033[1;37m', '').replace('\033[1;90m', '').replace('\033[1;33m', '').replace('\033[0m', '')
+            if not text_line:
+                continue
+            clean_line = text_line.replace('\033[1;36m', '').replace('\033[1;37m', '').replace('\033[1;90m', '').replace('\033[1;33m', '').replace('\033[1;32m', '').replace('\033[0m', '')
             x = max(2, (cols - len(clean_line)) // 2 + 1)
-            draw_at(text_y + i, x, text_line)
+            
+            color_prefix = text_line.split('m')[0] + 'm' if '\033' in text_line else ''
+            draw_at(text_y + i, x, color_prefix)
+            
+            for char in clean_line:
+                sys.stdout.write(char)
+                sys.stdout.flush()
+                time.sleep(0.02)
+            
+            sys.stdout.write('\033[0m')
             sys.stdout.flush()
             time.sleep(0.02)
         
@@ -114,7 +125,7 @@ def draw_static_ui():
     box_title = "[ SECURITY CLEARANCE REQUIRED ]"
     title_start = (box_width - len(box_title)) // 2
     
-    top_border = f"╭{'─'*title_start}\033[1;31m{box_title}\033[1;36m{'─'*(box_width - 2 - title_start - len(box_title))}╮"
+    top_border = f"╭{'─'*title_start}\033[1;32m{box_title}\033[1;36m{'─'*(box_width - 2 - title_start - len(box_title))}╮"
     draw_at(box_y, box_x, f"\033[1;36m{top_border}\033[0m")
     draw_at(box_y+1, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
     draw_at(box_y+2, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
@@ -122,21 +133,41 @@ def draw_static_ui():
     draw_at(box_y+4, box_x, f"\033[1;36m╰{'─'*(box_width-2)}╯\033[0m")
     
     footer_text = " [ OMARCHY + CACHYOS // CORE SYSTEM OVERRIDE ] "
-    draw_at(rows - 2, max(2, (cols - len(footer_text)) // 2 + 1), f"\033[1;35m{footer_text}\033[0m")
+    draw_at(rows - 2, max(2, (cols - len(footer_text)) // 2 + 1), f"\033[1;32m{footer_text}\033[0m")
     
     sys.stdout.flush()
 
-def update_dynamic_ui(password_len, msg="", scramble_char=None):
+def update_dynamic_ui(password_len, msg="", scramble_char=None, is_error=False):
     rows, cols = get_term_size()
     _, _, box_y, _, _ = get_layout(rows)
     
     box_width = 72
     box_x = max(2, (cols - box_width) // 2 + 1)
     
+    # Error visual feedback
+    if is_error:
+        box_title = "[ ACCESS DENIED ]"
+        title_start = (box_width - len(box_title)) // 2
+        top_border = f"╭{'─'*title_start}\033[1;31m{box_title}\033[1;31m{'─'*(box_width - 2 - title_start - len(box_title))}╮"
+        draw_at(box_y, box_x, f"\033[1;31m{top_border}\033[0m")
+        draw_at(box_y+1, box_x, f"\033[1;31m│\033[0m" + " "*(box_width-2) + f"\033[1;31m│\033[0m")
+        draw_at(box_y+3, box_x, f"\033[1;31m│\033[0m" + " "*(box_width-2) + f"\033[1;31m│\033[0m")
+        draw_at(box_y+4, box_x, f"\033[1;31m╰{'─'*(box_width-2)}╯\033[0m")
+    else:
+        # Restore normal box
+        box_title = "[ SECURITY CLEARANCE REQUIRED ]"
+        title_start = (box_width - len(box_title)) // 2
+        top_border = f"╭{'─'*title_start}\033[1;32m{box_title}\033[1;36m{'─'*(box_width - 2 - title_start - len(box_title))}╮"
+        draw_at(box_y, box_x, f"\033[1;36m{top_border}\033[0m")
+        draw_at(box_y+1, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
+        draw_at(box_y+3, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
+        draw_at(box_y+4, box_x, f"\033[1;36m╰{'─'*(box_width-2)}╯\033[0m")
+
+    border_char = "\033[1;31m│\033[0m" if is_error else "\033[1;36m│\033[0m"
     prompt = "  > INPUT_KEY: ["
     
     if scramble_char and password_len > 0:
-        stars = "*" * (password_len - 1) + f"\033[1;33m{scramble_char}\033[1;31m"
+        stars = "*" * (password_len - 1) + f"\033[1;32m{scramble_char}\033[1;31m"
     else:
         stars = "*" * password_len
         
@@ -148,16 +179,54 @@ def update_dynamic_ui(password_len, msg="", scramble_char=None):
     pad_left = (box_width - 2 - content_len_visual) // 2
     
     blank_inner = " " * (box_width - 2)
+    draw_at(box_y+2, box_x, border_char)
     draw_at(box_y+2, box_x + 1, blank_inner)
     draw_at(box_y+2, box_x + 1 + pad_left, content)
+    draw_at(box_y+2, box_x + box_width - 1, border_char)
     
     # Blank msg space
     draw_at(box_y+5, 2, " " * (cols - 4))
     if msg:
-        msg_clean = msg.replace('\033[1;33m', '').replace('\033[1;31m', '').replace('\033[1;32m', '').replace('\033[0m', '')
+        msg_clean = msg.replace('\033[1;33m', '').replace('\033[1;31m', '').replace('\033[1;32m', '').replace('\033[1;36m', '').replace('\033[0m', '')
         pad_msg = max(2, (cols - len(msg_clean)) // 2 + 1)
         draw_at(box_y+6, pad_msg, msg)
         
+    sys.stdout.flush()
+
+def show_loading_bar(password_len):
+    rows, cols = get_term_size()
+    _, _, box_y, _, _ = get_layout(rows)
+    box_width = 72
+    box_x = max(2, (cols - box_width) // 2 + 1)
+    
+    for progress in range(1, 101, random.randint(15, 30)):
+        if progress > 100: progress = 100
+        bar_len = 30
+        filled = int((progress / 100) * bar_len)
+        bar = "\033[1;36m█\033[0m" * filled + "\033[1;90m░\033[0m" * (bar_len - filled)
+        
+        content = f"\033[1;37m  > DECRYPTING: [{bar}\033[1;37m] {progress}%\033[0m"
+        pad_left = (box_width - 2 - (18 + bar_len + 5)) // 2
+        
+        blank_inner = " " * (box_width - 2)
+        draw_at(box_y+2, box_x + 1, blank_inner)
+        draw_at(box_y+2, box_x + 1 + pad_left, content)
+        
+        draw_at(box_y+6, 2, " " * (cols - 4))
+        msg = f"\033[1;36m[!] VERIFYING CREDENTIALS...\033[0m"
+        msg_clean = "[!] VERIFYING CREDENTIALS..."
+        pad_msg = max(2, (cols - len(msg_clean)) // 2 + 1)
+        draw_at(box_y+6, pad_msg, msg)
+        
+        sys.stdout.flush()
+        time.sleep(random.uniform(0.05, 0.15))
+        
+    # Ensure it reaches 100%
+    bar = "\033[1;36m█\033[0m" * 30
+    content = f"\033[1;37m  > DECRYPTING: [{bar}\033[1;37m] 100%\033[0m"
+    pad_left = (box_width - 2 - (18 + 30 + 5)) // 2
+    draw_at(box_y+2, box_x + 1, " " * (box_width - 2))
+    draw_at(box_y+2, box_x + 1 + pad_left, content)
     sys.stdout.flush()
 
 def main():
@@ -182,7 +251,8 @@ def main():
                         if not password:
                             break
                         
-                        update_dynamic_ui(len(password), "\033[1;33m[!] AUTHORIZING SYSTEM OVERRIDE...\033[0m")
+                        sys.stdout.write("\033[2K") # Clear line
+                        show_loading_bar(len(password))
                         
                         proc = subprocess.Popen(
                             ['sudo', '-S', '-v'],
@@ -200,7 +270,7 @@ def main():
                         else:
                             password = ""
                             msg = "\033[1;31m[X] ACCESS DENIED. INCORRECT KEY.\033[0m"
-                            update_dynamic_ui(len(password), msg)
+                            update_dynamic_ui(len(password), msg, is_error=True)
                             break
                             
                     elif ch == '\x7f' or ch == '\b': 
@@ -212,6 +282,9 @@ def main():
                         sys.stdout.write("\033[?25h")
                         sys.exit(1)
                     else:
+                        if len(password) == 0:
+                            # Reset error state if any
+                            update_dynamic_ui(0, "")
                         password += ch
                         
                         scramble_chars = "!@#$%^&*?/~X"
