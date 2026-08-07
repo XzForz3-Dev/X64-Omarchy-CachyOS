@@ -27,7 +27,8 @@ welcome_text = [
     "\033[1;90mInstaladores avanzados, diagnósticos y optimización extrema. Todo en un solo núcleo.\033[0m",
     "\033[1;90mTu máquina está lista para evolucionar.\033[0m",
     "",
-    "\033[1;33m[ Sigue el desarrollo en github.com/XzForz3-Dev/X64-Omarchy-CachyOS o únete a nuestro Discord ]\033[0m",
+    "\033[1;33m[ Sigue el desarrollo en github.com/XzForz3-Dev/X64-Omarchy-CachyOS ]\033[0m",
+    "\033[1;33m[ Únete a nuestra red: discord.gg/pon-tu-link-aqui ]\033[0m",
     "\033[1;33m\"El código es la ley. El rendimiento es la meta.\"\033[0m"
 ]
 
