@@ -30,11 +30,11 @@ jobs:
           git remote add upstream https://github.com/basecamp/omarchy.git
           git fetch upstream quattro
 
-      - name: Fusión Inteligente (Priorizar Nuestro Código)
+      - name: Fusión Estricta (Requerir Adaptación Manual)
         run: |
-          # Hacemos merge. Si hay conflicto estructural (ej: nosotros borramos un archivo y ellos lo editaron), 
-          # forzamos la resolución a nuestro favor (mantenerlo borrado) para que el bot no se estrelle.
-          git merge upstream/quattro --strategy-option ours -m "chore: Auto-sync from upstream" || (git status -s | awk '/^DU/ {print $2}' | xargs -r git rm && git commit --no-edit)
+          # Hacemos merge. Si hay conflicto estructural con los cambios del creador, el comando fallará.
+          # Esto activará el Escudo de Emergencia para que la IA y el usuario adapten el código.
+          git merge upstream/quattro -m "chore: Auto-sync from upstream"
 
       - name: Ejecutar Pruebas de Integridad (CI)
         id: run_tests
