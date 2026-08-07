@@ -27,10 +27,7 @@ welcome_text = [
     "\033[1;37mabsoluto converja perfectamente con una estética minimalista y superior.\033[0m",
     "",
     "\033[1;90mEste instalador exclusivo ha sido forjado desde cero por X64 Studios para brindarte\033[0m",
-    "\033[1;90muna metamorfosis impecable de tu sistema, fusionando el poder de Omarchy y CachyOS.\033[0m",
-    "",
-    "\033[1;36m[ Únete a nuestras filas en Discord para colaborar, aprender y crear con nosotros ]\033[0m",
-    "\033[1;36m\"Potenciando ideas, desarrollando el futuro.\"\033[0m"
+    "\033[1;90muna metamorfosis impecable de tu sistema, fusionando el poder de Omarchy y CachyOS.\033[0m"
 ]
 
 def draw_at(y, x, text):
@@ -43,26 +40,71 @@ def get_term_size():
     except:
         return 24, 80
 
+def get_system_specs():
+    specs = {"os": "Unknown", "kernel": "Unknown", "cpu": "Unknown", "ram": "Unknown"}
+    try:
+        if os.path.exists('/etc/os-release'):
+            with open('/etc/os-release') as f:
+                for line in f:
+                    if line.startswith('PRETTY_NAME='):
+                        specs['os'] = line.split('=')[1].strip().strip('"')
+                        break
+        
+        specs['kernel'] = subprocess.check_output(['uname', '-r'], stderr=subprocess.DEVNULL).decode().strip()
+        
+        if os.path.exists('/proc/cpuinfo'):
+            with open('/proc/cpuinfo') as f:
+                for line in f:
+                    if line.startswith('model name'):
+                        specs['cpu'] = line.split(':')[1].strip()
+                        break
+                        
+        if os.path.exists('/proc/meminfo'):
+            with open('/proc/meminfo') as f:
+                for line in f:
+                    if line.startswith('MemTotal:'):
+                        kb = int(line.split()[1])
+                        gb = round(kb / (1024**2), 1)
+                        specs['ram'] = f"{gb} GB"
+                        break
+    except:
+        pass
+    return specs
+
 def get_layout(rows):
     logo_lines = logo_text.strip('\n').split('\n')
     logo_height = len(logo_lines)
     text_height = len(welcome_text)
+    diag_height = 6 # Height of the diagnostic panel
     box_height = 5
     
-    if rows >= (logo_height + 2 + text_height + 2 + box_height + 4):
+    total_content = logo_height + 2 + text_height + 2 + diag_height + 2 + box_height
+    
+    if rows >= total_content + 4:
+        start_y = max(3, (rows - total_content) // 2)
+        text_y = start_y + logo_height + 2
+        diag_y = text_y + text_height + 2
+        box_y = diag_y + diag_height + 2
+        show_text = True
+        show_diag = True
+    elif rows >= (logo_height + 2 + text_height + 2 + box_height + 4):
         total_height = logo_height + 2 + text_height + 2 + box_height
         start_y = max(3, (rows - total_height) // 2)
         text_y = start_y + logo_height + 2
+        diag_y = 0
         box_y = text_y + text_height + 2
         show_text = True
+        show_diag = False
     else:
         total_height = logo_height + 3 + box_height
         start_y = max(3, (rows - total_height) // 2)
         text_y = 0
+        diag_y = 0
         box_y = start_y + logo_height + 3
         show_text = False
+        show_diag = False
         
-    return start_y, text_y, box_y, show_text, logo_lines
+    return start_y, text_y, diag_y, box_y, show_text, show_diag, logo_lines
 
 def draw_static_ui():
     rows, cols = get_term_size()
@@ -73,9 +115,13 @@ def draw_static_ui():
     sys.stdout.flush()
     time.sleep(0.02)
     
+    hex_chars = "0123456789ABCDEF"
     for r in range(2, rows):
-        draw_at(r, 1, color + "║\033[0m")
-        draw_at(r, cols, color + "║\033[0m")
+        # Add matrix/hex visual detail to borders
+        hex_l = "0x" + "".join(random.choice(hex_chars) for _ in range(4))
+        hex_r = "0x" + "".join(random.choice(hex_chars) for _ in range(4))
+        draw_at(r, 1, color + f"║ \033[1;90m{hex_l}\033[0m")
+        draw_at(r, cols - 9, f"\033[1;90m{hex_r} \033[1;32m║\033[0m")
         sys.stdout.flush()
         time.sleep(0.002)
         
@@ -85,7 +131,7 @@ def draw_static_ui():
     title = "[ X64 SECURE TERMINAL ]"
     draw_at(1, max(1, (cols - len(title)) // 2 + 1), f"\033[1;36m{title}\033[0m")
     
-    start_y, text_y, box_y, show_text, logo_lines = get_layout(rows)
+    start_y, text_y, diag_y, box_y, show_text, show_diag, logo_lines = get_layout(rows)
     logo_width = 83 
     
     for i, line in enumerate(logo_lines):
@@ -101,11 +147,28 @@ def draw_static_ui():
             draw_at(text_y + i, x, text_line)
             sys.stdout.flush()
             time.sleep(0.02)
+            
+    if show_diag:
+        specs = get_system_specs()
+        diag_title = " [ SYSTEM DIAGNOSTICS ] "
+        diag_width = 60
+        diag_x = max(2, (cols - diag_width) // 2 + 1)
+        
+        os_str = f" OS: {specs['os']}"
+        kern_str = f" KERNEL: {specs['kernel']}"
+        cpu_str = f" CPU: {specs['cpu'][:48]}"
+        ram_str = f" MEM: {specs['ram']}"
+        
+        draw_at(diag_y, diag_x, f"\033[1;90m╭──\033[1;36m{diag_title}\033[1;90m{'─'*(diag_width - len(diag_title) - 4)}╮\033[0m")
+        draw_at(diag_y+1, diag_x, f"\033[1;90m│\033[1;37m{os_str.ljust(diag_width-2)}\033[1;90m│\033[0m")
+        draw_at(diag_y+2, diag_x, f"\033[1;90m│\033[1;37m{kern_str.ljust(diag_width-2)}\033[1;90m│\033[0m")
+        draw_at(diag_y+3, diag_x, f"\033[1;90m│\033[1;37m{cpu_str.ljust(diag_width-2)}\033[1;90m│\033[0m")
+        draw_at(diag_y+4, diag_x, f"\033[1;90m│\033[1;37m{ram_str.ljust(diag_width-2)}\033[1;90m│\033[0m")
+        draw_at(diag_y+5, diag_x, f"\033[1;90m╰{'─'*(diag_width-2)}╯\033[0m")
         
     box_width = 72
     box_x = max(2, (cols - box_width) // 2 + 1)
     
-    # Animar apertura del modal
     center_x = box_x + box_width // 2
     draw_at(box_y, center_x, "\033[1;36m+\033[0m")
     sys.stdout.flush()
@@ -121,19 +184,23 @@ def draw_static_ui():
     draw_at(box_y+3, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
     draw_at(box_y+4, box_x, f"\033[1;36m╰{'─'*(box_width-2)}╯\033[0m")
     
+    # Padlock ASCII 
+    draw_at(box_y, box_x - 6, "\033[1;33m ▄▄ \033[0m")
+    draw_at(box_y+1, box_x - 6, "\033[1;33m█  █\033[0m")
+    draw_at(box_y+2, box_x - 6, "\033[1;33m████\033[0m")
+    
     footer_text = " [ OMARCHY + CACHYOS // CORE SYSTEM OVERRIDE ] "
     draw_at(rows - 2, max(2, (cols - len(footer_text)) // 2 + 1), f"\033[1;32m{footer_text}\033[0m")
     
     sys.stdout.flush()
 
-def update_dynamic_ui(password_len, msg="", scramble_char=None, is_error=False):
+def update_dynamic_ui(password_len, msg="", scramble_char=None, is_error=False, cursor_on=False):
     rows, cols = get_term_size()
-    _, _, box_y, _, _ = get_layout(rows)
+    _, _, _, box_y, _, _, _ = get_layout(rows)
     
     box_width = 72
     box_x = max(2, (cols - box_width) // 2 + 1)
     
-    # Error visual feedback
     if is_error:
         box_title = "[ ACCESS DENIED ]"
         title_start = (box_width - len(box_title)) // 2
@@ -142,8 +209,11 @@ def update_dynamic_ui(password_len, msg="", scramble_char=None, is_error=False):
         draw_at(box_y+1, box_x, f"\033[1;31m│\033[0m" + " "*(box_width-2) + f"\033[1;31m│\033[0m")
         draw_at(box_y+3, box_x, f"\033[1;31m│\033[0m" + " "*(box_width-2) + f"\033[1;31m│\033[0m")
         draw_at(box_y+4, box_x, f"\033[1;31m╰{'─'*(box_width-2)}╯\033[0m")
+        # Turn lock red
+        draw_at(box_y, box_x - 6, "\033[1;31m ▄▄ \033[0m")
+        draw_at(box_y+1, box_x - 6, "\033[1;31m█  █\033[0m")
+        draw_at(box_y+2, box_x - 6, "\033[1;31m████\033[0m")
     else:
-        # Restore normal box
         box_title = "[ SECURITY CLEARANCE REQUIRED ]"
         title_start = (box_width - len(box_title)) // 2
         top_border = f"╭{'─'*title_start}\033[1;32m{box_title}\033[1;36m{'─'*(box_width - 2 - title_start - len(box_title))}╮"
@@ -151,6 +221,10 @@ def update_dynamic_ui(password_len, msg="", scramble_char=None, is_error=False):
         draw_at(box_y+1, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
         draw_at(box_y+3, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
         draw_at(box_y+4, box_x, f"\033[1;36m╰{'─'*(box_width-2)}╯\033[0m")
+        # Turn lock yellow
+        draw_at(box_y, box_x - 6, "\033[1;33m ▄▄ \033[0m")
+        draw_at(box_y+1, box_x - 6, "\033[1;33m█  █\033[0m")
+        draw_at(box_y+2, box_x - 6, "\033[1;33m████\033[0m")
 
     border_char = "\033[1;31m│\033[0m" if is_error else "\033[1;36m│\033[0m"
     prompt = "  > INPUT_KEY: ["
@@ -161,9 +235,11 @@ def update_dynamic_ui(password_len, msg="", scramble_char=None, is_error=False):
         stars = "*" * password_len
         
     visual_stars = "*" * password_len
-    space_left = max(0, 30 - len(visual_stars))
+    cursor_char = "\033[1;36m_\033[0m" if cursor_on and not is_error else " "
     
-    content = f"\033[1;37m{prompt} \033[1;31m{stars}\033[0m{' '*space_left}\033[1;37m]\033[0m"
+    space_left = max(0, 30 - len(visual_stars) - 1)
+    
+    content = f"\033[1;37m{prompt} \033[1;31m{stars}\033[0m{cursor_char}{' '*space_left}\033[1;37m]\033[0m"
     content_len_visual = len(prompt) + 1 + 30 + 1
     pad_left = (box_width - 2 - content_len_visual) // 2
     
@@ -173,7 +249,6 @@ def update_dynamic_ui(password_len, msg="", scramble_char=None, is_error=False):
     draw_at(box_y+2, box_x + 1 + pad_left, content)
     draw_at(box_y+2, box_x + box_width - 1, border_char)
     
-    # Blank msg space
     draw_at(box_y+5, 2, " " * (cols - 4))
     if msg:
         msg_clean = msg.replace('\033[1;33m', '').replace('\033[1;31m', '').replace('\033[1;32m', '').replace('\033[1;36m', '').replace('\033[0m', '')
@@ -184,9 +259,14 @@ def update_dynamic_ui(password_len, msg="", scramble_char=None, is_error=False):
 
 def show_loading_bar(password_len):
     rows, cols = get_term_size()
-    _, _, box_y, _, _ = get_layout(rows)
+    _, _, _, box_y, _, _, _ = get_layout(rows)
     box_width = 72
     box_x = max(2, (cols - box_width) // 2 + 1)
+    
+    # Unlock icon animation
+    draw_at(box_y, box_x - 6, "\033[1;32m   ▄\033[0m")
+    draw_at(box_y+1, box_x - 6, "\033[1;32m█  █\033[0m")
+    draw_at(box_y+2, box_x - 6, "\033[1;32m████\033[0m")
     
     for progress in range(1, 101, random.randint(15, 30)):
         if progress > 100: progress = 100
@@ -210,7 +290,6 @@ def show_loading_bar(password_len):
         sys.stdout.flush()
         time.sleep(random.uniform(0.05, 0.15))
         
-    # Ensure it reaches 100%
     bar = "\033[1;36m█\033[0m" * 30
     content = f"\033[1;37m  > DECRYPTING: [{bar}\033[1;37m] 100%\033[0m"
     pad_left = (box_width - 2 - (18 + 30 + 5)) // 2
@@ -225,65 +304,82 @@ def main():
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     
-    sys.stdout.write("\033[?25l") # Hide cursor
+    sys.stdout.write("\033[?25l") 
     try:
         draw_static_ui()
-        update_dynamic_ui(0)
+        update_dynamic_ui(0, cursor_on=True)
         
         tty.setcbreak(fd)
         
+        last_cursor_time = time.time()
+        cursor_state = True
+        
         while True:
             while True:
-                if select.select([sys.stdin], [], [], 0.05)[0]:
-                    ch = sys.stdin.read(1)
+                # Use a small timeout to allow cursor blinking
+                rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
+                
+                if not rlist:
+                    current_time = time.time()
+                    if current_time - last_cursor_time > 0.6:
+                        cursor_state = not cursor_state
+                        last_cursor_time = current_time
+                        update_dynamic_ui(len(password), msg, cursor_on=cursor_state)
+                    continue
                     
-                    if ch == '\n' or ch == '\r':
-                        if not password:
-                            break
-                        
-                        sys.stdout.write("\033[2K") # Clear line
-                        show_loading_bar(len(password))
-                        
-                        proc = subprocess.Popen(
-                            ['sudo', '-S', '-v'],
-                            stdin=subprocess.PIPE,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE
-                        )
-                        out, err = proc.communicate(input=(password + '\n').encode())
-                        
-                        if proc.returncode == 0:
-                            update_dynamic_ui(len(password), "\033[1;32m[✓] ACCESS GRANTED. INITIATING METAMORPHOSIS...\033[0m")
-                            time.sleep(1)
-                            sys.stdout.write("\033[2J\033[H\033[?25h") 
-                            sys.exit(0)
-                        else:
-                            password = ""
-                            msg = "\033[1;31m[X] ACCESS DENIED. INCORRECT KEY.\033[0m"
-                            update_dynamic_ui(len(password), msg, is_error=True)
-                            break
-                            
-                    elif ch == '\x7f' or ch == '\b': 
-                        if len(password) > 0:
-                            password = password[:-1]
-                            update_dynamic_ui(len(password), "")
-                            break
-                    elif ch == '\x03': 
-                        sys.stdout.write("\033[?25h")
-                        sys.exit(1)
+                ch = sys.stdin.read(1)
+                
+                # Turn solid cursor on when typing
+                cursor_state = True
+                last_cursor_time = time.time()
+                
+                if ch == '\n' or ch == '\r':
+                    if not password:
+                        continue
+                    
+                    sys.stdout.write("\033[2K")
+                    show_loading_bar(len(password))
+                    
+                    proc = subprocess.Popen(
+                        ['sudo', '-S', '-v'],
+                        stdin=subprocess.PIPE,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE
+                    )
+                    out, err = proc.communicate(input=(password + '\n').encode())
+                    
+                    if proc.returncode == 0:
+                        update_dynamic_ui(len(password), "\033[1;32m[✓] ACCESS GRANTED. INITIATING METAMORPHOSIS...\033[0m")
+                        time.sleep(1)
+                        sys.stdout.write("\033[2J\033[H\033[?25h") 
+                        sys.exit(0)
                     else:
-                        if len(password) == 0:
-                            # Reset error state if any
-                            update_dynamic_ui(0, "")
-                        password += ch
+                        password = ""
+                        msg = "\033[1;31m[X] ACCESS DENIED. INCORRECT KEY.\033[0m"
+                        update_dynamic_ui(len(password), msg, is_error=True)
+                        # Remove error after 1 second automatically? No, let them type.
+                        continue
                         
-                        scramble_chars = "!@#$%^&*?/~X"
-                        for _ in range(2):
-                            update_dynamic_ui(len(password), "", scramble_char=random.choice(scramble_chars))
-                            time.sleep(0.015)
+                elif ch == '\x7f' or ch == '\b': 
+                    if len(password) > 0:
+                        password = password[:-1]
                         update_dynamic_ui(len(password), "")
-                        
-                        break
+                    msg = "" # clear error if they backspace
+                elif ch == '\x03': 
+                    sys.stdout.write("\033[?25h")
+                    sys.exit(1)
+                else:
+                    if len(password) == 0:
+                        update_dynamic_ui(0, "")
+                    password += ch
+                    msg = ""
+                    
+                    scramble_chars = "!@#$%^&*?/~X"
+                    for _ in range(2):
+                        update_dynamic_ui(len(password), "", scramble_char=random.choice(scramble_chars), cursor_on=True)
+                        time.sleep(0.015)
+                    update_dynamic_ui(len(password), "", cursor_on=True)
+
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         sys.stdout.write("\033[?25h")
