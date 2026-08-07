@@ -9,7 +9,7 @@ import time
 import random
 
 logo_text = """
-\033[1;31m██╗  ██╗ ██████╗ ██╗  ██╗    ███████╗████████╗██╗   ██╗██████╗ ██╗ ██████╗ ███████╗
+\033[1;36m██╗  ██╗ ██████╗ ██╗  ██╗    ███████╗████████╗██╗   ██╗██████╗ ██╗ ██████╗ ███████╗
 ╚██╗██╔╝██╔════╝ ██║  ██║    ██╔════╝╚══██╔══╝██║   ██║██╔══██╗██║██╔═══██╗██╔════╝
  ╚███╔╝ ███████╗ ███████║    ███████╗   ██║   ██║   ██║██║  ██║██║██║   ██║███████╗
  ██╔██╗ ██╔═══██╗╚════██║    ╚════██║   ██║   ██║   ██║██║  ██║██║██║   ██║╚════██║
@@ -18,16 +18,16 @@ logo_text = """
 """
 
 welcome_text = [
-    "\033[1;31m✦ BIENVENIDO A LA COMUNIDAD X64 STUDIOS ✦\033[0m",
+    "\033[1;35m✦ BIENVENIDO A LA COMUNIDAD X64 STUDIOS ✦\033[0m",
     "",
-    "\033[1;90mSomos un colectivo élite de desarrolladores, ingenieros y diseñadores dedicados\033[0m",
-    "\033[1;90ma superar los límites del software, desarrollo web y herramientas de última generación.\033[0m",
+    "\033[1;37mSomos un colectivo élite de desarrolladores, ingenieros y diseñadores dedicados\033[0m",
+    "\033[1;37ma superar los límites del software, desarrollo web y herramientas de última generación.\033[0m",
     "",
-    "\033[1;90mNuestra filosofía es inquebrantable: construir ecosistemas digitales donde el rendimiento\033[0m",
-    "\033[1;90mabsoluto converja perfectamente con una estética minimalista y superior.\033[0m",
+    "\033[1;37mNuestra filosofía es inquebrantable: construir ecosistemas digitales donde el rendimiento\033[0m",
+    "\033[1;37mabsoluto converja perfectamente con una estética minimalista y superior.\033[0m",
     "",
-    "\033[1;37mEste instalador exclusivo ha sido forjado desde cero por X64 Studios para brindarte\033[0m",
-    "\033[1;37muna metamorfosis impecable de tu sistema, fusionando el poder de Omarchy y CachyOS.\033[0m"
+    "\033[1;90mEste instalador exclusivo ha sido forjado desde cero por X64 Studios para brindarte\033[0m",
+    "\033[1;90muna metamorfosis impecable de tu sistema, fusionando el poder de Omarchy y CachyOS.\033[0m"
 ]
 
 def draw_at(y, x, text):
@@ -110,7 +110,7 @@ def draw_static_ui():
     rows, cols = get_term_size()
     sys.stdout.write("\033[2J\033[H")
     
-    color = "\033[1;31m" # Red borders
+    color = "\033[1;36m" # Cyan borders
     draw_at(1, 1, color + "╔" + "═"*(cols-2) + "╗\033[0m")
     sys.stdout.flush()
     time.sleep(0.02)
@@ -125,7 +125,7 @@ def draw_static_ui():
     sys.stdout.flush()
     
     title = "[ X64 SECURE TERMINAL ]"
-    draw_at(1, max(1, (cols - len(title)) // 2 + 1), f"\033[1;90m{title}\033[0m")
+    draw_at(1, max(1, (cols - len(title)) // 2 + 1), f"\033[1;35m{title}\033[0m")
     
     start_y, text_y, diag_y, box_y, show_text, show_diag, logo_lines = get_layout(rows)
     logo_width = 83 
@@ -138,7 +138,7 @@ def draw_static_ui():
         
     if show_text:
         for i, text_line in enumerate(welcome_text):
-            clean_line = text_line.replace('\033[1;31m', '').replace('\033[1;37m', '').replace('\033[1;90m', '').replace('\033[0m', '')
+            clean_line = text_line.replace('\033[1;36m', '').replace('\033[1;35m', '').replace('\033[1;37m', '').replace('\033[1;90m', '').replace('\033[0m', '')
             x = max(2, (cols - len(clean_line)) // 2 + 1)
             draw_at(text_y + i, x, text_line)
             sys.stdout.flush()
@@ -155,33 +155,33 @@ def draw_static_ui():
         cpu_str = f" CPU: {specs['cpu'][:48]}"
         ram_str = f" MEM: {specs['ram']}"
         
-        draw_at(diag_y, diag_x, f"\033[1;31m╭──\033[1;90m{diag_title}\033[1;31m{'─'*(diag_width - len(diag_title) - 4)}╮\033[0m")
-        draw_at(diag_y+1, diag_x, f"\033[1;31m│\033[1;90m{os_str.ljust(diag_width-2)}\033[1;31m│\033[0m")
-        draw_at(diag_y+2, diag_x, f"\033[1;31m│\033[1;90m{kern_str.ljust(diag_width-2)}\033[1;31m│\033[0m")
-        draw_at(diag_y+3, diag_x, f"\033[1;31m│\033[1;90m{cpu_str.ljust(diag_width-2)}\033[1;31m│\033[0m")
-        draw_at(diag_y+4, diag_x, f"\033[1;31m│\033[1;90m{ram_str.ljust(diag_width-2)}\033[1;31m│\033[0m")
-        draw_at(diag_y+5, diag_x, f"\033[1;31m╰{'─'*(diag_width-2)}╯\033[0m")
+        draw_at(diag_y, diag_x, f"\033[1;36m╭──\033[1;35m{diag_title}\033[1;36m{'─'*(diag_width - len(diag_title) - 4)}╮\033[0m")
+        draw_at(diag_y+1, diag_x, f"\033[1;36m│\033[1;37m{os_str.ljust(diag_width-2)}\033[1;36m│\033[0m")
+        draw_at(diag_y+2, diag_x, f"\033[1;36m│\033[1;37m{kern_str.ljust(diag_width-2)}\033[1;36m│\033[0m")
+        draw_at(diag_y+3, diag_x, f"\033[1;36m│\033[1;37m{cpu_str.ljust(diag_width-2)}\033[1;36m│\033[0m")
+        draw_at(diag_y+4, diag_x, f"\033[1;36m│\033[1;37m{ram_str.ljust(diag_width-2)}\033[1;36m│\033[0m")
+        draw_at(diag_y+5, diag_x, f"\033[1;36m╰{'─'*(diag_width-2)}╯\033[0m")
         
     box_width = 72
     box_x = max(2, (cols - box_width) // 2 + 1)
     
     center_x = box_x + box_width // 2
-    draw_at(box_y, center_x, "\033[1;31m+\033[0m")
+    draw_at(box_y, center_x, "\033[1;35m+\033[0m")
     sys.stdout.flush()
     time.sleep(0.1)
     
     box_title = "[ SECURITY CLEARANCE REQUIRED ]"
     title_start = (box_width - len(box_title)) // 2
     
-    top_border = f"╭{'─'*title_start}\033[1;31m{box_title}\033[1;90m{'─'*(box_width - 2 - title_start - len(box_title))}╮"
-    draw_at(box_y, box_x, f"\033[1;90m{top_border}\033[0m")
-    draw_at(box_y+1, box_x, f"\033[1;90m│\033[0m" + " "*(box_width-2) + f"\033[1;90m│\033[0m")
-    draw_at(box_y+2, box_x, f"\033[1;90m│\033[0m" + " "*(box_width-2) + f"\033[1;90m│\033[0m")
-    draw_at(box_y+3, box_x, f"\033[1;90m│\033[0m" + " "*(box_width-2) + f"\033[1;90m│\033[0m")
-    draw_at(box_y+4, box_x, f"\033[1;90m╰{'─'*(box_width-2)}╯\033[0m")
+    top_border = f"╭{'─'*title_start}\033[1;35m{box_title}\033[1;36m{'─'*(box_width - 2 - title_start - len(box_title))}╮"
+    draw_at(box_y, box_x, f"\033[1;36m{top_border}\033[0m")
+    draw_at(box_y+1, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
+    draw_at(box_y+2, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
+    draw_at(box_y+3, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
+    draw_at(box_y+4, box_x, f"\033[1;36m╰{'─'*(box_width-2)}╯\033[0m")
     
     footer_text = " [ OMARCHY + CACHYOS // CORE SYSTEM OVERRIDE ] "
-    draw_at(rows - 2, max(2, (cols - len(footer_text)) // 2 + 1), f"\033[1;90m{footer_text}\033[0m")
+    draw_at(rows - 2, max(2, (cols - len(footer_text)) // 2 + 1), f"\033[1;35m{footer_text}\033[0m")
     
     sys.stdout.flush()
 
@@ -203,26 +203,26 @@ def update_dynamic_ui(password_len, msg="", scramble_char=None, is_error=False, 
     else:
         box_title = "[ SECURITY CLEARANCE REQUIRED ]"
         title_start = (box_width - len(box_title)) // 2
-        top_border = f"╭{'─'*title_start}\033[1;31m{box_title}\033[1;90m{'─'*(box_width - 2 - title_start - len(box_title))}╮"
-        draw_at(box_y, box_x, f"\033[1;90m{top_border}\033[0m")
-        draw_at(box_y+1, box_x, f"\033[1;90m│\033[0m" + " "*(box_width-2) + f"\033[1;90m│\033[0m")
-        draw_at(box_y+3, box_x, f"\033[1;90m│\033[0m" + " "*(box_width-2) + f"\033[1;90m│\033[0m")
-        draw_at(box_y+4, box_x, f"\033[1;90m╰{'─'*(box_width-2)}╯\033[0m")
+        top_border = f"╭{'─'*title_start}\033[1;35m{box_title}\033[1;36m{'─'*(box_width - 2 - title_start - len(box_title))}╮"
+        draw_at(box_y, box_x, f"\033[1;36m{top_border}\033[0m")
+        draw_at(box_y+1, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
+        draw_at(box_y+3, box_x, f"\033[1;36m│\033[0m" + " "*(box_width-2) + f"\033[1;36m│\033[0m")
+        draw_at(box_y+4, box_x, f"\033[1;36m╰{'─'*(box_width-2)}╯\033[0m")
 
-    border_char = "\033[1;31m│\033[0m" if is_error else "\033[1;90m│\033[0m"
+    border_char = "\033[1;31m│\033[0m" if is_error else "\033[1;36m│\033[0m"
     prompt = "  > INPUT_KEY: ["
     
     if scramble_char and password_len > 0:
-        stars = "*" * (password_len - 1) + f"\033[1;37m{scramble_char}\033[1;31m"
+        stars = "*" * (password_len - 1) + f"\033[1;37m{scramble_char}\033[1;35m"
     else:
         stars = "*" * password_len
         
     visual_stars = "*" * password_len
-    cursor_char = "\033[1;31m_\033[0m" if cursor_on and not is_error else " "
+    cursor_char = "\033[1;35m_\033[0m" if cursor_on and not is_error else " "
     
     space_left = max(0, 30 - len(visual_stars) - 1)
     
-    content = f"\033[1;90m{prompt} \033[1;31m{stars}\033[0m{cursor_char}{' '*space_left}\033[1;90m]\033[0m"
+    content = f"\033[1;36m{prompt} \033[1;35m{stars}\033[0m{cursor_char}{' '*space_left}\033[1;36m]\033[0m"
     content_len_visual = len(prompt) + 1 + 30 + 1
     pad_left = (box_width - 2 - content_len_visual) // 2
     
@@ -234,7 +234,7 @@ def update_dynamic_ui(password_len, msg="", scramble_char=None, is_error=False, 
     
     draw_at(box_y+5, 2, " " * (cols - 4))
     if msg:
-        msg_clean = msg.replace('\033[1;31m', '').replace('\033[1;37m', '').replace('\033[1;90m', '').replace('\033[0m', '')
+        msg_clean = msg.replace('\033[1;31m', '').replace('\033[1;37m', '').replace('\033[1;35m', '').replace('\033[1;36m', '').replace('\033[0m', '')
         pad_msg = max(2, (cols - len(msg_clean)) // 2 + 1)
         draw_at(box_y+6, pad_msg, msg)
         
@@ -250,9 +250,9 @@ def show_loading_bar(password_len):
         if progress > 100: progress = 100
         bar_len = 30
         filled = int((progress / 100) * bar_len)
-        bar = "\033[1;31m█\033[0m" * filled + "\033[1;90m░\033[0m" * (bar_len - filled)
+        bar = "\033[1;35m█\033[0m" * filled + "\033[1;90m░\033[0m" * (bar_len - filled)
         
-        content = f"\033[1;90m  > DECRYPTING: [{bar}\033[1;90m] \033[1;31m{progress}%\033[0m"
+        content = f"\033[1;36m  > DECRYPTING: [{bar}\033[1;36m] \033[1;35m{progress}%\033[0m"
         pad_left = (box_width - 2 - (18 + bar_len + 5)) // 2
         
         blank_inner = " " * (box_width - 2)
@@ -260,7 +260,7 @@ def show_loading_bar(password_len):
         draw_at(box_y+2, box_x + 1 + pad_left, content)
         
         draw_at(box_y+6, 2, " " * (cols - 4))
-        msg = f"\033[1;31m[!] VERIFYING CREDENTIALS...\033[0m"
+        msg = f"\033[1;35m[!] VERIFYING CREDENTIALS...\033[0m"
         msg_clean = "[!] VERIFYING CREDENTIALS..."
         pad_msg = max(2, (cols - len(msg_clean)) // 2 + 1)
         draw_at(box_y+6, pad_msg, msg)
@@ -268,8 +268,8 @@ def show_loading_bar(password_len):
         sys.stdout.flush()
         time.sleep(random.uniform(0.05, 0.15))
         
-    bar = "\033[1;31m█\033[0m" * 30
-    content = f"\033[1;90m  > DECRYPTING: [{bar}\033[1;90m] \033[1;31m100%\033[0m"
+    bar = "\033[1;35m█\033[0m" * 30
+    content = f"\033[1;36m  > DECRYPTING: [{bar}\033[1;36m] \033[1;35m100%\033[0m"
     pad_left = (box_width - 2 - (18 + 30 + 5)) // 2
     draw_at(box_y+2, box_x + 1, " " * (box_width - 2))
     draw_at(box_y+2, box_x + 1 + pad_left, content)
