@@ -1,6 +1,8 @@
 # Omarchy core package list pacstrapped by the ISO.
 # The ISO builder also reads this file when constructing the offline mirror.
+aether
 alsa-utils
+asdcontrol
 avahi
 bash-completion
 bat
@@ -10,8 +12,8 @@ bluez-utils
 bolt
 brightnessctl
 btop
-firefox
 clang
+cliamp
 cups
 cups-browsed
 cups-filters
@@ -34,14 +36,16 @@ fcitx5-gtk
 fcitx5-qt
 fd
 ffmpegthumbnailer
+firefox
 fontconfig
 foot
 fzf
 git
+gnome-disk-utility
 gnome-keyring
 gnome-themes-extra
-grim
 gpu-screen-recorder
+grim
 gum
 gvfs-mtp
 gvfs-nfs
@@ -51,16 +55,15 @@ imv
 inetutils
 inotify-tools
 inxi
-networkmanager
 jq
 kdenlive
 kernel-modules-hook
 lazydocker
 lazygit
 less
+libreoffice-fresh
 libsecret
 libyaml
-libreoffice-fresh
 llvm
 localsend
 lua51
@@ -73,14 +76,17 @@ mpv
 mpv-mpris
 nautilus
 nautilus-python
-gnome-disk-utility
+neovim
+networkmanager
 noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
 nss-mdns
-neovim
 obs-studio
 obsidian
+omacut
+omarchy-nvim
+omawrite
 pacman-contrib
 pamixer
 pinta
@@ -90,22 +96,29 @@ postgresql-libs
 power-profiles-daemon
 python-gobject
 python-poetry-core
+python-terminaltexteffects
 qemu-user-static-binfmt
 ripgrep
 ruby
-satty
+# satty
 sddm
 socat
 starship
 sushi
 system-config-printer
+tensaku
 tesseract
 tesseract-data-eng
 tldr
-tree-sitter-cli
 tmux
+tobi-try
+tree-sitter-cli
+ttf-ia-writer
+ttf-jetbrains-mono-nerd-basic
+tzupdate
 udiskie
 ufw
+ufw-docker
 unzip
 usage
 uwsm
@@ -117,7 +130,8 @@ woff2-font-awesome
 xclip
 xdg-desktop-portal-gtk
 xdg-desktop-portal-hyprland
-xdg-terminal-exec-git
+xdg-terminal-exec
+# xdg-terminal-exec-git
 xdg-user-dirs
 xorg-xhost
 xournalpp

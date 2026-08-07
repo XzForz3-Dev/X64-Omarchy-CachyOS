@@ -663,7 +663,7 @@ remove_retired_default_packages() {
     playerctl
     polkit-gnome
     qt5-remoteobjects
-    satty
+    tensaku
     swaybg
     swayosd
     walker-bin

@@ -610,8 +610,11 @@ def installer_worker():
         run_cmd_live("sudo pacman-key --lsign-key 3056513887B78AEB", check=False)
         run_cmd_live("sudo pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'", check=False)
         run_cmd_live("sudo bash -c 'if [ -f /etc/pacman.d/chaotic-mirrorlist ]; then grep -q \"chaotic-aur\" /etc/pacman.conf || echo -e \"\\n[chaotic-aur]\\nInclude = /etc/pacman.d/chaotic-mirrorlist\\n\" >> /etc/pacman.conf; fi'")
+        
+        progress.update(t_repo, description="[yellow]Inyectando repo Omarchy...", advance=10)
+        run_cmd_live("sudo bash -c 'grep -q \"omarchy\" /etc/pacman.conf || echo -e \"\\n[omarchy]\\nSigLevel = Optional TrustAll\\nServer = https://pkgs.omarchy.org/\\$arch/\\n\" >> /etc/pacman.conf'")
+        
         progress.update(t_repo, description="[green]Repositorios Listos", completed=100)
-
 
         progress.update(t_sync, description="[yellow]Creando Snapshot BTRFS...", advance=5)
         run_cmd_live("sudo snapper create -c root -d 'Pre-Omarchy Installation'", check=False)

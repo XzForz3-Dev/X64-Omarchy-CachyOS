@@ -30,7 +30,7 @@ open_image() {
   local path="$1"
 
   [[ -r $path ]] || exit 1
-  exec satty -f "$path"
+  exec tensaku -f "$path"
 }
 
 open_text() {

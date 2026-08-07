@@ -1,4 +1,4 @@
-echo "Ensure Satty is used instead of Tensaku (CachyOS)"
+echo "Replace Satty with Tensaku"
 
-omarchy-pkg-add satty
-omarchy-pkg-drop tensaku
+omarchy-pkg-add tensaku
+omarchy-pkg-drop satty
