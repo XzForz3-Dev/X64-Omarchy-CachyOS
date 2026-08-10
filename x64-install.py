@@ -657,7 +657,12 @@ def installer_worker():
                     if not i.get("selected"):
                         env_pkgs_to_remove.extend(i.get("pkg", []))
         
-        to_remove = set(env_pkgs_to_remove) - set(pkgs)
+        # Quitamos de la lista a instalar los paquetes de los entornos NO seleccionados
+        # (Esto previene que se instalen aunque vengan hardcodeados en el omarchy-base.packages original)
+        pkgs = list(set(pkgs) - set(env_pkgs_to_remove))
+        pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
+
+        to_remove = set(env_pkgs_to_remove)
         if to_remove:
             remove_str = " ".join([p for p in to_remove if p and not p.startswith('#')])
             progress.update(t_pkg, description="[yellow]Purgando entornos anteriores...", advance=5)
