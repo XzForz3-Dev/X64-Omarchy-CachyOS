@@ -2,7 +2,8 @@ echo "Install herdr from the Omarchy package repo and seed its config"
 
 # The package was briefly published as omarchy-herdr; herdr replaces it
 omarchy-pkg-drop omarchy-herdr
-omarchy-pkg-add herdr
+# X64 Override: herdr no existe todavía en los repositorios
+# omarchy-pkg-add herdr
 
 # An earlier revision of this migration installed herdr through mise. Drop that
 # install so a stale client can't shadow the packaged /usr/bin/herdr with an
