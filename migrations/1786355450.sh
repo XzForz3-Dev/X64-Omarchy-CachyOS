@@ -1,4 +1,4 @@
-echo "Replace terminaltexteffects with ttfx"
+echo "Bypass replacing terminaltexteffects with ttfx (package not in repos)"
 
-omarchy-pkg-add ttfx
-omarchy-pkg-drop python-terminaltexteffects
+# omarchy-pkg-add ttfx
+# omarchy-pkg-drop python-terminaltexteffects
