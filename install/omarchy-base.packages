@@ -102,7 +102,7 @@ postgresql-libs
 power-profiles-daemon
 python-gobject
 python-poetry-core
-ttfx
+python-terminaltexteffects
 qemu-user-static-binfmt
 ripgrep
 ruby
