@@ -322,6 +322,8 @@ fi
 
 sudo_keepalive_pid=""
 hyprland_config_reload_suppressed=0
+upgrade_started=0
+upgrade_completed=0
 
 cleanup_on_exit() {
   local exit_status=$?
@@ -332,6 +334,14 @@ cleanup_on_exit() {
 
   if [[ -n ${sudo_keepalive_pid:-} ]]; then
     kill "$sudo_keepalive_pid" 2>/dev/null || true
+  fi
+
+  # set -e aborts without a word, and the last thing on screen is a green
+  # progress line, so a half-finished upgrade otherwise reads as a finished one.
+  if (( exit_status != 0 && upgrade_started && ! upgrade_completed )); then
+    printf '\n\033[31mUpgrade incomplete - do NOT reboot.\033[0m\n' >&2
+    printf 'The system is part Omarchy 3 and part Omarchy quattro; rebooting now can leave it without a working network or desktop.\n' >&2
+    printf 'Fix the error reported above and run this script again. Re-running is safe and resumes the remaining steps.\n' >&2
   fi
 
   exit "$exit_status"
@@ -402,11 +412,16 @@ install_keyrings() {
   # database's checksum and abort --noconfirm transactions as "corrupted".
   as_root find /var/cache/pacman/pkg -maxdepth 1 -name 'omarchy-*' -delete 2>/dev/null || true
 
-  as_root pacman -Sy --noconfirm archlinux-keyring omarchy-keyring || {
+  # -Syy forces the database download. configure_pacman_channel just repointed
+  # the mirrors, and a plain -Sy keeps the legacy database whenever the new
+  # server's copy isn't newer, leaving stale checksums that no amount of
+  # re-downloading can satisfy.
+
+  as_root pacman -Syy --noconfirm archlinux-keyring omarchy-keyring || {
     warn "Keyring package install failed; attempting to trust the Omarchy packaging key directly."
     as_root pacman-key --recv-keys 40DFB630FF42BCFFB047046CF0134EE680CAC571 --keyserver keys.openpgp.org || true
     as_root pacman-key --lsign-key 40DFB630FF42BCFFB047046CF0134EE680CAC571 || true
-    as_root pacman -Sy --noconfirm archlinux-keyring omarchy-keyring
+    as_root pacman -Syy --noconfirm archlinux-keyring omarchy-keyring
   }
 }
 
@@ -574,7 +589,7 @@ EOF
     while read -r uki; do
       [[ -n $uki ]] || continue
       as_root objcopy -O binary --only-section=.cmdline "$uki" /dev/stdout 2>/dev/null |
-        tr -d '\0' | grep -qE '(^|[[:space:]])root=' || missing+=("$uki")
+        tr -d '\0' | grep -E '(^|[[:space:]])root=' >/dev/null || missing+=("$uki")
     done < <(as_root find /boot/EFI/Linux -maxdepth 1 -name 'omarchy_linux*.efi' 2>/dev/null)
   fi
 
@@ -714,7 +729,7 @@ install_omarchy_quattro_packages() {
 install_hardware_transition_packages() {
   local hardware_packages=()
 
-  if lspci | grep -qiE '(Multimedia audio controller|Audio device).*Intel'; then
+  if lspci | grep -iE '(Multimedia audio controller|Audio device).*Intel' >/dev/null; then
     hardware_packages+=(sof-firmware)
   fi
 
@@ -1035,11 +1050,9 @@ USER_UNITS
 cleanup_retired_services() {
   log "Disabling services retired by Omarchy quattro"
 
-  # Do not stop iwd or systemd-networkd mid-upgrade; disabling is enough and
-  # avoids dropping a running Wi-Fi connection before the user can reboot into
-  # NetworkManager.
-  as_root systemctl disable iwd.service >/dev/null 2>&1 || true
-
+  # iwd is retired alongside the NetworkManager enable it depends on. Do not
+  # stop systemd-networkd mid-upgrade; disabling is enough and avoids dropping a
+  # running connection before the user can reboot into NetworkManager.
   local networkd_unit
   for networkd_unit in \
     systemd-networkd.service \
@@ -1334,7 +1347,12 @@ EOF
   enable_system_service linux-modules-cleanup.service
   enable_system_service docker.socket
   enable_system_service systemd-resolved.service
+  # NetworkManager replaces iwd, and both halves of that swap belong in one
+  # step: a machine that boots with both enabled has two daemons fighting over
+  # the Wi-Fi adapter. iwd is disabled but never stopped, so the running
+  # connection survives until the reboot.
   enable_system_service NetworkManager.service
+  as_root systemctl disable iwd.service >/dev/null 2>&1 || true
   enable_system_service bluetooth.service
   enable_system_service power-profiles-daemon.service
   enable_system_service sddm.service
@@ -2251,11 +2269,15 @@ if command -v xdg-mime >/dev/null 2>&1; then
   xdg-mime default HEY.desktop x-scheme-handler/mailto || true
 fi
 
-"$root/bin/omarchy-done" mark first-run-user
-rm -f "$state_dir/first-run-user.done"
-
-"$root/bin/omarchy-done" mark finalize-user
-rm -f "$state_dir/finalize-user.done"
+# This script is fetched from the branch and runs against whatever packaged
+# tree the channel currently serves, so the packaged tree can be older than the
+# script. The completion markers are written directly rather than through
+# omarchy-done, because a command missing from an older build would abort the
+# upgrade two thirds of the way through.
+done_dir="$state_dir/done"
+mkdir -p "$done_dir"
+touch "$done_dir/first-run-user" "$done_dir/finalize-user"
+rm -f "$state_dir/first-run-user.done" "$state_dir/finalize-user.done"
 USER_SETUP
 }
 
@@ -2355,6 +2377,10 @@ refresh_current_theme_after_upgrade() {
   run_as_user_omarchy omarchy-restart-terminal >/dev/null 2>&1 || true
 }
 
+# Everything below mutates the system, so a non-zero exit from here on leaves a
+# half-upgraded machine that must not be rebooted.
+upgrade_started=1
+
 # Suppress live Hyprland reloads before anything touches the legacy config
 # trees; the swap windows otherwise surface transient "source= globbing error"
 # popups in the running session.
@@ -2376,8 +2402,10 @@ cleanup_legacy_user_paths
 apply_system_transition
 apply_user_transition
 apply_user_hardware_transition
-run_as_user_omarchy omarchy-refresh-applications
-run_as_user_omarchy omarchy-bar defaults
+run_as_user_omarchy omarchy-refresh-applications ||
+  warn "Could not refresh application launchers; run 'omarchy refresh applications' after reboot."
+run_as_user_omarchy omarchy-bar defaults ||
+  warn "Could not restore the default bar widgets; run 'omarchy bar defaults' after reboot."
 cleanup_retired_services
 ensure_sleep_lock_service
 remove_retired_default_packages
@@ -2395,6 +2423,8 @@ if start_omarchy_shell_session; then
 else
   warn "Leaving retired Omarchy 3 session processes running until reboot."
 fi
+
+upgrade_completed=1
 
 cat <<EOF
 
