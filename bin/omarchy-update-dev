@@ -21,7 +21,7 @@ if [[ -z $upstream ]]; then
 fi
 
 echo -e "\e[32m\nUpdate Omarchy dev checkout\e[0m"
-if ! git -C "$OMARCHY_PATH" pull --ff-only; then
+if ! git -C "$OMARCHY_PATH" merge --ff-only "@{upstream}"; then
   echo -e "\e[33m\nDetectados cambios locales en el sistema. Aplicando autostash para proteger la configuracion del usuario...\e[0m"
   git -C "$OMARCHY_PATH" pull --rebase --autostash
 fi
