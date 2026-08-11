@@ -66,6 +66,7 @@
                 "pkg": [
                     "cinnamon",
                     "gnome-terminal",
+                    "kitty",
                     "nemo-fileroller",
                     "file-roller",
                     "xed",
