@@ -681,7 +681,7 @@ def installer_worker():
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             progress.update(t_pkg, description="[cyan]Descargando e Instalando Paquetes (Puede tardar varios minutos)...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm jack2 2>/dev/null", check=False)
-            run_cmd_live("sudo pacman -Rdd --noconfirm noctalia-shell noctalia-qs cachyos-niri-settings 2>/dev/null", check=False)
+            run_cmd_live("sudo pacman -Rdd --noconfirm noctalia-shell noctalia-qs 2>/dev/null", check=False)
 
             run_cmd_live(f"sudo pacman -S --noconfirm --needed {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
@@ -740,6 +740,13 @@ def installer_worker():
             shutil.copytree("bin", os.path.expanduser("~/.local/bin"), dirs_exist_ok=True)
             shutil.copytree("themes", os.path.expanduser("~/.local/share/themes"), dirs_exist_ok=True)
             run_cmd_live("chmod +x ~/.local/bin/*", check=False)
+        
+        has_cachyos_settings = any("cachyos-" in pkg and "-settings" in pkg for pkg in pkgs)
+        if has_cachyos_settings:
+            log_lines.append("[yellow]Aplicando estética de CachyOS desde /etc/skel...[/yellow]")
+            run_cmd_live("if [ -d /etc/skel/.config ]; then cp -rn /etc/skel/.config/* ~/.config/ 2>/dev/null || true; fi", check=False)
+            run_cmd_live("if [ -d /etc/skel/.local ]; then cp -rn /etc/skel/.local/* ~/.local/ 2>/dev/null || true; fi", check=False)
+            run_cmd_live(f"sudo chown -R $USER:$USER ~/.config ~/.local 2>/dev/null", check=False)
         
         if install_plymouth_flag:
             progress.update(t_config, description=f"[yellow]Configurando Pantalla de Arranque ({install_plymouth_theme_name})...", advance=5)

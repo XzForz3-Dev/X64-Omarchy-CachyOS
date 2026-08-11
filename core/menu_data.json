@@ -28,6 +28,7 @@
                 "selected": false,
                 "pkg": [
                     "plasma-meta",
+                    "cachyos-kde-settings",
                     "konsole",
                     "dolphin",
                     "ark",
@@ -47,6 +48,7 @@
                 "pkg": [
                     "niri",
                     "noctalia",
+                    "cachyos-niri-settings",
                     "polkit-kde-agent",
                     "adw-gtk-theme",
                     "capitaine-cursors",
