@@ -660,9 +660,12 @@ def installer_worker():
                     if not i.get("selected"):
                         env_pkgs_to_remove.extend(i.get("pkg", []))
         
+        # Protegemos los paquetes que SÍ fueron seleccionados (ej: 'kitty' es compartido entre Niri y Cinnamon)
+        env_pkgs_to_remove = set(env_pkgs_to_remove) - set(user_choices["packages"])
+        
         # Quitamos de la lista a instalar los paquetes de los entornos NO seleccionados
         # (Esto previene que se instalen aunque vengan hardcodeados en el omarchy-base.packages original)
-        pkgs = list(set(pkgs) - set(env_pkgs_to_remove))
+        pkgs = list(set(pkgs) - env_pkgs_to_remove)
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
 
         to_remove = set(env_pkgs_to_remove)
