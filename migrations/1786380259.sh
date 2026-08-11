@@ -19,9 +19,9 @@ fi
 # from an active graphical seat — an update over SSH would otherwise abort here,
 # before the marker, and abort again on every retry.
 if omarchy-bluetooth-power is-on; then
-  sudo omarchy-bluetooth-power on
+  sudo "${OMARCHY_PATH:-/usr/share/omarchy}/bin/omarchy-bluetooth-power" on
 else
-  sudo omarchy-bluetooth-power off
+  sudo "${OMARCHY_PATH:-/usr/share/omarchy}/bin/omarchy-bluetooth-power" off
 fi
 
 # Omarchy set AutoEnable=false believing bluetoothd would then restore the last
