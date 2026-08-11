@@ -69,6 +69,7 @@ lazygit
 less
 libreoffice-fresh
 libsecret
+libvips
 libyaml
 llvm
 localsend
@@ -144,4 +145,5 @@ xournalpp
 yaru-icon-theme
 yay
 yt-dlp
+zbar
 zoxide

@@ -45,6 +45,13 @@ Item {
   property bool useTransparentForeground: false
   property bool transparent: false
   property bool centerSectionHovered: false
+  // One bar surface exists per monitor and each reports into this count, so a
+  // pointer crossing from one monitor's bar to another's stays counted however
+  // the enter and leave interleave. A single shared bool would be left false by
+  // whichever event landed last.
+  property int barHoverCount: 0
+  // True while the pointer is over any bar, widgets included.
+  readonly property bool barHovered: barHoverCount > 0
   property bool centerSectionRevealHeld: false
   property bool centerHoverRevealSuppressed: false
   property int barConfigSerial: 0
@@ -410,6 +417,21 @@ Item {
     return slots
   }
 
+  // The Nth panel in a bar region, counted the way the bar reads: layout order,
+  // and only the panels actually on screen. A widget with no panel (the tray)
+  // and one that is hiding itself are passed over, so the number lands on the
+  // Nth panel icon the user can see rather than the Nth layout entry.
+  // One-based, because it exists for hotkeys; anything else lands on no slot.
+  //
+  // Counting any bar surface is enough: every monitor lays its bar out from the
+  // one layout, and summoning the id routes through pickPanelSlot, which opens
+  // the focused monitor's copy whichever surface was counted.
+  function panelWidgetIdAt(region, index) {
+    var slots = panelNavigationSlots(String(region || ""), null)
+    var slot = slots[Math.round(Number(index)) - 1]
+    return slot ? String(slot.moduleName || "") : ""
+  }
+
   function switchPanelFrom(owner, direction) {
     if (!owner) return false
 
@@ -559,6 +581,9 @@ Item {
 
   Component.onCompleted: applyBarConfig()
 
+  // Revealing the indicators widens their section, which can slide a neighbour
+  // under a stationary pointer. Collapsing on that un-hover would move it back
+  // out and re-open the peek, so hold until the pointer leaves the bar.
   function setCenterSectionHovered(hovered) {
     centerSectionHovered = hovered
     if (hovered) {
@@ -569,10 +594,18 @@ Item {
     }
   }
 
+  function setBarHovered(hovered) {
+    barHoverCount = Math.max(0, barHoverCount + (hovered ? 1 : -1))
+    if (barHoverCount === 0) centerSectionRevealTimer.restart()
+  }
+
   Timer {
     id: centerSectionRevealTimer
     interval: 120
-    onTriggered: root.centerSectionRevealHeld = root.centerSectionHovered
+    // Collapse only. Opening the peek is the center section's own gesture, done
+    // in setCenterSectionHovered, so a timer left pending by a pointer that dipped
+    // off the bar and came back cannot reveal indicators it never pointed at.
+    onTriggered: if (!root.centerSectionHovered && !root.barHovered) root.centerSectionRevealHeld = false
   }
 
   function run(command) {
@@ -993,6 +1026,16 @@ Item {
     Loader {
       anchors.fill: parent
       sourceComponent: root.vertical ? verticalBar : horizontalBar
+
+      // A child of the loader, not a sibling of the sections: an ancestor stays
+      // hovered while the pointer is over a widget, where a sibling would lose
+      // hover to the section the pointer entered.
+      HoverHandler {
+        onHoveredChanged: root.setBarHovered(hovered)
+        // Unplugging a monitor destroys its bar without a leave event, which
+        // would strand this surface's tally and hold the peek open for good.
+        Component.onDestruction: if (hovered) root.setBarHovered(false)
+      }
     }
 
     PopupWindow {
