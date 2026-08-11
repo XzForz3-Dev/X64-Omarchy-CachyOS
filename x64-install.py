@@ -586,6 +586,8 @@ def installer_worker():
     global install_error, install_done, current_state
     try:
         install_hyprland = "hyprland" in user_choices["packages"]
+        is_wayland_env = any(pkg in user_choices["packages"] for pkg in ["hyprland", "plasma-meta", "niri"])
+        force_tty = is_legacy_nvidia and is_wayland_env
         progress.update(t_health, description="[yellow]Verificando Red...", advance=30)
         run_cmd_live("curl -s -I https://archlinux.org >/dev/null")
         progress.update(t_health, description="[yellow]Verificando Espacio en Disco...", advance=30)
@@ -752,7 +754,7 @@ def installer_worker():
         run_cmd_live("sudo mv /tmp/plymouth-fix.conf /etc/systemd/system/greetd.service.d/plymouth-fix.conf", check=False)
 
         # --- Configurar Sesiones Híbridas ---
-        if is_legacy_nvidia:
+        if force_tty:
             # 1. Arte ASCII para TTY1 (Antes de Loguearse)
             issue_omarchy = """\\e[2J\\e[H
 
@@ -872,7 +874,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
                 is_omarchy_oficial = True
                 break
 
-        if not is_legacy_nvidia:
+        if not force_tty:
             if is_omarchy_oficial:
                 actual_user = os.environ.get("USER", "root")
                 services_script += "mkdir -p /usr/share/sddm/themes/omarchy /etc/sddm.conf.d /var/lib/sddm\n"
