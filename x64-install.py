@@ -877,6 +877,11 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             run_cmd_live("rm -f ~/.config/fish/conf.d/hyprland_autostart.fish", check=False)
             with open(os.path.expanduser("~/.config/fish/conf.d/omarchy_selector.fish"), "w") as f:
                 f.write(fish_selector)
+        else:
+            run_cmd_live("rm -f ~/.config/fish/conf.d/omarchy_selector.fish", check=False)
+            run_cmd_live("sudo rm -f /etc/systemd/system/getty@tty1.service.d/issue.conf", check=False)
+            run_cmd_live("sudo rm -f /etc/issue.omarchy", check=False)
+            run_cmd_live("sudo systemctl daemon-reload", check=False)
 
         # --- Batch Shelling para Servicios y Entornos ---
         progress.update(t_config, description="[yellow]Aplicando configuraciones finales (Batch Shell)...", advance=10)
@@ -900,6 +905,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
                 services_script += "rm -f /etc/sddm.conf.d/omarchy.conf\n"
 
             services_script += "systemctl disable greetd.service 2>/dev/null\n"
+            services_script += "systemctl disable getty@tty1.service 2>/dev/null\n"
             services_script += "systemctl enable sddm.service --now\n"
         else:
             services_script += "systemctl disable sddm.service 2>/dev/null\n"
