@@ -749,8 +749,16 @@ def installer_worker():
             f.write("[Service]\nExecStartPre=-/usr/bin/plymouth quit\n")
         run_cmd_live("sudo mv /tmp/plymouth-fix.conf /etc/systemd/system/greetd.service.d/plymouth-fix.conf", check=False)
 
+        is_wayland_env = False
+        for item in menu_data[0]["items"]:
+            if item.get("selected"):
+                label = item["label"]
+                if "Hyprland" in label or "Niri" in label or "KDE" in label:
+                    is_wayland_env = True
+                    break
+
         # --- Configurar Sesiones Híbridas ---
-        if is_legacy_nvidia:
+        if is_legacy_nvidia and is_wayland_env:
             # 1. Arte ASCII para TTY1 (Antes de Loguearse)
             issue_omarchy = """\\e[2J\\e[H
 
@@ -782,11 +790,15 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             with open("/tmp/issue.conf", "w") as f:
                 f.write(getty_override)
             run_cmd_live("sudo mv /tmp/issue.conf /etc/systemd/system/getty@tty1.service.d/issue.conf", check=False)
+            run_cmd_live("sudo systemctl daemon-reload", check=False)
 
             # 2. Selector Interactivo de Entornos para Fish (Después de Loguearse)
             fish_selector = """if status is-login
         if test (tty) = /dev/tty1
-            echo -e "\\e[1;32m>>> SELECTOR DE ESCRITORIOS X64-OMARCHY <<<\\e[0m"
+            echo -e "\\n\\e[38;2;0;255;255m╭────────────────────────────────────────╮\\e[0m"
+            echo -e "\\e[38;2;0;230;255m│\\e[0m \\e[1;37m X64 MEGA DASHBOARD // CORE OVERRIDE  \\e[38;2;0;230;255m│\\e[0m"
+            echo -e "\\e[38;2;0;200;255m╰────────────────────────────────────────╯\\e[0m"
+            echo -e "\\e[38;2;0;255;150m> INGRESA EL NÚMERO DE LA SESIÓN:\\e[0m\\n"
             set idx 1
             set options
             set cmds
@@ -870,7 +882,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
                 is_omarchy_oficial = True
                 break
 
-        if not is_legacy_nvidia:
+        if not (is_legacy_nvidia and is_wayland_env):
             if is_omarchy_oficial:
                 actual_user = os.environ.get("USER", "root")
                 services_script += "mkdir -p /usr/share/sddm/themes/omarchy /etc/sddm.conf.d /var/lib/sddm\n"
