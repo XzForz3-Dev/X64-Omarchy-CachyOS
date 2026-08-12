@@ -925,6 +925,10 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
                 else if test "$choice" = "L" -o "$choice" = "l"
                     clear
                     echo -e "\\e[1;33mEjecutando limpieza profunda...\\e[0m"
+                    echo "Destruyendo descargas parciales y corruptas (error fd 7)..."
+                    sudo rm -f /var/cache/pacman/pkg/*.part
+                    sudo rm -f /var/cache/pacman/pkg/*.download
+                    echo "Vaciando caché de paquetes viejos..."
                     sudo pacman -Sc --noconfirm
                     if type -q paru
                         paru -Sc --noconfirm
