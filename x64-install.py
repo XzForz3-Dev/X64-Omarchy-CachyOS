@@ -950,6 +950,8 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
                 else if test "$choice" = "E" -o "$choice" = "e"
                     clear
                     echo -e "\\e[1;31m>> ESCÁNER DE ERRORES CRÍTICOS (Último Arranque) <<\\e[0m"
+                    echo -e "\\e[1;33m[!] ADVERTENCIA: Usa las flechas para leer. Presiona la letra 'Q' para salir de los logs.\\e[0m"
+                    sleep 2
                     sudo journalctl -p 3 -xb
                     echo -e "\\n\\e[1;33mPresiona Enter para volver al menú.\\e[0m"
                     read
