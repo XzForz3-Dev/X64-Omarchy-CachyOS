@@ -831,9 +831,9 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             echo -e "\\n$border_color────────────────────────────────────────────────────────────\\e[0m"
             echo -e " \\e[1;37m X64 MEGA DASHBOARD // TELEMETRY\\e[0m"
             echo -e "$border_color────────────────────────────────────────────────────────────\\e[0m"
-            echo -e " \\e[1;33m🕒 Time:\\e[0m $current_time  \\e[1;34m🌐 IP:\\e[0m $ip_addr"
-            echo -e " \\e[1;32m💾 RAM:\\e[0m  $mem_used MB / $mem_total MB"
-            echo -e " \\e[1;31m🌡️ Temp:\\e[0m $cpu_temp   \\e[1;35m🔋 Bat:\\e[0m $bat_pct%"
+            echo -e " \\e[1;33m[TIME]\\e[0m $current_time  \\e[1;34m[IP]\\e[0m $ip_addr"
+            echo -e " \\e[1;32m[RAM]\\e[0m  $mem_used MB / $mem_total MB"
+            echo -e " \\e[1;31m[TEMP]\\e[0m $cpu_temp   \\e[1;35m[BAT]\\e[0m $bat_pct%"
             echo -e "$border_color────────────────────────────────────────────────────────────\\e[0m"
             echo -e "$border_color> INGRESA EL NÚMERO DE LA SESIÓN:\\e[0m\\n"
 
