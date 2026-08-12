@@ -57,7 +57,8 @@
                     "file-roller",
                     "gnome-text-editor",
                     "loupe",
-                    "evince"
+                    "evince",
+                    "sddm"
                 ],
                 "desc": "Tiling scroll-infinito ultra moderno, configurado por X64 Studios."
             },
@@ -75,7 +76,8 @@
                     "xed",
                     "xviewer",
                     "xreader",
-                    "gnome-screenshot"
+                    "gnome-screenshot",
+                    "sddm"
                 ],
                 "desc": "Entorno clásico tradicional, amigable y muy estable (creado por Linux Mint)."
             }
