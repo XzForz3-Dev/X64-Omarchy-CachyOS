@@ -802,10 +802,42 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             # 2. Selector Interactivo de Entornos para Fish (Después de Loguearse)
             fish_selector = """if status is-login
         if test (tty) = /dev/tty1
-            echo -e "\\n\\e[38;2;0;255;255m╭────────────────────────────────────────╮\\e[0m"
-            echo -e "\\e[38;2;0;230;255m│\\e[0m \\e[1;37m X64 MEGA DASHBOARD // CORE OVERRIDE  \\e[38;2;0;230;255m│\\e[0m"
-            echo -e "\\e[38;2;0;200;255m╰────────────────────────────────────────╯\\e[0m"
-            echo -e "\\e[38;2;0;255;150m> INGRESA EL NÚMERO DE LA SESIÓN:\\e[0m\\n"
+            set border_color "\\e[38;2;0;255;255m"
+            set text_color "\\e[38;2;0;230;255m"
+            set bat_path (ls /sys/class/power_supply/BAT* 2>/dev/null | head -n 1)
+            set bat_pct "N/A"
+            if test -n "$bat_path" -a -f "$bat_path/capacity"
+                set bat_pct (cat $bat_path/capacity)
+                if test $bat_pct -lt 20
+                    set border_color "\\e[38;2;255;50;50m"
+                    set text_color "\\e[38;2;255;100;100m"
+                end
+            end
+
+            set current_time (date '+%Y-%m-%d %H:%M:%S')
+            set ip_addr (ip route get 1.1.1.1 2>/dev/null | awk '{print $7}')
+            if test -z "$ip_addr"
+                set ip_addr "Offline"
+            end
+            set mem_used (free -m | awk '/Mem:/ {print $3}')
+            set mem_total (free -m | awk '/Mem:/ {print $2}')
+            
+            set temp_raw (cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)
+            set cpu_temp "N/A"
+            if test -n "$temp_raw"
+                set cpu_temp (math "$temp_raw / 1000")"°C"
+            end
+
+            echo -e "\\n$border_color╭────────────────────────────────────────╮\\e[0m"
+            echo -e "$text_color│\\e[0m \\e[1;37m X64 MEGA DASHBOARD // TELEMETRY      $text_color│\\e[0m"
+            echo -e "$border_color├────────────────────────────────────────┤\\e[0m"
+            echo -e "$text_color│\\e[0m \\e[1;33m🕒 Time:\\e[0m $current_time"
+            echo -e "$text_color│\\e[0m \\e[1;34m🌐 IP:\\e[0m   $ip_addr"
+            echo -e "$text_color│\\e[0m \\e[1;32m💾 RAM:\\e[0m  $mem_used MB / $mem_total MB"
+            echo -e "$text_color│\\e[0m \\e[1;31m🌡️ Temp:\\e[0m $cpu_temp  \\e[1;35m🔋 Bat:\\e[0m $bat_pct%"
+            echo -e "$border_color╰────────────────────────────────────────╯\\e[0m"
+            echo -e "$border_color> INGRESA EL NÚMERO DE LA SESIÓN:\\e[0m\\n"
+
             set idx 1
             set options
             set cmds
@@ -853,7 +885,13 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             echo ""
 
             while true
-                read -p 'echo -n "❯ Elige una opción: "' choice
+                set timeout_sec 15
+                echo -e "\\e[1;33m(Auto-arrancando la opción 1 en $timeout_sec segundos si no eliges nada)\\e[0m"
+                set choice (bash -c "read -t $timeout_sec -p '❯ Elige una opción: ' c; echo \\$c")
+                if test -z "$choice"
+                    set choice 1
+                end
+                
                 if test "$choice" = "C" -o "$choice" = "c"
                     break
                 else if test "$choice" = "R" -o "$choice" = "r"
