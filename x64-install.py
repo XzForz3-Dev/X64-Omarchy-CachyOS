@@ -777,9 +777,6 @@ def installer_worker():
 \\e[38;2;255;0;50m╰──────────────────────────────────────────────────────────────────────────────────────╯\\e[0m
 \\e[1;36m           D   A   S   H   B   O   A   R   D       //       C   O   R   E\\e[0m
 
-\\e[1;36m[\\e[0m \\e[1;37m\\S \\m\\e[0m \\e[1;36m]\\e[0m   \\e[1;35m[\\e[0m \\e[1;37m\\r\\e[0m \\e[1;35m]\\e[0m
-\\e[1;36m[\\e[0m \\e[1;37m\\n (\\l)\\e[0m \\e[1;36m]\\e[0m   \\e[1;35m[\\e[0m \\e[1;37m\\d - \\t\\e[0m \\e[1;35m]\\e[0m
-
 \\e[1;32m>>> X64 STUDIOS DASHBOARD (PANEL DE CONTROL TTY1) <<<\\e[0m
 \\e[1;37mBienvenido. Si estás viendo esta pantalla, significa que el sistema no inició
 el entorno gráfico automáticamente (muy común en hardware gráfico Legacy).
@@ -832,12 +829,17 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
                 set cpu_temp (math "$temp_raw / 1000")"°C"
             end
 
+            set os_name (cat /etc/os-release | grep "PRETTY_NAME" | cut -d '=' -f 2 | tr -d '"')
+            set kernel_ver (uname -r)
+            set host_node (hostname)
+
             echo -e "\\n$border_color────────────────────────────────────────────────────────────\\e[0m"
             echo -e " \\e[1;37m X64 MEGA DASHBOARD // TELEMETRY\\e[0m"
             echo -e "$border_color────────────────────────────────────────────────────────────\\e[0m"
-            echo -e " \\e[1;33m[TIME]\\e[0m $current_time  \\e[1;34m[IP]\\e[0m $ip_addr"
-            echo -e " \\e[1;32m[RAM]\\e[0m  $mem_used MB / $mem_total MB"
-            echo -e " \\e[1;31m[TEMP]\\e[0m $cpu_temp   \\e[1;35m[BAT]\\e[0m $bat_pct%"
+            echo -e " \\e[1;36m[OS]\\e[0m $os_name  \\e[1;35m[KERNEL]\\e[0m $kernel_ver"
+            echo -e " \\e[1;36m[NODE]\\e[0m $host_node  \\e[1;33m[TIME]\\e[0m $current_time"
+            echo -e " \\e[1;34m[IP]\\e[0m $ip_addr  \\e[1;32m[RAM]\\e[0m $mem_used MB / $mem_total MB"
+            echo -e " \\e[1;31m[TEMP]\\e[0m $cpu_temp  \\e[1;32m[BAT]\\e[0m $bat_pct%"
             echo -e "$border_color────────────────────────────────────────────────────────────\\e[0m"
             echo -e "$border_color> INGRESA EL NÚMERO DE LA SESIÓN:\\e[0m\\n"
 
