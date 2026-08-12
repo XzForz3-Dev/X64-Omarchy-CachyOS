@@ -891,12 +891,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             echo ""
 
             while true
-                set timeout_sec 15
-                echo -e "\\e[1;33m(Auto-arrancando la opción 1 en $timeout_sec segundos si no eliges nada)\\e[0m"
-                set choice (bash -c "read -t $timeout_sec -p '❯ Elige una opción: ' c; echo \\$c")
-                if test -z "$choice"
-                    set choice 1
-                end
+                read -p 'echo -n "❯ Elige una opción: "' choice
                 
                 if test "$choice" = "C" -o "$choice" = "c"
                     break
