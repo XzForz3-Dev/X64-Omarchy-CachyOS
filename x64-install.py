@@ -585,6 +585,11 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False, theme_name="omarchy"):
 def installer_worker():
     global install_error, install_done, current_state
     try:
+        install_hyprland = "hyprland" in user_choices["packages"]
+        if not install_hyprland:
+            user_choices["theme"] = "CachyOS Nativo"
+        is_wayland_env = any(pkg in user_choices["packages"] for pkg in ["hyprland", "plasma-meta", "niri"])
+        force_tty = is_legacy_nvidia and is_wayland_env
         progress.update(t_health, description="[yellow]Verificando Red...", advance=30)
         run_cmd_live("curl -s -I https://archlinux.org >/dev/null")
         progress.update(t_health, description="[yellow]Verificando Espacio en Disco...", advance=30)
@@ -611,8 +616,9 @@ def installer_worker():
         run_cmd_live("sudo pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'", check=False)
         run_cmd_live("sudo bash -c 'if [ -f /etc/pacman.d/chaotic-mirrorlist ]; then grep -q \"chaotic-aur\" /etc/pacman.conf || echo -e \"\\n[chaotic-aur]\\nInclude = /etc/pacman.d/chaotic-mirrorlist\\n\" >> /etc/pacman.conf; fi'")
         
-        progress.update(t_repo, description="[yellow]Inyectando repo Omarchy...", advance=10)
-        run_cmd_live("sudo bash -c 'grep -q \"omarchy\" /etc/pacman.conf || echo -e \"\\n[omarchy]\\nSigLevel = Optional TrustAll\\nServer = https://pkgs.omarchy.org/\\$arch/\\n\" >> /etc/pacman.conf'")
+        if install_hyprland:
+            progress.update(t_repo, description="[yellow]Inyectando repo Omarchy...", advance=10)
+            run_cmd_live("sudo bash -c 'grep -q \"omarchy\" /etc/pacman.conf || echo -e \"\\n[omarchy]\\nSigLevel = Optional TrustAll\\nServer = https://pkgs.omarchy.org/\\$arch/\\n\" >> /etc/pacman.conf'")
         
         progress.update(t_repo, description="[green]Repositorios Listos", completed=100)
 
@@ -637,12 +643,13 @@ def installer_worker():
 
         progress.update(t_pkg, description="[yellow]Calculando paquetes base...", advance=20)
         pkgs = []
-        if os.path.exists("install/omarchy-base.packages"):
-            with open("install/omarchy-base.packages") as f1:
-                pkgs.extend(f1.read().splitlines())
-        if os.path.exists("install/omarchy-other.packages"):
-            with open("install/omarchy-other.packages") as f2:
-                pkgs.extend(f2.read().splitlines())
+        if install_hyprland:
+            if os.path.exists("install/omarchy-base.packages"):
+                with open("install/omarchy-base.packages") as f1:
+                    pkgs.extend(f1.read().splitlines())
+            if os.path.exists("install/omarchy-other.packages"):
+                with open("install/omarchy-other.packages") as f2:
+                    pkgs.extend(f2.read().splitlines())
         
         # Batch de paquetes críticos de sistema
         pkgs.extend(["xorg-xinit", "xorg-server", "nwg-displays", "waypaper", "firefox", "python-pyqt6"])
@@ -657,9 +664,12 @@ def installer_worker():
                     if not i.get("selected"):
                         env_pkgs_to_remove.extend(i.get("pkg", []))
         
+        # Protegemos los paquetes que SÍ fueron seleccionados (ej: 'kitty' es compartido entre Niri y Cinnamon)
+        env_pkgs_to_remove = set(env_pkgs_to_remove) - set(user_choices["packages"])
+        
         # Quitamos de la lista a instalar los paquetes de los entornos NO seleccionados
         # (Esto previene que se instalen aunque vengan hardcodeados en el omarchy-base.packages original)
-        pkgs = list(set(pkgs) - set(env_pkgs_to_remove))
+        pkgs = list(set(pkgs) - env_pkgs_to_remove)
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
 
         to_remove = set(env_pkgs_to_remove)
@@ -673,7 +683,7 @@ def installer_worker():
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             progress.update(t_pkg, description="[cyan]Descargando e Instalando Paquetes (Puede tardar varios minutos)...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm jack2 2>/dev/null", check=False)
-            run_cmd_live("sudo pacman -Rdd --noconfirm noctalia-shell noctalia-qs cachyos-niri-settings 2>/dev/null", check=False)
+            run_cmd_live("sudo pacman -Rdd --noconfirm noctalia-shell noctalia-qs 2>/dev/null", check=False)
 
             run_cmd_live(f"sudo pacman -S --noconfirm --needed {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
@@ -685,57 +695,60 @@ def installer_worker():
         progress.update(t_backup, description="[green]Respaldo Completado", completed=100)
 
         progress.update(t_config, description="[yellow]Desplegando escudo de sistema...", advance=20)
-        run_cmd_live("mkdir -p ~/.config ~/.local/bin ~/.local/share/themes")
-        run_cmd_live("sudo rm -rf /usr/share/omarchy")
-        run_cmd_live("sudo git clone -b quattro https://github.com/XzForz3-Dev/X64-Omarchy-CachyOS.git /usr/share/omarchy")
-        run_cmd_live("sudo git config --system --add safe.directory /usr/share/omarchy")
         
-        # FIX(updater): Ensure the user owns the directory so the GUI can run git pull without sudo
-        run_cmd_live("sudo chown -R $USER:$USER /usr/share/omarchy")
-
-        
-        run_cmd_live("sudo mkdir -p /usr/share/wayland-sessions")
-        
-        install_hyprland = "hyprland" in user_choices["packages"]
         if install_hyprland:
+            run_cmd_live("mkdir -p ~/.config ~/.local/bin ~/.local/share/themes")
+            run_cmd_live("sudo rm -rf /usr/share/omarchy")
+            run_cmd_live("sudo git clone -b quattro https://github.com/XzForz3-Dev/X64-Omarchy-CachyOS.git /usr/share/omarchy")
+            run_cmd_live("sudo git config --system --add safe.directory /usr/share/omarchy")
+            
+            # FIX(updater): Ensure the user owns the directory so the GUI can run git pull without sudo
+            run_cmd_live("sudo chown -R $USER:$USER /usr/share/omarchy")
+            
+            run_cmd_live("sudo mkdir -p /usr/share/wayland-sessions")
             run_cmd_live("sudo cp default/wayland-sessions/*.desktop /usr/share/wayland-sessions/", check=False)
             run_cmd_live("sudo mkdir -p /usr/share/xdg-terminal-exec")
             run_cmd_live("sudo cp default/xdg-terminal-exec/hyprland-xdg-terminals.list /usr/share/xdg-terminal-exec/", check=False)
-        else:
-            run_cmd_live("sudo rm -f /usr/share/wayland-sessions/omarchy.desktop /usr/share/wayland-sessions/hyprland*.desktop", check=False)
-        
-        run_cmd_live("sudo bash -c 'echo \"export OMARCHY_PATH=/usr/share/omarchy\" > /etc/profile.d/omarchy.sh'")
-        run_cmd_live("sudo chmod +x /etc/profile.d/omarchy.sh")
-        
-        # Copiado acelerado mediante Python nativo (shutil)
-        shutil.copytree("config", os.path.expanduser("~/.config"), dirs_exist_ok=True)
-
-        # Auto-configurar teclado leyendo localectl
-        try:
-            res = subprocess.run(["localectl", "status"], capture_output=True, text=True)
-            kb_layout = "us"
-            for line in res.stdout.splitlines():
-                if "X11 Layout:" in line:
-                    kb_layout = line.split(":")[1].strip()
-                    break
             
-            # Reemplazar teclado en la configuración de Hyprland (Omarchy)
-            omarchy_input = os.path.expanduser("~/.config/hypr/input.lua")
-            if os.path.exists(omarchy_input):
-                with open(omarchy_input, "r") as f:
-                    content = f.read()
-                content = content.replace('-- hl.config({', 'hl.config({', 1)
-                content = content.replace('--   input = {', '  input = {', 1)
-                content = content.replace('--     kb_layout = "us,dk,eu",', f'    kb_layout = "{kb_layout}",', 1)
-                content = content.replace('--   },\n-- })', '  },\n})', 1)
-                with open(omarchy_input, "w") as f:
-                    f.write(content)
-        except Exception:
-            pass
-                    
-        shutil.copytree("bin", os.path.expanduser("~/.local/bin"), dirs_exist_ok=True)
-        shutil.copytree("themes", os.path.expanduser("~/.local/share/themes"), dirs_exist_ok=True)
-        run_cmd_live("chmod +x ~/.local/bin/*", check=False)
+            run_cmd_live("sudo bash -c 'echo \"export OMARCHY_PATH=/usr/share/omarchy\" > /etc/profile.d/omarchy.sh'")
+            run_cmd_live("sudo chmod +x /etc/profile.d/omarchy.sh")
+            
+            # Copiado acelerado mediante Python nativo (shutil)
+            shutil.copytree("config", os.path.expanduser("~/.config"), dirs_exist_ok=True)
+    
+            # Auto-configurar teclado leyendo localectl
+            try:
+                res = subprocess.run(["localectl", "status"], capture_output=True, text=True)
+                kb_layout = "us"
+                for line in res.stdout.splitlines():
+                    if "X11 Layout:" in line:
+                        kb_layout = line.split(":")[1].strip()
+                        break
+                
+                # Reemplazar teclado en la configuración de Hyprland (Omarchy)
+                omarchy_input = os.path.expanduser("~/.config/hypr/input.lua")
+                if os.path.exists(omarchy_input):
+                    with open(omarchy_input, "r") as f:
+                        content = f.read()
+                    content = content.replace('-- hl.config({', 'hl.config({', 1)
+                    content = content.replace('--   input = {', '  input = {', 1)
+                    content = content.replace('--     kb_layout = "us,dk,eu",', f'    kb_layout = "{kb_layout}",', 1)
+                    content = content.replace('--   },\n-- })', '  },\n})', 1)
+                    with open(omarchy_input, "w") as f:
+                        f.write(content)
+            except Exception:
+                pass
+                        
+            shutil.copytree("bin", os.path.expanduser("~/.local/bin"), dirs_exist_ok=True)
+            shutil.copytree("themes", os.path.expanduser("~/.local/share/themes"), dirs_exist_ok=True)
+            run_cmd_live("chmod +x ~/.local/bin/*", check=False)
+        
+        has_cachyos_settings = any("cachyos-" in pkg and "-settings" in pkg for pkg in pkgs)
+        if has_cachyos_settings:
+            log_lines.append("[yellow]Aplicando estética de CachyOS desde /etc/skel...[/yellow]")
+            run_cmd_live("if [ -d /etc/skel/.config ]; then cp -rn /etc/skel/.config/* ~/.config/ 2>/dev/null || true; fi", check=False)
+            run_cmd_live("if [ -d /etc/skel/.local ]; then cp -rn /etc/skel/.local/* ~/.local/ 2>/dev/null || true; fi", check=False)
+            run_cmd_live(f"sudo chown -R $USER:$USER ~/.config ~/.local 2>/dev/null", check=False)
         
         if install_plymouth_flag:
             progress.update(t_config, description=f"[yellow]Configurando Pantalla de Arranque ({install_plymouth_theme_name})...", advance=5)
@@ -749,16 +762,9 @@ def installer_worker():
             f.write("[Service]\nExecStartPre=-/usr/bin/plymouth quit\n")
         run_cmd_live("sudo mv /tmp/plymouth-fix.conf /etc/systemd/system/greetd.service.d/plymouth-fix.conf", check=False)
 
-        is_wayland_env = False
-        for item in menu_data[0]["items"]:
-            if item.get("selected"):
-                label = item["label"]
-                if "Hyprland" in label or "Niri" in label or "KDE" in label:
-                    is_wayland_env = True
-                    break
 
         # --- Configurar Sesiones Híbridas ---
-        if is_legacy_nvidia and is_wayland_env:
+        if force_tty:
             # 1. Arte ASCII para TTY1 (Antes de Loguearse)
             issue_omarchy = """\\e[2J\\e[H
 
@@ -882,7 +888,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
                 is_omarchy_oficial = True
                 break
 
-        if not (is_legacy_nvidia and is_wayland_env):
+        if not force_tty:
             if is_omarchy_oficial:
                 actual_user = os.environ.get("USER", "root")
                 services_script += "mkdir -p /usr/share/sddm/themes/omarchy /etc/sddm.conf.d /var/lib/sddm\n"
@@ -920,7 +926,7 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
         run_cmd_live("sudo bash /tmp/omarchy-services.sh", check=False)
         
         progress.update(t_config, description="[yellow]Aplicando Diseño y Tema...", advance=20)
-        if user_choices["theme"] == "Tokyo Night":
+        if install_hyprland and user_choices["theme"] == "Tokyo Night":
             run_cmd_live("export OMARCHY_PATH=/usr/share/omarchy && export OMARCHY_THEME_HEADLESS=1 && /usr/share/omarchy/bin/omarchy-theme-set 'Tokyo Night'", check=False)
         
         progress.update(t_final, description="[yellow]Purgando caché de Pacman...", advance=10)
