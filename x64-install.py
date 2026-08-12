@@ -1025,6 +1025,8 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
 
             services_script += "systemctl disable greetd.service 2>/dev/null\n"
             services_script += "systemctl disable getty@tty1.service 2>/dev/null\n"
+            services_script += "mkdir -p /etc/sddm.conf.d\n"
+            services_script += "echo -e \"[General]\\nDisplayServer=x11\" > /etc/sddm.conf.d/10-x11.conf\n"
             services_script += "systemctl enable sddm.service --now\n"
         else:
             services_script += "systemctl disable sddm.service 2>/dev/null\n"
