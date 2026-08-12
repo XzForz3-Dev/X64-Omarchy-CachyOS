@@ -44,6 +44,8 @@
   "learn.neovim": {"icon":"","label":"Neovim","action":"omarchy-launch-webapp 'https://www.lazyvim.org/keymaps'"},
   "learn.bash": {"icon":"󱆃","label":"Bash","action":"omarchy-launch-webapp 'https://devhints.io/bash'"},
   "learn.tmux-keybindings": {"icon":"","label":"Tmux","action":"omarchy-menu-tmux-keybindings"},
+  "learn.herdr-keybindings": {"icon":"","label":"Herdr","action":"omarchy-menu-herdr-keybindings"},
+  "learn.community": {"icon":"󰙯","label":"Community","action":"omarchy-launch-discord-community"},
 
   // Trigger
   "trigger.emoji": {"icon":"","label":"Emoji","aliases":["emoji","emojis"],"action":"omarchy-menu-emoji"},
@@ -94,8 +96,8 @@
 
   // Style
   "style.theme": {"icon":"󰸌","label":"Theme","aliases":["theme","themes"],"action":"theme=$(omarchy-theme-switcher); [[ -n $theme ]] && omarchy-theme-set \"$theme\""},
-  "style.unlock": {"icon":"󰟵","label":"Unlock","aliases":["unlock"],"action":"unlock=$(omarchy-plymouth-switcher); if [[ $unlock == default ]]; then omarchy-launch-floating-terminal-with-presentation omarchy-plymouth-reset; elif [[ -n $unlock ]]; then omarchy-launch-floating-terminal-with-presentation \"omarchy-plymouth-set-by-theme '$unlock'\"; fi"},
   "style.background": {"icon":"","label":"Background","aliases":["background","wallpaper"],"action":"background=$(omarchy-theme-bg-switcher); [[ -n $background ]] && omarchy-theme-bg-set \"$background\""},
+  "style.unlock": {"icon":"󰟵","label":"Unlock","aliases":["unlock"],"action":"unlock=$(omarchy-plymouth-switcher); if [[ $unlock == default ]]; then omarchy-launch-floating-terminal-with-presentation omarchy-plymouth-reset; elif [[ -n $unlock ]]; then omarchy-launch-floating-terminal-with-presentation \"omarchy-plymouth-set-by-theme '$unlock'\"; fi"},
   "style.font": {"icon":"","label":"Font","provider":"fonts"},
   "style.bar": {"icon":"󰍜","label":"Menu Bar"},
   "style.bar.position": {"icon":"","label":"Position"},
