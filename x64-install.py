@@ -780,11 +780,15 @@ def installer_worker():
 \\e[1;36m[\\e[0m \\e[1;37m\\S \\m\\e[0m \\e[1;36m]\\e[0m   \\e[1;35m[\\e[0m \\e[1;37m\\r\\e[0m \\e[1;35m]\\e[0m
 \\e[1;36m[\\e[0m \\e[1;37m\\n (\\l)\\e[0m \\e[1;36m]\\e[0m   \\e[1;35m[\\e[0m \\e[1;37m\\d - \\t\\e[0m \\e[1;35m]\\e[0m
 
-\\e[1;32m>>> MODO GRÁFICO (PORTAL PRINCIPAL) <<<\\e[0m
-\\e[1;37mEstás en la \\e[1;33mTTY1\\e[1;37m. Ingresa tu usuario y contraseña aquí para 
-entrar al selector interactivo de escritorios de Omarchy.\\e[0m
+\\e[1;32m>>> X64 STUDIOS DASHBOARD (PANEL DE CONTROL TTY1) <<<\\e[0m
+\\e[1;37mBienvenido. Si estás viendo esta pantalla, significa que el sistema no inició
+el entorno gráfico automáticamente (muy común en hardware gráfico Legacy).
 
-\\e[38;2;0;255;150m> INGRESA TUS CREDENCIALES ABAJO:\\e[0m
+¡Pero no te preocupes! Este es tu \\e[1;36mCentro de Mando Seguro\\e[1;37m.
+Ingresa tus credenciales aquí abajo para desplegar el selector de sesiones. Desde allí podrás 
+lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de diagnóstico.\\e[0m
+
+\\e[38;2;0;255;150m> INGRESA TU USUARIO Y CONTRASEÑA PARA CONTINUAR:\\e[0m
 
 """
             with open("/tmp/issue.omarchy", "w", encoding="utf-8") as f:
