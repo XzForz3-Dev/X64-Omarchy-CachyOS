@@ -883,6 +883,8 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
             echo " [U] Actualizar Sistema (Pacman/AUR)"
             echo " [L] Limpieza Profunda de Caché"
             echo " [N] Diagnóstico de Red"
+            echo " [E] Escáner de Errores (Health Check)"
+            echo " [K] Reparar Pacman (Llaves/Mirrors)"
             echo ""
             echo " [R] Reiniciar el Sistema"
             echo " [A] Apagar el Sistema"
@@ -935,6 +937,29 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
                     echo -e "\\n--- Prueba de Ping a Google (8.8.8.8) ---"
                     ping -c 4 8.8.8.8
                     echo -e "\\n\\e[1;33mPresiona Enter para volver al menú.\\e[0m"
+                    read
+                    exec fish -l
+                else if test "$choice" = "E" -o "$choice" = "e"
+                    clear
+                    echo -e "\\e[1;31m>> ESCÁNER DE ERRORES CRÍTICOS (Último Arranque) <<\\e[0m"
+                    sudo journalctl -p 3 -xb
+                    echo -e "\\n\\e[1;33mPresiona Enter para volver al menú.\\e[0m"
+                    read
+                    exec fish -l
+                else if test "$choice" = "K" -o "$choice" = "k"
+                    clear
+                    echo -e "\\e[1;32m>> REPARANDO PACMAN (Llaves y Mirrors) <<\\e[0m"
+                    echo -e "\\e[1;33mRefrescando llaves de cifrado... esto puede tardar un poco.\\e[0m"
+                    sudo pacman-key --refresh-keys
+                    echo -e "\\e[1;33mOptimizando servidores espejo (rate-mirrors)...\\e[0m"
+                    if type -q rate-mirrors
+                        rate-mirrors arch | sudo tee /etc/pacman.d/mirrorlist
+                    else
+                        echo "Instalando rate-mirrors temporalmente..."
+                        sudo pacman -S --noconfirm rate-mirrors
+                        rate-mirrors arch | sudo tee /etc/pacman.d/mirrorlist
+                    end
+                    echo -e "\\n\\e[1;32mReparación completada. Presiona Enter para volver.\\e[0m"
                     read
                     exec fish -l
                 end
