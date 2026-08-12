@@ -879,9 +879,14 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
 
             fish_selector += """
             echo ""
+            echo -e " \\e[1;36m>> HERRAMIENTAS DE RESCATE <<\\e[0m"
+            echo " [U] Actualizar Sistema (Pacman/AUR)"
+            echo " [L] Limpieza Profunda de Caché"
+            echo " [N] Diagnóstico de Red"
+            echo ""
             echo " [R] Reiniciar el Sistema"
             echo " [A] Apagar el Sistema"
-            echo " [C] Consola Pura (Mantenimiento)"
+            echo " [C] Consola Pura (Mantenimiento Avanzado)"
             echo ""
 
             while true
@@ -900,6 +905,38 @@ entrar al selector interactivo de escritorios de Omarchy.\\e[0m
                 else if test "$choice" = "A" -o "$choice" = "a"
                     systemctl poweroff
                     break
+                else if test "$choice" = "U" -o "$choice" = "u"
+                    clear
+                    echo -e "\\e[1;32mIniciando actualización del sistema...\\e[0m"
+                    if type -q paru
+                        paru -Syu
+                    else
+                        sudo pacman -Syu
+                    end
+                    echo -e "\\n\\e[1;32mActualización completada. Presiona Enter para volver.\\e[0m"
+                    read
+                    exec fish -l
+                else if test "$choice" = "L" -o "$choice" = "l"
+                    clear
+                    echo -e "\\e[1;33mEjecutando limpieza profunda...\\e[0m"
+                    sudo pacman -Sc --noconfirm
+                    if type -q paru
+                        paru -Sc --noconfirm
+                    end
+                    sudo journalctl --vacuum-time=1w
+                    echo -e "\\n\\e[1;32mLimpieza completada. Presiona Enter para volver.\\e[0m"
+                    read
+                    exec fish -l
+                else if test "$choice" = "N" -o "$choice" = "n"
+                    clear
+                    echo -e "\\e[1;36m>> DIAGNÓSTICO DE RED <<\\e[0m"
+                    echo -e "\\n--- Interfaces de Red ---"
+                    ip addr
+                    echo -e "\\n--- Prueba de Ping a Google (8.8.8.8) ---"
+                    ping -c 4 8.8.8.8
+                    echo -e "\\n\\e[1;33mPresiona Enter para volver al menú.\\e[0m"
+                    read
+                    exec fish -l
                 end
             
                 set list_idx 0
