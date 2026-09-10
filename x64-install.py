@@ -618,7 +618,19 @@ def installer_worker():
         
         if install_hyprland:
             progress.update(t_repo, description="[yellow]Inyectando repo Omarchy...", advance=10)
-            run_cmd_live("sudo bash -c 'grep -q \"omarchy\" /etc/pacman.conf || echo -e \"\\n[omarchy]\\nSigLevel = Optional TrustAll\\nServer = https://pkgs.omarchy.org/\\$arch/\\n\" >> /etc/pacman.conf'")
+            # Ensure omarchy repo is injected with high priority (before cachyos and core)
+            inject_script = """
+import re
+import sys
+conf = open('/etc/pacman.conf').read()
+if '[omarchy]' not in conf:
+    match = re.search(r'^\\[(?!options\\]).*?\\]', conf, re.MULTILINE)
+    if match:
+        idx = match.start()
+        new_conf = conf[:idx] + '[omarchy]\\nSigLevel = Optional TrustAll\\nServer = https://pkgs.omarchy.org/$arch/\\n\\n' + conf[idx:]
+        open('/etc/pacman.conf', 'w').write(new_conf)
+"""
+            run_cmd_live(f"sudo python -c \"{inject_script}\"")
         
         progress.update(t_repo, description="[green]Repositorios Listos", completed=100)
 
@@ -651,6 +663,20 @@ def installer_worker():
                 with open("install/omarchy-other.packages") as f2:
                     pkgs.extend(f2.read().splitlines())
         
+        # Filtro Negro (Blacklist) de X64 para proteger CachyOS de upstream
+        blacklisted_pkgs = {
+            "linux-ptl", "linux-t2", "linux", "linux-firmware", "linux-headers", "linux-ptl-headers",
+            "linux-firmware-marvell", "limine", "limine-mkinitcpio-hook", "limine-snapper-sync",
+            "nvidia-580xx-dkms", "nvidia-dkms", "nvidia-open-dkms", "nvidia-580xx-utils", "nvidia-utils",
+            "lib32-nvidia-580xx-utils", "lib32-nvidia-utils", "libva-nvidia-driver", "intel-media-driver",
+            "intel-lpmd", "intel-ipu7-camera", "broadcom-wl-dkms", "macbook12-spi-driver-dkms",
+            "tuxedo-drivers-nocompatcheck-dkms", "yt6801-dkms", "apple-bcm-firmware", "apple-t2-audio-config",
+            "t2fanrd", "qmk-hid", "dell-xps-touchpad-haptics", "dell-xps13-sidecar-amps",
+            "vulkan-intel", "vulkan-radeon", "vulkan-asahi", "yay-debug", "btrfs-progs", "sof-firmware",
+            "base", "base-devel", "dkms", "asusctl"
+        }
+        pkgs = [p for p in pkgs if p and not p.startswith('#') and p not in blacklisted_pkgs]
+
         # Batch de paquetes críticos de sistema
         pkgs.extend(["xorg-xinit", "xorg-server", "nwg-displays", "waypaper", "firefox", "python-pyqt6"])
         pkgs.extend(user_choices["packages"])
@@ -705,6 +731,9 @@ def installer_worker():
             # FIX(updater): Ensure the user owns the directory so the GUI can run git pull without sudo
             run_cmd_live("sudo chown -R $USER:$USER /usr/share/omarchy")
             
+            # Dinamicamente inyectar scale = "auto" para pantallas HiDPI
+            run_cmd_live("sudo sed -i 's/scale = 1/scale = \"auto\"/g' /usr/share/omarchy/config/hypr/monitors.lua")
+
             run_cmd_live("sudo mkdir -p /usr/share/wayland-sessions")
             run_cmd_live("sudo cp default/wayland-sessions/*.desktop /usr/share/wayland-sessions/", check=False)
             run_cmd_live("sudo mkdir -p /usr/share/xdg-terminal-exec")
