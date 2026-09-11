@@ -18,6 +18,7 @@
                     "quickshell",
                     "slurp",
                     "wtype",
+                    "sddm",
                     "xdg-desktop-portal-hyprland"
                 ],
                 "desc": "Entorno base (Wayland) con estética hacker/cyberpunk, animaciones fluidas y bajo consumo de recursos."

@@ -684,7 +684,7 @@ if '[omarchy]' not in conf:
         pkgs = [p for p in pkgs if p and not p.startswith('#') and p not in blacklisted_pkgs]
 
         # Batch de paquetes críticos de sistema
-        pkgs.extend(["xorg-xinit", "xorg-server", "nwg-displays", "waypaper", "firefox", "python-pyqt6"])
+        pkgs.extend(["xorg-xinit", "xorg-server", "nwg-displays", "waypaper", "firefox", "python-pyqt6", "qt6-declarative", "qt6-5compat", "qt6-svg"])
         pkgs.extend(user_choices["packages"])
         pkgs = list(set(pkgs))
         pkg_str = " ".join([p for p in pkgs if p and not p.startswith('#')])
