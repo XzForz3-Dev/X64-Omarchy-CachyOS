@@ -35,5 +35,9 @@ if ! python3 -c "import rich" &> /dev/null || ! command -v fastfetch &> /dev/nul
     sudo pacman -Sy --noconfirm python-rich fastfetch python-psutil >/dev/null 2>&1
 fi
 
+echo -e "\n[+] Sincronizando con la última versión..."
+git pull --rebase --autostash 2>/dev/null || true
+rm -rf __pycache__ 2>/dev/null || true
+
 echo -e "\n[+] Iniciando X64-Omarchy TUI Installer..."
 exec python3 x64-install.py
