@@ -822,6 +822,7 @@ if '[omarchy]' not in conf:
 
 
         # --- Configurar Sesiones Híbridas ---
+        fish_selector = ""
         if force_tty:
             # 1. Arte ASCII para TTY1 (Antes de Loguearse)
             issue_omarchy = """\\e[2J\\e[H
