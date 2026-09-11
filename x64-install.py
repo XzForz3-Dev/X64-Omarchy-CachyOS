@@ -672,7 +672,7 @@ if '[omarchy]' not in conf:
         # Filtro Negro (Blacklist) de X64 para proteger CachyOS de upstream
         blacklisted_pkgs = {
             "linux-ptl", "linux-t2", "linux", "linux-firmware", "linux-headers", "linux-ptl-headers",
-            "linux-firmware-marvell", "limine", "limine-mkinitcpio-hook", "limine-snapper-sync",
+            "linux-firmware-marvell", "linux-t2-headers", "limine", "limine-mkinitcpio-hook", "limine-snapper-sync",
             "nvidia-580xx-dkms", "nvidia-dkms", "nvidia-open-dkms", "nvidia-580xx-utils", "nvidia-utils",
             "lib32-nvidia-580xx-utils", "lib32-nvidia-utils", "libva-nvidia-driver", "intel-media-driver",
             "intel-lpmd", "intel-ipu7-camera", "broadcom-wl-dkms", "macbook12-spi-driver-dkms",
