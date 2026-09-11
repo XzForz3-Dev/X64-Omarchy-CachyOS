@@ -6,17 +6,6 @@
 
 import os
 import sys
-
-import fcntl
-def _sanitize_streams():
-    for stream in (sys.stdin, sys.stdout, sys.stderr):
-        try:
-            fd = stream.fileno()
-            fl = fcntl.fcntl(fd, fcntl.F_GETFL)
-            fcntl.fcntl(fd, fcntl.F_SETFL, fl & ~os.O_NONBLOCK)
-        except Exception:
-            pass
-_sanitize_streams()
 import subprocess
 import time
 import threading
@@ -26,6 +15,7 @@ import tty
 import termios
 import json
 import asyncio
+import fcntl
 from datetime import datetime
 from collections import deque
 
@@ -56,28 +46,51 @@ if os.geteuid() == 0:
 
 LOG_FILE = "x64-install.log"
 
-import time
-class BlockingWriter:
-    def __init__(self, target):
-        self.target = target
-    def write(self, s):
-        while s:
-            try:
-                written = self.target.write(s)
-                if written is None:
-                    written = len(s)
-                s = s[written:]
-            except BlockingIOError:
-                time.sleep(0.005)
-    def flush(self):
+# === NUCLEAR FIX: Parchear os.write a nivel del kernel de Python ===
+# El emulador de terminal (foot) hereda O_NONBLOCK en el fd de stdout.
+# La librería rich escribe internamente a través de C → os.write(fd, data).
+# Si el buffer del kernel se llena, os.write lanza BlockingIOError y rich colapsa.
+# La ÚNICA forma de interceptar esto es parchear os.write directamente.
+_original_os_write = os.write
+def _safe_os_write(fd, data):
+    """os.write que reintenta automáticamente ante BlockingIOError."""
+    total = 0
+    mv = memoryview(data) if isinstance(data, (bytes, bytearray)) else data
+    while total < len(data):
         try:
-            self.target.flush()
+            n = _original_os_write(fd, mv[total:] if isinstance(mv, memoryview) else data[total:])
+            total += n
         except BlockingIOError:
-            pass
-    def __getattr__(self, name):
-        return getattr(self.target, name)
-        
-sys.stdout = BlockingWriter(sys.stdout)
+            time.sleep(0.001)
+    return total
+os.write = _safe_os_write
+
+# Limpiar O_NONBLOCK de todos los streams al inicio
+for _stream in (sys.stdin, sys.stdout, sys.stderr):
+    try:
+        _fd = _stream.fileno()
+        _fl = fcntl.fcntl(_fd, fcntl.F_GETFL)
+        fcntl.fcntl(_fd, fcntl.F_SETFL, _fl & ~os.O_NONBLOCK)
+    except Exception:
+        pass
+
+# Hilo guardián que limpia O_NONBLOCK cada 500ms por si algo lo reactiva
+def _nonblock_guardian():
+    while True:
+        for s in (sys.stdin, sys.stdout, sys.stderr):
+            try:
+                f = s.fileno() if hasattr(s, 'fileno') else None
+                if f is not None:
+                    fl = fcntl.fcntl(f, fcntl.F_GETFL)
+                    if fl & os.O_NONBLOCK:
+                        fcntl.fcntl(f, fcntl.F_SETFL, fl & ~os.O_NONBLOCK)
+            except Exception:
+                pass
+        time.sleep(0.5)
+
+_guardian = threading.Thread(target=_nonblock_guardian, daemon=True)
+_guardian.start()
+
 console = Console()
 
 # --- Shared State ---
