@@ -19,8 +19,9 @@ Un proyecto de ingeniería avanzada creado por **X64 Studios**. Fusionamos la ve
 Este no es un simple script de bash (dotfiles). Hemos construido un **motor de despliegue dinámico en Python** de grado corporativo que asegura que el sistema se instale, se actualice y sobreviva sin intervención manual.
 
 ### 1. 🖥️ Mega Dashboard Interactivo (TUI)
-Olvídate de los scripts que corren ciegamente en la terminal.
-- **Interfaz Gráfica en Terminal (TUI):** Desarrollada con la librería `Rich`, ofrece navegación interactiva, barras de progreso fluidas y selectores visuales.
+Olvídate de los scripts que corren ciegamente en la terminal. Hemos diseñado un panel de control inmersivo en 2D.
+- **La Boutique de Software Integrada:** Navega usando las flechas del teclado a través de 24 categorías de software exhaustivamente curadas (desde Entornos de Escritorio, Gaming con Proton, Edición 3D, hasta Virtualización KVM). Cada paquete tiene descripciones nativas. Tú eliges qué instalas pulsando la barra espaciadora.
+- **Interfaz Gráfica en Terminal (TUI):** Desarrollada con la librería `Rich`, ofrece navegación interactiva, barras de progreso fluidas y paneles divisores (Splits) que muestran qué hace cada paquete en tiempo real.
 - **Auto-Sanación (Self-Healing):** El motor intercepta errores críticos en vivo (bases de datos bloqueadas `pacman.lck`, errores de red, espejos caídos) y te despliega un menú para **Reintentar, Ignorar o Abortar**, salvando la instalación sin tener que empezar de cero.
 - **Pre-purga Inteligente:** Detecta y destruye paquetes residuales y conflictivos en tu disco antes de instalar, evitando fallas silenciosas.
 
