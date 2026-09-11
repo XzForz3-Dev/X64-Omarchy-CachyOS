@@ -1039,9 +1039,9 @@ end
         desktop_entry = f"""[Desktop Entry]
 Name=X64 Software Boutique
 Comment=Mega Dashboard y Selector de Paquetes
-Exec=kitty --hold -e bash -c "cd {os.getcwd()} && ./x64-install.sh"
+Exec=bash -c "cd {os.getcwd()} && ./x64-install.sh; echo 'Boutique finalizada. Presiona Enter para cerrar...'; read"
 Icon=system-software-install
-Terminal=false
+Terminal=true
 Type=Application
 Categories=System;Settings;
 """
