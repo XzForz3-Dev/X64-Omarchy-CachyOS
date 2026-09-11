@@ -28,6 +28,11 @@ require("default.hypr.toggles")
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
 
+-- X64 Studios: Modo Gaming Automático (Cero Latencia)
+o.window({ class = "^steam_app_.*$" }, { immediate = true, noanim = true, noblur = true, noshadow = true })
+o.window({ class = "^gamescope$" }, { immediate = true, noanim = true, noblur = true, noshadow = true })
+o.window({ class = "^cs2$" }, { immediate = true, noanim = true, noblur = true, noshadow = true })
+
 -- Hardware Video Acceleration (VA-API) Environment Variables
 hl.env("MOZ_ENABLE_WAYLAND", "1")
 hl.env("MOZ_DISABLE_RDD_SANDBOX", "1")
