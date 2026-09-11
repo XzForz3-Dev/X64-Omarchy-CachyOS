@@ -74,6 +74,8 @@ Puedes instalar todos estos entornos simultáneamente. Nuestro *Chasis Puro* ase
 ---
 <div align="center">
   <b>Desarrollado y operado por X64 Studios.</b><br>
+  <i>(Autores de la Arquitectura Híbrida, el Mega Dashboard TUI, el Security Gateway, los Motores de Auto-Sanación y las adaptaciones a hardware de CachyOS)</i><br>
+  <br>
   <i>Inspirado y construido sobre la base arquitectónica de <a href="https://omarchy.org">Omarchy by DHH</a>.</i><br>
   <i>Impulsado por el núcleo ultra-optimizado de <a href="https://cachyos.org">CachyOS</a>.</i>
 </div>
