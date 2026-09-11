@@ -6,6 +6,17 @@
 
 import os
 import sys
+
+import fcntl
+def _sanitize_streams():
+    for stream in (sys.stdin, sys.stdout, sys.stderr):
+        try:
+            fd = stream.fileno()
+            fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+            fcntl.fcntl(fd, fcntl.F_SETFL, fl & ~os.O_NONBLOCK)
+        except Exception:
+            pass
+_sanitize_streams()
 import subprocess
 import time
 import threading
