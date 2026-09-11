@@ -681,7 +681,7 @@ if '[omarchy]' not in conf:
             "tuxedo-drivers-nocompatcheck-dkms", "yt6801-dkms", "apple-bcm-firmware", "apple-t2-audio-config",
             "t2fanrd", "qmk-hid", "dell-xps-touchpad-haptics", "dell-xps13-sidecar-amps",
             "vulkan-intel", "vulkan-radeon", "vulkan-asahi", "yay-debug", "btrfs-progs", "sof-firmware",
-            "base", "base-devel", "dkms", "asusctl", "quickshell"
+            "base", "base-devel", "dkms", "asusctl"
         }
         pkgs = [p for p in pkgs if p and not p.startswith('#') and p not in blacklisted_pkgs]
 
