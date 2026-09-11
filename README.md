@@ -32,6 +32,7 @@ Disfruta de lo último de Omarchy Oficial sin romper la estabilidad de CachyOS.
 
 ### 3. ⚙️ Optimizaciones de Alto Nivel "Bajo el Capó"
 Hemos operado el código fuente para resolver los dolores de cabeza de Linux:
+- **Modo Gaming X64 (Latencia Cero Automática):** Al abrir un juego (Steam/Proton/Gamescope), Hyprland lo detecta inteligentemente e inyecta reglas de evasión: apaga los efectos de blur, desactiva animaciones y permite el *Tearing* (V-Sync OFF) para darte una latencia ultra-baja en títulos competitivos. El motor de CachyOS te da los FPS, nuestro script asegura que el compositor no los ahogue.
 - **Amputación de Polkit Zombie:** Solucionamos un *Crash* (Violación de Segmento) nativo del código C++ de Quickshell en Qt 6.11 aislando y destruyendo su plugin de contraseñas, delegándolo a un agente ultra-estable externo (`polkit-kde-agent`). **¡Cero ventanas de error azules!**
 - **Soporte HiDPI (4K) Automático:** El instalador detecta e inyecta dinámicamente el flag `scale = "auto"` en Hyprland para que tus pantallas de alta resolución se vean perfectas desde el primer arranque.
 - **Aceleración Gráfica VA-API:** Navegadores y aplicaciones preconfigurados para procesar video directo en tu tarjeta gráfica.
