@@ -618,7 +618,7 @@ def installer_worker():
         
         if install_hyprland:
             progress.update(t_repo, description="[yellow]Purgando dependencias en conflicto pre-existentes...", advance=10)
-            run_cmd_live("sudo pacman -Rdd --noconfirm quickshell noctalia-qs 2>/dev/null", check=False)
+            run_cmd_live("for pkg in quickshell noctalia-qs noctalia-shell; do sudo pacman -Rdd --noconfirm $pkg 2>/dev/null; done", check=False)
             progress.update(t_repo, description="[yellow]Inyectando repo Omarchy...", advance=10)
             # Ensure omarchy repo is injected with high priority (before cachyos and core)
             inject_script = """
@@ -717,7 +717,7 @@ if '[omarchy]' not in conf:
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             progress.update(t_pkg, description="[cyan]Descargando e Instalando Paquetes (Puede tardar varios minutos)...", advance=40)
             run_cmd_live("sudo pacman -Rdd --noconfirm jack2 2>/dev/null", check=False)
-            run_cmd_live("sudo pacman -Rdd --noconfirm noctalia-shell noctalia-qs quickshell 2>/dev/null", check=False)
+            run_cmd_live("for pkg in noctalia-shell noctalia-qs quickshell; do sudo pacman -Rdd --noconfirm $pkg 2>/dev/null; done", check=False)
 
             run_cmd_live(f"sudo pacman -S --noconfirm --needed {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
