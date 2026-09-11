@@ -29,9 +29,20 @@ require("default.hypr.toggles")
 -- o.window("qemu", { workspace = "5" })
 
 -- X64 Studios: Modo Gaming Automático (Cero Latencia)
-o.window({ class = "^steam_app_.*$" }, { immediate = true, noanim = true, noblur = true, noshadow = true })
-o.window({ class = "^gamescope$" }, { immediate = true, noanim = true, noblur = true, noshadow = true })
-o.window({ class = "^cs2$" }, { immediate = true, noanim = true, noblur = true, noshadow = true })
+hl.command("windowrulev2 = immediate, class:^steam_app_.*$")
+hl.command("windowrulev2 = noanim, class:^steam_app_.*$")
+hl.command("windowrulev2 = noblur, class:^steam_app_.*$")
+hl.command("windowrulev2 = noshadow, class:^steam_app_.*$")
+
+hl.command("windowrulev2 = immediate, class:^gamescope$")
+hl.command("windowrulev2 = noanim, class:^gamescope$")
+hl.command("windowrulev2 = noblur, class:^gamescope$")
+hl.command("windowrulev2 = noshadow, class:^gamescope$")
+
+hl.command("windowrulev2 = immediate, class:^cs2$")
+hl.command("windowrulev2 = noanim, class:^cs2$")
+hl.command("windowrulev2 = noblur, class:^cs2$")
+hl.command("windowrulev2 = noshadow, class:^cs2$")
 
 -- Hardware Video Acceleration (VA-API) Environment Variables
 hl.env("MOZ_ENABLE_WAYLAND", "1")
