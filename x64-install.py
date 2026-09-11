@@ -1039,9 +1039,9 @@ end
         desktop_entry = f"""[Desktop Entry]
 Name=X64 Software Boutique
 Comment=Mega Dashboard y Selector de Paquetes
-Exec=bash -c "cd {os.getcwd()} && ./x64-install.sh; echo 'Boutique finalizada. Presiona Enter para cerrar...'; read"
+Exec=omarchy-launch-floating-terminal-with-presentation "cd {os.getcwd()} && ./x64-install.sh"
 Icon=system-software-install
-Terminal=true
+Terminal=false
 Type=Application
 Categories=System;Settings;
 """
