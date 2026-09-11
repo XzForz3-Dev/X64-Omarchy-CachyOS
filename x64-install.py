@@ -1048,7 +1048,11 @@ Categories=System;Settings;
         run_cmd_live("mkdir -p ~/.local/share/applications", check=False)
         with open(os.path.expanduser("~/.local/share/applications/x64-boutique.desktop"), "w") as f:
             f.write(desktop_entry)
-
+        # 4. Auto-Healing: Reparar configs rotas de Hyprland (Modo Gaming anterior)
+        run_cmd_live("sed -i '/allow_tearing = true/d' ~/.config/hypr/looknfeel.lua 2>/dev/null", check=False)
+        run_cmd_live("sed -i '/hl\.command/d' ~/.config/hypr/hyprland.lua 2>/dev/null", check=False)
+        run_cmd_live("sed -i '/X64 Studios: Modo Gaming Automático/d' ~/.config/hypr/hyprland.lua 2>/dev/null", check=False)
+        
         # --- Batch Shelling para Servicios y Entornos ---
         progress.update(t_config, description="[yellow]Aplicando configuraciones finales (Batch Shell)...", advance=10)
         services_script = "#!/bin/bash\n"
