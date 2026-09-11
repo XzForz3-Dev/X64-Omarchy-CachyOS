@@ -46,50 +46,21 @@ if os.geteuid() == 0:
 
 LOG_FILE = "x64-install.log"
 
-# === NUCLEAR FIX: Parchear os.write a nivel del kernel de Python ===
-# El emulador de terminal (foot) hereda O_NONBLOCK en el fd de stdout.
-# La librería rich escribe internamente a través de C → os.write(fd, data).
-# Si el buffer del kernel se llena, os.write lanza BlockingIOError y rich colapsa.
-# La ÚNICA forma de interceptar esto es parchear os.write directamente.
-_original_os_write = os.write
-def _safe_os_write(fd, data):
-    """os.write que reintenta automáticamente ante BlockingIOError."""
-    total = 0
-    mv = memoryview(data) if isinstance(data, (bytes, bytearray)) else data
-    while total < len(data):
-        try:
-            n = _original_os_write(fd, mv[total:] if isinstance(mv, memoryview) else data[total:])
-            total += n
-        except BlockingIOError:
-            time.sleep(0.001)
-    return total
-os.write = _safe_os_write
-
-# Limpiar O_NONBLOCK de todos los streams al inicio
-for _stream in (sys.stdin, sys.stdout, sys.stderr):
-    try:
-        _fd = _stream.fileno()
-        _fl = fcntl.fcntl(_fd, fcntl.F_GETFL)
-        fcntl.fcntl(_fd, fcntl.F_SETFL, _fl & ~os.O_NONBLOCK)
-    except Exception:
-        pass
-
-# Hilo guardián que limpia O_NONBLOCK cada 500ms por si algo lo reactiva
-def _nonblock_guardian():
-    while True:
-        for s in (sys.stdin, sys.stdout, sys.stderr):
-            try:
-                f = s.fileno() if hasattr(s, 'fileno') else None
-                if f is not None:
-                    fl = fcntl.fcntl(f, fcntl.F_GETFL)
-                    if fl & os.O_NONBLOCK:
-                        fcntl.fcntl(f, fcntl.F_SETFL, fl & ~os.O_NONBLOCK)
-            except Exception:
-                pass
-        time.sleep(0.5)
-
-_guardian = threading.Thread(target=_nonblock_guardian, daemon=True)
-_guardian.start()
+# === FIX DEFINITIVO: Reabrir stdout vía /dev/tty ===
+# El problema: foot/uwsm-app heredan O_NONBLOCK en el fd original de stdout.
+# Rich escribe a través de código C interno de Python (BufferedWriter → syscall write),
+# que NO pasa por os.write de Python, así que los monkey-patches no sirven.
+# Limpiar O_NONBLOCK con fcntl tampoco funciona porque algo lo reactiva constantemente.
+#
+# La solución: os.open('/dev/tty') abre un fd NUEVO con una "file description" del kernel
+# completamente independiente. Sus flags (incluido O_NONBLOCK) son propias y no se
+# comparten con el fd original. Esto es inmune a cualquier cosa que el entorno haga.
+try:
+    _tty_fd = os.open('/dev/tty', os.O_WRONLY)
+    os.set_blocking(_tty_fd, True)
+    sys.stdout = os.fdopen(_tty_fd, 'w', buffering=1)
+except OSError:
+    pass  # Fallback: usar stdout original si /dev/tty no está disponible
 
 console = Console()
 
