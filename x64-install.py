@@ -1039,7 +1039,7 @@ end
         desktop_entry = f"""[Desktop Entry]
 Name=X64 Software Boutique
 Comment=Mega Dashboard y Selector de Paquetes
-Exec=uwsm-app -- xdg-terminal-exec --app-id=org.x64.boutique --title="X64 Boutique" -e bash -c "cd {os.getcwd()} && ./x64-install.sh; echo 'Boutique finalizada. Presiona Enter para cerrar...'; read"
+Exec=x64-launch-tiled-terminal "cd {os.getcwd()} && ./x64-install.sh"
 Icon=system-software-install
 Terminal=false
 Type=Application
