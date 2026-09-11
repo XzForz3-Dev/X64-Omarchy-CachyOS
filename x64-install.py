@@ -55,6 +55,29 @@ if os.geteuid() == 0:
     sys.exit(1)
 
 LOG_FILE = "x64-install.log"
+
+import time
+class BlockingWriter:
+    def __init__(self, target):
+        self.target = target
+    def write(self, s):
+        while s:
+            try:
+                written = self.target.write(s)
+                if written is None:
+                    written = len(s)
+                s = s[written:]
+            except BlockingIOError:
+                time.sleep(0.005)
+    def flush(self):
+        try:
+            self.target.flush()
+        except BlockingIOError:
+            pass
+    def __getattr__(self, name):
+        return getattr(self.target, name)
+        
+sys.stdout = BlockingWriter(sys.stdout)
 console = Console()
 
 # --- Shared State ---
