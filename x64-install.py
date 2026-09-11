@@ -617,6 +617,8 @@ def installer_worker():
         run_cmd_live("sudo bash -c 'if [ -f /etc/pacman.d/chaotic-mirrorlist ]; then grep -q \"chaotic-aur\" /etc/pacman.conf || echo -e \"\\n[chaotic-aur]\\nInclude = /etc/pacman.d/chaotic-mirrorlist\\n\" >> /etc/pacman.conf; fi'")
         
         if install_hyprland:
+            progress.update(t_repo, description="[yellow]Purgando dependencias en conflicto pre-existentes...", advance=10)
+            run_cmd_live("sudo pacman -Rdd --noconfirm quickshell noctalia-qs 2>/dev/null", check=False)
             progress.update(t_repo, description="[yellow]Inyectando repo Omarchy...", advance=10)
             # Ensure omarchy repo is injected with high priority (before cachyos and core)
             inject_script = """
