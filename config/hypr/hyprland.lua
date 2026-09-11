@@ -25,24 +25,25 @@ require("hypr.autostart")
 -- Toggle config flags dynamically.
 require("default.hypr.toggles")
 
--- Add any other personal Hyprland configuration below.
--- o.window("qemu", { workspace = "5" })
-
 -- X64 Studios: Modo Gaming Automático (Cero Latencia)
-hl.command("windowrulev2 = immediate, class:^steam_app_.*$")
-hl.command("windowrulev2 = noanim, class:^steam_app_.*$")
-hl.command("windowrulev2 = noblur, class:^steam_app_.*$")
-hl.command("windowrulev2 = noshadow, class:^steam_app_.*$")
-
-hl.command("windowrulev2 = immediate, class:^gamescope$")
-hl.command("windowrulev2 = noanim, class:^gamescope$")
-hl.command("windowrulev2 = noblur, class:^gamescope$")
-hl.command("windowrulev2 = noshadow, class:^gamescope$")
-
-hl.command("windowrulev2 = immediate, class:^cs2$")
-hl.command("windowrulev2 = noanim, class:^cs2$")
-hl.command("windowrulev2 = noblur, class:^cs2$")
-hl.command("windowrulev2 = noshadow, class:^cs2$")
+hl.config({
+  windowrulev2 = {
+    "immediate, class:^steam_app_.*$",
+    "noanim, class:^steam_app_.*$",
+    "noblur, class:^steam_app_.*$",
+    "noshadow, class:^steam_app_.*$",
+    
+    "immediate, class:^gamescope$",
+    "noanim, class:^gamescope$",
+    "noblur, class:^gamescope$",
+    "noshadow, class:^gamescope$",
+    
+    "immediate, class:^cs2$",
+    "noanim, class:^cs2$",
+    "noblur, class:^cs2$",
+    "noshadow, class:^cs2$"
+  }
+})
 
 -- Hardware Video Acceleration (VA-API) Environment Variables
 hl.env("MOZ_ENABLE_WAYLAND", "1")
