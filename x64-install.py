@@ -1054,10 +1054,9 @@ import os
 conf=os.path.expanduser("~/.config/hypr/hyprland.lua")
 if os.path.exists(conf):
     with open(conf,"r") as f: content=f.read()
-    if "-- X64 Studios: Modo Gaming" in content and "-- Hardware Video Acceleration" in content:
+    if "-- X64 Studios: Modo Gaming" in content:
         b=content.split("-- X64 Studios: Modo Gaming")[0]
-        a="-- Hardware Video Acceleration"+content.split("-- Hardware Video Acceleration",1)[1]
-        with open(conf,"w") as f: f.write(b+"-- X64 Studios: Modo Gaming Automático (Cero Latencia)\\nhl.config({\\n  windowrulev2 = {\\n    \\"immediate, class:^steam_app_.*$\\",\\n    \\"noanim, class:^steam_app_.*$\\",\\n    \\"noblur, class:^steam_app_.*$\\",\\n    \\"noshadow, class:^steam_app_.*$\\",\\n    \\"immediate, class:^gamescope$\\",\\n    \\"noanim, class:^gamescope$\\",\\n    \\"noblur, class:^gamescope$\\",\\n    \\"noshadow, class:^gamescope$\\",\\n    \\"immediate, class:^cs2$\\",\\n    \\"noanim, class:^cs2$\\",\\n    \\"noblur, class:^cs2$\\",\\n    \\"noshadow, class:^cs2$\\"\\n  }\\n})\\n\\n"+a)
+        with open(conf,"w") as f: f.write(b+"-- X64 Studios: Modo Gaming Automático (Cero Latencia)\\nhl.config({\\n  windowrulev2 = {\\n    \\"immediate, class:^steam_app_.*$\\",\\n    \\"noanim, class:^steam_app_.*$\\",\\n    \\"noblur, class:^steam_app_.*$\\",\\n    \\"noshadow, class:^steam_app_.*$\\",\\n    \\"immediate, class:^gamescope$\\",\\n    \\"noanim, class:^gamescope$\\",\\n    \\"noblur, class:^gamescope$\\",\\n    \\"noshadow, class:^gamescope$\\",\\n    \\"immediate, class:^cs2$\\",\\n    \\"noanim, class:^cs2$\\",\\n    \\"noblur, class:^cs2$\\",\\n    \\"noshadow, class:^cs2$\\"\\n  }\\n})\\n\\n")
 \\' 2>/dev/null'''
         run_cmd_live(python_heal, check=False)        
         # --- Batch Shelling para Servicios y Entornos ---
