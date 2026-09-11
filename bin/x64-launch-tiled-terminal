@@ -1,5 +1,5 @@
 #!/bin/bash
 source omarchy-restart-gum
 cmd="$*"
-presentation_script="omarchy-show-logo; $cmd; if (( \$? != 130 )); then omarchy-show-done; fi"
-exec setsid uwsm-app -- xdg-terminal-exec --app-id=org.x64.boutique --title="X64 Boutique" -e bash -c "$presentation_script"
+presentation_script="hyprctl dispatch togglefloating; $cmd; if (( \$? != 130 )); then omarchy-show-done; fi"
+exec setsid uwsm-app -- xdg-terminal-exec --app-id=org.omarchy.terminal --title="X64 Boutique" -e bash -c "$presentation_script"
