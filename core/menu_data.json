@@ -15,7 +15,7 @@
                     "hyprland-preview-share-picker",
                     "hyprpicker",
                     "hyprsunset",
-                    "quickshell",
+                    "quickshell-git",
                     "slurp",
                     "wtype",
                     "sddm",
@@ -40,8 +40,6 @@
                 ],
                 "desc": "El entorno de escritorio KDE Plasma (X64 Studios Edition) con configuración propia."
             },
-
-
             {
                 "label": "Niri (X64 Studios Edition)",
                 "type": "toggle",
