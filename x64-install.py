@@ -623,6 +623,12 @@ def installer_worker():
 import re
 import sys
 conf = open('/etc/pacman.conf').read()
+
+# Auto-sanar URL rota de versiones previas
+if 'https://pkgs.omarchy.org//' in conf:
+    conf = conf.replace('https://pkgs.omarchy.org//', 'https://pkgs.omarchy.org/\\$arch/')
+    open('/etc/pacman.conf', 'w').write(conf)
+
 if '[omarchy]' not in conf:
     match = re.search(r'^\\[(?!options\\]).*?\\]', conf, re.MULTILINE)
     if match:
