@@ -627,7 +627,7 @@ if '[omarchy]' not in conf:
     match = re.search(r'^\\[(?!options\\]).*?\\]', conf, re.MULTILINE)
     if match:
         idx = match.start()
-        new_conf = conf[:idx] + '[omarchy]\\nSigLevel = Optional TrustAll\\nServer = https://pkgs.omarchy.org/$arch/\\n\\n' + conf[idx:]
+        new_conf = conf[:idx] + '[omarchy]\\nSigLevel = Optional TrustAll\\nServer = https://pkgs.omarchy.org/\\$arch/\\n\\n' + conf[idx:]
         open('/etc/pacman.conf', 'w').write(new_conf)
 """
             run_cmd_live(f"sudo python -c \"{inject_script}\"")
