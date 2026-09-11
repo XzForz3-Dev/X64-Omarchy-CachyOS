@@ -739,6 +739,9 @@ if '[omarchy]' not in conf:
             # FIX(updater): Ensure the user owns the directory so the GUI can run git pull without sudo
             run_cmd_live("sudo chown -R $USER:$USER /usr/share/omarchy")
             
+            # FIX(crash): Disable Quickshell native polkit plugin on CachyOS due to Segmentation Faults
+            run_cmd_live("sudo rm -rf /usr/share/omarchy/shell/plugins/polkit")
+            
             # Dinamicamente inyectar scale = "auto" para pantallas HiDPI
             run_cmd_live("sudo sed -i 's/scale = 1/scale = \"auto\"/g' /usr/share/omarchy/config/hypr/monitors.lua")
 
