@@ -1136,7 +1136,6 @@ try:
     
     import fcntl
     fl = fcntl.fcntl(fd, fcntl.F_GETFL)
-    fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
     
     installer_started = False
     
