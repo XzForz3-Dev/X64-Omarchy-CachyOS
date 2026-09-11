@@ -1017,30 +1017,37 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
                 set list_idx 0
                 for i in (seq (count $options))
                     if test "$choice" = "$options[$i]"
-                        set list_idx $i
-                        break
-                    end
+                        echo "Presiona Enter para continuar..."
+                        read
                 end
-            
-                if test $list_idx -gt 0
-                    eval $cmds[$list_idx]
-                    break
-                else
-                    echo -e "\\e[31mOpción inválida.\\e[0m"
-                end
-            end
         end
     end
-    """
-            run_cmd_live("mkdir -p ~/.config/fish/conf.d", check=False)
-            run_cmd_live("rm -f ~/.config/fish/conf.d/hyprland_autostart.fish", check=False)
-            with open(os.path.expanduser("~/.config/fish/conf.d/omarchy_selector.fish"), "w") as f:
-                f.write(fish_selector)
-        else:
-            run_cmd_live("rm -f ~/.config/fish/conf.d/omarchy_selector.fish", check=False)
+end
+"""
+        run_cmd_live("mkdir -p ~/.config/fish/conf.d", check=False)
+        run_cmd_live("rm -f ~/.config/fish/conf.d/hyprland_autostart.fish", check=False)
+        with open(os.path.expanduser("~/.config/fish/conf.d/omarchy_selector.fish"), "w") as f:
+            f.write(fish_selector)
+        
+        # Limpiar arte ASCII en TTY1 si no forzamos
+        if not force_tty:
             run_cmd_live("sudo rm -f /etc/systemd/system/getty@tty1.service.d/issue.conf", check=False)
             run_cmd_live("sudo rm -f /etc/issue.omarchy", check=False)
             run_cmd_live("sudo systemctl daemon-reload", check=False)
+
+        # 3. Crear Acceso Directo de Escritorio para la Boutique
+        desktop_entry = f"""[Desktop Entry]
+Name=X64 Software Boutique
+Comment=Mega Dashboard y Selector de Paquetes
+Exec=kitty --hold -e bash -c "cd {os.getcwd()} && ./x64-install.sh"
+Icon=system-software-install
+Terminal=false
+Type=Application
+Categories=System;Settings;
+"""
+        run_cmd_live("mkdir -p ~/.local/share/applications", check=False)
+        with open(os.path.expanduser("~/.local/share/applications/x64-boutique.desktop"), "w") as f:
+            f.write(desktop_entry)
 
         # --- Batch Shelling para Servicios y Entornos ---
         progress.update(t_config, description="[yellow]Aplicando configuraciones finales (Batch Shell)...", advance=10)
