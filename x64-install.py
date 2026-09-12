@@ -1068,16 +1068,36 @@ Categories=System;Settings;
         with open(os.path.expanduser("~/.local/share/applications/x64-boutique.desktop"), "w") as f:
             f.write(desktop_entry)        # 4. Auto-Healing: Reparar configs rotas de Hyprland (Sintaxis Quirúrgica en Python)
         run_cmd_live("sed -i '/allow_tearing = true/d' ~/.config/hypr/looknfeel.lua 2>/dev/null", check=False)
-        python_heal = '''python3 -c \\'
+        python_heal_script = """
 import os
 conf=os.path.expanduser("~/.config/hypr/hyprland.lua")
 if os.path.exists(conf):
     with open(conf,"r") as f: content=f.read()
     if "-- X64 Studios: Modo Gaming" in content:
         b=content.split("-- X64 Studios: Modo Gaming")[0]
-        with open(conf,"w") as f: f.write(b+"-- X64 Studios: Modo Gaming Automático (Cero Latencia)\\nhl.config({\\n  windowrulev2 = {\\n    \\"immediate, class:^steam_app_.*$\\",\\n    \\"noanim, class:^steam_app_.*$\\",\\n    \\"noblur, class:^steam_app_.*$\\",\\n    \\"noshadow, class:^steam_app_.*$\\",\\n    \\"immediate, class:^gamescope$\\",\\n    \\"noanim, class:^gamescope$\\",\\n    \\"noblur, class:^gamescope$\\",\\n    \\"noshadow, class:^gamescope$\\",\\n    \\"immediate, class:^cs2$\\",\\n    \\"noanim, class:^cs2$\\",\\n    \\"noblur, class:^cs2$\\",\\n    \\"noshadow, class:^cs2$\\"\\n  }\\n})\\n\\n")
-\\' 2>/dev/null'''
-        run_cmd_live(python_heal, check=False)        
+        replacement = '''-- X64 Studios: Modo Gaming Automático (Cero Latencia)
+hl.config({
+  windowrulev2 = {
+    "immediate, class:^steam_app_.*$",
+    "noanim, class:^steam_app_.*$",
+    "noblur, class:^steam_app_.*$",
+    "noshadow, class:^steam_app_.*$",
+    "immediate, class:^gamescope$",
+    "noanim, class:^gamescope$",
+    "noblur, class:^gamescope$",
+    "noshadow, class:^gamescope$",
+    "immediate, class:^cs2$",
+    "noanim, class:^cs2$",
+    "noblur, class:^cs2$",
+    "noshadow, class:^cs2$"
+  }
+})
+'''
+        with open(conf,"w") as f: f.write(b + replacement)
+"""
+        with open("/tmp/heal_hyprland.py", "w") as f:
+            f.write(python_heal_script)
+        run_cmd_live("python3 /tmp/heal_hyprland.py 2>/dev/null", check=False)        
         # --- Batch Shelling para Servicios y Entornos ---
         progress.update(t_config, description="[yellow]Aplicando configuraciones finales (Batch Shell)...", advance=10)
         services_script = "#!/bin/bash\n"
