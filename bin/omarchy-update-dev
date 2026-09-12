@@ -20,9 +20,21 @@ if [[ -z $upstream ]]; then
   exit 0
 fi
 
+# FIX: omarchy-update corre como root (requires-sudo=true), pero el repo en
+# /usr/share/omarchy pertenece al usuario. Git moderno bloquea operaciones
+# en directorios ajenos. Si estamos corriendo como root y existe SUDO_USER,
+# ejecutamos los comandos de git como el usuario real del sistema.
+_git() {
+  if (( EUID == 0 )) && [[ -n ${SUDO_USER:-} ]]; then
+    sudo -u "$SUDO_USER" git -C "$OMARCHY_PATH" "$@"
+  else
+    git -C "$OMARCHY_PATH" "$@"
+  fi
+}
+
 echo -e "\e[32m\nUpdate Omarchy dev checkout\e[0m"
-git -C "$OMARCHY_PATH" fetch --quiet || true
-if ! git -C "$OMARCHY_PATH" merge --ff-only "@{upstream}"; then
+_git fetch --quiet || true
+if ! _git merge --ff-only "@{upstream}"; then
   echo -e "\e[33m\nDetectados cambios locales en el sistema. Aplicando autostash para proteger la configuracion del usuario...\e[0m"
-  git -C "$OMARCHY_PATH" pull --rebase --autostash
+  _git pull --rebase --autostash
 fi
