@@ -1036,8 +1036,7 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
                 set list_idx 0
                 for i in (seq (count $options))
                     if test "$choice" = "$options[$i]"
-                        echo "Presiona Enter para continuar..."
-                        read
+                        eval $cmds[$i]
                     end
                 end
         end
