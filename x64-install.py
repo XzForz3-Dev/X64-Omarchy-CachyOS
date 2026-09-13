@@ -1038,6 +1038,7 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
                     if test "$choice" = "$options[$i]"
                         echo "Presiona Enter para continuar..."
                         read
+                    end
                 end
         end
     end
