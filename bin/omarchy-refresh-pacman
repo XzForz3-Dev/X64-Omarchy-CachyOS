@@ -24,4 +24,4 @@ echo
 omarchy-hook pre-refresh-pacman
 
 # Reset all package DBs and then update
-sudo env OMARCHY_UPDATE_PACMAN=1 pacman -Syyuu --noconfirm
+omarchy-update-pacman -Syyuu --noconfirm
