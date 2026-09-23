@@ -753,6 +753,12 @@ if '[omarchy]' not in conf:
             run_cmd_live(f"sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -S --noconfirm --needed --assume-installed linux-omarchy=99.9 --assume-installed linux-omarchy-headers=99.9 {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
 
+        # === INSTALACIÓN DE DEPENDENCIAS HUÉRFANAS PARA EFECTOS VISUALES ===
+        progress.update(t_pkg, description="[yellow]Instalando motor de animaciones (tte) para salvapantallas...", advance=0)
+        run_cmd_live("sudo pacman -S --noconfirm python-pip 2>/dev/null", check=False)
+        run_cmd_live("sudo pip install terminaltexteffects --break-system-packages 2>/dev/null || true", check=False)
+        # ===================================================================
+
         progress.update(t_backup, description="[yellow]Comprimiendo ~/.config...", advance=50)
         home = os.path.expanduser("~")
         backup_name = f"x64-backup-{datetime.now().strftime('%Y%m%d_%H%M%S')}.tar.gz"
