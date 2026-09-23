@@ -93,6 +93,7 @@ user_choices = {"theme": "Tokyo Night", "packages": []}
 transition_text = ""
 is_legacy_nvidia = False
 has_nvidia = False
+is_vm = False
 
 try:
     pci_out = subprocess.check_output("lspci -k | grep -iEA3 'vga|3d|display'", shell=True, text=True).lower()
@@ -100,6 +101,10 @@ try:
         has_nvidia = True
         if any(arch in pci_out for arch in ["gtx 9", "gtx 7", "gtx 6", "kepler", "maxwell"]):
              is_legacy_nvidia = True
+    
+    if "vmware" in pci_out or "virtualbox" in pci_out:
+        is_vm = True
+        
 except Exception:
     pass
 
@@ -787,6 +792,10 @@ if '[omarchy]' not in conf:
             
             run_cmd_live("sudo bash -c 'echo \"export OMARCHY_PATH=/usr/share/omarchy\" > /etc/profile.d/omarchy.sh'")
             run_cmd_live("sudo chmod +x /etc/profile.d/omarchy.sh")
+            
+            if is_vm:
+                log_lines.append("[yellow]Máquina Virtual detectada. Inyectando modo de renderizado por software...[/yellow]")
+                run_cmd_live("sudo bash -c 'grep -q \"QT_QUICK_BACKEND\" /etc/environment || echo -e \"\\n# Parche de renderizado para VM\\nQT_QUICK_BACKEND=software\\nWLR_RENDERER_ALLOW_SOFTWARE=1\\nWLR_NO_HARDWARE_CURSORS=1\" >> /etc/environment'", check=False)
             
             # Copiado acelerado mediante Python nativo (shutil)
             shutil.copytree("config", os.path.expanduser("~/.config"), dirs_exist_ok=True)
