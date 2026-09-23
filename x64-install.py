@@ -442,6 +442,7 @@ def update_ui():
             cat_start_idx = max(0, cat_end_idx - MAX_CAT_ROWS)
 
         cat_text = ""
+        for i, c in enumerate(menu_data):
         if cat_start_idx > 0:
             cat_text += "  [dim cyan]... (↑ Arriba)[/dim cyan]\n\n"
 
@@ -684,11 +685,14 @@ if '[omarchy]' not in conf:
         progress.update(t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=3)
         res = run_cmd_live("sudo pacman -Syu --noconfirm", check=False)
         if res != 0:
-            log_lines.append("[bold red]Fallo detectado. Reparando Llavero GPG...[/bold red]")
+            log_lines.append("[bold red]Fallo detectado. Reparando Llavero GPG y Limpiando Caché...[/bold red]")
             run_cmd_live("sudo rm -rf /etc/pacman.d/gnupg/")
+            run_cmd_live("sudo rm -f /var/cache/pacman/pkg/*.part")
+            run_cmd_live("sudo rm -f /var/cache/pacman/pkg/chaotic-mirrorlist*")
             progress.update(t_sync, description="[yellow]Reparando Llavero...", advance=10)
             run_cmd_live("sudo pacman-key --init")
-            run_cmd_live("sudo pacman-key --populate archlinux cachyos")
+            run_cmd_live("sudo pacman-key --populate archlinux cachyos chaotic")
+            run_cmd_live("sudo pacman -Sy --noconfirm archlinux-keyring cachyos-keyring chaotic-keyring")
             progress.update(t_sync, description="[yellow]Reintentando Sincronización...", advance=20)
             run_cmd_live("sudo pacman -Syu --noconfirm")
         progress.update(t_sync, description="[green]Sistema Sincronizado", completed=100)
