@@ -620,6 +620,11 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False, theme_name="omarchy"):
             run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/{cmdline_extra}/ }}\" {lpath}' 2>/dev/null", check=False)
             break
     
+    # Destruir físicamente linux-omarchy si quedó como residuo de instalaciones previas
+    log_lines.append("[yellow]Asegurando la purga física de linux-omarchy...[/yellow]")
+    run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rns --noconfirm linux-omarchy linux-omarchy-headers 2>/dev/null", check=False)
+    run_cmd_live("sudo rm -f /boot/EFI/Linux/*linux-omarchy* /efi/EFI/Linux/*linux-omarchy* /boot/efi/EFI/Linux/*linux-omarchy* 2>/dev/null", check=False)
+
     # Actualizar limine si está instalado (ignorando prompts)
     run_cmd_live("if command -v limine-update >/dev/null; then echo '' | sudo limine-update; fi", check=False)
 
