@@ -585,7 +585,7 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False, theme_name="omarchy"):
     run_cmd_live("sudo dkms autoinstall -j $(nproc)", check=False)
     
     # Regenerar initramfs explícitamente y silenciar advertencias de limine
-    run_cmd_live("echo '' | sudo mkinitcpio -P", check=False)
+    run_cmd_live("echo '' | sudo mkinitcpio -P 2>&1 | grep -ivE 'WARNING: Possibly missing firmware|WARNING: consolefont|WARNING: This does not update Limine'", check=False)
     
     log_lines.append("[yellow]Configurando Dracut (Fallback)...[/yellow]")
     run_cmd_live("sudo mkdir -p /etc/dracut.conf.d", check=False)
