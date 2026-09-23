@@ -607,26 +607,7 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False, theme_name="omarchy"):
         
     run_cmd_live(f"sudo bash -c 'if [ -f /etc/kernel/cmdline ]; then grep -q \"splash\" /etc/kernel/cmdline || sed -i \"s/$/{cmdline_extra}/\" /etc/kernel/cmdline; fi' 2>/dev/null", check=False)
     
-    # Búsqueda optimizada de Limine nativa (Sin escaneos ciegos)
-    limine_paths = ["/boot/limine.conf", "/boot/limine/limine.conf", "/efi/limine.conf", "/boot/efi/limine.conf",
-                    "/boot/limine.cfg", "/boot/limine/limine.cfg", "/efi/limine.cfg", "/boot/efi/limine.cfg"]
-    for lpath in limine_paths:
-        if os.path.exists(lpath):
-            # Purgar entradas fantasma de CachyOS causadas por la transición a Omarchy UKI
-            log_lines.append("[yellow]Limpiando entradas fantasma de CachyOS en Limine...[/yellow]")
-            run_cmd_live(f"sudo perl -0777 -pi -e 's/comment: machine-id=[a-f0-9]+\\n\\/\\+CachyOS.*?(?=\\/\\+Omarchy)//s' {lpath} 2>/dev/null", check=False)
-            
-            run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *kernel_cmdline/ {{ /splash/! s/$/{cmdline_extra}/ }}\" {lpath}' 2>/dev/null", check=False)
-            run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/{cmdline_extra}/ }}\" {lpath}' 2>/dev/null", check=False)
-            break
-    
-    # Destruir físicamente linux-omarchy si quedó como residuo de instalaciones previas
-    log_lines.append("[yellow]Asegurando la purga física de linux-omarchy...[/yellow]")
-    run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rns --noconfirm linux-omarchy linux-omarchy-headers 2>/dev/null", check=False)
-    run_cmd_live("sudo rm -f /boot/EFI/Linux/*linux-omarchy* /efi/EFI/Linux/*linux-omarchy* /boot/efi/EFI/Linux/*linux-omarchy* 2>/dev/null", check=False)
-
-    # Actualizar limine si está instalado (ignorando prompts)
-    run_cmd_live("if command -v limine-update >/dev/null; then echo '' | sudo limine-update; fi", check=False)
+    # (Lógica de Limine movida al final de installer_worker para ejecución incondicional)
 
 def installer_worker():
     global install_error, install_done, current_state
@@ -1193,7 +1174,25 @@ hl.config({
         
         progress.update(t_final, description="[yellow]Purgando caché de Pacman...", advance=10)
         run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Scc --noconfirm", check=False)
-        
+
+        # === PURGA FINAL Y RECONSTRUCCIÓN DE ARRANQUE ===
+        progress.update(t_final, description="[yellow]Reconstruyendo el menú de arranque...", advance=10)
+        log_lines.append("[yellow]Asegurando la purga física de linux-omarchy...[/yellow]")
+        run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rns --noconfirm linux-omarchy linux-omarchy-headers 2>/dev/null", check=False)
+        run_cmd_live("sudo rm -f /boot/EFI/Linux/*linux-omarchy* /efi/EFI/Linux/*linux-omarchy* /boot/efi/EFI/Linux/*linux-omarchy* 2>/dev/null", check=False)
+
+        limine_paths = ["/boot/limine.conf", "/boot/limine/limine.conf", "/efi/limine.conf", "/boot/efi/limine.conf", "/boot/limine.cfg", "/boot/limine/limine.cfg", "/efi/limine.cfg", "/boot/efi/limine.cfg"]
+        for lpath in limine_paths:
+            if os.path.exists(lpath):
+                log_lines.append("[yellow]Limpiando entradas fantasma en Limine...[/yellow]")
+                run_cmd_live(f"sudo perl -0777 -pi -e 's/comment: machine-id=[a-f0-9]+\\n\\/\\+CachyOS.*?(?=\\/\\+Omarchy)//s' {lpath} 2>/dev/null", check=False)
+                run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *kernel_cmdline/ {{ /splash/! s/$/ splash/ }}\" {lpath}' 2>/dev/null", check=False)
+                run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/ splash/ }}\" {lpath}' 2>/dev/null", check=False)
+                break
+
+        run_cmd_live("if command -v limine-update >/dev/null; then echo '' | sudo limine-update; fi", check=False)
+        # ================================================
+
         progress.update(t_config, description="[green]Sistema Listo", completed=100)
         
     except Exception as e:
