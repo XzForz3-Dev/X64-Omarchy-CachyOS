@@ -645,12 +645,12 @@ def installer_worker():
         run_cmd_live("sudo sed -i '/\\[chaotic-aur\\]/,+2d' /etc/pacman.conf", check=False)
         run_cmd_live("sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com", check=False)
         run_cmd_live("sudo pacman-key --lsign-key 3056513887B78AEB", check=False)
-        run_cmd_live("sudo pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'", check=False)
+        run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'", check=False)
         run_cmd_live("sudo bash -c 'if [ -f /etc/pacman.d/chaotic-mirrorlist ]; then grep -q \"chaotic-aur\" /etc/pacman.conf || echo -e \"\\n[chaotic-aur]\\nInclude = /etc/pacman.d/chaotic-mirrorlist\\n\" >> /etc/pacman.conf; fi'")
         
         if install_hyprland:
             progress.update(t_repo, description="[yellow]Purgando dependencias en conflicto pre-existentes...", advance=10)
-            run_cmd_live("for pkg in quickshell noctalia-qs noctalia-shell polkit-kde-agent polkit-gnome lxqt-policykit; do sudo pacman -Rdd --noconfirm $pkg 2>/dev/null; done", check=False)
+            run_cmd_live("for pkg in quickshell noctalia-qs noctalia-shell polkit-kde-agent polkit-gnome lxqt-policykit; do sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rdd --noconfirm $pkg 2>/dev/null; done", check=False)
             progress.update(t_repo, description="[yellow]Inyectando repo Omarchy...", advance=10)
             # Ensure omarchy repo is injected with high priority (before cachyos and core)
             inject_script = """
@@ -682,7 +682,7 @@ if '[omarchy]' not in conf:
 
 
         progress.update(t_sync, description="[yellow]Sincronizando firmas (Puede tardar)...", advance=3)
-        res = run_cmd_live("sudo pacman -Syu --noconfirm", check=False)
+        res = run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Syu --noconfirm", check=False)
         if res != 0:
             log_lines.append("[bold red]Fallo detectado. Reparando Llavero GPG y Limpiando Caché...[/bold red]")
             run_cmd_live("sudo rm -rf /etc/pacman.d/gnupg/")
@@ -691,9 +691,9 @@ if '[omarchy]' not in conf:
             progress.update(t_sync, description="[yellow]Reparando Llavero...", advance=10)
             run_cmd_live("sudo pacman-key --init")
             run_cmd_live("sudo pacman-key --populate archlinux cachyos chaotic")
-            run_cmd_live("sudo pacman -Sy --noconfirm archlinux-keyring cachyos-keyring chaotic-keyring")
+            run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Sy --noconfirm archlinux-keyring cachyos-keyring chaotic-keyring")
             progress.update(t_sync, description="[yellow]Reintentando Sincronización...", advance=20)
-            run_cmd_live("sudo pacman -Syu --noconfirm")
+            run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Syu --noconfirm")
         progress.update(t_sync, description="[green]Sistema Sincronizado", completed=100)
 
         progress.update(t_pkg, description="[yellow]Calculando paquetes base...", advance=20)
@@ -751,10 +751,10 @@ if '[omarchy]' not in conf:
         if chk.returncode != 0:
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             progress.update(t_pkg, description="[cyan]Descargando e Instalando Paquetes (Puede tardar varios minutos)...", advance=40)
-            run_cmd_live("sudo pacman -Rdd --noconfirm jack2 2>/dev/null", check=False)
-            run_cmd_live("for pkg in noctalia-shell noctalia-qs quickshell polkit-kde-agent polkit-gnome lxqt-policykit; do sudo pacman -Rdd --noconfirm $pkg 2>/dev/null; done", check=False)
+            run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rdd --noconfirm jack2 2>/dev/null", check=False)
+            run_cmd_live("for pkg in noctalia-shell noctalia-qs quickshell polkit-kde-agent polkit-gnome lxqt-policykit; do sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rdd --noconfirm $pkg 2>/dev/null; done", check=False)
 
-            run_cmd_live(f"sudo pacman -S --noconfirm --needed {' '.join(missing_pkgs)}")
+            run_cmd_live(f"sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -S --noconfirm --needed {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
 
         progress.update(t_backup, description="[yellow]Comprimiendo ~/.config...", advance=50)
@@ -996,7 +996,7 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
                     if type -q paru
                         paru -Syu
                     else
-                        sudo pacman -Syu
+                        sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Syu
                     end
                     echo -e "\\n\\e[1;32mActualización completada. Presiona Enter para volver.\\e[0m"
                     read
@@ -1008,7 +1008,7 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
                     sudo rm -f /var/cache/pacman/pkg/*.part
                     sudo rm -f /var/cache/pacman/pkg/*.download
                     echo "Vaciando caché de paquetes viejos..."
-                    sudo pacman -Sc --noconfirm
+                    sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Sc --noconfirm
                     if type -q paru
                         paru -Sc --noconfirm
                     end
@@ -1045,7 +1045,7 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
                         rate-mirrors arch | sudo tee /etc/pacman.d/mirrorlist
                     else
                         echo "Instalando rate-mirrors temporalmente..."
-                        sudo pacman -S --noconfirm rate-mirrors
+                        sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -S --noconfirm rate-mirrors
                         rate-mirrors arch | sudo tee /etc/pacman.d/mirrorlist
                     end
                     echo -e "\\n\\e[1;32mReparación completada. Presiona Enter para volver.\\e[0m"
@@ -1173,7 +1173,7 @@ hl.config({
             run_cmd_live("export OMARCHY_PATH=/usr/share/omarchy && export OMARCHY_THEME_HEADLESS=1 && /usr/share/omarchy/bin/omarchy-theme-set 'Tokyo Night'", check=False)
         
         progress.update(t_final, description="[yellow]Purgando caché de Pacman...", advance=10)
-        run_cmd_live("sudo pacman -Scc --noconfirm", check=False)
+        run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Scc --noconfirm", check=False)
         
         progress.update(t_config, description="[green]Sistema Listo", completed=100)
         
