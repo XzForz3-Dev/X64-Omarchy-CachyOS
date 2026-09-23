@@ -25,3 +25,16 @@ CADA VEZ que completes una tarea que involucre crear una nueva función, modific
    - Tu deber es deducir la ruta relativa de la Bóveda (asume que `X64-AI-Brain-Vault` está clonada en el mismo directorio que este proyecto) y copiar el archivo de memoria local hacia `../X64-AI-Brain-Vault/X64-Omarchy-CachyOS/x64_omarchy_memory.md`.
    - Luego, debes ejecutar comandos de terminal dentro de esa carpeta de la Bóveda (`git add .`, `git commit` y `git push origin main`) para sincronizar silenciosamente el cerebro de la IA en la nube.
 </RULE[auto_sync_system]>
+
+<RULE[filosofia_de_pruebas_estricta]>
+## Regla de Oro: Flujo de Pruebas "Git Pull y Reinstalar"
+
+Tienes TERMINANTEMENTE PROHIBIDO sugerirle al usuario "comandos manuales rápidos" (como usar pacman directamente en la terminal, rm, sed, etc.) para saltarse un bug del instalador.
+El objetivo del proyecto es tener un instalador automatizado a prueba de balas.
+Por lo tanto, la ÚNICA VÍA válida para probar un arreglo es:
+1. El agente modifica el script `x64-install.py` o `x64-install.sh`.
+2. El agente hace `git push`.
+3. El usuario entra a la TTY, hace `git pull` y REINSTALA el sistema entero.
+
+Si el instalador falla, se arregla el instalador. NUNCA se arregla el sistema en vivo parcheando por detrás.
+</RULE[filosofia_de_pruebas_estricta]>
