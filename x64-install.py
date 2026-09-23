@@ -773,6 +773,7 @@ if '[omarchy]' not in conf:
             
             # Copiado acelerado mediante Python nativo (shutil)
             shutil.copytree("config", os.path.expanduser("~/.config"), dirs_exist_ok=True)
+            shutil.copytree("config", os.path.expanduser("~/.config"), dirs_exist_ok=True, symlinks=True)
     
             # Auto-configurar teclado leyendo localectl
             try:
@@ -799,6 +800,8 @@ if '[omarchy]' not in conf:
                         
             shutil.copytree("bin", os.path.expanduser("~/.local/bin"), dirs_exist_ok=True)
             shutil.copytree("themes", os.path.expanduser("~/.local/share/themes"), dirs_exist_ok=True)
+            shutil.copytree("bin", os.path.expanduser("~/.local/bin"), dirs_exist_ok=True, symlinks=True)
+            shutil.copytree("themes", os.path.expanduser("~/.local/share/themes"), dirs_exist_ok=True, symlinks=True)
             run_cmd_live("chmod +x ~/.local/bin/*", check=False)
         
         has_cachyos_settings = any("cachyos-" in pkg and "-settings" in pkg for pkg in pkgs)
