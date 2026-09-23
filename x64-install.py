@@ -612,6 +612,10 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False, theme_name="omarchy"):
                     "/boot/limine.cfg", "/boot/limine/limine.cfg", "/efi/limine.cfg", "/boot/efi/limine.cfg"]
     for lpath in limine_paths:
         if os.path.exists(lpath):
+            # Purgar entradas fantasma de CachyOS causadas por la transición a Omarchy UKI
+            log_lines.append("[yellow]Limpiando entradas fantasma de CachyOS en Limine...[/yellow]")
+            run_cmd_live(f"sudo perl -0777 -pi -e 's/comment: machine-id=[a-f0-9]+\\n\\/\\+CachyOS.*?(?=\\/\\+Omarchy)//s' {lpath} 2>/dev/null", check=False)
+            
             run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *kernel_cmdline/ {{ /splash/! s/$/{cmdline_extra}/ }}\" {lpath}' 2>/dev/null", check=False)
             run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/{cmdline_extra}/ }}\" {lpath}' 2>/dev/null", check=False)
             break
