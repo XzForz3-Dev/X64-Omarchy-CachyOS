@@ -1190,6 +1190,14 @@ hl.config({
                 run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/ splash/ }}\" {lpath}' 2>/dev/null", check=False)
                 break
 
+        # === SILENCIADOR DE MIGRACIONES HISTÓRICAS ===
+        log_lines.append("[yellow]Marcando historial de migraciones de Omarchy como completado...[/yellow]")
+        run_cmd_live("mkdir -p ~/.local/state/omarchy/migrations", check=False)
+        run_cmd_live("if [ -d /usr/share/omarchy/migrations ]; then for m in /usr/share/omarchy/migrations/*.sh; do touch \"$HOME/.local/state/omarchy/migrations/$(basename $m)\" 2>/dev/null; done; fi", check=False)
+        run_cmd_live("sudo mkdir -p /etc/skel/.local/state/omarchy/migrations", check=False)
+        run_cmd_live("if [ -d /usr/share/omarchy/migrations ]; then for m in /usr/share/omarchy/migrations/*.sh; do sudo touch \"/etc/skel/.local/state/omarchy/migrations/$(basename $m)\" 2>/dev/null; done; fi", check=False)
+        # ===============================================
+
         run_cmd_live("if command -v limine-update >/dev/null; then echo '' | sudo limine-update 2>&1 | grep -ivE 'WARNING:( Possibly missing firmware| consolefont| This does not update Limine)'; fi", check=False)
         # ================================================
 
