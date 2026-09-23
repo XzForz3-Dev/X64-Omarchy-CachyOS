@@ -5,3 +5,6 @@ __pycache__/
 # Logs and backups
 *.log
 *.tar.gz
+
+# Upstream
+.claude/

@@ -10,7 +10,6 @@
 
 Un proyecto de ingeniería avanzada creado por **X64 Studios**. Fusionamos la velocidad brutal y optimización de **CachyOS** con la elegancia estética y productividad extrema de **Omarchy (Hyprland)**.
 
-</div>
 
 ---
 
