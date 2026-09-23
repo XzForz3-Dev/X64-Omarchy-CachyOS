@@ -718,6 +718,7 @@ if '[omarchy]' not in conf:
         # Filtro Negro (Blacklist) de X64 para proteger CachyOS de upstream
         blacklisted_pkgs = {
             "linux-ptl", "linux-t2", "linux", "linux-firmware", "linux-headers", "linux-ptl-headers",
+            "linux-omarchy", "linux-omarchy-headers",
             "linux-firmware-marvell", "linux-t2-headers", "limine", "limine-mkinitcpio-hook", "limine-snapper-sync",
             "nvidia-580xx-dkms", "nvidia-dkms", "nvidia-open-dkms", "nvidia-580xx-utils", "nvidia-utils",
             "lib32-nvidia-580xx-utils", "lib32-nvidia-utils", "libva-nvidia-driver", "intel-media-driver",
@@ -763,7 +764,7 @@ if '[omarchy]' not in conf:
             run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rdd --noconfirm jack2 2>/dev/null", check=False)
             run_cmd_live("for pkg in noctalia-shell noctalia-qs quickshell polkit-kde-agent polkit-gnome lxqt-policykit; do sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rdd --noconfirm $pkg 2>/dev/null; done", check=False)
 
-            run_cmd_live(f"sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -S --noconfirm --needed {' '.join(missing_pkgs)}")
+            run_cmd_live(f"sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -S --noconfirm --needed --assume-installed linux-omarchy=99.9 --assume-installed linux-omarchy-headers=99.9 {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
 
         progress.update(t_backup, description="[yellow]Comprimiendo ~/.config...", advance=50)
