@@ -638,9 +638,6 @@ def installer_worker():
         run_cmd_live("sudo sed -i '/NoExtract = usr\\/share\\/doc\\/\\*/d' /etc/pacman.conf", check=False)
         run_cmd_live("sudo bash -c 'grep -q \"NoExtract = usr/share/doc\" /etc/pacman.conf || sed -i \"/^\\[options\\]/a NoExtract = usr/share/doc/* usr/share/gtk-doc/* usr/share/help/* usr/share/man/* usr/share/info/*\" /etc/pacman.conf'", check=False)
         
-        progress.update(t_repo, description="[yellow]Buscando los servidores más rápidos...", advance=5)
-        run_cmd_live("sudo cachyos-rate-mirrors", check=False)
-        
         progress.update(t_repo, description="[yellow]Desbloqueando Pacman...", advance=10)
         if os.path.exists("/var/lib/pacman/db.lck"):
             run_cmd_live("sudo rm -f /var/lib/pacman/db.lck")
