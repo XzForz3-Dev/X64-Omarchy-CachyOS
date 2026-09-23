@@ -1190,7 +1190,7 @@ hl.config({
                 run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/ splash/ }}\" {lpath}' 2>/dev/null", check=False)
                 break
 
-        run_cmd_live("if command -v limine-update >/dev/null; then echo '' | sudo limine-update; fi", check=False)
+        run_cmd_live("if command -v limine-update >/dev/null; then echo '' | sudo limine-update 2>&1 | grep -ivE 'WARNING:( Possibly missing firmware| consolefont| This does not update Limine)'; fi", check=False)
         # ================================================
 
         progress.update(t_config, description="[green]Sistema Listo", completed=100)
