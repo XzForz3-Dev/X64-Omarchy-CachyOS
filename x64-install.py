@@ -434,8 +434,19 @@ def update_ui():
             for i in range(0, len(cells), 3):
                 grid.add_row(cells[i], cells[i+1], cells[i+2])
 
+        MAX_CAT_ROWS = 15
+        cat_start_idx = max(0, cat_idx - (MAX_CAT_ROWS // 2))
+        cat_end_idx = cat_start_idx + MAX_CAT_ROWS
+        if cat_end_idx > len(menu_data):
+            cat_end_idx = len(menu_data)
+            cat_start_idx = max(0, cat_end_idx - MAX_CAT_ROWS)
+
         cat_text = ""
-        for i, c in enumerate(menu_data):
+        if cat_start_idx > 0:
+            cat_text += "  [dim cyan]... (↑ Arriba)[/dim cyan]\n\n"
+
+        for i in range(cat_start_idx, cat_end_idx):
+            c = menu_data[i]
             if i == cat_idx:
                 style = "bold cyan reverse" if active_pane == "left" else "bold cyan"
                 prefix = "▶ " if active_pane == "left" else "  "
@@ -443,6 +454,9 @@ def update_ui():
             else:
                 style = "dim white" if active_pane == "right" else "white"
                 cat_text += f"  [{style}]{c['cat']}[/{style}]\n\n"
+                
+        if cat_end_idx < len(menu_data):
+            cat_text += "  [dim cyan]... (↓ Abajo)[/dim cyan]\n\n"
         
         # --- NUEVO LAYOUT COMPLETO ESTILO IDE ---
         cat_border = "cyan" if active_pane == "left" else "dim white"
