@@ -442,7 +442,6 @@ def update_ui():
             cat_start_idx = max(0, cat_end_idx - MAX_CAT_ROWS)
 
         cat_text = ""
-        for i, c in enumerate(menu_data):
         if cat_start_idx > 0:
             cat_text += "  [dim cyan]... (↑ Arriba)[/dim cyan]\n\n"
 
