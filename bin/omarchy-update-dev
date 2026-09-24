@@ -20,10 +20,6 @@ if [[ -z $upstream ]]; then
   exit 0
 fi
 
-# FIX: omarchy-update corre como root (requires-sudo=true), pero el repo en
-# /usr/share/omarchy pertenece al usuario. Git moderno bloquea operaciones
-# en directorios ajenos. Si estamos corriendo como root y existe SUDO_USER,
-# ejecutamos los comandos de git como el usuario real del sistema.
 _git() {
   if (( EUID == 0 )) && [[ -n ${SUDO_USER:-} ]]; then
     sudo -u "$SUDO_USER" git -C "$OMARCHY_PATH" "$@"
@@ -33,6 +29,18 @@ _git() {
 }
 
 echo -e "\e[32m\nUpdate Omarchy dev checkout\e[0m"
+
+# i18n Auto-Sync: Para prevenir crasheos de Quickshell (hot-reload masivo),
+# pausamos la interfaz gráfic si detectamos que hay traducciones aplicadas.
+if ! _git diff --quiet; then
+    echo ">> Pausando la interfaz gráfica temporalmente para la actualización segura..."
+    if (( EUID == 0 )) && [[ -n ${SUDO_USER:-} ]]; then
+        sudo -u "$SUDO_USER" quickshell kill -p "$OMARCHY_PATH/shell" --any-display >/dev/null 2>&1 || true
+    else
+        quickshell kill -p "$OMARCHY_PATH/shell" --any-display >/dev/null 2>&1 || true
+    fi
+    sleep 0.5
+fi
 
 # i18n Auto-Sync: Limpiar cualquier traducción activa antes de actualizar el código
 _git reset --hard HEAD || true
