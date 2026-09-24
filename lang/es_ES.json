@@ -1,0 +1,12 @@
+{
+  "Bluetooth": "Bluetooth",
+  "CONNECTED": "CONECTADO",
+  "CONNECTIONS": "CONEXIONES",
+  "EXIT NODES": "NODOS DE SALIDA",
+  "MACHINES": "MÁQUINAS",
+  "No machines found on this tailnet.": "No se encontraron máquinas en esta red.",
+  "Generating QR code…": "Generando código QR…",
+  "Scan to join this network": "Escanea para unirte a esta red",
+  "No synced files found.": "No se encontraron archivos sincronizados.",
+  "RECENT FILES": "ARCHIVOS RECIENTES"
+}
