@@ -26,6 +26,13 @@ STATE_FILE="$HOME/.local/state/omarchy/lang_es_ES"
 
 echo ">> Preparando el sistema de traducción en $UI_DIR..."
 
+# FIX CRÍTICO: Detener Quickshell ANTES de modificar sus archivos para evitar el Crash por Hot-Reload.
+if (( NO_RESTART == 0 )); then
+    echo ">> Deteniendo la interfaz visual para evitar conflictos..."
+    quickshell kill -p "$UI_DIR/shell" --any-display >/dev/null 2>&1 || pkill -f quickshell || true
+    sleep 0.5
+fi
+
 # 1. Limpiar modificaciones previas usando GIT.
 echo ">> Restaurando base en inglés desde Git..."
 git -C "$UI_DIR" reset --hard HEAD || true
@@ -33,10 +40,16 @@ git -C "$UI_DIR" reset --hard HEAD || true
 # Si el idioma es inglés, terminamos aquí
 if [[ "$LANG_CODE" == "en_US" ]]; then
     rm -f "$STATE_FILE"
+    
+    # Restaurar también el menú del usuario si existe
+    if [[ -f "$HOME/.config/omarchy/omarchy-menu.jsonc" ]]; then
+        cp "$UI_DIR/default/omarchy/omarchy-menu.jsonc" "$HOME/.config/omarchy/omarchy-menu.jsonc"
+    fi
+
     echo ">> ¡Idioma Inglés (Por defecto) aplicado exitosamente!"
     if (( NO_RESTART == 0 )); then
         echo ">> Reiniciando Quickshell..."
-        pkill -f quickshell || true
+        "$UI_DIR/bin/omarchy-restart-shell" || true
     fi
     exit 0
 fi
@@ -54,27 +67,36 @@ import json, os
 with open('$LANG_FILE', 'r') as f:
     dic = json.load(f)
 
+# Función para traducir un archivo
+def translate_file(filepath):
+    try:
+        with open(filepath, 'r') as f:
+            content = f.read()
+        modified = False
+        for eng, esp in dic.items():
+            target_str = f'\"{eng}\"'
+            if target_str in content:
+                content = content.replace(target_str, f'\"{esp}\"')
+                modified = True
+        if modified:
+            with open(filepath, 'w') as f:
+                f.write(content)
+            print(f'Traducido: {filepath}')
+    except Exception as e:
+        print(f'Error en {filepath}: {e}')
+
+# 1. Traducir todo el sistema base
 for root, _, files in os.walk('$UI_DIR'):
-    # Ignorar la carpeta .git para no romper el repositorio
     if '.git' in root:
         continue
-
     for file in files:
         if file.endswith('.qml') or file.endswith('.sh') or file.endswith('.jsonc'):
-            filepath = os.path.join(root, file)
-            with open(filepath, 'r') as f:
-                content = f.read()
-            
-            modified = False
-            for eng, esp in dic.items():
-                target_str = f'\"{eng}\"'
-                if target_str in content:
-                    content = content.replace(target_str, f'\"{esp}\"')
-                    modified = True
-            
-            if modified:
-                with open(filepath, 'w') as f:
-                    f.write(content)
+            translate_file(os.path.join(root, file))
+
+# 2. Traducir también la copia de usuario del Menú Principal
+user_menu = os.path.expanduser('~/.config/omarchy/omarchy-menu.jsonc')
+if os.path.exists(user_menu):
+    translate_file(user_menu)
 "
 
 # Guardar estado para que el menú muestre el ✓ correcto
@@ -84,5 +106,5 @@ touch "$STATE_FILE"
 echo ">> ¡Idioma $LANG_CODE aplicado exitosamente!"
 if (( NO_RESTART == 0 )); then
     echo ">> Reiniciando Quickshell..."
-    pkill -f quickshell || true
+    "$UI_DIR/bin/omarchy-restart-shell" || true
 fi
