@@ -584,8 +584,8 @@ Item {
     path: "/etc/pam.d/omarchy-lock-password"
     watchChanges: true
     printErrors: false
-    onLoaded: root.passwordPamConfigured = true
-    onLoadFailed: root.passwordPamConfigured = false
+    onLoaded: if(root) root.passwordPamConfigured = true
+    onLoadFailed: if(root) root.passwordPamConfigured = false
     onFileChanged: reload()
   }
 

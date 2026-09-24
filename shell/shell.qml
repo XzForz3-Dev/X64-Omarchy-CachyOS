@@ -902,6 +902,8 @@ ShellRoot {
 
     var comp = Qt.createComponent(url, Component.Asynchronous)
     function finalize() {
+      if (authenticationService && AuthServiceStore.has(key)) return
+      if (!authenticationService && _services[key]) return
       if (comp.status !== Component.Ready) {
         console.warn("service plugin load failed for " + key + ": " + comp.errorString())
         return
