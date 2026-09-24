@@ -16,22 +16,18 @@ if [[ -z "$OMARCHY_PATH" ]]; then
     fi
 fi
 
-UI_DIR="/usr/share/omarchy"
-BAK_DIR="/usr/share/omarchy.en_US.bak"
+UI_DIR="$OMARCHY_PATH"
 STATE_FILE="$HOME/.local/state/omarchy/lang_es_ES"
 
-echo ">> Solicitando permisos para parchear el idioma del sistema en $UI_DIR..."
-# 1. Crear backup inmaculado si no existe
-if [[ ! -d "$BAK_DIR" ]]; then
-    echo ">> Creando respaldo original en $BAK_DIR..."
-    sudo cp -a "$UI_DIR" "$BAK_DIR"
-fi
+echo ">> Preparando el sistema de traducción en $UI_DIR..."
 
-# 2. Restaurar backup para garantizar limpieza
-echo ">> Restaurando base en inglés desde el respaldo..."
-sudo rsync -a --delete "$BAK_DIR/" "$UI_DIR/"
+# 1. Limpiar modificaciones previas usando GIT.
+# Esto elimina cualquier traducción previa o residuo de autostash,
+# dejando el código exactamente como viene de Basecamp.
+echo ">> Restaurando base en inglés desde Git..."
+git -C "$UI_DIR" reset --hard HEAD || true
 
-# Si el idioma es inglés, terminamos aquí (ya restauramos el backup)
+# Si el idioma es inglés, terminamos aquí
 if [[ "$LANG_CODE" == "en_US" ]]; then
     rm -f "$STATE_FILE"
     echo ">> ¡Idioma Inglés (Por defecto) aplicado exitosamente!"
@@ -48,12 +44,16 @@ if [[ ! -f "$LANG_FILE" ]]; then
 fi
 
 echo ">> Inyectando traducciones al vuelo desde $LANG_FILE..."
-sudo python3 -c "
+python3 -c "
 import json, os
 with open('$LANG_FILE', 'r') as f:
     dic = json.load(f)
 
 for root, _, files in os.walk('$UI_DIR'):
+    # Ignorar la carpeta .git para no romper el repositorio
+    if '.git' in root:
+        continue
+
     for file in files:
         if file.endswith('.qml') or file.endswith('.sh') or file.endswith('.jsonc'):
             filepath = os.path.join(root, file)
