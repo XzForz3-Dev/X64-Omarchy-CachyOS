@@ -33,8 +33,23 @@ _git() {
 }
 
 echo -e "\e[32m\nUpdate Omarchy dev checkout\e[0m"
+
+# i18n Auto-Sync: Limpiar cualquier traducción activa antes de actualizar el código
+_git reset --hard HEAD || true
+
 _git fetch --quiet || true
 if ! _git merge --ff-only "@{upstream}"; then
   echo -e "\e[33m\nDetectados cambios locales en el sistema. Aplicando autostash para proteger la configuracion del usuario...\e[0m"
   _git pull --rebase --autostash
+fi
+
+# i18n Auto-Sync: Re-aplicar Español si el usuario lo tenía configurado previamente
+REAL_HOME=$(eval echo "~${SUDO_USER:-$USER}")
+if [[ -f "$REAL_HOME/.local/state/omarchy/lang_es_ES" ]]; then
+    echo -e "\e[32m\nRe-aplicando idioma Español (Persistencia automática)...\e[0m"
+    if (( EUID == 0 )) && [[ -n ${SUDO_USER:-} ]]; then
+        sudo -u "$SUDO_USER" "$OMARCHY_PATH/bin/omarchy-language-set" es_ES --no-restart
+    else
+        "$OMARCHY_PATH/bin/omarchy-language-set" es_ES --no-restart
+    fi
 fi

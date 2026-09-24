@@ -5,6 +5,11 @@
 set -e
 
 LANG_CODE="${1:-es_ES}"
+NO_RESTART=0
+
+if [[ "${2:-}" == "--no-restart" ]]; then
+    NO_RESTART=1
+fi
 
 # Derivar rutas con respecto a OMARCHY_PATH o la ruta de instalación real
 OMARCHY_DIR="/usr/share/omarchy"
@@ -22,8 +27,6 @@ STATE_FILE="$HOME/.local/state/omarchy/lang_es_ES"
 echo ">> Preparando el sistema de traducción en $UI_DIR..."
 
 # 1. Limpiar modificaciones previas usando GIT.
-# Esto elimina cualquier traducción previa o residuo de autostash,
-# dejando el código exactamente como viene de Basecamp.
 echo ">> Restaurando base en inglés desde Git..."
 git -C "$UI_DIR" reset --hard HEAD || true
 
@@ -31,8 +34,10 @@ git -C "$UI_DIR" reset --hard HEAD || true
 if [[ "$LANG_CODE" == "en_US" ]]; then
     rm -f "$STATE_FILE"
     echo ">> ¡Idioma Inglés (Por defecto) aplicado exitosamente!"
-    echo ">> Reiniciando Quickshell..."
-    pkill -f quickshell || true
+    if (( NO_RESTART == 0 )); then
+        echo ">> Reiniciando Quickshell..."
+        pkill -f quickshell || true
+    fi
     exit 0
 fi
 
@@ -77,5 +82,7 @@ mkdir -p "$(dirname "$STATE_FILE")"
 touch "$STATE_FILE"
 
 echo ">> ¡Idioma $LANG_CODE aplicado exitosamente!"
-echo ">> Reiniciando Quickshell..."
-pkill -f quickshell || true
+if (( NO_RESTART == 0 )); then
+    echo ">> Reiniciando Quickshell..."
+    pkill -f quickshell || true
+fi
