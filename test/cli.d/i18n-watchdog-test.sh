@@ -19,7 +19,7 @@ ORPHAN_COUNT=0
 while IFS= read -r ENG_STRING; do
     [[ -z "$ENG_STRING" ]] && continue
     
-    if ! grep -qF "\"$ENG_STRING\"" -R "$SOURCE_DIR" "$ROOT_DIR/bin"; then
+    if ! grep -qF "\"$ENG_STRING\"" -R "$SOURCE_DIR" "$ROOT_DIR/bin" "$ROOT_DIR/default"; then
         echo "[ERROR] Traducción huérfana: El texto original \"$ENG_STRING\" ya no existe en el código (shell/ o bin/)."
         ORPHAN_COUNT=$((ORPHAN_COUNT + 1))
     fi
