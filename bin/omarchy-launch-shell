@@ -15,12 +15,18 @@
 # against a half-written tree, and that failed reload leaves a second engine
 # generation behind that turns the next restart's IPC kill into a crash.
 run_shell() {
+  local LC_INJECT=""
+  if [[ -f "$HOME/.local/state/omarchy/lang_es_ES" ]]; then
+    LC_INJECT="LC_ALL=es_ES.UTF-8"
+  fi
+  
   if [[ -f /etc/locale.conf ]]; then
     set -a
     source /etc/locale.conf
     set +a
   fi
-  QS_DISABLE_FILE_WATCHER=1 QS_NO_RELOAD_POPUP=1 \
+  
+  env $LC_INJECT QS_DISABLE_FILE_WATCHER=1 QS_NO_RELOAD_POPUP=1 \
     systemd-cat -t omarchy-shell -- quickshell -n -p "$OMARCHY_PATH/shell" &
   shell_pid=$!
 
