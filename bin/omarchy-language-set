@@ -55,7 +55,7 @@ if [[ "$LANG_CODE" == "en_US" ]]; then
     fi
 
     echo ">> Configurando Locale del sistema a en_US.UTF-8..."
-    $SUDO localectl set-locale LC_TIME=en_US.UTF-8 || true
+    sudo localectl set-locale LC_TIME=en_US.UTF-8 || true
 
     echo ">> ¡Idioma Inglés (Por defecto) aplicado exitosamente!"
     if (( NO_RESTART == 0 )); then
@@ -76,10 +76,10 @@ if [[ "$LANG_CODE" == "es_ES" ]]; then
     echo ">> Verificando Locale del sistema para es_ES.UTF-8..."
     if ! grep -q "^es_ES.UTF-8 UTF-8" /etc/locale.gen; then
         echo ">> Generando locale es_ES.UTF-8..."
-        $SUDO sed -i 's/^#es_ES.UTF-8 UTF-8/es_ES.UTF-8 UTF-8/' /etc/locale.gen
-        $SUDO locale-gen
+        sudo sed -i 's/^#es_ES.UTF-8 UTF-8/es_ES.UTF-8 UTF-8/' /etc/locale.gen
+        sudo locale-gen
     fi
-    $SUDO localectl set-locale LC_TIME=es_ES.UTF-8 || true
+    sudo localectl set-locale LC_TIME=es_ES.UTF-8 || true
 fi
 
 echo ">> Inyectando traducciones al vuelo en los archivos base ($UI_DIR)..."
