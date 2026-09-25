@@ -151,4 +151,15 @@
   "Whisper": "Susurro",
   "Unknown": "Desconocido",
   "Stream": "Transmisión"
+,
+  "Ethernet": "Ethernet",
+  "KNOWN NETWORKS": "REDES CONOCIDAS",
+  "OTHER NETWORKS": "OTRAS REDES",
+  "Passphrase required": "Contraseña requerida",
+  "Wrong password": "Contraseña incorrecta",
+  "Network lost": "Red perdida",
+  "Disconnected": "Desconectado",
+  "Connection failed": "Conexión fallida",
+  "Failed to connect": "Error al conectar",
+  "Timeout": "Tiempo agotado"
 }
