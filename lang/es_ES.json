@@ -170,4 +170,11 @@
   "Routing crumbs": "Enrutando migas",
   "Counting collisions": "Contando colisiones",
   "Bending light": "Doblando luz"
+,
+  "Tailscale is disconnected": "Tailscale está desconectado",
+  "Authorize this device": "Autorizar este dispositivo",
+  "Turn Tailscale off": "Apagar Tailscale",
+  "Turn Tailscale on": "Encender Tailscale",
+  "Authorize Tailscale operator to show connections": "Autoriza al operador para ver conexiones",
+  "Could not list Tailscale connections": "No se pudieron listar las conexiones"
 }
