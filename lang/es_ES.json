@@ -162,4 +162,12 @@
   "Connection failed": "Conexión fallida",
   "Failed to connect": "Error al conectar",
   "Timeout": "Tiempo agotado"
+,
+  "Wiring bits": "Enlazando bits",
+  "Handling packets": "Manejando paquetes",
+  "Sorting frames": "Ordenando tramas",
+  "Hauling bytes": "Transportando bytes",
+  "Routing crumbs": "Enrutando migas",
+  "Counting collisions": "Contando colisiones",
+  "Bending light": "Doblando luz"
 }
