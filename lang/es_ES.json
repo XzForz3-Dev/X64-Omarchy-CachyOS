@@ -129,5 +129,14 @@
   "Tailscale CLI is not installed or not on PATH.": "CLI de Tailscale no instalada.",
   "Allow this user to operate this Tailscale profile": "Permitir a este usuario operar este perfil de Tailscale",
   "Authorize Tailscale operator": "Autorizar operador de Tailscale",
-  "year": "año"
+  "year": "año",
+  "FIXED BRIGHTNESS": "BRILLO FIJO",
+  "Sun blast": "Rayo de sol",
+  "Solar flare": "Erupción solar",
+  "Golden hour": "Hora dorada",
+  "Even day": "Luz diurna",
+  "Soft glow": "Resplandor suave",
+  "Lamp light": "Luz de lámpara",
+  "Candlelit": "A la luz de las velas",
+  "Night owl": "Búho nocturno"
 }
