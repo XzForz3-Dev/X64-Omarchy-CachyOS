@@ -109,7 +109,7 @@ for root, _, files in os.walk('$UI_DIR'):
     if '.git' in root:
         continue
     for file in files:
-        if file.endswith('.qml') or file.endswith('.sh') or file.endswith('.jsonc'):
+        if file.endswith('.qml') or file.endswith('.sh') or file.endswith('.jsonc') or file.endswith('.js'):
             translate_file(os.path.join(root, file))
 "
 
