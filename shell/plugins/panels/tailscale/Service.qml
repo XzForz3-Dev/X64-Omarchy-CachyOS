@@ -502,7 +502,12 @@ Item {
           root.accountsAccessDenied = true
           root.lastError = "Authorize Tailscale operator to show connections"
         } else {
-          root.lastError = elideStatus(stderr || stdout || "Could not list Tailscale connections")
+          var errStr = stderr || stdout || ""
+          if (errStr.indexOf("checkprefs access denied") !== -1) {
+            root.lastError = "Access denied: checkprefs access denied Use 'sudo tailscale up'. To not require root, use 'sudo tailscale set --operator=$USER' once."
+          } else {
+            root.lastError = elideStatus(errStr || "Could not list Tailscale connections")
+          }
         }
       }
     }

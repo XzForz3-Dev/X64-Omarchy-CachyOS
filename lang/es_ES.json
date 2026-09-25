@@ -177,4 +177,6 @@
   "Turn Tailscale on": "Encender Tailscale",
   "Authorize Tailscale operator to show connections": "Autoriza al operador para ver conexiones",
   "Could not list Tailscale connections": "No se pudieron listar las conexiones"
+,
+  "Access denied: checkprefs access denied Use 'sudo tailscale up'. To not require root, use 'sudo tailscale set --operator=$USER' once.": "Acceso denegado: Usa 'sudo tailscale up'. Para no requerir root, usa 'sudo tailscale set --operator=$USER' una vez."
 }
