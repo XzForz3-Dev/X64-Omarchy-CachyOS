@@ -122,5 +122,12 @@
   "Type something (Enter to start editing, Esc to leave)": "Escribe algo (Enter para editar, Esc para salir)",
   "Use DNS from DHCP": "Usar DNS del DHCP",
   "Weather": "Clima",
-  "Workspaces": "Áreas de Trabajo"
+  "Workspaces": "Áreas de Trabajo",
+  "Battery": "Batería",
+  "Dropbox": "Dropbox",
+  "No matches for “": "Sin resultados para “",
+  "Tailscale CLI is not installed or not on PATH.": "CLI de Tailscale no instalada.",
+  "Allow this user to operate this Tailscale profile": "Permitir a este usuario operar este perfil de Tailscale",
+  "Authorize Tailscale operator": "Autorizar operador de Tailscale",
+  "year": "año"
 }
