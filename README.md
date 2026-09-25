@@ -35,6 +35,7 @@ Hemos operado el código fuente para resolver los dolores de cabeza de Linux:
 - **Amputación de Polkit Zombie:** Solucionamos un *Crash* (Violación de Segmento) nativo del código C++ de Quickshell en Qt 6.11 aislando y destruyendo su plugin de contraseñas, delegándolo a un agente ultra-estable externo (`polkit-kde-agent`). **¡Cero ventanas de error azules!**
 - **Soporte HiDPI (4K) Automático:** El instalador detecta e inyecta dinámicamente el flag `scale = "auto"` en Hyprland para que tus pantallas de alta resolución se vean perfectas desde el primer arranque.
 - **Aceleración Gráfica VA-API:** Navegadores y aplicaciones preconfigurados para procesar video directo en tu tarjeta gráfica.
+- **Traductor Universal Dinámico (Ninja Translator):** Cambia el idioma de toda la interfaz en tiempo real. Un script inyecta agresivamente `LC_ALL` al entorno y reemplaza textos "al vuelo" en el código QML y JS sin requerir reiniciar la computadora o cerrar sesión. ¡Aplica español instantáneamente!
 
 ### 4. 🔄 El Actualizador Inmortal (Updater 2.0)
 El mantenimiento de tu PC ahora vuela en piloto automático.
