@@ -26,6 +26,14 @@ STATE_FILE="$HOME/.local/state/omarchy/lang_es_ES"
 
 echo ">> Preparando el sistema de traducción en $UI_DIR..."
 
+SUDO=""
+if [[ ! -w "$UI_DIR" ]]; then
+    echo ">> Se requieren permisos de administrador para modificar $UI_DIR"
+    SUDO="sudo"
+    # Aseguramos que el usuario tiene caché de sudo activa para que pida clave una sola vez si es necesario
+    $SUDO true
+fi
+
 # FIX CRÍTICO: Detener Quickshell ANTES de modificar sus archivos para evitar el Crash por Hot-Reload.
 if (( NO_RESTART == 0 )); then
     echo ">> Deteniendo la interfaz visual para evitar conflictos..."
@@ -35,7 +43,7 @@ fi
 
 # 1. Limpiar modificaciones previas usando GIT.
 echo ">> Restaurando base en inglés desde Git..."
-git -C "$UI_DIR" reset --hard HEAD || true
+$SUDO git -C "$UI_DIR" reset --hard HEAD || true
 
 # Si el idioma es inglés, terminamos aquí
 if [[ "$LANG_CODE" == "en_US" ]]; then
@@ -61,13 +69,12 @@ if [[ ! -f "$LANG_FILE" ]]; then
     exit 1
 fi
 
-echo ">> Inyectando traducciones al vuelo desde $LANG_FILE..."
-python3 -c "
+echo ">> Inyectando traducciones al vuelo en los archivos base ($UI_DIR)..."
+$SUDO python3 -c "
 import json, os
 with open('$LANG_FILE', 'r') as f:
     dic = json.load(f)
 
-# Función para traducir un archivo
 def translate_file(filepath):
     try:
         with open(filepath, 'r') as f:
@@ -81,19 +88,41 @@ def translate_file(filepath):
         if modified:
             with open(filepath, 'w') as f:
                 f.write(content)
-            print(f'Traducido: {filepath}')
+            # print(f'Traducido base: {filepath}')
     except Exception as e:
         print(f'Error en {filepath}: {e}')
 
-# 1. Traducir todo el sistema base
 for root, _, files in os.walk('$UI_DIR'):
     if '.git' in root:
         continue
     for file in files:
         if file.endswith('.qml') or file.endswith('.sh') or file.endswith('.jsonc'):
             translate_file(os.path.join(root, file))
+"
 
-# 2. Traducir también la copia de usuario del Menú Principal
+echo ">> Inyectando traducciones al vuelo en los archivos de usuario..."
+python3 -c "
+import json, os
+with open('$LANG_FILE', 'r') as f:
+    dic = json.load(f)
+
+def translate_file(filepath):
+    try:
+        with open(filepath, 'r') as f:
+            content = f.read()
+        modified = False
+        for eng, esp in dic.items():
+            target_str = f'\"{eng}\"'
+            if target_str in content:
+                content = content.replace(target_str, f'\"{esp}\"')
+                modified = True
+        if modified:
+            with open(filepath, 'w') as f:
+                f.write(content)
+            # print(f'Traducido user: {filepath}')
+    except Exception as e:
+        print(f'Error en {filepath}: {e}')
+
 user_menu = os.path.expanduser('~/.config/omarchy/omarchy-menu.jsonc')
 if os.path.exists(user_menu):
     translate_file(user_menu)
