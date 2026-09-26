@@ -283,5 +283,16 @@
   "Xbox Controllers": "Mandos de Xbox",
   "high": "alto",
   "low": "bajo",
-  "mid": "medio"
+  "mid": "medio",
+  "Allow Notifications": "Permitir Notificaciones",
+  "Silence Notifications": "Silenciar Notificaciones",
+  "Day Light": "Luz de Día",
+  "Night Light": "Luz Nocturna",
+  "Stop recording": "Detener grabación",
+  "Screen Recording": "Grabación de Pantalla",
+  "Allow Idle Lock & Screensaver": "Permitir Bloqueo y Protector",
+  "Dictate": "Dictar",
+  "recording": "grabando",
+  "transcribing": "transcribiendo",
+  "idle": "inactivo"
 }
