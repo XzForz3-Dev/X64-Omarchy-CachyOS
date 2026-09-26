@@ -1,169 +1,184 @@
-import QtQuick 2.0
+import QtQuick 2.15
 import SddmComponents 2.0
 
 Rectangle {
   id: root
-  width: 640
-  height: 480
-  color: "#1a1b26"
+  width: 1920
+  height: 1080
+
+  gradient: Gradient {
+      GradientStop { position: 0.0; color: "#050508" }
+      GradientStop { position: 1.0; color: "#12101c" }
+  }
 
   property int userIndex: userModel.lastIndex >= 0 ? userModel.lastIndex : 0
   property string currentUser: userModel.rowCount() > 0 ? userModel.data(userModel.index(userIndex, 0), userModel.NameRole) : ""
-  property bool loginFailed: false
-  property int sessionIndex: {
-    for (var i = 0; i < sessionModel.rowCount(); i++) {
-      var name = (sessionModel.data(sessionModel.index(i, 0), Qt.DisplayRole) || "").toString()
-      if (name.indexOf("uwsm") !== -1)
-        return i
-    }
-    return sessionModel.lastIndex
-  }
 
   Connections {
     target: sddm
-    function onLoginFailed() {
-      root.loginFailed = true
-      password.text = ""
-      password.focus = true
-    }
-    function onLoginSucceeded() {
-      root.loginFailed = false
-    }
+    function onLoginFailed() { password.text = ""; password.focus = true; box.shake() }
+  }
+
+  // Soft background glows
+  Rectangle {
+      width: 800
+      height: 800
+      radius: 400
+      color: "#ff007f"
+      opacity: 0.04
+      anchors.centerIn: parent
+  }
+
+  Rectangle {
+      width: 600
+      height: 600
+      radius: 300
+      color: "#00f0ff"
+      opacity: 0.04
+      anchors.centerIn: parent
+      anchors.verticalCenterOffset: -100
   }
 
   Column {
-    anchors.centerIn: parent
-    spacing: 40
+      anchors.centerIn: parent
+      spacing: 60
 
-    Image {
-      id: logo
-      source: "logo.png"
-      width: Math.min(sourceSize.width, root.width * 0.8)
-      height: sourceSize.width > 0 ? Math.round(width * sourceSize.height / sourceSize.width) : 0
-      fillMode: Image.PreserveAspectFit
-      anchors.horizontalCenter: parent.horizontalCenter
-    }
-
-    Item {
-      width: entry.width
-      height: entry.height * 2 + 15
-      anchors.horizontalCenter: parent.horizontalCenter
-
-      // Username Field
+      // TEXT-BASED CYBERPUNK LOGO
       Item {
-        id: userContainer
-        width: entry.width
-        height: entry.height
-        anchors.top: parent.top
-
-        Image {
-          source: "entry.png"
-          anchors.centerIn: parent
-        }
-
-        Image {
-          source: "lock.png"
-          width: 24
-          height: 24
-          fillMode: Image.PreserveAspectFit
-          anchors.left: parent.left
-          anchors.leftMargin: -40
-          anchors.verticalCenter: parent.verticalCenter
-          visible: false // Hidden to keep symmetry but could be a user icon
-        }
-
-        TextInput {
-          id: username
-          anchors.fill: parent
-          anchors.leftMargin: 20
-          anchors.rightMargin: 20
-          verticalAlignment: TextInput.AlignVCenter
-          font.family: "JetBrainsMono Nerd Font"
-          font.pixelSize: 20
-          color: "#c0caf5"
-          text: userModel.lastUser
-          clip: true
+          width: 500
+          height: 120
+          anchors.horizontalCenter: parent.horizontalCenter
           
-          KeyNavigation.tab: password
-          Keys.onPressed: {
-            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-              password.forceActiveFocus()
-              event.accepted = true
-            }
+          Text {
+              text: "X64 LIOS"
+              color: "#ff007f"
+              font.family: "JetBrainsMono Nerd Font"
+              font.pixelSize: 85
+              font.weight: Font.Black
+              font.letterSpacing: 15
+              anchors.centerIn: parent
+              anchors.horizontalCenterOffset: -4
+              anchors.verticalCenterOffset: 3
+              opacity: 0.8
           }
-        }
+          Text {
+              text: "X64 LIOS"
+              color: "#00f0ff"
+              font.family: "JetBrainsMono Nerd Font"
+              font.pixelSize: 85
+              font.weight: Font.Black
+              font.letterSpacing: 15
+              anchors.centerIn: parent
+              anchors.horizontalCenterOffset: 4
+              anchors.verticalCenterOffset: -3
+              opacity: 0.8
+          }
+          Text {
+              text: "X64 LIOS"
+              color: "#ffffff"
+              font.family: "JetBrainsMono Nerd Font"
+              font.pixelSize: 85
+              font.weight: Font.Black
+              font.letterSpacing: 15
+              anchors.centerIn: parent
+          }
+          
+          // Pulsing underline
+          Rectangle {
+              width: 120
+              height: 4
+              color: "#00ffcc"
+              anchors.bottom: parent.bottom
+              anchors.horizontalCenter: parent.horizontalCenter
+              SequentialAnimation on opacity {
+                  loops: Animation.Infinite
+                  NumberAnimation { to: 0.2; duration: 1500; easing.type: Easing.InOutSine }
+                  NumberAnimation { to: 1.0; duration: 1500; easing.type: Easing.InOutSine }
+              }
+          }
       }
 
-      // Password Field
-      Item {
-        id: passContainer
-        width: entry.width
-        height: entry.height
-        anchors.bottom: parent.bottom
+      Column {
+          spacing: 10
+          anchors.horizontalCenter: parent.horizontalCenter
 
-        Image {
-          source: root.loginFailed ? "lock-failed.png" : "lock.png"
-          width: 34
-          height: 38
-          fillMode: Image.PreserveAspectFit
-          anchors.left: parent.left
-          anchors.leftMargin: -45
-          anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Image {
-          id: entry
-          source: root.loginFailed ? "entry-failed.png" : "entry.png"
-          anchors.centerIn: parent
-        }
-
-        Row {
-          anchors.left: parent.left
-          anchors.leftMargin: 20
-          anchors.verticalCenter: parent.verticalCenter
-          spacing: 5
-
-          Repeater {
-            model: Math.min(password.text.length, 21)
-
-            Image {
-              source: "bullet.png"
-              width: 7
-              height: 7
-            }
+          Text {
+              text: "S Y S T E M   O P E R A T O R"
+              color: "#555566"
+              font.pixelSize: 12
+              font.family: "JetBrainsMono Nerd Font"
+              font.weight: Font.Bold
+              anchors.horizontalCenter: parent.horizontalCenter
           }
-        }
 
-        TextInput {
-          id: password
-          anchors.fill: parent
-          anchors.leftMargin: 20
-          anchors.rightMargin: 20
-          verticalAlignment: TextInput.AlignVCenter
-          echoMode: TextInput.Password
-          font.family: "JetBrainsMono Nerd Font"
-          font.pixelSize: 24
-          font.letterSpacing: 5
-          passwordCharacter: "\u2022"
-          color: "transparent"
-          selectionColor: "transparent"
-          selectedTextColor: "transparent"
-          cursorDelegate: Item {}
-          focus: true
-
-          onTextChanged: root.loginFailed = false
-
-          Keys.onPressed: {
-            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-              sddm.login(username.text, password.text, root.sessionIndex)
-              event.accepted = true
-            }
+          Text {
+              text: root.currentUser.toUpperCase()
+              color: "#ffffff"
+              font.pixelSize: 26
+              font.family: "JetBrainsMono Nerd Font"
+              font.weight: Font.Black
+              font.letterSpacing: 4
+              anchors.horizontalCenter: parent.horizontalCenter
           }
-        }
       }
-    }
 
+      Rectangle {
+          id: box
+          width: 320
+          height: 60
+          color: "#0a0a10"
+          radius: 8
+          border.width: 2
+          anchors.horizontalCenter: parent.horizontalCenter
+
+          SequentialAnimation on border.color {
+              loops: Animation.Infinite
+              ColorAnimation { to: "#ff007f"; duration: 3000 }
+              ColorAnimation { to: "#7000ff"; duration: 3000 }
+              ColorAnimation { to: "#00f0ff"; duration: 3000 }
+              ColorAnimation { to: "#ff007f"; duration: 3000 }
+          }
+
+          SequentialAnimation {
+              id: shakeAnim
+              NumberAnimation { target: box; property: "anchors.horizontalCenterOffset"; to: -10; duration: 50 }
+              NumberAnimation { target: box; property: "anchors.horizontalCenterOffset"; to: 10; duration: 50 }
+              NumberAnimation { target: box; property: "anchors.horizontalCenterOffset"; to: -10; duration: 50 }
+              NumberAnimation { target: box; property: "anchors.horizontalCenterOffset"; to: 10; duration: 50 }
+              NumberAnimation { target: box; property: "anchors.horizontalCenterOffset"; to: 0; duration: 50 }
+          }
+
+          function shake() { shakeAnim.start() }
+
+          TextInput {
+              id: password
+              anchors.fill: parent
+              horizontalAlignment: TextInput.AlignHCenter
+              verticalAlignment: TextInput.AlignVCenter
+              echoMode: TextInput.Password
+              font.pixelSize: 24
+              color: "#ffffff"
+              passwordCharacter: "■"
+              focus: true
+              
+              Text {
+                  anchors.centerIn: parent
+                  text: "ACCESS CODE"
+                  color: "#444455"
+                  font.pixelSize: 14
+                  font.letterSpacing: 2
+                  font.family: "JetBrainsMono Nerd Font"
+                  visible: password.text.length === 0 && !password.activeFocus
+              }
+
+              Keys.onPressed: {
+                  if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                      sddm.login(root.currentUser, password.text, sessionModel.lastIndex)
+                      event.accepted = true
+                  }
+              }
+          }
+      }
   }
-
   Component.onCompleted: password.forceActiveFocus()
 }
