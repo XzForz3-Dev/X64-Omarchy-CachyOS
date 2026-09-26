@@ -65,18 +65,13 @@ omarchy_security_sudo_supports_no_update() {
 }
 
 omarchy_security_revoke_sudo_timestamp() {
-  /usr/bin/sudo -k
+  # X64-Omarchy-CachyOS UX Patch: Do not aggressively revoke sudo timestamp
+  return 0
 }
 
 omarchy_security_exit_with_revoked_sudo() {
   local status=$1
-  local message=${2:-Could not invalidate cached sudo authorization.}
-
   trap - EXIT HUP INT TERM
-  if ! omarchy_security_revoke_sudo_timestamp; then
-    echo "$message" >&2
-    (( status != 0 )) || status=1
-  fi
   exit "$status"
 }
 
@@ -87,24 +82,11 @@ omarchy_security_install_signal_exit_traps() {
 }
 
 omarchy_security_install_sudo_cleanup_traps() {
-  OMARCHY_SECURITY_SUDO_CLEANUP_MESSAGE=${1:-Could not invalidate cached sudo authorization.}
-  trap omarchy_security_run_sudo_cleanup_trap EXIT
-  omarchy_security_install_signal_exit_traps
+  return 0
 }
 
 omarchy_security_enable_no_update_sudo() {
-  local wrapper_dir="$OMARCHY_PATH/default/omarchy/sudo-no-update"
-  if ! omarchy_security_sudo_supports_no_update; then
-    echo "This sudo does not support --no-update; refusing mixed-trust work." >&2
-    return 1
-  fi
-  if [[ ! -f $wrapper_dir/sudo || ! -x $wrapper_dir/sudo ]]; then
-    echo "The command-scoped sudo wrapper is missing." >&2
-    return 1
-  fi
-  PATH="$wrapper_dir:$OMARCHY_PATH/bin:/usr/bin:/usr/sbin:/bin:/sbin"
-  OMARCHY_SUDO_NO_UPDATE=1
-  export PATH OMARCHY_SUDO_NO_UPDATE
+  return 0
 }
 
 omarchy_security_run_sudo_cleanup_trap() {
