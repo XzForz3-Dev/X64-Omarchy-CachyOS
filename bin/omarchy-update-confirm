@@ -1,14 +1,15 @@
 #!/bin/bash
 
-# Evitamos que se genere scroll reduciendo 1 columna
-width=$(( $(tput cols || echo 80) - 1 ))
+# omarchy:summary=Prompt for confirmation before starting an update
+
+width=$(tput cols || echo 80)
 box_width=70
-margin=$(( (width - box_width) / 2 ))
-[[ $margin -lt 0 ]] && margin=0
+box_margin=$(( (width - box_width) / 2 ))
+[[ $box_margin -lt 0 ]] && box_margin=0
 
 gum style \
   --width $box_width \
-  --margin "1 0 1 $margin" \
+  --margin "1 0 1 $box_margin" \
   --border double \
   --border-foreground 198 \
   --padding "1 2" \
@@ -28,19 +29,32 @@ gum style \
 
 echo
 
-# Centramos el texto de la pregunta de forma completamente independiente
-gum style --width $width --align center "¿Iniciar Secuencia de Actualización?"
+# Centrar título manualmente con printf
+title="¿Iniciar Secuencia de Actualización?"
+title_pad=$(( (width - ${#title}) / 2 ))
+[[ $title_pad -lt 0 ]] && title_pad=0
+printf "%*s%s\n\n" $title_pad "" "$title"
 
-btn_yes="   YES   "
-btn_no="   NO   "
-# gum confirm añade un espacio de separación
-btn_width=$(( ${#btn_yes} + 1 + ${#btn_no} ))
-btn_margin=$(( (width - btn_width) / 2 ))
-[[ $btn_margin -lt 0 ]] && btn_margin=0
+# Centrar botones: calcular el padding izquierdo exacto
+btn_yes="    Sí    "
+btn_no="    No    "
+btn_total=$(( ${#btn_yes} + 2 + ${#btn_no} ))
+btn_pad=$(( (width - btn_total) / 2 ))
+[[ $btn_pad -lt 0 ]] && btn_pad=0
 
-# Usamos padding solo izquierdo para evitar wrap/scroll y pasamos un string vacío al prompt interactivo
-if ! gum confirm " " --affirmative "$btn_yes" --negative "$btn_no" --selected.background 198 --selected.foreground 232 --unselected.background 237 --padding "0 0 0 $btn_margin"; then
+# Pasar prompt vacío, sin ayuda, padding solo izquierdo
+if ! gum confirm "" \
+  --no-show-help \
+  --affirmative "$btn_yes" \
+  --negative "$btn_no" \
+  --selected.background 198 \
+  --selected.foreground 232 \
+  --unselected.background 237 \
+  --padding "0 0 0 $btn_pad"; then
   echo
-  gum style --width $width --align center --foreground 196 " ❌ Update sequence aborted by user."
+  err="❌ Actualización cancelada por el usuario."
+  err_pad=$(( (width - ${#err}) / 2 ))
+  [[ $err_pad -lt 0 ]] && err_pad=0
+  printf "\033[31m%*s%s\033[0m\n" $err_pad "" "$err"
   exit 1
 fi
