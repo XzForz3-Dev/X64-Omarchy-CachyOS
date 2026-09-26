@@ -59,7 +59,7 @@ BarWidget {
   function formatted(date) {
     var formatStr = activeFormat.replace(/ww/g, Model.isoWeekLiteral(date.getFullYear(), date.getMonth(), date.getDate()));
     var result = date.toLocaleString(Qt.locale(), formatStr);
-    return result.replace(/\b([a-zñáéíóú])/g, function(w) { return w.toUpperCase(); });
+    return result.replace(/(^|[\s,.-])([a-zñáéíóú])/g, function(match, p1, p2) { return p1 + p2.toUpperCase(); });
   }
 
   // ---- Calendar popup. Shape contract for shell.summon/hide/toggle

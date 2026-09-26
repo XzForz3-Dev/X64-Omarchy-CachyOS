@@ -315,7 +315,7 @@ Panel {
                 id: heroDate
                 textFormat: Text.PlainText
                 anchors.verticalCenter: parent.verticalCenter
-                text: root.today.toLocaleString(Qt.locale(), "MMMM d").replace(/\b([a-zñáéíóú])/g, function(w) { return w.toUpperCase(); })
+                text: root.today.toLocaleString(Qt.locale(), "MMMM d").replace(/(^|[\s,.-])([a-zñáéíóú])/g, function(match, p1, p2) { return p1 + p2.toUpperCase(); })
                 color: heroMouse.containsMouse
                   ? Style.hoverStateColor(root.contentForeground, Color.accent)
                   : root.contentForeground
