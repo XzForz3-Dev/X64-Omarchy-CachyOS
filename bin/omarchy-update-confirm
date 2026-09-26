@@ -10,10 +10,16 @@ gum style \
   --align center \
   "🚀 READY TO UPDATE X64 LIOS 🚀" \
   "" \
-  "⚠️  WARNING: Do not interrupt the update process." \
-  "⚡ Ensure your system is connected to a power source." \
+  "Únete a la evolución de tu sistema con las siguientes ventajas PRO:" \
   "" \
-  "Preparing for system upgrade..."
+  "✨ Recibe las últimas actualizaciones de Omarchy." \
+  "✨ Disfruta del máximo rendimiento con las" \
+  "   últimas versiones Rolling Release de CachyOS." \
+  "✨ Obtén las más recientes novedades de X64 LIOS" \
+  "   junto con sus respectivos datos técnicos." \
+  "" \
+  "⚠️ WARNING: No interrumpas el proceso una vez iniciado." \
+  "⚡ Asegúrate de estar conectado a la corriente."
 
 echo
 
