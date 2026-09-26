@@ -59,9 +59,9 @@ Cuando modifiques código QML o configuraciones visuales, debes reiniciar el mot
 <RULE[git_branch_policy]>
 ## Política Estricta de Ramas (Git Branching)
 
-El proyecto mantiene dos ramas principales: `quattro` (estable/producción) y `experimental` (desarrollo activo).
-- Todo el trabajo diario, rediseños, y refactorizaciones DEBEN hacerse en `experimental`.
-- **PROHIBICIÓN ABSOLUTA:** Tienes estrictamente prohibido ejecutar un `git merge` hacia `quattro` o pushear a `quattro` sin que el usuario te haya dado explícitamente la orden de desplegar o fusionar a producción.
+El proyecto opera ÚNICAMENTE en la rama `quattro` (estable/producción).
+- Todo el trabajo diario, rediseños, y refactorizaciones DEBEN hacerse y pushearse directamente a `quattro`.
+- Dado que el proyecto aún no tiene usuarios, se prescinde de la rama experimental para acelerar el desarrollo.
 </RULE[git_branch_policy]>
 
 <RULE[x64_lios_rebranding]>
@@ -71,12 +71,3 @@ El proyecto se está distanciando de su base original "Omarchy".
 - Siempre que edites un archivo QML, un menú JSONC o un script que contenga texto visible para el usuario, debes auditarlo y cambiar cualquier mención de "Omarchy" por **X64 LIOS**.
 - El nombre del sistema operativo debe presentarse siempre de forma estéticamente agradable e integrada (ej: menús, actualizador, pantalla de bloqueo).
 </RULE[x64_lios_rebranding]>
-
-<RULE[dev_env_workflow]>
-## Flujo de Trabajo y Entornos (Laptop vs VM)
-
-La arquitectura de desarrollo y despliegue del proyecto divide estrictamente los roles de las máquinas conectadas:
-1. **Máquina Virtual (VM - 192.168.71.128):** Es el entorno de desarrollo y pruebas. Debe seguir y trackear **ÚNICAMENTE la rama `experimental`**. Todo el código, arreglos y experimentos se realizan aquí primero.
-2. **Laptop Anfitriona (Producción):** Es el entorno estable del usuario. Sigue y trackea **ÚNICAMENTE la rama `quattro`**.
-3. **Flujo de Transferencia:** Una vez que el código en la VM (`experimental`) está verificado y el usuario da luz verde, los cambios se transfieren a la rama `quattro`. Posteriormente, el usuario ejecutará manualmente el actualizador en la laptop para aplicar los cambios a producción.
-</RULE[dev_env_workflow]>
