@@ -29,15 +29,14 @@ gum style \
 
 echo
 
-# Centramos también la línea inferior de texto manualmente
 prompt="¿Iniciar Secuencia de Actualización?"
 prompt_padding=$(( (width - ${#prompt}) / 2 ))
 [[ $prompt_padding -lt 0 ]] && prompt_padding=0
-printf "%*s" $prompt_padding ""
+pad_str=$(printf "%*s" $prompt_padding "")
 
-if ! gum confirm "$prompt" --selected.background 198 --selected.foreground 232 --unselected.background 237; then
+# Try padding the gum confirm globally
+if ! gum confirm "¿Iniciar Secuencia de Actualización?" --affirmative "   YES   " --negative "   NO   " --selected.background 198 --selected.foreground 232 --unselected.background 237 --padding "0 $margin"; then
   echo
-  printf "%*s" $prompt_padding ""
-  gum style --foreground 196 " ❌ Update sequence aborted by user."
+  gum style --margin "0 $margin" --foreground 196 " ❌ Update sequence aborted by user."
   exit 1
 fi
