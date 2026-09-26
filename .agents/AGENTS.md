@@ -38,3 +38,36 @@ Por lo tanto, la ÚNICA VÍA válida para probar un arreglo es:
 
 Si el instalador falla, se arregla el instalador. NUNCA se arregla el sistema en vivo parcheando por detrás.
 </RULE[filosofia_de_pruebas_estricta]>
+
+<RULE[vm_ssh_execution]>
+## Flujo de Ejecución en Máquina Virtual (VM Test Environment)
+
+Para probar cambios en la interfaz o scripts en vivo sin romper el sistema anfitrión del usuario, debes conectarte y ejecutar comandos en la Máquina Virtual de pruebas.
+- **Comando base obligatorio:** Usa siempre `sshpass -p 1111 ssh -o StrictHostKeyChecking=no qqqq@192.168.71.128 "<comando>"`
+- **Despliegue de scripts en vivo:** Si modificas un script de la carpeta `bin/` local, para probarlo en la VM no edites `/usr/bin/` (es de solo lectura). Copia tu versión modificada a `~/.local/bin/` en la VM para que el sistema le dé prioridad.
+</RULE[vm_ssh_execution]>
+
+<RULE[quickshell_restart]>
+## Protocolo Oficial de Reinicio de UI (Quickshell)
+
+Cuando modifiques código QML o configuraciones visuales, debes reiniciar el motor de la interfaz (Quickshell) dentro de la VM para que los cambios se reflejen inmediatamente.
+- **Comando de reinicio:** Ejecuta en la VM la siguiente instrucción exacta:
+  `env OMARCHY_PATH=/usr/share/omarchy /usr/share/omarchy/bin/omarchy-restart-shell`
+- No pidas al usuario que reinicie la interfaz manualmente; hazlo tú a través de SSH tras aplicar un parche QML.
+</RULE[quickshell_restart]>
+
+<RULE[git_branch_policy]>
+## Política Estricta de Ramas (Git Branching)
+
+El proyecto mantiene dos ramas principales: `quattro` (estable/producción) y `experimental` (desarrollo activo).
+- Todo el trabajo diario, rediseños, y refactorizaciones DEBEN hacerse en `experimental`.
+- **PROHIBICIÓN ABSOLUTA:** Tienes estrictamente prohibido ejecutar un `git merge` hacia `quattro` o pushear a `quattro` sin que el usuario te haya dado explícitamente la orden de desplegar o fusionar a producción.
+</RULE[git_branch_policy]>
+
+<RULE[x64_lios_rebranding]>
+## Directiva de Rebranding Continuo "X64 LIOS"
+
+El proyecto se está distanciando de su base original "Omarchy".
+- Siempre que edites un archivo QML, un menú JSONC o un script que contenga texto visible para el usuario, debes auditarlo y cambiar cualquier mención de "Omarchy" por **X64 LIOS**.
+- El nombre del sistema operativo debe presentarse siempre de forma estéticamente agradable e integrada (ej: menús, actualizador, pantalla de bloqueo).
+</RULE[x64_lios_rebranding]>
