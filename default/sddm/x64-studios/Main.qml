@@ -12,7 +12,7 @@ Rectangle {
       GradientStop { position: 1.0; color: "#12101c" }
   }
 
-  property var videos: ["videos/background.mp4", "videos/matrix.mp4", "videos/galaxy.mp4", "videos/hexagons.mp4", "videos/synthwave.mp4", "videos/radar.mp4", "videos/particles.mp4", "videos/binary.mp4", "videos/fluid.mp4", "videos/glass.mp4"]
+  property var videos: ["videos/background.mp4", "videos/galaxy.mp4", "videos/particles.mp4", "videos/fluid.mp4", "videos/smooth_wave.mp4", "videos/elegant_dark.mp4", "videos/glowing_lines.mp4", "videos/space_stars.mp4", "videos/neon_minimal.mp4", "videos/abstract_mesh.mp4"]
   property int currentVideoIndex: 0
   
   property int userIndex: userModel.lastIndex >= 0 ? userModel.lastIndex : 0
@@ -40,18 +40,6 @@ Rectangle {
       opacity: 0.5
   }
 
-  // Soft background glows
-  Rectangle {
-      width: 800; height: 800; radius: 400
-      color: "#ff007f"; opacity: 0.04
-      anchors.centerIn: parent
-  }
-
-  Rectangle {
-      width: 600; height: 600; radius: 300
-      color: "#00f0ff"; opacity: 0.04
-      anchors.centerIn: parent
-      anchors.verticalCenterOffset: -100
   }
 
   // ==========================================
