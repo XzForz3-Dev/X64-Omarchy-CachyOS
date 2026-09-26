@@ -16,10 +16,14 @@ BarWidget {
     text: ""
     hasVisualContent: true
     horizontalMargin: 12
+    
+    // Explicitly set the width so it doesn't collapse to 0 and overlap adjacent widgets
+    fixedWidth: row.implicitWidth + (horizontalMargin * 2)
 
     Row {
+      id: row
       anchors.centerIn: parent
-      spacing: 6
+      spacing: 8
 
       Text {
         text: "󰣇"
@@ -30,7 +34,7 @@ BarWidget {
       }
 
       Text {
-        text: "X64 OS"
+        text: "X64 LIOS"
         font.family: root.bar ? root.bar.fontFamily : Style.font.family
         font.pixelSize: 13
         font.weight: Font.ExtraBold
