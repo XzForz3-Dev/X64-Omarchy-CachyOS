@@ -25,41 +25,20 @@ gum style \
   "   junto con sus respectivos datos técnicos." \
   "" \
   "⚠️  No interrumpas el proceso una vez iniciado." \
-  "⚡ Asegúrate de estar conectado a la corriente."
+  "⚡ Asegúrate de estar conectado a la corriente." \
+  "" \
+  "¿Iniciar Secuencia de Actualización?"
 
 echo
 
-# --- Centrado manual: pregunta ---
-title="¿Iniciar Secuencia de Actualización?"
-title_pad=$(( box_margin + (box_width - ${#title}) / 2 ))
-[[ $title_pad -lt 0 ]] && title_pad=0
-printf "%*s%s\n\n" $title_pad "" "$title"
-
-# --- Centrado manual: botones ---
-btn_si="    Sí    "
-btn_no="    No    "
-gap="  "
-btn_line="${btn_si}${gap}${btn_no}"
-btn_pad=$(( box_margin + (box_width - ${#btn_line}) / 2 ))
-[[ $btn_pad -lt 0 ]] && btn_pad=0
-
-# Renderizar los botones con colores
-printf "%*s\033[48;5;198;38;5;232m%s\033[0m%s\033[48;5;237;38;5;254m%s\033[0m\n" \
-  $btn_pad "" "$btn_si" "$gap" "$btn_no"
-echo
-
-# --- Centrado manual: input ---
-prompt="(y) Sí  (n) No: "
-prompt_pad=$(( box_margin + (box_width - ${#prompt}) / 2 ))
-[[ $prompt_pad -lt 0 ]] && prompt_pad=0
-printf "%*s%s" $prompt_pad "" "$prompt"
-
-read -n 1 -r answer
-echo
-
-if [[ $answer == "y" || $answer == "Y" || $answer == "s" || $answer == "S" ]]; then
-  exit 0
-else
+if ! gum confirm "" \
+  --no-show-help \
+  --affirmative "    Sí    " \
+  --negative "    No    " \
+  --selected.background 198 \
+  --selected.foreground 232 \
+  --unselected.background 237 \
+  --padding "0 0 0 $box_margin"; then
   echo
   msg="❌ Actualización cancelada por el usuario."
   msg_pad=$(( box_margin + (box_width - ${#msg}) / 2 ))
