@@ -7,6 +7,7 @@ box_width=70
 box_margin=$(( (width - box_width) / 2 ))
 [[ $box_margin -lt 0 ]] && box_margin=0
 
+# Caja centrada con borde doble y contenido centrado
 gum style \
   --width $box_width \
   --margin "1 0 1 $box_margin" \
@@ -25,24 +26,19 @@ gum style \
   "   junto con sus respectivos datos técnicos." \
   "" \
   "⚠️ WARNING: No interrumpas el proceso una vez iniciado." \
-  "⚡ Asegúrate de estar conectado a la corriente."
+  "⚡ Asegúrate de estar conectado a la corriente." \
+  "" \
+  "¿Iniciar Secuencia de Actualización?"
 
 echo
 
-# Centrar título manualmente con printf
-title="¿Iniciar Secuencia de Actualización?"
-title_pad=$(( (width - ${#title}) / 2 ))
-[[ $title_pad -lt 0 ]] && title_pad=0
-printf "%*s%s\n\n" $title_pad "" "$title"
-
-# Centrar botones: calcular el padding izquierdo exacto
+# Botones centrados respecto a la caja (mismo eje)
 btn_yes="    Sí    "
 btn_no="    No    "
 btn_total=$(( ${#btn_yes} + 2 + ${#btn_no} ))
-btn_pad=$(( (width - btn_total) / 2 ))
+btn_pad=$(( box_margin + (box_width - btn_total) / 2 ))
 [[ $btn_pad -lt 0 ]] && btn_pad=0
 
-# Pasar prompt vacío, sin ayuda, padding solo izquierdo
 if ! gum confirm "" \
   --no-show-help \
   --affirmative "$btn_yes" \
@@ -53,7 +49,7 @@ if ! gum confirm "" \
   --padding "0 0 0 $btn_pad"; then
   echo
   err="❌ Actualización cancelada por el usuario."
-  err_pad=$(( (width - ${#err}) / 2 ))
+  err_pad=$(( box_margin + (box_width - ${#err}) / 2 ))
   [[ $err_pad -lt 0 ]] && err_pad=0
   printf "\033[31m%*s%s\033[0m\n" $err_pad "" "$err"
   exit 1
