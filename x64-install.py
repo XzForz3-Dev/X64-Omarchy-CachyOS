@@ -776,11 +776,20 @@ if '[omarchy]' not in conf:
             # FIX(elsewhen): Reinstalar plugin que fue barrido por el clone del git
             run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -S --noconfirm elsewhen", check=False)
             
-            # FIX(router): Bypass broken CachyOS router by placing a master wrapper in /usr/local/bin
-            with open("/tmp/omarchy_wrapper", "w") as fw:
-                fw.write("#!/bin/bash\nexport OMARCHY_PATH=/usr/share/omarchy\nexec /usr/share/omarchy/bin/omarchy \"$@\"\n")
-            run_cmd_live("sudo cp /tmp/omarchy_wrapper /usr/local/bin/omarchy")
-            run_cmd_live("sudo chmod +x /usr/local/bin/omarchy")
+            # FIX(router): Bypass broken CachyOS binaries by placing master wrappers in /usr/local/bin
+            wrapper_script = '''#!/bin/bash
+sudo mkdir -p /usr/local/bin
+for cmd in /usr/share/omarchy/bin/omarchy*; do
+    bname=$(basename "$cmd")
+    echo "#!/bin/bash" > "/usr/local/bin/$bname"
+    echo "export OMARCHY_PATH=/usr/share/omarchy" >> "/usr/local/bin/$bname"
+    echo "exec /usr/share/omarchy/bin/$bname \"\$@\"" >> "/usr/local/bin/$bname"
+    chmod +x "/usr/local/bin/$bname"
+done
+'''
+            with open("/tmp/omarchy_wrappers.sh", "w") as fw:
+                fw.write(wrapper_script)
+            run_cmd_live("sudo bash /tmp/omarchy_wrappers.sh")
 
             # FIX(updater): Ensure the user owns the directory so the GUI can run git pull without sudo
             run_cmd_live("sudo chown -R $USER:$USER /usr/share/omarchy")
