@@ -1,5 +1,6 @@
 import QtQuick
 import qs.Ui
+import Quickshell
 
 BarWidget {
   id: root
@@ -25,9 +26,6 @@ BarWidget {
       fillMode: Image.PreserveAspectFit
       antialiasing: true
       mipmap: true
-      // Inherit the color of the button (which changes on hover/active)
-      // Actually we can just use the SVG's currentColor if we use Icon or ColorOverlay,
-      // but Quickshell has `Icon` maybe? Or we can just use a plain SVG.
     }
 
     onPressed: function(mouseButton) {
