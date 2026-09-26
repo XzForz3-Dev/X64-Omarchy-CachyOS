@@ -12,12 +12,27 @@ BarWidget {
     id: button
     anchors.fill: parent
     bar: root.bar
-    text: "󰣇"
-    // fontFamily: "omarchy"  // Removido para usar Nerd Fonts del sistema
+    text: ""
+    hasVisualContent: true
     horizontalMargin: 7.5
-    onPressed: function(button) {
+
+    Image {
+      anchors.centerIn: parent
+      source: "file://" + Quickshell.env("OMARCHY_PATH") + "/shell/assets/x64-logo.svg"
+      width: Math.floor(button.height * 0.5)
+      height: width
+      sourceSize: Qt.size(width, height)
+      fillMode: Image.PreserveAspectFit
+      antialiasing: true
+      mipmap: true
+      // Inherit the color of the button (which changes on hover/active)
+      // Actually we can just use the SVG's currentColor if we use Icon or ColorOverlay,
+      // but Quickshell has `Icon` maybe? Or we can just use a plain SVG.
+    }
+
+    onPressed: function(mouseButton) {
       if (!root.bar) return
-      if (button === Qt.RightButton) root.bar.run("xdg-terminal-exec")
+      if (mouseButton === Qt.RightButton) root.bar.run("xdg-terminal-exec")
       else root.bar.run("omarchy-shell shell toggle omarchy.menu '{\"menu\":\"root\"}'")
     }
   }

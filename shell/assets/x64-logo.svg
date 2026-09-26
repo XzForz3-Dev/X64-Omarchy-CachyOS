@@ -1,0 +1,4 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 60 L100 128 L40 196 L80 196 L120 150 L160 196 L200 196 L140 128 L200 60 L160 60 L120 106 L80 60 Z" fill="currentColor"/>
+  <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="24"/>
+</svg>
