@@ -483,7 +483,7 @@ Panel {
                 width: profileRow.cellWidth
                 iconText: root.profileIcon(String(modelData))
                 iconSize: Style.font.title
-                text: String(modelData).charAt(0).toUpperCase() + String(modelData).slice(1)
+                text: { var p = String(modelData); if (p === "power-saver") return "Power-saver"; if (p === "balanced") return "Balanced"; if (p === "performance") return "Performance"; return p.charAt(0).toUpperCase() + p.slice(1); }
                 fontSize: Style.font.bodySmall
                 foreground: root.bar.foreground
                 fontFamily: root.bar.fontFamily
