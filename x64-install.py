@@ -773,6 +773,9 @@ if '[omarchy]' not in conf:
             run_cmd_live("sudo git clone -b quattro https://github.com/XzForz3-Dev/X64-Omarchy-CachyOS.git /usr/share/omarchy")
             run_cmd_live("sudo git config --system --add safe.directory /usr/share/omarchy")
             
+            # FIX(elsewhen): Reinstalar plugin que fue barrido por el clone del git
+            run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -S --noconfirm elsewhen", check=False)
+            
             # FIX(updater): Ensure the user owns the directory so the GUI can run git pull without sudo
             run_cmd_live("sudo chown -R $USER:$USER /usr/share/omarchy")
             

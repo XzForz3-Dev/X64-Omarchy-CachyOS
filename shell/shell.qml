@@ -46,7 +46,7 @@ ShellRoot {
       centerAnchor: "omarchy.clock",
       layout: {
         left: [{ id: "omarchy.menu" }, { id: "omarchy.workspaces" }],
-        center: [{ id: "omarchy.clock", format: "dddd HH:mm" }],
+        center: [{ id: "omacom.elsewhen" }, { id: "omarchy.clock", format: "dddd HH:mm" }],
         right: [{ id: "omarchy.audio" }]
       }
     },
