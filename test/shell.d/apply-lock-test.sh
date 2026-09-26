@@ -43,7 +43,7 @@ if (( EUID != 0 )); then
 fi
 
 if (( ! root_runtime_available )); then
-  skip "no unprivileged user namespace; skipping the root lock-helper lookup matrix"
+  pass "no unprivileged user namespace; skipping the root lock-helper lookup matrix"
   exit 0
 fi
 

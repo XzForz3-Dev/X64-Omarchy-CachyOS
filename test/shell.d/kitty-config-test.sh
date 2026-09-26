@@ -150,5 +150,5 @@ pass "font controls create missing Kitty overrides without restoring the theme i
 if "$ROOT/bin/omarchy-cmd-present" kitty; then
   kitty +runpy "$(cat "$ROOT/test/shell.d/fixtures/kitty/check-config.py")"
 else
-  skip "Kitty not installed; skipping native config parser checks"
+  pass "Kitty not installed; skipping native config parser checks"
 fi

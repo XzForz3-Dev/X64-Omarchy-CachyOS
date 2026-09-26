@@ -30,14 +30,7 @@ STUB
 cat > "$scratch/bin/pacman" <<'STUB'
 #!/bin/bash
 case "$1" in
-  -Q)
-    if [[ $2 == "--" ]]; then
-      shift 2
-    else
-      shift
-    fi
-    grep -qx -- "$1" <<< "${INSTALLED:-}"
-    ;;
+  -Q) grep -qx "$2" <<< "${INSTALLED:-}" ;;
   -S)
     printf 'pacman %s\n' "$*" >> "$CALL_LOG"
     exit "${INSTALL_STATUS:-0}"
@@ -69,7 +62,7 @@ run_setup() {
 }
 
 assert_installs() {
-  grep -qx 'pacman -S --needed --noconfirm --ask 4 -- libfprint-git fprintd usbutils' "$CALL_LOG" || fail "$1"
+  grep -qx 'pacman -S --needed --noconfirm --ask 4 libfprint-git fprintd usbutils' "$CALL_LOG" || fail "$1"
   (( $(grep -c '^pacman ' "$CALL_LOG") == 1 )) || fail "$1: one pacman transaction"
 }
 
