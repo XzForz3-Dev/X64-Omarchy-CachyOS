@@ -1,13 +1,14 @@
 #!/bin/bash
 
-width=$(tput cols || echo 80)
+# Evitamos que se genere scroll reduciendo 1 columna
+width=$(( $(tput cols || echo 80) - 1 ))
 box_width=70
 margin=$(( (width - box_width) / 2 ))
 [[ $margin -lt 0 ]] && margin=0
 
 gum style \
   --width $box_width \
-  --margin "1 $margin" \
+  --margin "1 0 1 $margin" \
   --border double \
   --border-foreground 198 \
   --padding "1 2" \
@@ -27,18 +28,18 @@ gum style \
 
 echo
 
-# Centramos el texto de la pregunta usando gum style!
+# Centramos el texto de la pregunta de forma completamente independiente
 gum style --width $width --align center "¿Iniciar Secuencia de Actualización?"
 
-# Centramos los botones
 btn_yes="   YES   "
 btn_no="   NO   "
-# gum confirm añade 1 espacio entre los botones
+# gum confirm añade un espacio de separación
 btn_width=$(( ${#btn_yes} + 1 + ${#btn_no} ))
 btn_margin=$(( (width - btn_width) / 2 ))
 [[ $btn_margin -lt 0 ]] && btn_margin=0
 
-if ! gum confirm "" --affirmative "$btn_yes" --negative "$btn_no" --selected.background 198 --selected.foreground 232 --unselected.background 237 --padding "0 $btn_margin"; then
+# Usamos padding solo izquierdo para evitar wrap/scroll y pasamos un string vacío al prompt interactivo
+if ! gum confirm " " --affirmative "$btn_yes" --negative "$btn_no" --selected.background 198 --selected.foreground 232 --unselected.background 237 --padding "0 0 0 $btn_margin"; then
   echo
   gum style --width $width --align center --foreground 196 " ❌ Update sequence aborted by user."
   exit 1
