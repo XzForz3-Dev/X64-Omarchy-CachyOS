@@ -1,8 +1,6 @@
 import QtQuick 2.15
 import SddmComponents 2.0
 import QtMultimedia
-import Qt.labs.folderlistmodel 2.15
-import QtCore
 
 Rectangle {
   id: root
@@ -14,41 +12,9 @@ Rectangle {
       GradientStop { position: 1.0; color: "#12101c" }
   }
 
-  // ==========================================
-  // SETTINGS & VIDEO LIST
-  // ==========================================
-  Settings {
-      id: sddmSettings
-      category: "X64StudiosSDDM"
-      property string savedVideo: ""
-  }
-
-  FolderListModel {
-      id: videoFiles
-      folder: Qt.resolvedUrl("videos")
-      nameFilters: ["*.mp4", "*.webm", "*.mkv"]
-      showDirs: false
-      onStatusChanged: {
-          if (status === FolderListModel.Ready && count > 0) {
-              var found = false;
-              for (var i = 0; i < count; i++) {
-                  if (get(i, "fileURL").toString() === sddmSettings.savedVideo) {
-                      bgVideo.source = sddmSettings.savedVideo;
-                      currentVideoIndex = i;
-                      found = true;
-                      break;
-                  }
-              }
-              if (!found) {
-                  bgVideo.source = get(0, "fileURL");
-                  currentVideoIndex = 0;
-                  sddmSettings.savedVideo = get(0, "fileURL").toString();
-              }
-          }
-      }
-  }
-
+  property var videos: ["background.mp4", "videos/matrix.mp4", "videos/galaxy.mp4"]
   property int currentVideoIndex: 0
+  
   property int userIndex: userModel.lastIndex >= 0 ? userModel.lastIndex : 0
   property string currentUser: userModel.rowCount() > 0 ? userModel.data(userModel.index(userIndex, 0), userModel.NameRole) : ""
   property int currentSessionIndex: sessionModel.lastIndex >= 0 ? sessionModel.lastIndex : 0
@@ -60,6 +26,7 @@ Rectangle {
 
   MediaPlayer {
       id: bgVideo
+      source: root.videos[root.currentVideoIndex]
       loops: MediaPlayer.Infinite
       autoPlay: true
       videoOutput: videoOutput
@@ -95,7 +62,6 @@ Rectangle {
       anchors.left: parent.left
       anchors.margins: 50
       spacing: 15
-      visible: videoFiles.count > 1
 
       Text {
           text: "[ WALLPAPER ]"
@@ -116,18 +82,12 @@ Rectangle {
           MouseArea {
               anchors.fill: parent
               cursorShape: Qt.PointingHandCursor
-              onClicked: {
-                  if (videoFiles.count > 0) {
-                      root.currentVideoIndex = (root.currentVideoIndex - 1 + videoFiles.count) % videoFiles.count;
-                      bgVideo.source = videoFiles.get(root.currentVideoIndex, "fileURL");
-                      sddmSettings.savedVideo = bgVideo.source.toString();
-                  }
-              }
+              onClicked: root.currentVideoIndex = (root.currentVideoIndex - 1 + root.videos.length) % root.videos.length
           }
       }
 
       Text {
-          text: videoFiles.count > 0 ? videoFiles.get(root.currentVideoIndex, "fileName").replace(/\.[^/.]+$/, "").toUpperCase() : "NONE"
+          text: "VIDEO " + (root.currentVideoIndex + 1)
           color: "#ffffff"
           font.pixelSize: 14
           font.family: "JetBrainsMono Nerd Font"
@@ -145,17 +105,10 @@ Rectangle {
           MouseArea {
               anchors.fill: parent
               cursorShape: Qt.PointingHandCursor
-              onClicked: {
-                  if (videoFiles.count > 0) {
-                      root.currentVideoIndex = (root.currentVideoIndex + 1) % videoFiles.count;
-                      bgVideo.source = videoFiles.get(root.currentVideoIndex, "fileURL");
-                      sddmSettings.savedVideo = bgVideo.source.toString();
-                  }
-              }
+              onClicked: root.currentVideoIndex = (root.currentVideoIndex + 1) % root.videos.length
           }
       }
   }
-
 
   // ==========================================
   // TOP RIGHT: CLOCK & DATE
