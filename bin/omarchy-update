@@ -74,13 +74,13 @@ if [[ ${1:-} == "-y" ]] || omarchy-update-confirm; then
   omarchy-update-stay-awake start
 
   # Preserve the established development-checkout update ordering.
-  omarchy-update-dev
-  omarchy-update-keyring
+  "$OMARCHY_PATH/bin/omarchy-update-dev"
+  "$OMARCHY_PATH/bin/omarchy-update-keyring"
 
   # Migrations ship with the packages installed here and are written against
   # them, so everything below waits on this finishing. An upgrade that stopped
   # takes the update with it rather than migrating against what is still on disk.
-  omarchy-update-system-pkgs
+  "$OMARCHY_PATH/bin/omarchy-update-system-pkgs"
 
   # Historical migrations are strictly ordered and mix user hooks/downloaded
   # tooling with privileged repairs. The no-update sudo wrapper has covered the
