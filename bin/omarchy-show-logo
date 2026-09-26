@@ -1,10 +1,13 @@
 #!/bin/bash
 
-# omarchy:summary=Display the X64 LIOS logo in the terminal using neon pink color.
+# omarchy:summary=Display the X64 LIOS logo centered in the terminal using neon pink color.
 
 clear
-# Synthwave Neon Pink: 38;5;198m
+width=$(tput cols || echo 80)
 echo -e "\033[38;5;198m"
-cat <$OMARCHY_PATH/logo.txt
+while IFS= read -r line; do
+  padding=$(( (width - ${#line}) / 2 ))
+  [[ $padding -lt 0 ]] && padding=0
+  printf "%*s%s\n" $padding "" "$line"
+done < "$OMARCHY_PATH/logo.txt"
 echo -e "\033[0m"
-echo
