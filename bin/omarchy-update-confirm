@@ -2,47 +2,19 @@
 
 # omarchy:summary=Prompt for confirmation before starting an update
 
-width=$(tput cols 2>/dev/null || echo 80)
-box_width=70
-box_margin=$(( (width - box_width) / 2 ))
-[[ $box_margin -lt 0 ]] && box_margin=0
-
-gum style \
-  --width $box_width \
-  --margin "1 0 1 $box_margin" \
-  --border double \
-  --border-foreground 198 \
-  --padding "1 2" \
-  --align center \
-  "🚀 READY TO UPDATE X64 LIOS 🚀" \
-  "" \
-  "Únete a la evolución de tu sistema con las siguientes ventajas PRO:" \
+gum style --border normal --padding "1 2" \
+  "🚀 Ready to update X64 LIOS?" \
   "" \
   "✨ Recibe las últimas actualizaciones de Omarchy." \
-  "✨ Disfruta del máximo rendimiento con las" \
-  "   últimas versiones Rolling Release de CachyOS." \
-  "✨ Obtén las más recientes novedades de X64 LIOS" \
-  "   junto con sus respectivos datos técnicos." \
+  "✨ Últimas versiones Rolling Release de CachyOS." \
+  "✨ Novedades de X64 LIOS con sus datos técnicos." \
   "" \
   "⚠️  No interrumpas el proceso una vez iniciado." \
-  "⚡ Asegúrate de estar conectado a la corriente." \
-  "" \
-  "¿Iniciar Secuencia de Actualización?"
+  "⚡ Asegúrate de estar conectado a la corriente."
 
 echo
 
-if ! gum confirm "" \
-  --no-show-help \
-  --affirmative "    Sí    " \
-  --negative "    No    " \
-  --selected.background 198 \
-  --selected.foreground 232 \
-  --unselected.background 237 \
-  --padding "0 0 0 $box_margin"; then
-  echo
-  msg="❌ Actualización cancelada por el usuario."
-  msg_pad=$(( box_margin + (box_width - ${#msg}) / 2 ))
-  [[ $msg_pad -lt 0 ]] && msg_pad=0
-  printf "\033[31m%*s%s\033[0m\n" $msg_pad "" "$msg"
+if ! gum confirm "Continue with update?"; then
+  echo "Update cancelled"
   exit 1
 fi
