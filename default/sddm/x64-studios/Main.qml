@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import SddmComponents 2.0
+import QtMultimedia
 
 Rectangle {
   id: root
@@ -11,6 +12,25 @@ Rectangle {
       GradientStop { position: 1.0; color: "#12101c" }
   }
 
+  // ==========================================
+  // VIDEO BACKGROUND (Fallback to Gradient if missing)
+  // ==========================================
+  MediaPlayer {
+      id: bgVideo
+      source: "background.mp4"
+      loops: MediaPlayer.Infinite
+      autoPlay: true
+      videoOutput: videoOutput
+      audioOutput: AudioOutput { muted: true } // Mute the video just in case
+  }
+
+  VideoOutput {
+      id: videoOutput
+      anchors.fill: parent
+      fillMode: VideoOutput.PreserveAspectCrop
+      opacity: 0.5 // Hace que el video se mezcle con el fondo oscuro y no deslumbre
+  }
+
   property int userIndex: userModel.lastIndex >= 0 ? userModel.lastIndex : 0
   property string currentUser: userModel.rowCount() > 0 ? userModel.data(userModel.index(userIndex, 0), userModel.NameRole) : ""
   property int currentSessionIndex: sessionModel.lastIndex >= 0 ? sessionModel.lastIndex : 0
@@ -18,26 +38,6 @@ Rectangle {
   Connections {
     target: sddm
     function onLoginFailed() { password.text = ""; password.focus = true; box.shake() }
-  }
-
-  // Soft background glows
-  Rectangle {
-      width: 800
-      height: 800
-      radius: 400
-      color: "#ff007f"
-      opacity: 0.04
-      anchors.centerIn: parent
-  }
-
-  Rectangle {
-      width: 600
-      height: 600
-      radius: 300
-      color: "#00f0ff"
-      opacity: 0.04
-      anchors.centerIn: parent
-      anchors.verticalCenterOffset: -100
   }
 
   // ==========================================
@@ -88,7 +88,6 @@ Rectangle {
       anchors.centerIn: parent
       spacing: 60
 
-      // TEXT-BASED CYBERPUNK LOGO
       Item {
           width: 500
           height: 120
@@ -155,7 +154,6 @@ Rectangle {
               anchors.horizontalCenter: parent.horizontalCenter
           }
 
-          // User Selector
           Row {
               anchors.horizontalCenter: parent.horizontalCenter
               spacing: 20
