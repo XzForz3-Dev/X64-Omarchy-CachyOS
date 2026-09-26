@@ -96,6 +96,9 @@ def translate_file(filepath):
         for eng, esp in dic.items():
             target_str = f'\"{eng}\"'
             if target_str in content:
+                # Excepcion para no romper nombres de archivos internos
+                if "Indicators.qml" in filepath and eng in ["Dictation", "Reminder"]:
+                    continue
                 content = content.replace(target_str, f'\"{esp}\"')
                 modified = True
         if modified:
@@ -127,6 +130,9 @@ def translate_file(filepath):
         for eng, esp in dic.items():
             target_str = f'\"{eng}\"'
             if target_str in content:
+                # Excepcion para no romper nombres de archivos internos
+                if "Indicators.qml" in filepath and eng in ["Dictation", "Reminder"]:
+                    continue
                 content = content.replace(target_str, f'\"{esp}\"')
                 modified = True
         if modified:
