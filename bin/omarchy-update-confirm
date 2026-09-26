@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# omarchy:summary=Prompt for confirmation before starting an update
-
 width=$(tput cols || echo 80)
 box_width=70
 margin=$(( (width - box_width) / 2 ))
@@ -29,14 +27,19 @@ gum style \
 
 echo
 
-prompt="¿Iniciar Secuencia de Actualización?"
-prompt_padding=$(( (width - ${#prompt}) / 2 ))
-[[ $prompt_padding -lt 0 ]] && prompt_padding=0
-pad_str=$(printf "%*s" $prompt_padding "")
+# Centramos el texto de la pregunta usando gum style!
+gum style --width $width --align center "¿Iniciar Secuencia de Actualización?"
 
-# Try padding the gum confirm globally
-if ! gum confirm "¿Iniciar Secuencia de Actualización?" --affirmative "   YES   " --negative "   NO   " --selected.background 198 --selected.foreground 232 --unselected.background 237 --padding "0 $margin"; then
+# Centramos los botones
+btn_yes="   YES   "
+btn_no="   NO   "
+# gum confirm añade 1 espacio entre los botones
+btn_width=$(( ${#btn_yes} + 1 + ${#btn_no} ))
+btn_margin=$(( (width - btn_width) / 2 ))
+[[ $btn_margin -lt 0 ]] && btn_margin=0
+
+if ! gum confirm "" --affirmative "$btn_yes" --negative "$btn_no" --selected.background 198 --selected.foreground 232 --unselected.background 237 --padding "0 $btn_margin"; then
   echo
-  gum style --margin "0 $margin" --foreground 196 " ❌ Update sequence aborted by user."
+  gum style --width $width --align center --foreground 196 " ❌ Update sequence aborted by user."
   exit 1
 fi
