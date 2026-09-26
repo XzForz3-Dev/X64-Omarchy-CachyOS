@@ -1,6 +1,6 @@
 import QtQuick
 import qs.Ui
-import Quickshell
+import qs.Commons
 
 BarWidget {
   id: root
@@ -15,17 +15,29 @@ BarWidget {
     bar: root.bar
     text: ""
     hasVisualContent: true
-    horizontalMargin: 7.5
+    horizontalMargin: 12
 
-    Image {
+    Row {
       anchors.centerIn: parent
-      source: "file://" + Quickshell.env("OMARCHY_PATH") + "/shell/assets/x64-logo.svg"
-      width: Math.floor(button.height * 0.5)
-      height: width
-      sourceSize: Qt.size(width, height)
-      fillMode: Image.PreserveAspectFit
-      antialiasing: true
-      mipmap: true
+      spacing: 6
+
+      Text {
+        text: "󰣇"
+        font.family: root.bar ? root.bar.fontFamily : Style.font.family
+        font.pixelSize: 15
+        color: button.active && button.useActiveColor ? button.activeColor : button.foreground
+        anchors.verticalCenter: parent.verticalCenter
+      }
+
+      Text {
+        text: "X64 OS"
+        font.family: root.bar ? root.bar.fontFamily : Style.font.family
+        font.pixelSize: 13
+        font.weight: Font.ExtraBold
+        font.letterSpacing: 0.5
+        color: button.active && button.useActiveColor ? button.activeColor : button.foreground
+        anchors.verticalCenter: parent.verticalCenter
+      }
     }
 
     onPressed: function(mouseButton) {
