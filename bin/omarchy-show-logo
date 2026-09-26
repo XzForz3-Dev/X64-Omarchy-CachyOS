@@ -1,9 +1,10 @@
 #!/bin/bash
 
-# omarchy:summary=Display the Omarchy logo in the terminal using green color.
+# omarchy:summary=Display the X64 LIOS logo in the terminal using neon pink color.
 
 clear
-echo -e "\033[32m"
+# Synthwave Neon Pink: 38;5;198m
+echo -e "\033[38;5;198m"
 cat <$OMARCHY_PATH/logo.txt
 echo -e "\033[0m"
 echo

@@ -2,15 +2,23 @@
 
 # omarchy:summary=Prompt for confirmation before starting an update
 
-gum style --border normal --padding "1 2" \
-  "Ready to update X64 LIOS?" \
+gum style \
+  --border double \
+  --border-foreground 198 \
+  --padding "1 4" \
+  --margin "1 2" \
+  --align center \
+  "🚀 READY TO UPDATE X64 LIOS 🚀" \
   "" \
-  "• You cannot stop the update once you start!" \
-  "• Make sure you're connected to power or have a full battery"
+  "⚠️  WARNING: Do not interrupt the update process." \
+  "⚡ Ensure your system is connected to a power source." \
+  "" \
+  "Preparing for system upgrade..."
 
 echo
 
-if ! gum confirm "Continue with update?"; then
-  echo "Update cancelled"
+if ! gum confirm "Initialize Update Sequence?" --selected.background 198 --selected.foreground 232 --unselected.background 237; then
+  echo
+  gum style --foreground 196 " ❌ Update sequence aborted by user."
   exit 1
 fi
