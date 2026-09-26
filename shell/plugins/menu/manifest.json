@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "omarchy.menu",
-  "name": "Omarchy menu",
+  "name": "X64 LIOS Menu",
   "version": "1.0.0",
   "author": "Omarchy",
   "description": "Quickshell-powered Omarchy command menu",
@@ -15,8 +15,8 @@
     "barWidget": "BarWidget.qml"
   },
   "barWidget": {
-    "displayName": "Omarchy menu",
-    "description": "Launches the Omarchy menu",
+    "displayName": "X64 LIOS Menu",
+    "description": "Launches the X64 LIOS menu",
     "category": "Compositor",
     "allowMultiple": false
   }
