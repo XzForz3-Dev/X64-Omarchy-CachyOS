@@ -566,8 +566,8 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False, theme_name="omarchy"):
         run_cmd_live("sudo cp -r default/plymouth-x64/* /usr/share/plymouth/themes/x64-studios/ 2>/dev/null", check=False)
         run_cmd_live("sudo plymouth-set-default-theme x64-studios", check=False)
     else:
-        run_cmd_live("sudo mkdir -p /usr/share/plymouth/themes/omarchy", check=False)
-        run_cmd_live("sudo cp -r default/plymouth/* /usr/share/plymouth/themes/omarchy/ 2>/dev/null", check=False)
+        run_cmd_live("sudo mkdir -p /usr/share/plymouth/themes/x64-studios", check=False)
+        run_cmd_live("sudo cp -r default/plymouth/* /usr/share/plymouth/themes/x64-studios/ 2>/dev/null", check=False)
         run_cmd_live("sudo plymouth-set-default-theme omarchy", check=False)
     
     log_lines.append("[yellow]Configurando mkinitcpio (HOOKS & KMS)...[/yellow]")
@@ -798,7 +798,7 @@ done
             run_cmd_live("sudo rm -rf /usr/share/omarchy/shell/plugins/polkit")
             
             # Dinamicamente inyectar scale = "auto" para pantallas HiDPI
-            run_cmd_live("sudo sed -i 's/scale = 1/scale = \"auto\"/g' /usr/share/omarchy/config/hypr/monitors.lua")
+            run_cmd_live("sudo sed -i 's/scale = 1/scale = \"auto\"/g' /usr/share/x64-studios.config/hypr/monitors.lua")
 
             run_cmd_live("sudo mkdir -p /usr/share/wayland-sessions")
             run_cmd_live("sudo cp default/wayland-sessions/*.desktop /usr/share/wayland-sessions/", check=False)
@@ -1155,13 +1155,13 @@ hl.config({
         if not force_tty:
             if is_omarchy_oficial:
                 actual_user = os.environ.get("USER", "root")
-                services_script += "mkdir -p /usr/share/sddm/themes/omarchy /etc/sddm.conf.d /var/lib/sddm\n"
-                services_script += "cp -r default/sddm/omarchy/* /usr/share/sddm/themes/omarchy/ 2>/dev/null\n"
-                services_script += "echo -e \"[Theme]\\nCurrent=omarchy\" > /etc/sddm.conf.d/omarchy.conf\n"
+                services_script += "mkdir -p /usr/share/sddm/themes/x64-studios /etc/sddm.conf.d /var/lib/sddm\n"
+                services_script += "cp -r default/sddm/x64-studios/* /usr/share/sddm/themes/x64-studios/ 2>/dev/null\n"
+                services_script += "echo -e \"[Theme]\\nCurrent=x64-studios\" > /etc/sddm.conf.d/x64-studios.conf\n"
                 services_script += f"echo -e \"[Last]\\nSession=/usr/share/wayland-sessions/omarchy.desktop\\nUser={actual_user}\" > /var/lib/sddm/state.conf\n"
                 services_script += "chown -R sddm:sddm /var/lib/sddm\n"
             else:
-                services_script += "rm -f /etc/sddm.conf.d/omarchy.conf\n"
+                services_script += "rm -f /etc/sddm.conf.d/x64-studios.conf\n"
 
             services_script += "systemctl disable greetd.service 2>/dev/null\n"
             services_script += "systemctl disable getty@tty1.service 2>/dev/null\n"
