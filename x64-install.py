@@ -776,6 +776,12 @@ if '[omarchy]' not in conf:
             # FIX(elsewhen): Reinstalar plugin que fue barrido por el clone del git
             run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -S --noconfirm elsewhen", check=False)
             
+            # FIX(router): Bypass broken CachyOS router by placing a master wrapper in /usr/local/bin
+            with open("/tmp/omarchy_wrapper", "w") as fw:
+                fw.write("#!/bin/bash\nexport OMARCHY_PATH=/usr/share/omarchy\nexec /usr/share/omarchy/bin/omarchy \"$@\"\n")
+            run_cmd_live("sudo cp /tmp/omarchy_wrapper /usr/local/bin/omarchy")
+            run_cmd_live("sudo chmod +x /usr/local/bin/omarchy")
+
             # FIX(updater): Ensure the user owns the directory so the GUI can run git pull without sudo
             run_cmd_live("sudo chown -R $USER:$USER /usr/share/omarchy")
             
