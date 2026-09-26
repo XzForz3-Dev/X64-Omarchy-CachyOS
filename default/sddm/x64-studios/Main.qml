@@ -12,7 +12,7 @@ Rectangle {
       GradientStop { position: 1.0; color: "#12101c" }
   }
 
-  property var videos: ["background.mp4", "videos/matrix.mp4", "videos/galaxy.mp4"]
+  property var videos: ["videos/background.mp4", "videos/matrix.mp4", "videos/galaxy.mp4"]
   property int currentVideoIndex: 0
   
   property int userIndex: userModel.lastIndex >= 0 ? userModel.lastIndex : 0
