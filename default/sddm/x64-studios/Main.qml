@@ -1,6 +1,8 @@
 import QtQuick 2.15
 import SddmComponents 2.0
 import QtMultimedia
+import Qt.labs.folderlistmodel 2.15
+import QtCore
 
 Rectangle {
   id: root
@@ -13,24 +15,40 @@ Rectangle {
   }
 
   // ==========================================
-  // VIDEO BACKGROUND (Fallback to Gradient if missing)
+  // SETTINGS & VIDEO LIST
   // ==========================================
-  MediaPlayer {
-      id: bgVideo
-      source: "background.mp4"
-      loops: MediaPlayer.Infinite
-      autoPlay: true
-      videoOutput: videoOutput
-      audioOutput: AudioOutput { muted: true } // Mute the video just in case
+  Settings {
+      id: sddmSettings
+      category: "X64StudiosSDDM"
+      property string savedVideo: ""
   }
 
-  VideoOutput {
-      id: videoOutput
-      anchors.fill: parent
-      fillMode: VideoOutput.PreserveAspectCrop
-      opacity: 0.5 // Hace que el video se mezcle con el fondo oscuro y no deslumbre
+  FolderListModel {
+      id: videoFiles
+      folder: Qt.resolvedUrl("videos")
+      nameFilters: ["*.mp4", "*.webm", "*.mkv"]
+      showDirs: false
+      onStatusChanged: {
+          if (status === FolderListModel.Ready && count > 0) {
+              var found = false;
+              for (var i = 0; i < count; i++) {
+                  if (get(i, "fileURL").toString() === sddmSettings.savedVideo) {
+                      bgVideo.source = sddmSettings.savedVideo;
+                      currentVideoIndex = i;
+                      found = true;
+                      break;
+                  }
+              }
+              if (!found) {
+                  bgVideo.source = get(0, "fileURL");
+                  currentVideoIndex = 0;
+                  sddmSettings.savedVideo = get(0, "fileURL").toString();
+              }
+          }
+      }
   }
 
+  property int currentVideoIndex: 0
   property int userIndex: userModel.lastIndex >= 0 ? userModel.lastIndex : 0
   property string currentUser: userModel.rowCount() > 0 ? userModel.data(userModel.index(userIndex, 0), userModel.NameRole) : ""
   property int currentSessionIndex: sessionModel.lastIndex >= 0 ? sessionModel.lastIndex : 0
@@ -39,6 +57,105 @@ Rectangle {
     target: sddm
     function onLoginFailed() { password.text = ""; password.focus = true; box.shake() }
   }
+
+  MediaPlayer {
+      id: bgVideo
+      loops: MediaPlayer.Infinite
+      autoPlay: true
+      videoOutput: videoOutput
+      audioOutput: AudioOutput { muted: true }
+  }
+
+  VideoOutput {
+      id: videoOutput
+      anchors.fill: parent
+      fillMode: VideoOutput.PreserveAspectCrop
+      opacity: 0.5
+  }
+
+  // Soft background glows
+  Rectangle {
+      width: 800; height: 800; radius: 400
+      color: "#ff007f"; opacity: 0.04
+      anchors.centerIn: parent
+  }
+
+  Rectangle {
+      width: 600; height: 600; radius: 300
+      color: "#00f0ff"; opacity: 0.04
+      anchors.centerIn: parent
+      anchors.verticalCenterOffset: -100
+  }
+
+  // ==========================================
+  // TOP LEFT: WALLPAPER SELECTOR
+  // ==========================================
+  Row {
+      anchors.top: parent.top
+      anchors.left: parent.left
+      anchors.margins: 50
+      spacing: 15
+      visible: videoFiles.count > 1
+
+      Text {
+          text: "[ WALLPAPER ]"
+          color: "#00f0ff"
+          font.pixelSize: 14
+          font.family: "JetBrainsMono Nerd Font"
+          font.weight: Font.Bold
+          anchors.verticalCenter: parent.verticalCenter
+      }
+
+      Text {
+          text: "<"
+          color: "#ffffff"
+          font.pixelSize: 18
+          font.family: "JetBrainsMono Nerd Font"
+          font.weight: Font.Black
+          anchors.verticalCenter: parent.verticalCenter
+          MouseArea {
+              anchors.fill: parent
+              cursorShape: Qt.PointingHandCursor
+              onClicked: {
+                  if (videoFiles.count > 0) {
+                      root.currentVideoIndex = (root.currentVideoIndex - 1 + videoFiles.count) % videoFiles.count;
+                      bgVideo.source = videoFiles.get(root.currentVideoIndex, "fileURL");
+                      sddmSettings.savedVideo = bgVideo.source.toString();
+                  }
+              }
+          }
+      }
+
+      Text {
+          text: videoFiles.count > 0 ? videoFiles.get(root.currentVideoIndex, "fileName").replace(/\.[^/.]+$/, "").toUpperCase() : "NONE"
+          color: "#ffffff"
+          font.pixelSize: 14
+          font.family: "JetBrainsMono Nerd Font"
+          font.letterSpacing: 2
+          anchors.verticalCenter: parent.verticalCenter
+      }
+
+      Text {
+          text: ">"
+          color: "#ffffff"
+          font.pixelSize: 18
+          font.family: "JetBrainsMono Nerd Font"
+          font.weight: Font.Black
+          anchors.verticalCenter: parent.verticalCenter
+          MouseArea {
+              anchors.fill: parent
+              cursorShape: Qt.PointingHandCursor
+              onClicked: {
+                  if (videoFiles.count > 0) {
+                      root.currentVideoIndex = (root.currentVideoIndex + 1) % videoFiles.count;
+                      bgVideo.source = videoFiles.get(root.currentVideoIndex, "fileURL");
+                      sddmSettings.savedVideo = bgVideo.source.toString();
+                  }
+              }
+          }
+      }
+  }
+
 
   // ==========================================
   // TOP RIGHT: CLOCK & DATE
@@ -89,50 +206,27 @@ Rectangle {
       spacing: 60
 
       Item {
-          width: 500
-          height: 120
+          width: 500; height: 120
           anchors.horizontalCenter: parent.horizontalCenter
           
           Text {
               text: "X64 LIOS"
-              color: "#ff007f"
-              font.family: "JetBrainsMono Nerd Font"
-              font.pixelSize: 85
-              font.weight: Font.Black
-              font.letterSpacing: 15
-              anchors.centerIn: parent
-              anchors.horizontalCenterOffset: -4
-              anchors.verticalCenterOffset: 3
-              opacity: 0.8
+              color: "#ff007f"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 85; font.weight: Font.Black; font.letterSpacing: 15
+              anchors.centerIn: parent; anchors.horizontalCenterOffset: -4; anchors.verticalCenterOffset: 3; opacity: 0.8
           }
           Text {
               text: "X64 LIOS"
-              color: "#00f0ff"
-              font.family: "JetBrainsMono Nerd Font"
-              font.pixelSize: 85
-              font.weight: Font.Black
-              font.letterSpacing: 15
-              anchors.centerIn: parent
-              anchors.horizontalCenterOffset: 4
-              anchors.verticalCenterOffset: -3
-              opacity: 0.8
+              color: "#00f0ff"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 85; font.weight: Font.Black; font.letterSpacing: 15
+              anchors.centerIn: parent; anchors.horizontalCenterOffset: 4; anchors.verticalCenterOffset: -3; opacity: 0.8
           }
           Text {
               text: "X64 LIOS"
-              color: "#ffffff"
-              font.family: "JetBrainsMono Nerd Font"
-              font.pixelSize: 85
-              font.weight: Font.Black
-              font.letterSpacing: 15
+              color: "#ffffff"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 85; font.weight: Font.Black; font.letterSpacing: 15
               anchors.centerIn: parent
           }
-          
           Rectangle {
-              width: 120
-              height: 4
-              color: "#00ffcc"
-              anchors.bottom: parent.bottom
-              anchors.horizontalCenter: parent.horizontalCenter
+              width: 120; height: 4; color: "#00ffcc"
+              anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter
               SequentialAnimation on opacity {
                   loops: Animation.Infinite
                   NumberAnimation { to: 0.2; duration: 1500; easing.type: Easing.InOutSine }
@@ -147,58 +241,36 @@ Rectangle {
 
           Text {
               text: "S Y S T E M   O P E R A T O R"
-              color: "#555566"
-              font.pixelSize: 12
-              font.family: "JetBrainsMono Nerd Font"
-              font.weight: Font.Bold
+              color: "#555566"; font.pixelSize: 12; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold
               anchors.horizontalCenter: parent.horizontalCenter
           }
 
           Row {
               anchors.horizontalCenter: parent.horizontalCenter
               spacing: 20
-
               Text {
                   text: "<"
                   color: userModel.rowCount() > 1 ? "#00f0ff" : "#333344"
-                  font.pixelSize: 26
-                  font.family: "JetBrainsMono Nerd Font"
-                  font.weight: Font.Black
+                  font.pixelSize: 26; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Black
                   anchors.verticalCenter: parent.verticalCenter
                   MouseArea {
-                      anchors.fill: parent
-                      enabled: userModel.rowCount() > 1
-                      cursorShape: Qt.PointingHandCursor
-                      onClicked: {
-                          root.userIndex = (root.userIndex - 1 + userModel.rowCount()) % userModel.rowCount()
-                      }
+                      anchors.fill: parent; enabled: userModel.rowCount() > 1; cursorShape: Qt.PointingHandCursor
+                      onClicked: root.userIndex = (root.userIndex - 1 + userModel.rowCount()) % userModel.rowCount()
                   }
               }
-
               Text {
                   text: root.currentUser.toUpperCase()
-                  color: "#ffffff"
-                  font.pixelSize: 26
-                  font.family: "JetBrainsMono Nerd Font"
-                  font.weight: Font.Black
-                  font.letterSpacing: 4
+                  color: "#ffffff"; font.pixelSize: 26; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Black; font.letterSpacing: 4
                   anchors.verticalCenter: parent.verticalCenter
               }
-
               Text {
                   text: ">"
                   color: userModel.rowCount() > 1 ? "#00f0ff" : "#333344"
-                  font.pixelSize: 26
-                  font.family: "JetBrainsMono Nerd Font"
-                  font.weight: Font.Black
+                  font.pixelSize: 26; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Black
                   anchors.verticalCenter: parent.verticalCenter
                   MouseArea {
-                      anchors.fill: parent
-                      enabled: userModel.rowCount() > 1
-                      cursorShape: Qt.PointingHandCursor
-                      onClicked: {
-                          root.userIndex = (root.userIndex + 1) % userModel.rowCount()
-                      }
+                      anchors.fill: parent; enabled: userModel.rowCount() > 1; cursorShape: Qt.PointingHandCursor
+                      onClicked: root.userIndex = (root.userIndex + 1) % userModel.rowCount()
                   }
               }
           }
@@ -206,11 +278,7 @@ Rectangle {
 
       Rectangle {
           id: box
-          width: 320
-          height: 60
-          color: "#0a0a10"
-          radius: 8
-          border.width: 2
+          width: 320; height: 60; color: "#0a0a10"; radius: 8; border.width: 2
           anchors.horizontalCenter: parent.horizontalCenter
 
           SequentialAnimation on border.color {
@@ -229,27 +297,15 @@ Rectangle {
               NumberAnimation { target: box; property: "anchors.horizontalCenterOffset"; to: 10; duration: 50 }
               NumberAnimation { target: box; property: "anchors.horizontalCenterOffset"; to: 0; duration: 50 }
           }
-
           function shake() { shakeAnim.start() }
 
           TextInput {
               id: password
-              anchors.fill: parent
-              horizontalAlignment: TextInput.AlignHCenter
-              verticalAlignment: TextInput.AlignVCenter
-              echoMode: TextInput.Password
-              font.pixelSize: 24
-              color: "#ffffff"
-              passwordCharacter: "■"
-              focus: true
+              anchors.fill: parent; horizontalAlignment: TextInput.AlignHCenter; verticalAlignment: TextInput.AlignVCenter
+              echoMode: TextInput.Password; font.pixelSize: 24; color: "#ffffff"; passwordCharacter: "■"; focus: true
               
               Text {
-                  anchors.centerIn: parent
-                  text: "ACCESS CODE"
-                  color: "#444455"
-                  font.pixelSize: 14
-                  font.letterSpacing: 2
-                  font.family: "JetBrainsMono Nerd Font"
+                  anchors.centerIn: parent; text: "ACCESS CODE"; color: "#444455"; font.pixelSize: 14; font.letterSpacing: 2; font.family: "JetBrainsMono Nerd Font"
                   visible: password.text.length === 0 && !password.activeFocus
               }
 
@@ -274,29 +330,17 @@ Rectangle {
 
       Text {
           text: "[ SESSION ]"
-          color: "#00f0ff"
-          font.pixelSize: 14
-          font.family: "JetBrainsMono Nerd Font"
-          font.weight: Font.Bold
+          color: "#00f0ff"; font.pixelSize: 14; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold
           anchors.verticalCenter: parent.verticalCenter
       }
 
       Text {
           text: sessionModel.rowCount() > 0 ? sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), sessionModel.NameRole) : "X64 Desktop"
-          color: "#ffffff"
-          font.pixelSize: 16
-          font.family: "JetBrainsMono Nerd Font"
-          font.weight: Font.Bold
+          color: "#ffffff"; font.pixelSize: 16; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold
           anchors.verticalCenter: parent.verticalCenter
-          
           MouseArea {
-              anchors.fill: parent
-              cursorShape: Qt.PointingHandCursor
-              onClicked: {
-                  if (sessionModel.rowCount() > 0) {
-                      root.currentSessionIndex = (root.currentSessionIndex + 1) % sessionModel.rowCount()
-                  }
-              }
+              anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+              onClicked: if (sessionModel.rowCount() > 0) root.currentSessionIndex = (root.currentSessionIndex + 1) % sessionModel.rowCount()
           }
       }
   }
@@ -311,51 +355,27 @@ Rectangle {
       spacing: 20
 
       Rectangle {
-          width: 140; height: 42
+          width: 140; height: 42; radius: 6; border.width: 2
           color: rebootMouse.containsMouse ? "#222233" : "#111116"
           border.color: rebootMouse.containsMouse ? "#00f0ff" : "#333344"
-          border.width: 2
-          radius: 6
           Text {
-              anchors.centerIn: parent
-              text: "REBOOT"
+              anchors.centerIn: parent; text: "REBOOT"
               color: rebootMouse.containsMouse ? "#00f0ff" : "#aaaaaa"
-              font.pixelSize: 14
-              font.family: "JetBrainsMono Nerd Font"
-              font.weight: Font.Bold
-              font.letterSpacing: 2
+              font.pixelSize: 14; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; font.letterSpacing: 2
           }
-          MouseArea {
-              id: rebootMouse
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-              onClicked: sddm.reboot()
-          }
+          MouseArea { id: rebootMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: sddm.reboot() }
       }
 
       Rectangle {
-          width: 140; height: 42
+          width: 140; height: 42; radius: 6; border.width: 2
           color: powerMouse.containsMouse ? "#331111" : "#111116"
           border.color: powerMouse.containsMouse ? "#ff007f" : "#333344"
-          border.width: 2
-          radius: 6
           Text {
-              anchors.centerIn: parent
-              text: "SHUTDOWN"
+              anchors.centerIn: parent; text: "SHUTDOWN"
               color: powerMouse.containsMouse ? "#ff007f" : "#aaaaaa"
-              font.pixelSize: 14
-              font.family: "JetBrainsMono Nerd Font"
-              font.weight: Font.Bold
-              font.letterSpacing: 2
+              font.pixelSize: 14; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; font.letterSpacing: 2
           }
-          MouseArea {
-              id: powerMouse
-              anchors.fill: parent
-              hoverEnabled: true
-              cursorShape: Qt.PointingHandCursor
-              onClicked: sddm.powerOff()
-          }
+          MouseArea { id: powerMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: sddm.powerOff() }
       }
   }
 
