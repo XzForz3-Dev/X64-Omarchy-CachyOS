@@ -122,7 +122,7 @@ Rectangle {
       
       Text {
           id: dateDisplay
-          text: Qt.formatDate(new Date(), "dd MMM yyyy").toUpperCase()
+          text: Qt.formatDate(new Date(), "dd MMM yyyy")
           color: "#ffffff"
           font.pixelSize: 16
           font.family: "JetBrainsMono Nerd Font"
@@ -132,7 +132,7 @@ Rectangle {
           
           Timer {
               interval: 60000; running: true; repeat: true
-              onTriggered: dateDisplay.text = Qt.formatDate(new Date(), "dd MMM yyyy").toUpperCase()
+              onTriggered: dateDisplay.text = Qt.formatDate(new Date(), "dd MMM yyyy")
           }
       }
   }
@@ -182,7 +182,7 @@ Rectangle {
 
           Text {
               text: "S Y S T E M   O P E R A T O R"
-              color: "#666677"; font.pixelSize: 11; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; font.letterSpacing: 2
+              color: "#666677"; font.pixelSize: 11; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; font.capitalization: Font.AllUppercase; font.letterSpacing: 2
               anchors.horizontalCenter: parent.horizontalCenter
           }
 
@@ -201,7 +201,7 @@ Rectangle {
                   }
               }
               Text {
-                  text: root.currentUser.toUpperCase()
+                  text: root.currentUser
                   color: "#ffffff"; font.pixelSize: 28; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Black; font.letterSpacing: 4
                   anchors.verticalCenter: parent.verticalCenter
               }
@@ -298,8 +298,8 @@ Rectangle {
               spacing: 8; anchors.verticalCenter: parent.verticalCenter
               Text { text: "󰇄"; color: "#00f0ff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; anchors.verticalCenter: parent.verticalCenter }
               Text {
-                  text: sessionModel.rowCount() > 0 ? sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), sessionModel.NameRole).toUpperCase() : "X64 DESKTOP"
-                  color: "#ffffff"; font.pixelSize: 13; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; font.letterSpacing: 1
+                  text: sessionModel.rowCount() > 0 ? sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), sessionModel.NameRole) : "X64 DESKTOP"
+                  color: "#ffffff"; font.pixelSize: 13; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; font.capitalization: Font.AllUppercase; font.letterSpacing: 1
                   anchors.verticalCenter: parent.verticalCenter
               }
           }
@@ -333,7 +333,7 @@ Rectangle {
           Row {
               anchors.centerIn: parent; spacing: 8
               Text { text: "󰜉"; color: rebootMouse.containsMouse ? "#00f0ff" : "#aaaaaa"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 14 }
-              Text { text: "REBOOT"; color: rebootMouse.containsMouse ? "#00f0ff" : "#aaaaaa"; font.pixelSize: 12; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; font.letterSpacing: 1 }
+              Text { text: "REBOOT"; color: rebootMouse.containsMouse ? "#00f0ff" : "#aaaaaa"; font.pixelSize: 12; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; font.capitalization: Font.AllUppercase; font.letterSpacing: 1 }
           }
           MouseArea { id: rebootMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: sddm.reboot() }
       }
@@ -346,7 +346,7 @@ Rectangle {
           Row {
               anchors.centerIn: parent; spacing: 8
               Text { text: "󰐥"; color: powerMouse.containsMouse ? "#ff007f" : "#aaaaaa"; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 14 }
-              Text { text: "SHUTDOWN"; color: powerMouse.containsMouse ? "#ff007f" : "#aaaaaa"; font.pixelSize: 12; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; font.letterSpacing: 1 }
+              Text { text: "SHUTDOWN"; color: powerMouse.containsMouse ? "#ff007f" : "#aaaaaa"; font.pixelSize: 12; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; font.capitalization: Font.AllUppercase; font.letterSpacing: 1 }
           }
           MouseArea { id: powerMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: sddm.powerOff() }
       }
