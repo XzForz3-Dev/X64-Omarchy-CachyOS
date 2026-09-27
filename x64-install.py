@@ -1251,9 +1251,9 @@ try:
     out = []
     skip = False
     for line in lines:
-        if line.startswith("/+CachyOS"):
+        if line.startswith("/+CachyOS") or line.startswith("/-CachyOS"):
             skip = True
-        elif skip and line.startswith("/+"): 
+        elif skip and (line.startswith("/+") or line.startswith("/-")): 
             skip = False
         
         if not skip:
