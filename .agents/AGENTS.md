@@ -71,3 +71,12 @@ El proyecto se está distanciando de su base original "Omarchy".
 - Siempre que edites un archivo QML, un menú JSONC o un script que contenga texto visible para el usuario, debes auditarlo y cambiar cualquier mención de "Omarchy" por **X64 LIOS**.
 - El nombre del sistema operativo debe presentarse siempre de forma estéticamente agradable e integrada (ej: menús, actualizador, pantalla de bloqueo).
 </RULE[x64_lios_rebranding]>
+
+<RULE[strict_merge_testing]>
+## Protocolo de Verificación Estricta (Pre-Commit / Pre-Merge)
+
+Para evitar introducir "Pantallas Negras" o crashes silenciosos tras fusionar (merge) código nuevo o refactorizaciones:
+1. Siempre que fusiones ramas (ej. `upstream/quattro`), revisa los logs de tu fusión y los posibles conflictos en archivos QML/Bash.
+2. NUNCA asumas que un `git merge` limpio significa código funcional.
+3. SIEMPRE debes reiniciar la interfaz gráfica en la Máquina Virtual (`omarchy-restart-shell`) e inmediatamente leer los logs internos (`journalctl --user -b | grep -i shell | tail -n 50`) en busca de `TypeError`, `WARN`, o `ERROR` antes de dar el ticket por cerrado.
+</RULE[strict_merge_testing]>
