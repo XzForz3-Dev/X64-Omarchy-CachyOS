@@ -172,7 +172,7 @@ Rectangle {
           font.pixelSize: 48
           font.family: "JetBrainsMono Nerd Font"
           font.weight: Font.Black
-          anchors.right: parent.right
+          anchors.verticalCenter: parent.verticalCenter
           
           Timer {
               interval: 1000; running: true; repeat: true
