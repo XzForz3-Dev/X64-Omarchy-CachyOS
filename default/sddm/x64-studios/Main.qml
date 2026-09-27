@@ -28,18 +28,22 @@ Rectangle {
   property string currentSessionName: {
       if (typeof sessionModel === "undefined" || sessionModel.rowCount() === 0) return "X64 DESKTOP";
       var n = sessionModel.data(sessionModel.index(currentSessionIndex, 0), 257);
-      if (!n || n.toString().indexOf("/") !== -1 || n.toString().indexOf(".desktop") !== -1) {
-          n = sessionModel.data(sessionModel.index(currentSessionIndex, 0), 0);
+      
+      var s = String(n || "");
+      if (s === "" || s.indexOf("/") !== -1 || s.indexOf(".desktop") !== -1) {
+          var f = sessionModel.data(sessionModel.index(currentSessionIndex, 0), 0);
+          s = String(f || "");
       }
-      var s = n ? n.toString() : "";
-      if (s.indexOf("/") !== -1 || s.indexOf(".desktop") !== -1) {
-          var parts = s.split("/");
-          var filename = parts[parts.length - 1].replace(".desktop", "");
-          if (filename === "omarchy") return "Omarchy (Hyprland uwsm)";
-          if (filename === "hyprland-uwsm") return "Hyprland (UWSM)";
-          return filename.charAt(0).toUpperCase() + filename.slice(1);
-      }
-      return (s && s !== "") ? s : "X64 DESKTOP";
+      
+      var parts = s.split("/");
+      var filename = parts[parts.length - 1].replace(".desktop", "").replace(".Desktop", "");
+      
+      if (filename.toLowerCase() === "omarchy") return "Omarchy (Hyprland uwsm)";
+      if (filename.toLowerCase() === "hyprland-uwsm") return "Hyprland (UWSM)";
+      
+      if (filename === "") return "X64 DESKTOP";
+      
+      return filename.charAt(0).toUpperCase() + filename.slice(1);
   }
 
   Connections {
