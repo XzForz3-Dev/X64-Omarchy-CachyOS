@@ -1510,7 +1510,12 @@ if not install_error:
         fcntl.fcntl(fd, fcntl.F_SETFL, fl)
     except Exception:
         pass
-    ans = Prompt.ask("\n¿Deseas reiniciar el sistema ahora?", choices=["Si", "No"], default="Si")
+    try:
+        ans = Prompt.ask("\n¿Deseas reiniciar el sistema ahora?", choices=["Si", "No"], default="Si")
+    except KeyboardInterrupt:
+        print("\nInstalación finalizada. Puedes reiniciar manualmente más tarde.")
+        sys.exit(0)
+    
     if ans == "Si":
         os.system("sudo reboot")
     else:
