@@ -798,7 +798,7 @@ done
             run_cmd_live("sudo rm -rf /usr/share/omarchy/shell/plugins/polkit")
             
             # Dinamicamente inyectar scale = "auto" para pantallas HiDPI
-            run_cmd_live("sudo sed -i 's/scale = 1/scale = \"auto\"/g' /usr/share/x64-studios.config/hypr/monitors.lua")
+            run_cmd_live("sudo sed -i 's/scale = 1/scale = \"auto\"/g' /usr/share/omarchy/config/hypr/monitors.lua")
 
             run_cmd_live("sudo mkdir -p /usr/share/wayland-sessions")
             run_cmd_live("sudo cp default/wayland-sessions/*.desktop /usr/share/wayland-sessions/", check=False)
