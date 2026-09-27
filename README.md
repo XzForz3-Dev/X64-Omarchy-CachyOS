@@ -1,82 +1,68 @@
 <div align="center">
+  <img src="https://raw.githubusercontent.com/XzForz3-Dev/X64-Omarchy-CachyOS/quattro/logo.txt" alt="X64 LIOS Logo" width="100%">
+  
+  # X64 LIOS 
+  *El sistema operativo de próxima generación para Gaming, Ciberseguridad y Desarrollo.*
+  
+  [![Base: CachyOS](https://img.shields.io/badge/Base-CachyOS-00a86b?style=for-the-badge&logo=archlinux)](https://cachyos.org/)
+  [![Compositor: Hyprland](https://img.shields.io/badge/Compositor-Hyprland-00a86b?style=for-the-badge&logo=hyprland)](https://hyprland.org/)
+  [![Licencia: MIT](https://img.shields.io/badge/Licencia-MIT-blue?style=for-the-badge)](LICENSE)
+  [![Versión](https://img.shields.io/badge/Versi%C3%B3n-2.0.0--Stable-purple?style=for-the-badge)]()
+  [![Good First Issues](https://img.shields.io/github/issues/XzForz3-Dev/X64-Omarchy-CachyOS/good%20first%20issue?style=for-the-badge&color=green)](https://github.com/XzForz3-Dev/X64-Omarchy-CachyOS/issues)
+</div>
 
-# 🌌 X64-Omarchy-CachyOS
-### El Entorno de Escritorio Definitivo, Optimizado al Máximo.
+<br>
 
-[![Arch Linux](https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white)](https://archlinux.org/)
-[![CachyOS](https://img.shields.io/badge/CachyOS-008080?style=for-the-badge&logo=arch-linux&logoColor=white)](https://cachyos.org/)
-[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![Hyprland](https://img.shields.io/badge/Hyprland-00A9FF?style=for-the-badge&logo=hyprland&logoColor=white)](https://hyprland.org/)
-
-Un proyecto de ingeniería avanzada creado por **X64 Studios**. Fusionamos la velocidad brutal y optimización de **CachyOS** con la elegancia estética y productividad extrema de **Omarchy (Hyprland)**.
-
-
----
-
-## 🚀 ¿Qué hace único a este proyecto?
-
-Este no es un simple script de bash (dotfiles). Hemos construido un **motor de despliegue dinámico en Python** de grado corporativo que asegura que el sistema se instale, se actualice y sobreviva sin intervención manual.
-
-### 1. 🖥️ Mega Dashboard Interactivo (TUI)
-Olvídate de los scripts que corren ciegamente en la terminal. Hemos diseñado un panel de control inmersivo en 2D.
-- **La Boutique de Software Integrada:** Navega usando las flechas del teclado a través de 24 categorías de software exhaustivamente curadas (desde Entornos de Escritorio, Gaming con Proton, Edición 3D, hasta Virtualización KVM). Cada paquete tiene descripciones nativas. Tú eliges qué instalas pulsando la barra espaciadora.
-- **Interfaz Gráfica en Terminal (TUI):** Desarrollada con la librería `Rich`, ofrece navegación interactiva, barras de progreso fluidas y paneles divisores (Splits) que muestran qué hace cada paquete en tiempo real.
-- **Auto-Sanación (Self-Healing):** El motor intercepta errores críticos en vivo (bases de datos bloqueadas `pacman.lck`, errores de red, espejos caídos) y te despliega un menú para **Reintentar, Ignorar o Abortar**, salvando la instalación sin tener que empezar de cero.
-- **Pre-purga Inteligente:** Detecta y destruye paquetes residuales y conflictivos en tu disco antes de instalar, evitando fallas silenciosas.
-
-### 2. 🛡️ Arquitectura de Sincronización Híbrida 
-Disfruta de lo último de Omarchy Oficial sin romper la estabilidad de CachyOS.
-- **Filtro Negro Dinámico (Blacklist):** Nuestro código escanea las actualizaciones oficiales en tiempo real y **destruye en memoria** dependencias que dañarían tu sistema (ej. kernels genéricos de Ubuntu/Arch o paquetes inestables), protegiendo el núcleo ultra-optimizado de CachyOS.
-- **Prioridad de Repositorios Inyectada:** El instalador reescribe tu `pacman.conf` para inyectar inteligentemente los servidores de Omarchy por encima de los demás, resolviendo automáticamente las guerras de paquetes (ej. garantizando que descargues siempre la barra oficial y no clones problemáticos).
-
-### 3. ⚙️ Optimizaciones de Alto Nivel "Bajo el Capó"
-Hemos operado el código fuente para resolver los dolores de cabeza de Linux:
-- **Modo Gaming X64 (Latencia Cero Automática):** Al abrir un juego (Steam/Proton/Gamescope), Hyprland lo detecta inteligentemente e inyecta reglas de evasión: apaga los efectos de blur, desactiva animaciones y permite el *Tearing* (V-Sync OFF) para darte una latencia ultra-baja en títulos competitivos. El motor de CachyOS te da los FPS, nuestro script asegura que el compositor no los ahogue.
-- **Amputación de Polkit Zombie:** Solucionamos un *Crash* (Violación de Segmento) nativo del código C++ de Quickshell en Qt 6.11 aislando y destruyendo su plugin de contraseñas, delegándolo a un agente ultra-estable externo (`polkit-kde-agent`). **¡Cero ventanas de error azules!**
-- **Soporte HiDPI (4K) Automático:** El instalador detecta e inyecta dinámicamente el flag `scale = "auto"` en Hyprland para que tus pantallas de alta resolución se vean perfectas desde el primer arranque.
-- **Aceleración Gráfica VA-API:** Navegadores y aplicaciones preconfigurados para procesar video directo en tu tarjeta gráfica.
-- **Traductor Universal Dinámico (Ninja Translator):** Cambia el idioma de toda la interfaz en tiempo real. Un script inyecta agresivamente `LC_ALL` al entorno y reemplaza textos "al vuelo" en el código QML y JS sin requerir reiniciar la computadora o cerrar sesión. ¡Aplica español instantáneamente!
-
-### 4. 🔄 El Actualizador Inmortal (Updater 2.0)
-El mantenimiento de tu PC ahora vuela en piloto automático.
-- **Auto-Migración (Rolling Release Real):** Al usar el botón "Actualizar" en el menú, el sistema no solo actualiza paquetes, sino que ejecuta docenas de scripts `.sh` de migración internos que **reescriben y modernizan tus archivos de configuración antiguos** para adaptarlos al código nuevo. Todo ocurre en segundos y evita que el entorno se rompa tras semanas sin actualizar.
-- **Sistema de Auto-Salvado (Git Autostash):** Si personalizaste el código a mano (cambiaste colores, scripts, atajos), el actualizador **no** crasheará por un conflicto. Extraerá tus cambios, actualizará el núcleo oficial, y volverá a aplicar tus ediciones por encima automáticamente.
-- **Permisos Reparados:** La arquitectura garantiza que la carpeta principal (`/usr/share/omarchy`) pertenezca a tu usuario, destrabando la actualización gráfica sin estancarse pidiendo contraseñas invisibles en segundo plano.
-
-### 5. 🆘 El Sistema de Rescate TTY (Modo Supervivencia)
-¿Tu tarjeta gráfica es vieja o tienes problemas con los drivers NVIDIA en Wayland?
-- Si SDDM falla en arrancar, el sistema activa nuestro **Menú de Rescate en TTY** (vía Fish Shell).
-- Te presenta una terminal estilizada donde con un solo número o letra puedes arrancar entornos seguros, hacer una purga profunda de caché, o forzar una reparación de pacman, todo sin teclear comandos complejos.
+**X64 LIOS** es un fork altamente optimizado y rediseñado de [Omarchy](https://omarchy.org), construido sobre la sólida y veloz base de **CachyOS**. Está diseñado desde cero para usuarios exigentes que buscan el máximo rendimiento en videojuegos, un entorno de desarrollo seguro, y una estética *Cyberpunk* inigualable.
 
 ---
 
-## 📥 Instalación (Un Solo Comando)
+## ⚡ Características Principales
 
-Para invocar el Mega Dashboard y comenzar la metamorfosis, ejecuta esto en un Live USB de CachyOS o en tu instalación base:
+* 🎮 **Gaming Extremo:** Aprovecha los kernels personalizados BORE de CachyOS y optimizaciones LTO para los máximos FPS.
+* 🛡️ **Zero-Amnesia IA:** Arquitectura interna preparada para asistentes de Inteligencia Artificial que sincronizan memoria y despliegues sin interrupciones.
+* 🖥️ **Terminal Premium (Overhaul):**
+  * Emulador `foot` hiper-rápido impulsado por Wayland.
+  * Prompt multilínea enriquecido con [Starship](https://starship.rs/).
+  * Árbol visual de hardware nativo impulsado por `fastfetch` con colores de acento neón.
+* 🎨 **Interfaz de Usuario (Quickshell):** Un escritorio QML moderno, minimalista y ultra reactivo sin la pesadez de los entornos tradicionales.
+* 🔄 **Actualizador Atómico (TUI/GUI):** Sistema de actualización a prueba de balas inspirado en arquitecturas inmutables, con recuperación instantánea.
+
+## 📸 Galería
+
+> **Nota para colaboradores:** *¡Sube aquí las capturas de tu escritorio! [Agrega una PR con tus capturas de Hyprland y la Terminal]*
+*(Espacio reservado para capturas de pantalla de la terminal transparente, el menú de aplicaciones y Fastfetch)*
+
+## 🚀 Instalación
+
+> **Advertencia:** X64 LIOS es un sistema operativo completo. Se recomienda instalarlo en una Máquina Virtual (QEMU/KVM) o en hardware dedicado.
+
+1. Instala una base limpia de **CachyOS**.
+2. Abre la terminal (`Ctrl + Alt + T` / `Ctrl + Alt + F3`).
+3. Clona este repositorio e inicia el proceso de inyección atómica:
 
 ```bash
-git clone -b quattro https://github.com/XzForz3-Dev/X64-Omarchy-CachyOS.git
+git clone https://github.com/XzForz3-Dev/X64-Omarchy-CachyOS.git
 cd X64-Omarchy-CachyOS
-chmod +x x64-install.sh
-./x64-install.sh
+python3 x64-install.py
 ```
-> [!IMPORTANT]
-> **No uses `sudo`** para ejecutar el script. Nuestro **Security Gateway** tomará el control, desplegará una animación de escaneo y te pedirá tu contraseña de forma segura solo cuando sea estrictamente necesario.
 
----
+4. Sigue las instrucciones interactivas del asistente (TUI) y reinicia el sistema.
 
-## 🛠️ Entornos Soportados
-Puedes instalar todos estos entornos simultáneamente. Nuestro *Chasis Puro* asegura que no se contaminen entre sí:
-* 🌌 **Hyprland (Omarchy X64 Edition)** - La experiencia insignia.
-* 🖥️ **KDE Plasma** - Robusto y clásico.
-* 🍃 **Cinnamon** - Tradicional y veloz.
-* 🪟 **Niri** - Para amantes de la estética scroll.
+## 🤝 ¿Cómo Colaborar?
 
----
-<div align="center">
-  <b>Desarrollado y operado por X64 Studios.</b><br>
-  <i>(Autores de la Arquitectura Híbrida, el Mega Dashboard TUI, el Security Gateway, los Motores de Auto-Sanación y las adaptaciones a hardware de CachyOS)</i><br>
-  <br>
-  <i>Inspirado y construido sobre la base arquitectónica de <a href="https://omarchy.org">Omarchy by DHH</a>.</i><br>
-  <i>Impulsado por el núcleo ultra-optimizado de <a href="https://cachyos.org">CachyOS</a>.</i>
-</div>
+¡La comunidad de X64 Studios te necesita! Si eres un apasionado de Linux, Wayland, Bash o QML, hay un lugar para ti.
+
+1. Revisa la pestaña de **[Issues](https://github.com/XzForz3-Dev/X64-Omarchy-CachyOS/issues)** y busca las etiquetas `good first issue` o `help wanted`.
+2. **Haz un Fork** del repositorio.
+3. Lee nuestro manifiesto interno de desarrollo en `.agents/AGENTS.md` para entender nuestras reglas de despliegue.
+4. Sube tus mejoras a la rama `quattro` y abre un Pull Request.
+
+**Regla de Oro del Proyecto:** Nunca arreglamos sistemas "en vivo". Si encuentras un bug, parcha el código fuente, sube el PR, y probamos el arreglo reinstalando. *Zero hot-patching.*
+
+## 📜 Créditos
+
+Este proyecto no sería posible sin el trabajo increíble de:
+- El equipo de **[CachyOS](https://cachyos.org/)** por el mejor rendimiento de kernel del planeta.
+- Los ingenieros de **[37signals (Basecamp)](https://github.com/basecamp/omarchy)** por la robusta arquitectura original de Omarchy.
+- **X64 Studios** y la iniciativa Antigravity por la automatización e integración IA.
