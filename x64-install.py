@@ -1239,11 +1239,38 @@ Exec = /bin/sh -c 'sed -i "s/\\/+CachyOS/\\/+X64 OS/g" /boot/limine.conf; sed -i
         limine_paths = ["/boot/limine.conf", "/boot/limine/limine.conf", "/efi/limine.conf", "/boot/efi/limine.conf", "/boot/limine.cfg", "/boot/limine/limine.cfg", "/efi/limine.cfg", "/boot/efi/limine.cfg"]
         for lpath in limine_paths:
             if os.path.exists(lpath):
-                log_lines.append("[yellow]Inyectando cmdline y aplicando renombrado en Limine...[/yellow]")
-                run_cmd_live(f"sudo perl -0777 -pi -e 's/comment: machine-id=[a-f0-9]+\\n\\/\\+CachyOS.*?(?=\\/\\+Omarchy)//s' {lpath} 2>/dev/null", check=False)
-                run_cmd_live(f"sudo sed -i 's/\\/+CachyOS/\\/+X64 OS/g' {lpath} 2>/dev/null", check=False)
-                run_cmd_live(f"sudo sed -i 's/\\/+Omarchy/\\/+X64 OS/g' {lpath} 2>/dev/null", check=False)
-                run_cmd_live(f"sudo sed -i 's/CachyOS Limine theme/X64 OS Limine Theme/g' {lpath} 2>/dev/null", check=False)
+                log_lines.append("[yellow]Limpiando menú de CachyOS y asegurando Omarchy...[/yellow]")
+                
+                # Delete the +CachyOS section entirely using python instead of regex
+                clean_script = '''
+import sys
+try:
+    with open(sys.argv[1], "r") as f:
+        lines = f.readlines()
+    
+    out = []
+    skip = False
+    for line in lines:
+        if line.startswith("/+CachyOS"):
+            skip = True
+        elif skip and line.startswith("/+"): 
+            skip = False
+        
+        if not skip:
+            out.append(line)
+            
+    with open(sys.argv[1], "w") as f:
+        f.writelines(out)
+except Exception as e:
+    pass
+'''
+                with open("/tmp/clean_limine.py", "w") as f:
+                    f.write(clean_script)
+                
+                run_cmd_live(f"sudo python3 /tmp/clean_limine.py {lpath}", check=False)
+                
+                # We do NOT rename Omarchy to X64 OS because user wants Omarchy.
+                # Just ensure splash is present for Omarchy kernels
                 run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *kernel_cmdline/ {{ /splash/! s/$/ splash/ }}\" {lpath}' 2>/dev/null", check=False)
                 run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/ splash/ }}\" {lpath}' 2>/dev/null", check=False)
                 break
