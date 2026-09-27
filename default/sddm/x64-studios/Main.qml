@@ -264,7 +264,7 @@ Rectangle {
                   }
               }
               Text {
-                  text: root.currentUser; font.capitalization: Font.AllUppercase
+                  text: (root.currentUser && root.currentUser.toString().trim() !== "") ? root.currentUser : "X64_ADMIN"; font.capitalization: Font.AllUppercase
                   color: "#ffffff"; font.pixelSize: 28; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Black; font.letterSpacing: 4
                   anchors.verticalCenter: parent.verticalCenter
               }
