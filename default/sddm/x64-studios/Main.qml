@@ -137,9 +137,9 @@ Rectangle {
           }
       }
       
-      // Hardware HUD Widget
+      // Fastfetch System Info Widget
       Rectangle {
-          width: 150
+          width: 240
           height: 180
           color: "#0a0a10"
           border.color: "#333344"
@@ -154,136 +154,32 @@ Rectangle {
               
               Row {
                   spacing: 12
-                  Text { id: batIcon; width: 22; text: "󰁹"; color: "#00f0ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text { id: batText; text: "100%"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+                  Text { width: 22; text: ""; color: "#00f0ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: "X64 LIOS"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
               
               Row {
                   spacing: 12
-                  Text { id: ramIcon; width: 22; text: "󰘚"; color: "#7000ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text { id: ramText; text: "0%"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+                  Text { width: 22; text: "󰒋"; color: "#00ffcc"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: sddm.hostName; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
               
               Row {
                   spacing: 12
-                  Text { id: cpuIcon; width: 22; text: "󰏈"; color: "#ff007f"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text { id: cpuText; text: "0°C"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+                  Text { width: 22; text: "󰌽"; color: "#ff007f"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: "Linux CachyOS"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
               
               Row {
                   spacing: 12
-                  Text { width: 22; text: "󰅐"; color: "#00ffcc"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text { id: upTextItem; text: "0h 0m"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+                  Text { width: 22; text: "󰧨"; color: "#7000ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: "Hyprland (Wayland)"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
               
               Row {
                   spacing: 12
-                  Text { width: 22; text: "󰊚"; color: "#ffaa00"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text { id: loadTextItem; text: "0.00"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
-              }
-          }
-
-          Timer {
-              id: hwTimer
-              interval: 5000; running: true; repeat: true
-              Component.onCompleted: hwTimer.triggered()
-              onTriggered: {
-                  // Battery
-                  try {
-                      var xhrCap = new XMLHttpRequest();
-                      xhrCap.open("GET", "file:///sys/class/power_supply/BAT0/capacity", false);
-                      xhrCap.send();
-                      var capText = xhrCap.responseText;
-                      if (capText && capText.length > 0) {
-                          var cap = parseInt(capText.trim());
-                          if (!isNaN(cap)) {
-                              batText.text = cap + "%";
-                              var xhrStat = new XMLHttpRequest();
-                              xhrStat.open("GET", "file:///sys/class/power_supply/BAT0/status", false);
-                              xhrStat.send();
-                              var stat = xhrStat.responseText.trim();
-                              if (stat === "Charging") {
-                                  batIcon.text = "󰂄"; batIcon.color = "#00ffcc";
-                              } else {
-                                  if (cap > 90) batIcon.text = "󰁹";
-                                  else if (cap > 80) batIcon.text = "󰂂";
-                                  else if (cap > 60) batIcon.text = "󰁿";
-                                  else if (cap > 40) batIcon.text = "󰁽";
-                                  else if (cap > 20) batIcon.text = "󰁻";
-                                  else { batIcon.text = "󰂃"; batIcon.color = "#ff007f"; }
-                                  if (cap > 20) batIcon.color = "#00f0ff";
-                              }
-                          }
-                      }
-                  } catch(e) {}
-                  
-                  // CPU Temp
-                  try {
-                      var xhrTemp = new XMLHttpRequest();
-                      xhrTemp.open("GET", "file:///sys/class/thermal/thermal_zone0/temp", false);
-                      xhrTemp.send();
-                      var tText = xhrTemp.responseText;
-                      if (tText && tText.length > 0) {
-                          var temp = parseInt(tText.trim()) / 1000;
-                          if (!isNaN(temp)) {
-                              cpuText.text = Math.round(temp) + "°C";
-                              cpuIcon.color = temp > 80 ? "#ff0000" : (temp > 60 ? "#ffaa00" : "#ff007f");
-                          }
-                      }
-                  } catch(e) {}
-                  
-                  // RAM
-                  try {
-                      var xhrMem = new XMLHttpRequest();
-                      xhrMem.open("GET", "file:///proc/meminfo", false);
-                      xhrMem.send();
-                      var lines = xhrMem.responseText.split('\n');
-                      var mTotal = 0;
-                      var mAvail = 0;
-                      for (var i = 0; i < lines.length; i++) {
-                          if (lines[i].indexOf("MemTotal:") === 0) {
-                              mTotal = parseInt(lines[i].replace(/[^0-9]/g, ''));
-                          } else if (lines[i].indexOf("MemAvailable:") === 0) {
-                              mAvail = parseInt(lines[i].replace(/[^0-9]/g, ''));
-                          }
-                      }
-                      if (mTotal > 0 && mAvail > 0) {
-                          var mUsed = mTotal - mAvail;
-                          var mPercent = Math.round((mUsed / mTotal) * 100);
-                          ramText.text = mPercent + "%";
-                          ramIcon.color = mPercent > 90 ? "#ff0000" : (mPercent > 70 ? "#ffaa00" : "#7000ff");
-                      }
-                  } catch(e) {}
-                  
-                  // Uptime
-                  try {
-                      var xhrUp = new XMLHttpRequest();
-                      xhrUp.open("GET", "file:///proc/uptime", false);
-                      xhrUp.send();
-                      var upText = xhrUp.responseText;
-                      if (upText && upText.length > 0) {
-                          var secs = parseFloat(upText.split(' ')[0]);
-                          if (!isNaN(secs)) {
-                              var hrs = Math.floor(secs / 3600);
-                              var mins = Math.floor((secs % 3600) / 60);
-                              upTextItem.text = hrs + "h " + mins + "m";
-                          }
-                      }
-                  } catch(e) {}
-                  
-                  // Load Avg
-                  try {
-                      var xhrLoad = new XMLHttpRequest();
-                      xhrLoad.open("GET", "file:///proc/loadavg", false);
-                      xhrLoad.send();
-                      var loadText = xhrLoad.responseText;
-                      if (loadText && loadText.length > 0) {
-                          var parts = loadText.split(' ');
-                          if (parts.length > 0) {
-                              loadTextItem.text = parts[0];
-                          }
-                      }
-                  } catch(e) {}
+                  Text { width: 22; text: "󰞷"; color: "#ffaa00"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: "Quickshell Desktop"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
           }
       }
