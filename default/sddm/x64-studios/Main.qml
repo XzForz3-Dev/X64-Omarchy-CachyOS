@@ -139,8 +139,8 @@ Rectangle {
       
       // Unified System & Hardware HUD Widget
       Rectangle {
-          width: 250
-          height: 320
+          width: 270
+          height: sysCol.implicitHeight + 40
           color: "#0a0a10"
           border.color: "#333344"
           border.width: 1
@@ -149,6 +149,7 @@ Rectangle {
           anchors.right: parent.right
           
           Column {
+              id: sysCol
               anchors.centerIn: parent
               spacing: 12
               
@@ -163,7 +164,7 @@ Rectangle {
               Row {
                   spacing: 12
                   Text { width: 22; text: "󰒋"; color: "#00ffcc"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text { text: sddm.hostName; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: (typeof sddm !== "undefined" && sddm.hostName && sddm.hostName !== "") ? sddm.hostName : "x64-machine"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
               Row {
                   spacing: 12
@@ -177,7 +178,7 @@ Rectangle {
               }
 
               Item { width: 1; height: 5 } // Spacer
-              Rectangle { width: 200; height: 1; color: "#333344"; anchors.horizontalCenter: parent.horizontalCenter } // Divider
+              Rectangle { width: 220; height: 1; color: "#333344"; anchors.horizontalCenter: parent.horizontalCenter } // Divider
               Item { width: 1; height: 5 } // Spacer
 
               // --- HARDWARE ---
