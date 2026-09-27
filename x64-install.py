@@ -783,7 +783,7 @@ for cmd in /usr/share/omarchy/bin/omarchy*; do
     bname=$(basename "$cmd")
     echo "#!/bin/bash" > "/usr/local/bin/$bname"
     echo "export OMARCHY_PATH=/usr/share/omarchy" >> "/usr/local/bin/$bname"
-    echo "exec /usr/share/omarchy/bin/$bname \"\$@\"" >> "/usr/local/bin/$bname"
+    echo "exec /usr/share/omarchy/bin/$bname \"\\$@\"" >> "/usr/local/bin/$bname"
     chmod +x "/usr/local/bin/$bname"
 done
 '''
