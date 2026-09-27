@@ -265,12 +265,13 @@ Rectangle {
   }
 
   // ==========================================
+  // ==========================================
   // BOTTOM LEFT: SESSION SELECTOR (Pill)
   // ==========================================
   Rectangle {
-      width: 220; height: 42
+      width: 280; height: 42
       color: "#0a0a10"
-      border.color: sessionMouse.containsMouse ? "#00f0ff" : "#333344"
+      border.color: "#333344"
       border.width: 1
       radius: 21
       opacity: 0.85
@@ -280,32 +281,42 @@ Rectangle {
 
       Row {
           anchors.centerIn: parent
-          spacing: 12
+          spacing: 20
+
           Text {
-              text: "󰇄" // Nerd Font Desktop Icon
-              color: sessionMouse.containsMouse ? "#00f0ff" : "#888899"
-              font.pixelSize: 16
-              font.family: "JetBrainsMono Nerd Font"
-              anchors.verticalCenter: parent.verticalCenter
+              text: "❮"
+              color: sLeftMouse.containsMouse ? "#00f0ff" : "#888899"
+              font.pixelSize: 14; font.weight: Font.Black
+              MouseArea {
+                  id: sLeftMouse; anchors.fill: parent; anchors.margins: -10
+                  hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                  onClicked: if (sessionModel.rowCount() > 0) root.currentSessionIndex = (root.currentSessionIndex - 1 + sessionModel.rowCount()) % sessionModel.rowCount()
+              }
           }
+
+          Row {
+              spacing: 8; anchors.verticalCenter: parent.verticalCenter
+              Text { text: "󰇄"; color: "#00f0ff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; anchors.verticalCenter: parent.verticalCenter }
+              Text {
+                  text: sessionModel.rowCount() > 0 ? sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), sessionModel.NameRole).toUpperCase() : "X64 DESKTOP"
+                  color: "#ffffff"; font.pixelSize: 13; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; font.letterSpacing: 1
+                  anchors.verticalCenter: parent.verticalCenter
+              }
+          }
+
           Text {
-              text: sessionModel.rowCount() > 0 ? sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), sessionModel.NameRole) : "X64 Desktop"
-              color: "#ffffff"
-              font.pixelSize: 13
-              font.family: "JetBrainsMono Nerd Font"
-              font.weight: Font.Bold
-              font.letterSpacing: 1
-              anchors.verticalCenter: parent.verticalCenter
+              text: "❯"
+              color: sRightMouse.containsMouse ? "#00f0ff" : "#888899"
+              font.pixelSize: 14; font.weight: Font.Black
+              MouseArea {
+                  id: sRightMouse; anchors.fill: parent; anchors.margins: -10
+                  hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                  onClicked: if (sessionModel.rowCount() > 0) root.currentSessionIndex = (root.currentSessionIndex + 1) % sessionModel.rowCount()
+              }
           }
-      }
-      MouseArea {
-          id: sessionMouse
-          anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-          onClicked: if (sessionModel.rowCount() > 0) root.currentSessionIndex = (root.currentSessionIndex + 1) % sessionModel.rowCount()
       }
   }
 
-  // ==========================================
   // BOTTOM RIGHT: POWER CONTROLS
   // ==========================================
   Row {
