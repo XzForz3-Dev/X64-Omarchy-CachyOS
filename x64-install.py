@@ -1228,7 +1228,7 @@ try:
     for line in out:
         final_out.append(line)
         if line.strip() == "[options]":
-            final_out.append("IgnorePkg = linux-omarchy linux-omarchy-headers\n")
+            final_out.append("IgnorePkg = linux-omarchy linux-omarchy-headers\\n")
             
     with open("/etc/pacman.conf", "w") as f:
         f.writelines(final_out)
