@@ -162,7 +162,9 @@ Rectangle {
           }
           
           Timer {
-              interval: 10000; running: true; repeat: true
+              id: batTimer
+              interval: 5000; running: true; repeat: true
+              Component.onCompleted: batTimer.triggered()
               onTriggered: {
                   try {
                       var xhrCap = new XMLHttpRequest();
