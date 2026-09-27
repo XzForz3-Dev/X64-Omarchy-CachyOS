@@ -15,33 +15,39 @@ Rectangle {
   property var videos: ["videos/background.mp4", "videos/galaxy.mp4", "videos/particles.mp4", "videos/fluid.mp4", "videos/smooth_wave.mp4", "videos/elegant_dark.mp4", "videos/glowing_lines.mp4", "videos/space_stars.mp4", "videos/neon_minimal.mp4", "videos/abstract_mesh.mp4"]
   property int currentVideoIndex: 0
   
+  Instantiator {
+      id: sessionInstantiator
+      model: sessionModel
+      delegate: QtObject { property string sessionName: name }
+  }
+
+  Instantiator {
+      id: userInstantiator
+      model: userModel
+      delegate: QtObject { property string userName: name }
+  }
+
   property int userIndex: userModel.lastIndex >= 0 ? userModel.lastIndex : 0
   property string currentUser: {
-      if (userModel.rowCount() === 0) return "X64_ADMIN";
-      var n = userModel.data(userModel.index(userIndex, 0), 257); // NameRole
-      if (!n || n === "") n = userModel.data(userModel.index(userIndex, 0), 0); // DisplayRole
-      if (!n || n === "") n = userModel.lastUser;
-      return (n && n !== "") ? n : "X64_ADMIN";
+      if (userModel.rowCount() === 0) return "qqqq";
+      var obj = userInstantiator.objectAt(userIndex);
+      if (obj && obj.userName && obj.userName !== "") return obj.userName;
+      if (userModel.lastUser && userModel.lastUser !== "") return userModel.lastUser;
+      return "qqqq";
   }
   
   property int currentSessionIndex: sessionModel.lastIndex >= 0 ? sessionModel.lastIndex : 0
   property string currentSessionName: {
       if (typeof sessionModel === "undefined" || sessionModel.rowCount() === 0) return "X64 DESKTOP";
-      var n = sessionModel.data(sessionModel.index(currentSessionIndex, 0), 257);
+      var obj = sessionInstantiator.objectAt(currentSessionIndex);
+      var s = obj ? (obj.sessionName || "") : "";
       
-      var s = String(n || "");
-      if (s === "" || s.indexOf("/") !== -1 || s.indexOf(".desktop") !== -1) {
-          var f = sessionModel.data(sessionModel.index(currentSessionIndex, 0), 0);
-          s = String(f || "");
-      }
+      if (s === "") return "X64 DESKTOP";
       
       var parts = s.split("/");
       var filename = parts[parts.length - 1].replace(".desktop", "").replace(".Desktop", "");
-      
       if (filename.toLowerCase() === "omarchy") return "Omarchy (Hyprland uwsm)";
       if (filename.toLowerCase() === "hyprland-uwsm") return "Hyprland (UWSM)";
-      
-      if (filename === "") return "X64 DESKTOP";
       
       return filename.charAt(0).toUpperCase() + filename.slice(1);
   }
