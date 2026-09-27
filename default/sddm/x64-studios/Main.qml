@@ -300,7 +300,8 @@ Rectangle {
               Text {
                   text: {
                       if (typeof sessionModel === "undefined" || sessionModel.rowCount() === 0) return "X64 DESKTOP";
-                      var name = sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), 258 /* NameRole is usually 258 or sessionModel.NameRole */);
+                      var name = sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), 0); // Qt.DisplayRole
+                      if (!name || name === "") name = sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), sessionModel.NameRole);
                       if (!name || name === "") name = sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), sessionModel.NameRole);
                       return (name && name !== "") ? name : "X64 DESKTOP";
                   }
