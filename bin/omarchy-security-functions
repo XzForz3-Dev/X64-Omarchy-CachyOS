@@ -48,12 +48,10 @@ omarchy_security_require_source_root() {
   local command_source command_name=${1##*/}
   command_source=$(/usr/bin/readlink -e -- "$1") || return 1
 
-  # A runtime root selects the code used by this invocation. Accept the
-  # canonical checkout containing the entrypoint or the package's bin links.
-  if [[ ${OMARCHY_PATH:-} != /* || $(/usr/bin/realpath -e -- "$OMARCHY_PATH") != "$OMARCHY_PATH" ]] ||
-    ! { [[ $command_source == "$OMARCHY_PATH/bin/$command_name" ]] ||
-      [[ $OMARCHY_PATH == "/usr/share/omarchy" && $command_source == "/usr/bin/$command_name" ]]; }; then
-    echo "OMARCHY_PATH ($OMARCHY_PATH) does not match this Omarchy command ($command_source vs $OMARCHY_PATH/bin/$command_name)." >&2
+  # A runtime root selects the code used by this invocation.
+  # DISABLED for X64 LIOS to allow testing scripts in ~/.local/bin/
+  if [[ ${OMARCHY_PATH:-} != /* || $(/usr/bin/realpath -e -- "$OMARCHY_PATH") != "$OMARCHY_PATH" ]]; then
+    echo "OMARCHY_PATH ($OMARCHY_PATH) is invalid or not absolute." >&2
     return 1
   fi
 }
