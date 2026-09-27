@@ -1240,6 +1240,7 @@ Exec = /bin/sh -c 'sed -i "s/\\/+CachyOS/\\/+X64 OS/g" /boot/limine.conf; sed -i
         for lpath in limine_paths:
             if os.path.exists(lpath):
                 log_lines.append("[yellow]Limpiando menú de CachyOS y asegurando Omarchy...[/yellow]")
+                run_cmd_live("sudo rm -f /etc/pacman.d/hooks/99-limine-x64.hook", check=False)
                 
                 # Delete the +CachyOS section entirely using python instead of regex
                 clean_script = '''
