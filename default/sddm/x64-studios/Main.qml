@@ -15,22 +15,22 @@ Rectangle {
   property var videos: ["videos/background.mp4", "videos/galaxy.mp4", "videos/particles.mp4", "videos/fluid.mp4", "videos/smooth_wave.mp4", "videos/elegant_dark.mp4", "videos/glowing_lines.mp4", "videos/space_stars.mp4", "videos/neon_minimal.mp4", "videos/abstract_mesh.mp4"]
   property int currentVideoIndex: 0
   
-  Instantiator {
-      id: sessionInstantiator
+  Repeater {
+      id: sessionRepeater
       model: sessionModel
-      delegate: QtObject { property string sessionName: name }
+      delegate: Item { property string sessionName: name }
   }
 
-  Instantiator {
-      id: userInstantiator
+  Repeater {
+      id: userRepeater
       model: userModel
-      delegate: QtObject { property string userName: name }
+      delegate: Item { property string userName: name }
   }
 
   property int userIndex: userModel.lastIndex >= 0 ? userModel.lastIndex : 0
   property string currentUser: {
       if (userModel.rowCount() === 0) return "qqqq";
-      var obj = userInstantiator.objectAt(userIndex);
+      var obj = userRepeater.itemAt(userIndex);
       if (obj && obj.userName && obj.userName !== "") return obj.userName;
       if (userModel.lastUser && userModel.lastUser !== "") return userModel.lastUser;
       return "qqqq";
@@ -39,7 +39,7 @@ Rectangle {
   property int currentSessionIndex: sessionModel.lastIndex >= 0 ? sessionModel.lastIndex : 0
   property string currentSessionName: {
       if (typeof sessionModel === "undefined" || sessionModel.rowCount() === 0) return "X64 DESKTOP";
-      var obj = sessionInstantiator.objectAt(currentSessionIndex);
+      var obj = sessionRepeater.itemAt(currentSessionIndex);
       var s = obj ? (obj.sessionName || "") : "";
       
       if (s === "") return "X64 DESKTOP";
