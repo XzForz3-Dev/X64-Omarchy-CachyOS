@@ -148,40 +148,6 @@ Rectangle {
           opacity: 0.85
           anchors.right: parent.right
           
-          function updateBattery() {
-              try {
-                  var xhrCap = new XMLHttpRequest();
-                  xhrCap.open("GET", "file:///sys/class/power_supply/BAT0/capacity", false);
-                  xhrCap.send();
-                  var cap = parseInt(xhrCap.responseText.trim());
-                  var xhrStat = new XMLHttpRequest();
-                  xhrStat.open("GET", "file:///sys/class/power_supply/BAT0/status", false);
-                  xhrStat.send();
-                  var stat = xhrStat.responseText.trim();
-                  if (!isNaN(cap)) {
-                      batText.text = cap + "%";
-                      if (stat === "Charging") {
-                          batIcon.text = "󰂄"; batIcon.color = "#00ffcc";
-                      } else {
-                          if (cap > 90) batIcon.text = "󰁹";
-                          else if (cap > 80) batIcon.text = "󰂂";
-                          else if (cap > 60) batIcon.text = "󰁿";
-                          else if (cap > 40) batIcon.text = "󰁽";
-                          else if (cap > 20) batIcon.text = "󰁻";
-                          else { batIcon.text = "󰂃"; batIcon.color = "#ff007f"; }
-                          if (cap > 20) batIcon.color = "#00f0ff";
-                      }
-                  }
-              } catch(e) {}
-          }
-          
-          Component.onCompleted: updateBattery()
-          
-          Timer {
-              interval: 5000; running: true; repeat: true
-              onTriggered: parent.updateBattery()
-          }
-          
           Column {
               id: sysCol
               anchors.centerIn: parent
@@ -219,6 +185,39 @@ Rectangle {
                   spacing: 12
                   Text { id: batIcon; width: 22; text: "󰁹"; color: "#00f0ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
                   Text { id: batText; text: "--%"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+                  
+                  Timer {
+                      interval: 10000; running: true; repeat: true
+                      triggeredOnStart: true
+                      onTriggered: {
+                          try {
+                              var xhrCap = new XMLHttpRequest();
+                              xhrCap.open("GET", "file:///sys/class/power_supply/BAT0/capacity", false);
+                              xhrCap.send();
+                              var cap = parseInt(xhrCap.responseText.trim());
+                              
+                              var xhrStat = new XMLHttpRequest();
+                              xhrStat.open("GET", "file:///sys/class/power_supply/BAT0/status", false);
+                              xhrStat.send();
+                              var stat = xhrStat.responseText.trim();
+                              
+                              if (!isNaN(cap)) {
+                                  batText.text = cap + "%";
+                                  if (stat === "Charging") {
+                                      batIcon.text = "󰂄"; batIcon.color = "#00ffcc";
+                                  } else {
+                                      if (cap > 90) batIcon.text = "󰁹";
+                                      else if (cap > 80) batIcon.text = "󰂂";
+                                      else if (cap > 60) batIcon.text = "󰁿";
+                                      else if (cap > 40) batIcon.text = "󰁽";
+                                      else if (cap > 20) batIcon.text = "󰁻";
+                                      else { batIcon.text = "󰂃"; batIcon.color = "#ff007f"; }
+                                      if (cap > 20) batIcon.color = "#00f0ff";
+                                  }
+                              }
+                          } catch(e) {}
+                      }
+                  }
               }
           }
       }
