@@ -1215,7 +1215,7 @@ hl.config({
         log_lines.append("[yellow]Añadiendo IgnorePkg en pacman.conf para bloquear linux-omarchy...[/yellow]")
         run_cmd_live("sudo sed -i '/^IgnorePkg/d' /etc/pacman.conf", check=False)
         run_cmd_live("sudo sed -i '/^#IgnorePkg/d' /etc/pacman.conf", check=False)
-        run_cmd_live("sudo sed -i '/^\[options\]/a IgnorePkg = linux-omarchy linux-omarchy-headers' /etc/pacman.conf", check=False)
+        run_cmd_live("sudo sed -i '/^\\[options\\]/a IgnorePkg = linux-omarchy linux-omarchy-headers' /etc/pacman.conf", check=False)
 
         log_lines.append("[yellow]Creando hook guardián de auto-defensa para Limine...[/yellow]")
         hook_content = '''[Trigger]
