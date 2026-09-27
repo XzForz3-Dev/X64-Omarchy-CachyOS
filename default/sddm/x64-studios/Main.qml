@@ -137,10 +137,10 @@ Rectangle {
           }
       }
       
-      // Fastfetch System Info Widget
+      // Unified System & Hardware HUD Widget
       Rectangle {
-          width: 240
-          height: 180
+          width: 250
+          height: 320
           color: "#0a0a10"
           border.color: "#333344"
           border.width: 1
@@ -150,36 +150,118 @@ Rectangle {
           
           Column {
               anchors.centerIn: parent
-              spacing: 14
+              spacing: 12
+              
+              // --- SYSTEM INFO ---
+              Text { text: "SYSTEM INFO"; color: "#555566"; font.pixelSize: 12; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.horizontalCenter: parent.horizontalCenter }
               
               Row {
                   spacing: 12
                   Text { width: 22; text: ""; color: "#00f0ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
                   Text { text: "X64 LIOS"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
-              
               Row {
                   spacing: 12
                   Text { width: 22; text: "󰒋"; color: "#00ffcc"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
                   Text { text: sddm.hostName; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
-              
               Row {
                   spacing: 12
                   Text { width: 22; text: "󰌽"; color: "#ff007f"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
                   Text { text: "Linux CachyOS"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
-              
-              Row {
-                  spacing: 12
-                  Text { width: 22; text: "󰧨"; color: "#7000ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text { text: "Hyprland (Wayland)"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
-              }
-              
               Row {
                   spacing: 12
                   Text { width: 22; text: "󰞷"; color: "#ffaa00"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text { text: "Quickshell Desktop"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: "Omarchy (Hyprland)"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+              }
+
+              Item { width: 1; height: 5 } // Spacer
+              Rectangle { width: 200; height: 1; color: "#333344"; anchors.horizontalCenter: parent.horizontalCenter } // Divider
+              Item { width: 1; height: 5 } // Spacer
+
+              // --- HARDWARE ---
+              Text { text: "HARDWARE MONITORS"; color: "#555566"; font.pixelSize: 12; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.horizontalCenter: parent.horizontalCenter }
+
+              Row {
+                  spacing: 12
+                  Text { id: batIcon; width: 22; text: "󰁹"; color: "#00f0ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { id: batText; text: "--%"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+              }
+              Row {
+                  spacing: 12
+                  Text { id: ramIcon; width: 22; text: "󰘚"; color: "#7000ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { id: ramText; text: "--%"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+              }
+              Row {
+                  spacing: 12
+                  Text { id: cpuIcon; width: 22; text: "󰏈"; color: "#ff007f"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { id: cpuText; text: "--°C"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+              }
+          }
+
+          Timer {
+              id: hwTimer
+              interval: 5000; running: true; repeat: true
+              Component.onCompleted: hwTimer.triggered()
+              onTriggered: {
+                  try {
+                      var xhrCap = new XMLHttpRequest();
+                      xhrCap.open("GET", "file:///sys/class/power_supply/BAT0/capacity", false);
+                      xhrCap.send();
+                      var cap = parseInt(xhrCap.responseText.trim());
+                      var xhrStat = new XMLHttpRequest();
+                      xhrStat.open("GET", "file:///sys/class/power_supply/BAT0/status", false);
+                      xhrStat.send();
+                      var stat = xhrStat.responseText.trim();
+                      if (!isNaN(cap)) {
+                          batText.text = cap + "%";
+                          if (stat === "Charging") {
+                              batIcon.text = "󰂄"; batIcon.color = "#00ffcc";
+                          } else {
+                              if (cap > 90) batIcon.text = "󰁹";
+                              else if (cap > 80) batIcon.text = "󰂂";
+                              else if (cap > 60) batIcon.text = "󰁿";
+                              else if (cap > 40) batIcon.text = "󰁽";
+                              else if (cap > 20) batIcon.text = "󰁻";
+                              else { batIcon.text = "󰂃"; batIcon.color = "#ff007f"; }
+                              if (cap > 20) batIcon.color = "#00f0ff";
+                          }
+                      }
+                  } catch(e) {}
+                  
+                  try {
+                      var xhrTemp = new XMLHttpRequest();
+                      xhrTemp.open("GET", "file:///sys/class/thermal/thermal_zone0/temp", false);
+                      xhrTemp.send();
+                      var temp = parseInt(xhrTemp.responseText.trim()) / 1000;
+                      if (!isNaN(temp)) {
+                          cpuText.text = Math.round(temp) + "°C";
+                          cpuIcon.color = temp > 80 ? "#ff0000" : (temp > 60 ? "#ffaa00" : "#ff007f");
+                      }
+                  } catch(e) {}
+                  
+                  try {
+                      var xhrMem = new XMLHttpRequest();
+                      xhrMem.open("GET", "file:///proc/meminfo", false);
+                      xhrMem.send();
+                      var lines = xhrMem.responseText.split('\n');
+                      var mTotal = 0;
+                      var mAvail = 0;
+                      for (var i = 0; i < lines.length; i++) {
+                          if (lines[i].indexOf("MemTotal:") === 0) {
+                              mTotal = parseInt(lines[i].replace(/[^0-9]/g, ''));
+                          } else if (lines[i].indexOf("MemAvailable:") === 0) {
+                              mAvail = parseInt(lines[i].replace(/[^0-9]/g, ''));
+                          }
+                      }
+                      if (mTotal > 0 && mAvail > 0) {
+                          var mUsed = mTotal - mAvail;
+                          var mPercent = Math.round((mUsed / mTotal) * 100);
+                          ramText.text = mPercent + "%";
+                          ramIcon.color = mPercent > 90 ? "#ff0000" : (mPercent > 70 ? "#ffaa00" : "#7000ff");
+                      }
+                  } catch(e) {}
               }
           }
       }
