@@ -1237,8 +1237,8 @@ Exec = /bin/sh -c 'sed -i "s/\\/+CachyOS/\\/+X64 OS/g" /boot/limine.conf; sed -i
                 run_cmd_live(f"sudo sed -i 's/\/+CachyOS/\/+X64 OS/g' {lpath} 2>/dev/null", check=False)
                 run_cmd_live(f"sudo sed -i 's/\/+Omarchy/\/+X64 OS/g' {lpath} 2>/dev/null", check=False)
                 run_cmd_live(f"sudo sed -i 's/CachyOS Limine theme/X64 OS Limine Theme/g' {lpath} 2>/dev/null", check=False)
-                run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *kernel_cmdline/ {{ /splash/! s/$/ splash/ }}" {lpath}' 2>/dev/null", check=False)
-                run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/ splash/ }}" {lpath}' 2>/dev/null", check=False)
+                run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *kernel_cmdline/ {{ /splash/! s/$/ splash/ }}\" {lpath}' 2>/dev/null", check=False)
+                run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/ splash/ }}\" {lpath}' 2>/dev/null", check=False)
                 break
 
         # === SILENCIADOR DE MIGRACIONES HISTÓRICAS ===
