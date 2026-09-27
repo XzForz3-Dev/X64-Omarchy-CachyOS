@@ -17,6 +17,7 @@ Rectangle {
   
   ListView {
       id: sessionList
+      width: 100; height: 100; opacity: 0; z: -100
       model: sessionModel
       currentIndex: root.currentSessionIndex
       delegate: Item { property string sessionName: name }
@@ -24,6 +25,7 @@ Rectangle {
 
   ListView {
       id: userList
+      width: 100; height: 100; opacity: 0; z: -100
       model: userModel
       currentIndex: root.userIndex
       delegate: Item { property string userName: name }
