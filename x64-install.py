@@ -1213,10 +1213,31 @@ hl.config({
         run_cmd_live("sudo rm -f /boot/EFI/Linux/*linux-omarchy* /efi/EFI/Linux/*linux-omarchy* /boot/efi/EFI/Linux/*linux-omarchy* 2>/dev/null", check=False)
         
         log_lines.append("[yellow]Añadiendo IgnorePkg en pacman.conf para bloquear linux-omarchy...[/yellow]")
-        run_cmd_live("sudo sed -i '/^IgnorePkg/d' /etc/pacman.conf", check=False)
-        run_cmd_live("sudo sed -i '/^#IgnorePkg/d' /etc/pacman.conf", check=False)
-        run_cmd_live("sudo sed -i '/^\\[options\\]/a IgnorePkg = linux-omarchy linux-omarchy-headers' /etc/pacman.conf", check=False)
-
+        clean_pacman_script = '''
+import sys
+try:
+    with open("/etc/pacman.conf", "r") as f:
+        lines = f.readlines()
+    
+    out = []
+    for line in lines:
+        if not line.strip().startswith("IgnorePkg") and "linux-omarchy" not in line:
+            out.append(line)
+            
+    final_out = []
+    for line in out:
+        final_out.append(line)
+        if line.strip() == "[options]":
+            final_out.append("IgnorePkg = linux-omarchy linux-omarchy-headers\n")
+            
+    with open("/etc/pacman.conf", "w") as f:
+        f.writelines(final_out)
+except:
+    pass
+'''
+        with open("/tmp/clean_pacman.py", "w") as f:
+            f.write(clean_pacman_script)
+        run_cmd_live("sudo python3 /tmp/clean_pacman.py", check=False)
         log_lines.append("[yellow]Creando hook guardián de auto-defensa para Limine...[/yellow]")
         hook_content = '''[Trigger]
 Operation = Install
