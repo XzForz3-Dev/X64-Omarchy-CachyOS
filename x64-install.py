@@ -1233,8 +1233,7 @@ Exec = /bin/sh -c 'sed -i "s/\\/+CachyOS/\\/+X64 OS/g" /boot/limine.conf; sed -i
         for lpath in limine_paths:
             if os.path.exists(lpath):
                 log_lines.append("[yellow]Inyectando cmdline y aplicando renombrado en Limine...[/yellow]")
-                run_cmd_live(f"sudo perl -0777 -pi -e 's/comment: machine-id=[a-f0-9]+
-\/\+CachyOS.*?(?=\/\+Omarchy)//s' {lpath} 2>/dev/null", check=False)
+                run_cmd_live(f"sudo perl -0777 -pi -e 's/comment: machine-id=[a-f0-9]+\\n\\/\\+CachyOS.*?(?=\\/\\+Omarchy)//s' {lpath} 2>/dev/null", check=False)
                 run_cmd_live(f"sudo sed -i 's/\/+CachyOS/\/+X64 OS/g' {lpath} 2>/dev/null", check=False)
                 run_cmd_live(f"sudo sed -i 's/\/+Omarchy/\/+X64 OS/g' {lpath} 2>/dev/null", check=False)
                 run_cmd_live(f"sudo sed -i 's/CachyOS Limine theme/X64 OS Limine Theme/g' {lpath} 2>/dev/null", check=False)
