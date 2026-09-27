@@ -12,7 +12,7 @@ Rectangle {
       GradientStop { position: 1.0; color: "#12101c" }
   }
 
-  property var videos: ["videos/background.mp4", "videos/matrix.mp4", "videos/galaxy.mp4", "videos/hexagons.mp4", "videos/synthwave.mp4", "videos/radar.mp4", "videos/particles.mp4", "videos/binary.mp4", "videos/fluid.mp4", "videos/glass.mp4"]
+  property var videos: ["videos/background.mp4", "videos/galaxy.mp4", "videos/particles.mp4", "videos/fluid.mp4", "videos/smooth_wave.mp4", "videos/elegant_dark.mp4", "videos/glowing_lines.mp4", "videos/space_stars.mp4", "videos/neon_minimal.mp4", "videos/abstract_mesh.mp4"]
   property int currentVideoIndex: 0
   
   ListView {
@@ -346,8 +346,10 @@ Rectangle {
 
           TextInput {
               id: password
-              anchors.fill: parent; horizontalAlignment: TextInput.AlignHCenter; verticalAlignment: TextInput.AlignVCenter
+              anchors.fill: parent; anchors.leftMargin: 25; anchors.rightMargin: 25
+              horizontalAlignment: TextInput.AlignHCenter; verticalAlignment: TextInput.AlignVCenter
               echoMode: TextInput.Password; font.pixelSize: 24; color: "#ffffff"; passwordCharacter: "■"; focus: true
+              clip: true
               
               Text {
                   anchors.centerIn: parent; text: "ACCESS CODE"; color: "#555566"; font.pixelSize: 13; font.letterSpacing: 3; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold
