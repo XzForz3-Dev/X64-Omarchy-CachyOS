@@ -277,6 +277,88 @@ Rectangle {
               }
           }
       }
+      Row {
+          anchors.right: parent.right
+          spacing: 15
+          opacity: 0.9
+          
+          Row {
+              spacing: 8
+              anchors.verticalCenter: parent.verticalCenter
+              Text {
+                  id: ramIcon
+                  text: "󰘚"
+                  color: "#7000ff"
+                  font.pixelSize: 18
+                  font.family: "JetBrainsMono Nerd Font"
+                  anchors.verticalCenter: parent.verticalCenter
+              }
+              Text {
+                  id: ramText
+                  text: "0%"
+                  color: "#ffffff"
+                  font.pixelSize: 15
+                  font.family: "JetBrainsMono Nerd Font"
+                  font.weight: Font.Bold
+                  anchors.verticalCenter: parent.verticalCenter
+              }
+          }
+
+          Row {
+              spacing: 8
+              anchors.verticalCenter: parent.verticalCenter
+              Text {
+                  id: cpuIcon
+                  text: "󰏈"
+                  color: "#ff007f"
+                  font.pixelSize: 18
+                  font.family: "JetBrainsMono Nerd Font"
+                  anchors.verticalCenter: parent.verticalCenter
+              }
+              Text {
+                  id: cpuText
+                  text: "0°C"
+                  color: "#ffffff"
+                  font.pixelSize: 15
+                  font.family: "JetBrainsMono Nerd Font"
+                  font.weight: Font.Bold
+                  anchors.verticalCenter: parent.verticalCenter
+              }
+          }
+
+          Timer {
+              id: hwTimer
+              interval: 5000; running: true; repeat: true
+              Component.onCompleted: hwTimer.triggered()
+              onTriggered: {
+                  try {
+                      var xhrTemp = new XMLHttpRequest();
+                      xhrTemp.open("GET", "file:///sys/class/thermal/thermal_zone0/temp", false);
+                      xhrTemp.send();
+                      var temp = parseInt(xhrTemp.responseText.trim()) / 1000;
+                      if (!isNaN(temp)) {
+                          cpuText.text = Math.round(temp) + "°C";
+                          cpuIcon.color = temp > 80 ? "#ff0000" : (temp > 60 ? "#ffaa00" : "#ff007f");
+                      }
+                  } catch(e) {}
+                  
+                  try {
+                      var xhrMem = new XMLHttpRequest();
+                      xhrMem.open("GET", "file:///proc/meminfo", false);
+                      xhrMem.send();
+                      var memData = xhrMem.responseText;
+                      var mTotal = parseInt(memData.match(/MemTotal:\s+(\d+)/)[1]);
+                      var mAvail = parseInt(memData.match(/MemAvailable:\s+(\d+)/)[1]);
+                      if (!isNaN(mTotal) && !isNaN(mAvail)) {
+                          var mUsed = mTotal - mAvail;
+                          var mPercent = Math.round((mUsed / mTotal) * 100);
+                          ramText.text = mPercent + "%";
+                          ramIcon.color = mPercent > 90 ? "#ff0000" : (mPercent > 70 ? "#ffaa00" : "#7000ff");
+                      }
+                  } catch(e) {}
+              }
+          }
+      }
   }
 
   // ==========================================
