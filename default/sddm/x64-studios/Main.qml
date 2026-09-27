@@ -16,8 +16,21 @@ Rectangle {
   property int currentVideoIndex: 0
   
   property int userIndex: userModel.lastIndex >= 0 ? userModel.lastIndex : 0
-  property string currentUser: userModel.rowCount() > 0 ? userModel.data(userModel.index(userIndex, 0), userModel.NameRole) : ""
+  property string currentUser: {
+      if (userModel.rowCount() === 0) return "X64_ADMIN";
+      var n = userModel.data(userModel.index(userIndex, 0), 257); // NameRole
+      if (!n || n === "") n = userModel.data(userModel.index(userIndex, 0), 0); // DisplayRole
+      if (!n || n === "") n = userModel.lastUser;
+      return (n && n !== "") ? n : "X64_ADMIN";
+  }
+  
   property int currentSessionIndex: sessionModel.lastIndex >= 0 ? sessionModel.lastIndex : 0
+  property string currentSessionName: {
+      if (sessionModel.rowCount() === 0) return "X64 DESKTOP";
+      var n = sessionModel.data(sessionModel.index(currentSessionIndex, 0), 257); // NameRole
+      if (!n || n === "") n = sessionModel.data(sessionModel.index(currentSessionIndex, 0), 0); // DisplayRole
+      return (n && n !== "") ? n : "X64 DESKTOP";
+  }
 
   Connections {
     target: sddm
@@ -264,7 +277,7 @@ Rectangle {
                   }
               }
               Text {
-                  text: (userRepeater.itemAt(root.userIndex) && userRepeater.itemAt(root.userIndex).userName) ? userRepeater.itemAt(root.userIndex).userName : "X64_ADMIN"; font.capitalization: Font.AllUppercase
+                  text: root.currentUser; font.capitalization: Font.AllUppercase
                   color: "#ffffff"; font.pixelSize: 28; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Black; font.letterSpacing: 4
                   anchors.verticalCenter: parent.verticalCenter
               }
@@ -361,7 +374,7 @@ Rectangle {
               spacing: 8; anchors.verticalCenter: parent.verticalCenter
               Text { text: "󰇄"; color: "#00f0ff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; anchors.verticalCenter: parent.verticalCenter }
               Text {
-                  text: (sessionRepeater.itemAt(root.currentSessionIndex) && sessionRepeater.itemAt(root.currentSessionIndex).sessionName) ? sessionRepeater.itemAt(root.currentSessionIndex).sessionName : "X64 DESKTOP" 
+                  text: root.currentSessionName 
                   color: "#ffffff"; font.pixelSize: 13; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; font.capitalization: Font.AllUppercase; font.letterSpacing: 1
                   anchors.verticalCenter: parent.verticalCenter
               }
