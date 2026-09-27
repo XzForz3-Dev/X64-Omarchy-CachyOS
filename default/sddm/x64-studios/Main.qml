@@ -201,7 +201,7 @@ Rectangle {
                   }
               }
               Text {
-                  text: root.currentUser
+                  text: root.currentUser; font.capitalization: Font.AllUppercase
                   color: "#ffffff"; font.pixelSize: 28; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Black; font.letterSpacing: 4
                   anchors.verticalCenter: parent.verticalCenter
               }
