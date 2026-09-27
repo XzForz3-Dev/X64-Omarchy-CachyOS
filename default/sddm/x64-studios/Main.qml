@@ -264,7 +264,7 @@ Rectangle {
                   }
               }
               Text {
-                  text: (root.currentUser && root.currentUser.toString().trim() !== "") ? root.currentUser : "X64_ADMIN"; font.capitalization: Font.AllUppercase
+                  text: (userRepeater.itemAt(root.userIndex) && userRepeater.itemAt(root.userIndex).userName) ? userRepeater.itemAt(root.userIndex).userName : "X64_ADMIN"; font.capitalization: Font.AllUppercase
                   color: "#ffffff"; font.pixelSize: 28; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Black; font.letterSpacing: 4
                   anchors.verticalCenter: parent.verticalCenter
               }
@@ -361,13 +361,7 @@ Rectangle {
               spacing: 8; anchors.verticalCenter: parent.verticalCenter
               Text { text: "󰇄"; color: "#00f0ff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; anchors.verticalCenter: parent.verticalCenter }
               Text {
-                  text: {
-                      if (typeof sessionModel === "undefined" || sessionModel.rowCount() === 0) return "X64 DESKTOP";
-                      var name = sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), 0); // Qt.DisplayRole
-                      if (!name || name === "") name = sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), sessionModel.NameRole);
-                      if (!name || name === "") name = sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), sessionModel.NameRole);
-                      return (name && name !== "") ? name : "X64 DESKTOP";
-                  }
+                  text: (sessionRepeater.itemAt(root.currentSessionIndex) && sessionRepeater.itemAt(root.currentSessionIndex).sessionName) ? sessionRepeater.itemAt(root.currentSessionIndex).sessionName : "X64 DESKTOP" 
                   color: "#ffffff"; font.pixelSize: 13; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; font.capitalization: Font.AllUppercase; font.letterSpacing: 1
                   anchors.verticalCenter: parent.verticalCenter
               }
