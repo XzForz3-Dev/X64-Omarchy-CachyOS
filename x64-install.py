@@ -1240,7 +1240,24 @@ Exec = /bin/sh -c 'sed -i "s/\\/+CachyOS/\\/+X64 OS/g" /boot/limine.conf; sed -i
         for lpath in limine_paths:
             if os.path.exists(lpath):
                 log_lines.append("[yellow]Limpiando menú de CachyOS y asegurando Omarchy...[/yellow]")
-                run_cmd_live("sudo rm -f /etc/pacman.d/hooks/99-limine-x64.hook", check=False)
+                log_lines.append("[yellow]Creando hook guardián de auto-defensa para Limine...[/yellow]")
+        hook_content = '''[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = linux*
+Target = limine*
+
+[Action]
+Description = Aplicando diseño X64 LIOS al bootloader Limine...
+When = PostTransaction
+Exec = /bin/sh -c 'sed -i "s/\\/+CachyOS/\\/+X64 LIOS/g" /boot/limine.conf; sed -i "s/\\/-CachyOS/\\/-X64 LIOS/g" /boot/limine.conf; sed -i "s/\\/+Omarchy/\\/+X64 LIOS/g" /boot/limine.conf; sed -i "s/\\/-Omarchy/\\/-X64 LIOS/g" /boot/limine.conf'
+'''
+        with open("/tmp/99-limine-x64.hook", "w") as f:
+            f.write(hook_content)
+        run_cmd_live("sudo mkdir -p /etc/pacman.d/hooks", check=False)
+        run_cmd_live("sudo cp /tmp/99-limine-x64.hook /etc/pacman.d/hooks/99-limine-x64.hook", check=False)
                 
                 # Delete the +CachyOS section entirely using python instead of regex
                 clean_script = '''
@@ -1270,8 +1287,11 @@ except Exception as e:
                 
                 run_cmd_live(f"sudo python3 /tmp/clean_limine.py {lpath}", check=False)
                 
-                # We do NOT rename Omarchy to X64 OS because user wants Omarchy.
-                # Just ensure splash is present for Omarchy kernels
+                # Renombrar Omarchy a X64 LIOS en Limine
+                run_cmd_live(f"sudo sed -i 's/\\/+Omarchy/\\/+X64 LIOS/g' {lpath} 2>/dev/null", check=False)
+                run_cmd_live(f"sudo sed -i 's/\\/-Omarchy/\\/-X64 LIOS/g' {lpath} 2>/dev/null", check=False)
+                
+                # Ensure splash is present for X64 LIOS kernels
                 run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *kernel_cmdline/ {{ /splash/! s/$/ splash/ }}\" {lpath}' 2>/dev/null", check=False)
                 run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/ splash/ }}\" {lpath}' 2>/dev/null", check=False)
                 break
