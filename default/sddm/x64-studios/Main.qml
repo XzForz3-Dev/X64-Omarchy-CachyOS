@@ -97,82 +97,23 @@ Rectangle {
   }
 
   // ==========================================
-  // TOP RIGHT: CLOCK & DATE
+  // ==========================================
+  // TOP RIGHT: CLOCK, DATE & BATTERY
   // ==========================================
   Column {
       anchors.top: parent.top
       anchors.right: parent.right
       anchors.margins: 40
-      spacing: 5
+      spacing: 8
       
-      Row {
-          anchors.right: parent.right
-          spacing: 25
-          
-          Row {
-              spacing: 8
-              anchors.verticalCenter: parent.verticalCenter
-              
-              Text {
-                  id: batIcon
-                  text: "󰁹" // Full battery icon
-                  color: "#00f0ff"
-                  font.pixelSize: 22
-                  font.family: "JetBrainsMono Nerd Font"
-                  anchors.verticalCenter: parent.verticalCenter
-              }
-              Text {
-                  id: batText
-                  text: "100%"
-                  color: "#ffffff"
-                  font.pixelSize: 18
-                  font.family: "JetBrainsMono Nerd Font"
-                  font.weight: Font.Bold
-                  anchors.verticalCenter: parent.verticalCenter
-              }
-              
-              Timer {
-                  interval: 10000; running: true; repeat: true
-                  triggeredOnStart: true
-                  onTriggered: {
-                      try {
-                          var xhrCap = new XMLHttpRequest();
-                          xhrCap.open("GET", "file:///sys/class/power_supply/BAT0/capacity", false);
-                          xhrCap.send();
-                          var cap = parseInt(xhrCap.responseText.trim());
-                          
-                          var xhrStat = new XMLHttpRequest();
-                          xhrStat.open("GET", "file:///sys/class/power_supply/BAT0/status", false);
-                          xhrStat.send();
-                          var stat = xhrStat.responseText.trim();
-                          
-                          if (!isNaN(cap)) {
-                              batText.text = cap + "%";
-                              if (stat === "Charging") {
-                                  batIcon.text = "󰂄"; batIcon.color = "#00ffcc";
-                              } else {
-                                  if (cap > 90) batIcon.text = "󰁹";
-                                  else if (cap > 80) batIcon.text = "󰂂";
-                                  else if (cap > 60) batIcon.text = "󰁿";
-                                  else if (cap > 40) batIcon.text = "󰁽";
-                                  else if (cap > 20) batIcon.text = "󰁻";
-                                  else { batIcon.text = "󰂃"; batIcon.color = "#ff007f"; }
-                                  if (cap > 20) batIcon.color = "#00f0ff";
-                              }
-                          }
-                      } catch(e) {}
-                  }
-              }
-          }
-
-          Text {
-              id: timeDisplay
+      Text {
+          id: timeDisplay
           text: Qt.formatTime(new Date(), "HH:mm:ss")
           color: "#00f0ff"
           font.pixelSize: 48
           font.family: "JetBrainsMono Nerd Font"
           font.weight: Font.Black
-          anchors.verticalCenter: parent.verticalCenter
+          anchors.right: parent.right
           
           Timer {
               interval: 1000; running: true; repeat: true
@@ -180,11 +121,9 @@ Rectangle {
           }
       }
       
-      }
-      
       Text {
           id: dateDisplay
-          text: Qt.formatDate(new Date(), "dd MMM yyyy")
+          text: Qt.formatDate(new Date(), "dd MMM yyyy").toUpperCase()
           color: "#ffffff"
           font.pixelSize: 16
           font.family: "JetBrainsMono Nerd Font"
@@ -194,7 +133,64 @@ Rectangle {
           
           Timer {
               interval: 60000; running: true; repeat: true
-              onTriggered: dateDisplay.text = Qt.formatDate(new Date(), "dd MMM yyyy")
+              onTriggered: dateDisplay.text = Qt.formatDate(new Date(), "dd MMM yyyy").toUpperCase()
+          }
+      }
+      
+      Row {
+          anchors.right: parent.right
+          spacing: 10
+          opacity: 0.9
+          
+          Text {
+              id: batText
+              text: "100%"
+              color: "#ffffff"
+              font.pixelSize: 15
+              font.family: "JetBrainsMono Nerd Font"
+              font.weight: Font.Bold
+              anchors.verticalCenter: parent.verticalCenter
+          }
+          
+          Text {
+              id: batIcon
+              text: "󰁹"
+              color: "#00f0ff"
+              font.pixelSize: 18
+              font.family: "JetBrainsMono Nerd Font"
+              anchors.verticalCenter: parent.verticalCenter
+          }
+          
+          Timer {
+              interval: 10000; running: true; repeat: true
+              onTriggered: {
+                  try {
+                      var xhrCap = new XMLHttpRequest();
+                      xhrCap.open("GET", "file:///sys/class/power_supply/BAT0/capacity", false);
+                      xhrCap.send();
+                      var cap = parseInt(xhrCap.responseText.trim());
+                      
+                      var xhrStat = new XMLHttpRequest();
+                      xhrStat.open("GET", "file:///sys/class/power_supply/BAT0/status", false);
+                      xhrStat.send();
+                      var stat = xhrStat.responseText.trim();
+                      
+                      if (!isNaN(cap)) {
+                          batText.text = cap + "%";
+                          if (stat === "Charging") {
+                              batIcon.text = "󰂄"; batIcon.color = "#00ffcc";
+                          } else {
+                              if (cap > 90) batIcon.text = "󰁹";
+                              else if (cap > 80) batIcon.text = "󰂂";
+                              else if (cap > 60) batIcon.text = "󰁿";
+                              else if (cap > 40) batIcon.text = "󰁽";
+                              else if (cap > 20) batIcon.text = "󰁻";
+                              else { batIcon.text = "󰂃"; batIcon.color = "#ff007f"; }
+                              if (cap > 20) batIcon.color = "#00f0ff";
+                          }
+                      }
+                  } catch(e) {}
+              }
           }
       }
   }
