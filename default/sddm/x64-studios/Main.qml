@@ -12,7 +12,7 @@ Rectangle {
       GradientStop { position: 1.0; color: "#12101c" }
   }
 
-  property var videos: ["videos/background.mp4", "videos/galaxy.mp4", "videos/particles.mp4", "videos/fluid.mp4", "videos/smooth_wave.mp4", "videos/elegant_dark.mp4", "videos/glowing_lines.mp4", "videos/space_stars.mp4", "videos/neon_minimal.mp4", "videos/abstract_mesh.mp4"]
+  property var videos: ["videos/video1.mp4", "videos/video2.mp4", "videos/video3.mp4", "videos/video4.mp4", "videos/video5.mp4", "videos/video6.mp4", "videos/video7.mp4", "videos/video8.mp4", "videos/video9.mp4", "videos/video10.mp4"]
   property int currentVideoIndex: 0
   
   ListView {

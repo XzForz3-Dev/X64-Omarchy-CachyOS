@@ -1254,37 +1254,19 @@ Target = linux*
 Target = limine*
 
 [Action]
-Description = Aplicando diseño X64 al bootloader Limine...
+Description = Aplicando diseño X64 LIOS al bootloader Limine...
 When = PostTransaction
-Exec = /bin/sh -c 'sed -i "s/\\/+CachyOS/\\/+X64 OS/g" /boot/limine.conf; sed -i "s/CachyOS Limine theme/X64 OS Limine Theme/g" /boot/limine.conf'
+Exec = /bin/sh -c 'for p in /boot/limine.conf /efi/limine.conf /boot/efi/limine.conf /boot/limine/limine.conf /efi/EFI/limine/limine.conf; do if [ -f "$p" ]; then sed -i "s@/+CachyOS@/+X64 LIOS@g; s@/-CachyOS@/-X64 LIOS@g; s@/+Omarchy@/+X64 LIOS@g; s@/-Omarchy@/-X64 LIOS@g" "$p"; grep -q "splash" "$p" || sed -i -E "/^ *kernel_cmdline/ { /splash/! s/$/ splash/ }" "$p"; grep -q "splash" "$p" || sed -i -E "/^ *cmdline/ { /splash/! s/$/ splash/ }" "$p"; fi; done'
 '''
         with open("/tmp/99-limine-x64.hook", "w") as f:
             f.write(hook_content)
         run_cmd_live("sudo mkdir -p /etc/pacman.d/hooks", check=False)
         run_cmd_live("sudo cp /tmp/99-limine-x64.hook /etc/pacman.d/hooks/99-limine-x64.hook", check=False)
 
-        limine_paths = ["/boot/limine.conf", "/boot/limine/limine.conf", "/efi/limine.conf", "/boot/efi/limine.conf", "/boot/limine.cfg", "/boot/limine/limine.cfg", "/efi/limine.cfg", "/boot/efi/limine.cfg"]
+        limine_paths = ["/boot/limine.conf", "/boot/limine/limine.conf", "/efi/limine.conf", "/boot/efi/limine.conf", "/efi/EFI/limine/limine.conf", "/boot/limine.cfg", "/boot/limine/limine.cfg", "/efi/limine.cfg", "/boot/efi/limine.cfg"]
         for lpath in limine_paths:
             if subprocess.run(["sudo", "test", "-f", lpath]).returncode == 0:
                 log_lines.append("[yellow]Limpiando menú de CachyOS y asegurando Omarchy...[/yellow]")
-                log_lines.append("[yellow]Creando hook guardián de auto-defensa para Limine...[/yellow]")
-                hook_content = '''[Trigger]
-Operation = Install
-Operation = Upgrade
-Operation = Remove
-Type = Package
-Target = linux*
-Target = limine*
-
-[Action]
-Description = Aplicando diseño X64 LIOS al bootloader Limine...
-When = PostTransaction
-Exec = /bin/sh -c 'sed -i "s@/+CachyOS@/+X64 LIOS@g" /boot/limine.conf; sed -i "s@/-CachyOS@/-X64 LIOS@g" /boot/limine.conf; sed -i "s@/+Omarchy@/+X64 LIOS@g" /boot/limine.conf; sed -i "s@/-Omarchy@/-X64 LIOS@g" /boot/limine.conf'
-'''
-                with open("/tmp/99-limine-x64.hook", "w") as f:
-                    f.write(hook_content)
-                run_cmd_live("sudo mkdir -p /etc/pacman.d/hooks", check=False)
-                run_cmd_live("sudo cp /tmp/99-limine-x64.hook /etc/pacman.d/hooks/99-limine-x64.hook", check=False)
                 
                 # Delete the +CachyOS section entirely using python instead of regex
                 clean_script = '''
@@ -1332,6 +1314,7 @@ except Exception as e:
         # ===============================================
 
         run_cmd_live("if command -v limine-update >/dev/null; then echo '' | sudo limine-update 2>&1 | grep -ivE 'WARNING:( Possibly missing firmware| consolefont| This does not update Limine)'; fi", check=False)
+
         # ================================================
 
         progress.update(t_config, description="[green]Sistema Listo", completed=100)
