@@ -137,9 +137,9 @@ Rectangle {
           }
       }
       
-      // Unified System & Battery HUD Widget
+      // Fastfetch System Info Widget
       Rectangle {
-          width: 270
+          width: 320
           height: sysCol.implicitHeight + 40
           color: "#0a0a10"
           border.color: "#333344"
@@ -151,7 +151,7 @@ Rectangle {
           Column {
               id: sysCol
               anchors.centerIn: parent
-              spacing: 12
+              spacing: 14
               
               // --- SYSTEM INFO ---
               Text { text: "SYSTEM INFO"; color: "#555566"; font.pixelSize: 12; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.horizontalCenter: parent.horizontalCenter }
@@ -159,65 +159,42 @@ Rectangle {
               Row {
                   spacing: 12
                   Text { width: 22; text: ""; color: "#00f0ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text { text: "X64 LIOS"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: "OS: X64 LIOS (CachyOS)"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
               Row {
                   spacing: 12
                   Text { width: 22; text: "󰒋"; color: "#00ffcc"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text { text: (typeof sddm !== "undefined" && sddm.hostName && sddm.hostName !== "") ? sddm.hostName : "x64-machine"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: "Host: " + ((typeof sddm !== "undefined" && sddm.hostName && sddm.hostName !== "") ? sddm.hostName : "x64-machine"); color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
               Row {
                   spacing: 12
                   Text { width: 22; text: "󰌽"; color: "#ff007f"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text { text: "Linux CachyOS"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: "Kernel: Linux BORE"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+              }
+              Row {
+                  spacing: 12
+                  Text { width: 22; text: "󰧨"; color: "#7000ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: "WM: Hyprland (Wayland)"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
               Row {
                   spacing: 12
                   Text { width: 22; text: "󰞷"; color: "#ffaa00"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text { text: "Omarchy (Hyprland)"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: "DE: Omarchy Desktop"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
-
-              Item { width: 1; height: 5 } // Spacer
-              Rectangle { width: 220; height: 1; color: "#333344"; anchors.horizontalCenter: parent.horizontalCenter } // Divider
-              Item { width: 1; height: 5 } // Spacer
-
               Row {
                   spacing: 12
-                  Text { id: batIcon; width: 22; text: "󰁹"; color: "#00f0ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text { id: batText; text: "--%"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
-                  
-                  Timer {
-                      interval: 10000; running: true; repeat: true
-                      triggeredOnStart: true
-                      onTriggered: {
-                          try {
-                              var xhrCap = new XMLHttpRequest();
-                              xhrCap.open("GET", "file:///sys/class/power_supply/BAT0/capacity", false);
-                              xhrCap.send();
-                              var cap = parseInt(xhrCap.responseText.trim());
-                              
-                              var xhrStat = new XMLHttpRequest();
-                              xhrStat.open("GET", "file:///sys/class/power_supply/BAT0/status", false);
-                              xhrStat.send();
-                              var stat = xhrStat.responseText.trim();
-                              
-                              if (!isNaN(cap)) {
-                                  batText.text = cap + "%";
-                                  if (stat === "Charging") {
-                                      batIcon.text = "󰂄"; batIcon.color = "#00ffcc";
-                                  } else {
-                                      if (cap > 90) batIcon.text = "󰁹";
-                                      else if (cap > 80) batIcon.text = "󰂂";
-                                      else if (cap > 60) batIcon.text = "󰁿";
-                                      else if (cap > 40) batIcon.text = "󰁽";
-                                      else if (cap > 20) batIcon.text = "󰁻";
-                                      else { batIcon.text = "󰂃"; batIcon.color = "#ff007f"; }
-                                      if (cap > 20) batIcon.color = "#00f0ff";
-                                  }
-                              }
-                          } catch(e) {}
-                      }
-                  }
+                  Text { width: 22; text: "󰍹"; color: "#00ffcc"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: "Res: " + root.width + "x" + root.height; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+              }
+              Row {
+                  spacing: 12
+                  Text { width: 22; text: "󰏘"; color: "#00f0ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: "Theme: X64 Glassmorphism"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+              }
+              Row {
+                  spacing: 12
+                  Text { width: 22; text: "󰛖"; color: "#ff007f"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: "Font: JetBrainsMono NF"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
           }
       }
