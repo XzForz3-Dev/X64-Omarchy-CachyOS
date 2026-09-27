@@ -1,6 +1,7 @@
 import QtQuick
 import QtQml.Models
 import Quickshell
+import Quickshell.Hyprland
 import Quickshell.Io
 
 import qs.Commons
@@ -19,6 +20,7 @@ ShellRoot {
   property PluginRegistry pluginRegistry: PluginRegistry { }
   property BarWidgetRegistry barWidgetRegistry: BarWidgetRegistry { }
   property AppLibrary appLibrary: AppLibrary { }
+  property BrightnessKeys brightnessKeys: BrightnessKeys { host: shell }
 
   property string home: Quickshell.env("HOME")
 
@@ -1524,6 +1526,104 @@ ShellRoot {
     }
   }
 
+  // ------------------------------------------------------ global shortcuts
+  //
+  // Bindings that open a menu route or panel, or step the volume, dispatch
+  // these through Hyprland, so a keypress reaches the shell without spawning
+  // an IPC client or script. The list is shared with default/hypr/helpers.lua, which binds a
+  // route or panel missing from it through the command instead.
+
+  function parseShortcuts(raw) {
+    var entries = []
+    var lines = String(raw || "").split("\n")
+    for (var i = 0; i < lines.length; i++) {
+      var match = /^([A-Za-z]+)\s+(\S+)\s*$/.exec(lines[i])
+      if (match && ["menu", "panel", "audio", "brightness", "ipc"].indexOf(match[1]) !== -1)
+        entries.push({ kind: match[1], target: match[2], name: match[1] + "." + match[2] })
+    }
+    return entries
+  }
+
+  // The IPC targets an ipc shortcut may name, and the service that owns each.
+  readonly property var ipcShortcutServices: ({ media: "omarchy.media", notifications: "omarchy.notifications" })
+
+  function runShortcut(entry) {
+    if (entry.kind === "menu") {
+      shell.toggle("omarchy.menu", JSON.stringify({ menu: entry.target }))
+    } else if (entry.kind === "ipc") {
+      // "media.next" runs the media service's own IPC handler for next.
+      var dot = entry.target.indexOf(".")
+      var target = entry.target.slice(0, dot)
+      var method = entry.target.slice(dot + 1)
+      var service = shell.serviceFor(shell.ipcShortcutServices[target] || "")
+      if (!service || !service.runShortcut(method))
+        Util.execArgv(["omarchy-shell", target, method])
+    } else if (entry.kind === "brightness") {
+      if (!shell.brightnessKeys.handle(entry.target))
+        Util.execArgv(["omarchy-brightness-display", entry.target === "raise" ? "+5%" : "5%-"])
+    } else if (entry.kind === "audio") {
+      var media = shell.serviceFor("omarchy.media")
+      if (!media || !media.handleVolumeKey(entry.target))
+        Util.execArgv(["omarchy-audio-output-volume", entry.target])
+    } else {
+      shell.toggle(entry.target, "{}")
+    }
+  }
+
+  FileView {
+    id: shortcutsFile
+    path: shell.omarchyPath + "/default/omarchy/shortcuts"
+    watchChanges: true
+    onFileChanged: reload()
+  }
+
+  Variants {
+    model: shell.parseShortcuts(shortcutsFile.text())
+
+    GlobalShortcut {
+      required property var modelData
+
+      appid: "omarchy"
+      name: modelData.name
+      description: modelData.kind === "audio" || modelData.kind === "brightness" ? (modelData.kind === "audio" ? "Volume " : "Brightness ") + modelData.target : (modelData.kind === "ipc" ? "Run " + modelData.target : "Toggle the " + modelData.target + " " + modelData.kind)
+      onPressed: shell.runShortcut(modelData)
+    }
+  }
+
+  // ------------------------------------------------------------ IPC socket
+  //
+  // omarchy-shell reaches the shell here first: a qs ipc client costs ~45ms
+  // to start per call, socat ~5ms. A request is target, method and arguments
+  // separated by unit separators and ended by a record separator. The reply is
+  // "OK" and the output, or "SKIP" when nothing ran (no such target or
+  // function, or the wrong number of arguments), which omarchy-shell hands to
+  // qs ipc for its exact answer. The socket sits in XDG_RUNTIME_DIR, private
+  // to the user like qs ipc's own. Like qs ipc, it belongs to one shell: the
+  // one running this config on this display. omarchy-shell derives the same
+  // name from the same two values.
+  readonly property string ipcSocketPath: Quickshell.env("XDG_RUNTIME_DIR") + "/omarchy-shell-"
+    + Qt.md5(shell.omarchyPath + "/shell\n" + Quickshell.env("WAYLAND_DISPLAY")).slice(0, 16) + ".sock"
+
+  SocketServer {
+    active: shell.omarchyPath !== ""
+    path: shell.ipcSocketPath
+
+    handler: Socket {
+      id: connection
+
+      parser: SplitParser {
+        splitMarker: "\u001e"
+        onRead: function(data) {
+          var fields = String(data).split("\u001f")
+          var result = fields.length >= 2 ? IpcRegistry.call(fields[0], fields[1], fields.slice(2)) : { ran: false }
+          connection.write(result.ran ? "OK\u001f" + result.output + "\u001e" : "SKIP\u001e")
+          connection.flush()
+          connection.connected = false
+        }
+      }
+    }
+  }
+
   // --------------------------------------------------- image selector IPC
 
   function imagePickerItem() {
@@ -1531,7 +1631,7 @@ ShellRoot {
     return loader && loader.item ? loader.item : null
   }
 
-  IpcHandler {
+  ShellIpc {
     target: "image-selector"
 
     function open(imageDirs: string,
@@ -1582,7 +1682,7 @@ ShellRoot {
 
   // ---------------------------------------------------------- shell IPC
 
-  IpcHandler {
+  ShellIpc {
     target: "shell"
 
     function ping(): string {
