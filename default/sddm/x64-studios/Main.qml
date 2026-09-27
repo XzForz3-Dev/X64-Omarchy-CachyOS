@@ -206,24 +206,8 @@ Rectangle {
               Row {
                   spacing: 12
                   Text { width: 22; text: "󰌽"; color: "#ff007f"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text {
-                      id: kernelText
-                      text: "Kernel: Linux"
-                      color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter
-                      Component.onCompleted: {
-                          var xhr = new XMLHttpRequest();
-                          xhr.open("GET", "file:///proc/sys/kernel/osrelease", true);
-                          xhr.onreadystatechange = function() {
-                              if (xhr.readyState === XMLHttpRequest.DONE) {
-                                  if (xhr.status === 200 || xhr.status === 0) {
-                                      var ver = xhr.responseText.trim();
-                                      if (ver !== "") kernelText.text = "Kernel: " + ver;
-                                  }
-                              }
-                          }
-                          xhr.send();
-                      }
-                  }
+                  KernelVersion { id: kv }
+                  Text { text: "Kernel: " + kv.text; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
               Row {
                   spacing: 12
@@ -363,8 +347,10 @@ Rectangle {
 
           TextInput {
               id: password
-              anchors.fill: parent; horizontalAlignment: TextInput.AlignHCenter; verticalAlignment: TextInput.AlignVCenter
+              anchors.fill: parent; anchors.leftMargin: 25; anchors.rightMargin: 25
+              horizontalAlignment: TextInput.AlignHCenter; verticalAlignment: TextInput.AlignVCenter
               echoMode: TextInput.Password; font.pixelSize: 24; color: "#ffffff"; passwordCharacter: "■"; focus: true
+              clip: true
               
               Text {
                   anchors.centerIn: parent; text: "ACCESS CODE"; color: "#555566"; font.pixelSize: 13; font.letterSpacing: 3; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold

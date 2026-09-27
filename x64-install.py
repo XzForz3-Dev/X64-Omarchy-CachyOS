@@ -1157,14 +1157,21 @@ hl.config({
                 actual_user = os.environ.get("USER", "root")
                 services_script += "mkdir -p /usr/share/sddm/themes/x64-studios /etc/sddm.conf.d /var/lib/sddm\n"
                 services_script += "cp -r default/sddm/x64-studios/* /usr/share/sddm/themes/x64-studios/ 2>/dev/null\n"
-                services_script += "rm -f /usr/share/sddm/themes/x64-studios/videos/video*.mp4\n"
-                services_script += "if [ ! -f /usr/share/sddm/themes/x64-studios/videos/matrix.mp4 ]; then\n"
+                services_script += "if [ ! -f /usr/share/sddm/themes/x64-studios/videos/video1.mp4 ]; then\n"
                 services_script += "    echo -e \"\\e[36m[*] Descargando videos de SDDM (Releases)...\\e[0m\"\n"
                 services_script += "    mkdir -p /tmp/sddm-videos && cd /tmp/sddm-videos\n"
                 services_script += "    curl -L -o videos.zip https://github.com/XzForz3-Dev/X64-Omarchy-CachyOS/releases/download/v1.0/x64-sddm-videos.zip || true\n"
                 services_script += "    unzip -o videos.zip -d /usr/share/sddm/themes/x64-studios/videos/ || true\n"
                 services_script += "    rm -rf /tmp/sddm-videos\n"
                 services_script += "fi\n"
+                
+                services_script += "mkdir -p /etc/systemd/system/sddm.service.d\n"
+                services_script += "cat << 'EOF_SDDM' > /etc/systemd/system/sddm.service.d/override.conf\n"
+                services_script += "[Service]\n"
+                services_script += "ExecStartPre=+/bin/sh -c \"echo -e 'import QtQuick 2.15\\\\nItem { property string text: \\\\\"$(uname -r)\\\\\" }' > /usr/share/sddm/themes/x64-studios/KernelVersion.qml\"\n"
+                services_script += "EOF_SDDM\n"
+                services_script += "systemctl daemon-reload\n"
+
                 services_script += "echo -e \"[Theme]\\nCurrent=x64-studios\" > /etc/sddm.conf.d/x64-studios.conf\n"
                 services_script += f"echo -e \"[Last]\\nSession=/usr/share/wayland-sessions/omarchy.desktop\\nUser={actual_user}\" > /var/lib/sddm/state.conf\n"
                 services_script += "chown -R sddm:sddm /var/lib/sddm\n"
