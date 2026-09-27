@@ -116,6 +116,7 @@ Rectangle {
           anchors.right: parent.right
           
           Timer {
+              id: batTimer
               interval: 1000; running: true; repeat: true
               onTriggered: timeDisplay.text = Qt.formatTime(new Date(), "HH:mm:ss")
           }
@@ -132,6 +133,7 @@ Rectangle {
           opacity: 0.7
           
           Timer {
+              id: batTimer
               interval: 60000; running: true; repeat: true
               onTriggered: dateDisplay.text = Qt.formatDate(new Date(), "dd MMM yyyy").toUpperCase()
           }
@@ -162,7 +164,9 @@ Rectangle {
           }
           
           Timer {
-              interval: 10000; running: true; repeat: true
+              id: batTimer
+              interval: 5000; running: true; repeat: true
+              Component.onCompleted: batTimer.triggered()
               onTriggered: {
                   try {
                       var xhrCap = new XMLHttpRequest();
