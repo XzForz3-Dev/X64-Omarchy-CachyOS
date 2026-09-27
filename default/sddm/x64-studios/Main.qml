@@ -298,7 +298,12 @@ Rectangle {
               spacing: 8; anchors.verticalCenter: parent.verticalCenter
               Text { text: "󰇄"; color: "#00f0ff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; anchors.verticalCenter: parent.verticalCenter }
               Text {
-                  text: sessionModel.rowCount() > 0 ? sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), sessionModel.NameRole) : "X64 DESKTOP"
+                  text: {
+                      if (typeof sessionModel === "undefined" || sessionModel.rowCount() === 0) return "X64 DESKTOP";
+                      var name = sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), 258 /* NameRole is usually 258 or sessionModel.NameRole */);
+                      if (!name || name === "") name = sessionModel.data(sessionModel.index(root.currentSessionIndex, 0), sessionModel.NameRole);
+                      return (name && name !== "") ? name : "X64 DESKTOP";
+                  }
                   color: "#ffffff"; font.pixelSize: 13; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; font.capitalization: Font.AllUppercase; font.letterSpacing: 1
                   anchors.verticalCenter: parent.verticalCenter
               }
