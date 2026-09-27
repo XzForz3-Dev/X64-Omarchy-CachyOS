@@ -1259,7 +1259,8 @@ Exec = /bin/sh -c 'sed -i "s/\\/+CachyOS/\\/+X64 OS/g" /boot/limine.conf; sed -i
 
         limine_paths = ["/boot/limine.conf", "/boot/limine/limine.conf", "/efi/limine.conf", "/boot/efi/limine.conf", "/boot/limine.cfg", "/boot/limine/limine.cfg", "/efi/limine.cfg", "/boot/efi/limine.cfg"]
         for lpath in limine_paths:
-            if os.path.exists(lpath):
+            import subprocess
+            if subprocess.run(["sudo", "test", "-f", lpath]).returncode == 0:
                 log_lines.append("[yellow]Limpiando menú de CachyOS y asegurando Omarchy...[/yellow]")
                 log_lines.append("[yellow]Creando hook guardián de auto-defensa para Limine...[/yellow]")
                 hook_content = '''[Trigger]
