@@ -1200,18 +1200,47 @@ hl.config({
         run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Scc --noconfirm", check=False)
 
         # === PURGA FINAL Y RECONSTRUCCIÓN DE ARRANQUE ===
-        progress.update(t_final, description="[yellow]Reconstruyendo el menú de arranque...", advance=10)
-        log_lines.append("[yellow]Asegurando la purga física de linux-omarchy...[/yellow]")
+        progress.update(t_final, description="[yellow]Blindando el sistema de actualizaciones y Limine...", advance=10)
+        log_lines.append("[yellow]Purgando el kernel linux-omarchy defectuoso permanentemente...[/yellow]")
         run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rns --noconfirm linux-omarchy linux-omarchy-headers 2>/dev/null", check=False)
         run_cmd_live("sudo rm -f /boot/EFI/Linux/*linux-omarchy* /efi/EFI/Linux/*linux-omarchy* /boot/efi/EFI/Linux/*linux-omarchy* 2>/dev/null", check=False)
+        
+        log_lines.append("[yellow]Añadiendo IgnorePkg en pacman.conf para bloquear linux-omarchy...[/yellow]")
+        run_cmd_live("sudo sed -i '/^IgnorePkg/d' /etc/pacman.conf", check=False)
+        run_cmd_live("sudo sed -i '/^#IgnorePkg/d' /etc/pacman.conf", check=False)
+        run_cmd_live("sudo sed -i '/^#NoUpgrade/i IgnorePkg = linux-omarchy linux-omarchy-headers
+' /etc/pacman.conf", check=False)
+
+        log_lines.append("[yellow]Creando hook guardián de auto-defensa para Limine...[/yellow]")
+        hook_content = '''[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = linux*
+Target = limine*
+
+[Action]
+Description = Aplicando diseño X64 al bootloader Limine...
+When = PostTransaction
+Exec = /bin/sh -c 'sed -i "s/\\/+CachyOS/\\/+X64 OS/g" /boot/limine.conf; sed -i "s/CachyOS Limine theme/X64 OS Limine Theme/g" /boot/limine.conf'
+'''
+        with open("/tmp/99-limine-x64.hook", "w") as f:
+            f.write(hook_content)
+        run_cmd_live("sudo mkdir -p /etc/pacman.d/hooks", check=False)
+        run_cmd_live("sudo cp /tmp/99-limine-x64.hook /etc/pacman.d/hooks/99-limine-x64.hook", check=False)
 
         limine_paths = ["/boot/limine.conf", "/boot/limine/limine.conf", "/efi/limine.conf", "/boot/efi/limine.conf", "/boot/limine.cfg", "/boot/limine/limine.cfg", "/efi/limine.cfg", "/boot/efi/limine.cfg"]
         for lpath in limine_paths:
             if os.path.exists(lpath):
-                log_lines.append("[yellow]Limpiando entradas fantasma en Limine...[/yellow]")
-                run_cmd_live(f"sudo perl -0777 -pi -e 's/comment: machine-id=[a-f0-9]+\\n\\/\\+CachyOS.*?(?=\\/\\+Omarchy)//s' {lpath} 2>/dev/null", check=False)
-                run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *kernel_cmdline/ {{ /splash/! s/$/ splash/ }}\" {lpath}' 2>/dev/null", check=False)
-                run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/ splash/ }}\" {lpath}' 2>/dev/null", check=False)
+                log_lines.append("[yellow]Inyectando cmdline y aplicando renombrado en Limine...[/yellow]")
+                run_cmd_live(f"sudo perl -0777 -pi -e 's/comment: machine-id=[a-f0-9]+
+\/\+CachyOS.*?(?=\/\+Omarchy)//s' {lpath} 2>/dev/null", check=False)
+                run_cmd_live(f"sudo sed -i 's/\/+CachyOS/\/+X64 OS/g' {lpath} 2>/dev/null", check=False)
+                run_cmd_live(f"sudo sed -i 's/\/+Omarchy/\/+X64 OS/g' {lpath} 2>/dev/null", check=False)
+                run_cmd_live(f"sudo sed -i 's/CachyOS Limine theme/X64 OS Limine Theme/g' {lpath} 2>/dev/null", check=False)
+                run_cmd_live(f"sudo bash -c 'grep -q "splash" {lpath} || sudo sed -i -E "/^ *kernel_cmdline/ {{ /splash/! s/$/ splash/ }}" {lpath}' 2>/dev/null", check=False)
+                run_cmd_live(f"sudo bash -c 'grep -q "splash" {lpath} || sudo sed -i -E "/^ *cmdline/ {{ /splash/! s/$/ splash/ }}" {lpath}' 2>/dev/null", check=False)
                 break
 
         # === SILENCIADOR DE MIGRACIONES HISTÓRICAS ===
