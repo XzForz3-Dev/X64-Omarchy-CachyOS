@@ -98,13 +98,13 @@ Rectangle {
 
   // ==========================================
   // ==========================================
-  // TOP RIGHT: CLOCK, DATE & BATTERY
+  // TOP RIGHT: CLOCK, DATE & HARDWARE HUD
   // ==========================================
   Column {
       anchors.top: parent.top
       anchors.right: parent.right
       anchors.margins: 40
-      spacing: 8
+      spacing: 15
       
       Text {
           id: timeDisplay
@@ -137,46 +137,54 @@ Rectangle {
           }
       }
       
-      Row {
+      // Hardware HUD Widget
+      Rectangle {
+          width: 140
+          height: 125
+          color: "#0a0a10"
+          border.color: "#333344"
+          border.width: 1
+          radius: 12
+          opacity: 0.85
           anchors.right: parent.right
-          spacing: 10
-          opacity: 0.9
           
-          Text {
-              id: batText
-              text: "100%"
-              color: "#ffffff"
-              font.pixelSize: 15
-              font.family: "JetBrainsMono Nerd Font"
-              font.weight: Font.Bold
-              anchors.verticalCenter: parent.verticalCenter
+          Column {
+              anchors.centerIn: parent
+              spacing: 14
+              
+              Row {
+                  spacing: 12
+                  Text { id: batIcon; width: 22; text: "󰁹"; color: "#00f0ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { id: batText; text: "100%"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+              }
+              
+              Row {
+                  spacing: 12
+                  Text { id: ramIcon; width: 22; text: "󰘚"; color: "#7000ff"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { id: ramText; text: "0%"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+              }
+              
+              Row {
+                  spacing: 12
+                  Text { id: cpuIcon; width: 22; text: "󰏈"; color: "#ff007f"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
+                  Text { id: cpuText; text: "0°C"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+              }
           }
-          
-          Text {
-              id: batIcon
-              text: "󰁹"
-              color: "#00f0ff"
-              font.pixelSize: 18
-              font.family: "JetBrainsMono Nerd Font"
-              anchors.verticalCenter: parent.verticalCenter
-          }
-          
+
           Timer {
-              id: batTimer
+              id: hwTimer
               interval: 5000; running: true; repeat: true
-              Component.onCompleted: batTimer.triggered()
+              Component.onCompleted: hwTimer.triggered()
               onTriggered: {
                   try {
                       var xhrCap = new XMLHttpRequest();
                       xhrCap.open("GET", "file:///sys/class/power_supply/BAT0/capacity", false);
                       xhrCap.send();
                       var cap = parseInt(xhrCap.responseText.trim());
-                      
                       var xhrStat = new XMLHttpRequest();
                       xhrStat.open("GET", "file:///sys/class/power_supply/BAT0/status", false);
                       xhrStat.send();
                       var stat = xhrStat.responseText.trim();
-                      
                       if (!isNaN(cap)) {
                           batText.text = cap + "%";
                           if (stat === "Charging") {
@@ -190,6 +198,32 @@ Rectangle {
                               else { batIcon.text = "󰂃"; batIcon.color = "#ff007f"; }
                               if (cap > 20) batIcon.color = "#00f0ff";
                           }
+                      }
+                  } catch(e) {}
+                  
+                  try {
+                      var xhrTemp = new XMLHttpRequest();
+                      xhrTemp.open("GET", "file:///sys/class/thermal/thermal_zone0/temp", false);
+                      xhrTemp.send();
+                      var temp = parseInt(xhrTemp.responseText.trim()) / 1000;
+                      if (!isNaN(temp)) {
+                          cpuText.text = Math.round(temp) + "°C";
+                          cpuIcon.color = temp > 80 ? "#ff0000" : (temp > 60 ? "#ffaa00" : "#ff007f");
+                      }
+                  } catch(e) {}
+                  
+                  try {
+                      var xhrMem = new XMLHttpRequest();
+                      xhrMem.open("GET", "file:///proc/meminfo", false);
+                      xhrMem.send();
+                      var memData = xhrMem.responseText;
+                      var mTotal = parseInt(memData.match(/MemTotal:\s+(\d+)/)[1]);
+                      var mAvail = parseInt(memData.match(/MemAvailable:\s+(\d+)/)[1]);
+                      if (!isNaN(mTotal) && !isNaN(mAvail)) {
+                          var mUsed = mTotal - mAvail;
+                          var mPercent = Math.round((mUsed / mTotal) * 100);
+                          ramText.text = mPercent + "%";
+                          ramIcon.color = mPercent > 90 ? "#ff0000" : (mPercent > 70 ? "#ffaa00" : "#7000ff");
                       }
                   } catch(e) {}
               }
