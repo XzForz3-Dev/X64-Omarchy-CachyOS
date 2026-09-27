@@ -1241,7 +1241,7 @@ Exec = /bin/sh -c 'sed -i "s/\\/+CachyOS/\\/+X64 OS/g" /boot/limine.conf; sed -i
             if os.path.exists(lpath):
                 log_lines.append("[yellow]Limpiando menú de CachyOS y asegurando Omarchy...[/yellow]")
                 log_lines.append("[yellow]Creando hook guardián de auto-defensa para Limine...[/yellow]")
-        hook_content = '''[Trigger]
+                hook_content = '''[Trigger]
 Operation = Install
 Operation = Upgrade
 Operation = Remove
@@ -1254,10 +1254,10 @@ Description = Aplicando diseño X64 LIOS al bootloader Limine...
 When = PostTransaction
 Exec = /bin/sh -c 'sed -i "s/\\/+CachyOS/\\/+X64 LIOS/g" /boot/limine.conf; sed -i "s/\\/-CachyOS/\\/-X64 LIOS/g" /boot/limine.conf; sed -i "s/\\/+Omarchy/\\/+X64 LIOS/g" /boot/limine.conf; sed -i "s/\\/-Omarchy/\\/-X64 LIOS/g" /boot/limine.conf'
 '''
-        with open("/tmp/99-limine-x64.hook", "w") as f:
-            f.write(hook_content)
-        run_cmd_live("sudo mkdir -p /etc/pacman.d/hooks", check=False)
-        run_cmd_live("sudo cp /tmp/99-limine-x64.hook /etc/pacman.d/hooks/99-limine-x64.hook", check=False)
+                with open("/tmp/99-limine-x64.hook", "w") as f:
+                    f.write(hook_content)
+                run_cmd_live("sudo mkdir -p /etc/pacman.d/hooks", check=False)
+                run_cmd_live("sudo cp /tmp/99-limine-x64.hook /etc/pacman.d/hooks/99-limine-x64.hook", check=False)
                 
                 # Delete the +CachyOS section entirely using python instead of regex
                 clean_script = '''
