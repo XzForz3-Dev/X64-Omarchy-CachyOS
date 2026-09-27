@@ -1199,9 +1199,11 @@ hl.config({
             f.write(services_script)
         run_cmd_live("sudo bash /tmp/omarchy-services.sh", check=False)
         
-        log_lines.append("[yellow]Inyectando scripts binarios actualizados al sistema...[/yellow]")
+        log_lines.append("[yellow]Inyectando scripts binarios y configuraciones actualizadas al sistema...[/yellow]")
         run_cmd_live("sudo cp -r bin/* /usr/share/omarchy/bin/ 2>/dev/null", check=False)
         run_cmd_live("sudo chmod +x /usr/share/omarchy/bin/* 2>/dev/null", check=False)
+        run_cmd_live("sudo cp -r config/* /usr/share/omarchy/config/ 2>/dev/null", check=False)
+        run_cmd_live("sudo cp -r config/* /etc/skel/.config/ 2>/dev/null", check=False)
         
         progress.update(t_config, description="[yellow]Aplicando Diseño y Tema...", advance=20)
         if install_hyprland and user_choices["theme"] == "Tokyo Night":
