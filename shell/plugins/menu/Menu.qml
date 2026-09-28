@@ -161,7 +161,7 @@ Item {
     // a longer submenu scrolls behind the fold instead of growing the card.
     if (panel.maxRowsHeight >= 0) available = Math.min(available, panel.maxRowsHeight)
     // A card that swallows the whole screen reads as a page, not a menu.
-    return Math.min(available, Math.round(panel.height * 0.85))
+    return Math.min(available, Math.round(panel.height * 0.75))
   }
 
   // When every row fits, the list gets its full height. When they don't,
