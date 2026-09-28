@@ -1,0 +1,3 @@
+#!/bin/bash
+export PYTHONPATH=/usr/share/omarchy/bin
+python3 /usr/share/omarchy/bin/x64-software-boutique-app

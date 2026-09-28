@@ -1,0 +1,176 @@
+#!/usr/bin/env python3
+import sys
+import os
+import subprocess
+import gi
+gi.require_version('Gtk', '4.0')
+from gi.repository import Gtk, Gdk, GLib, Gio, Pango
+
+CATALOG = {
+    "Inteligencia Artificial": [
+        {"id": "ai-hermes", "name": "Hermes AI", "desc": "Instalación local completa del modelo Hermes.", "icon": "system-run", "cmd": "omarchy-install-ai-hermes"},
+        {"id": "ai-openclaw", "name": "OpenClaw", "desc": "Asistente de IA avanzado de ejecución local.", "icon": "system-run", "cmd": "omarchy-install-ai-openclaw"},
+        {"id": "ai-t3-code", "name": "T3 Code", "desc": "Asistente de programación inteligente.", "icon": "applications-development", "cmd": "omarchy-install-ai-t3-code"},
+        {"id": "ai-chatgpt", "name": "ChatGPT", "desc": "Cliente de escritorio nativo para ChatGPT.", "icon": "web-browser", "cmd": "omarchy-install-ai-chatgpt"},
+    ],
+    "Navegadores Web": [
+        {"id": "browser-chrome", "name": "Google Chrome", "desc": "Navegador web rápido y seguro de Google.", "icon": "google-chrome", "cmd": "omarchy-install-browser chrome"},
+        {"id": "browser-edge", "name": "Microsoft Edge", "desc": "Navegador optimizado para alto rendimiento.", "icon": "microsoft-edge", "cmd": "omarchy-install-browser edge"},
+        {"id": "browser-brave", "name": "Brave", "desc": "Navegador centrado en la privacidad y bloqueo de anuncios.", "icon": "brave", "cmd": "omarchy-install-browser brave"},
+    ],
+    "Gaming": [
+        {"id": "gaming-steam", "name": "Steam", "desc": "La mayor plataforma de videojuegos en PC.", "icon": "steam", "cmd": "omarchy-install-gaming-steam"},
+        {"id": "gaming-lutris", "name": "Lutris", "desc": "Gestor de juegos todo en uno (Wine, Emuladores).", "icon": "lutris", "cmd": "omarchy-install-gaming-lutris"},
+        {"id": "gaming-heroic", "name": "Heroic Games", "desc": "Lanzador open-source de Epic Games y GOG.", "icon": "heroic", "cmd": "omarchy-install-gaming-heroic"},
+        {"id": "gaming-retroarch", "name": "RetroArch", "desc": "Emulación de consolas clásicas.", "icon": "retroarch", "cmd": "omarchy-install-gaming-retroarch"},
+    ],
+    "Desarrollo": [
+        {"id": "dev-vscode", "name": "VS Code", "desc": "Editor de código ligero, potente y extensible.", "icon": "visual-studio-code", "cmd": "omarchy-install-editor-vscode"},
+        {"id": "dev-zed", "name": "Zed Editor", "desc": "Editor ultrarrápido programado en Rust.", "icon": "accessories-text-editor", "cmd": "omarchy-install-editor-zed"},
+        {"id": "dev-docker", "name": "Docker & DBs", "desc": "Contenedores y bases de datos locales.", "icon": "applications-engineering", "cmd": "omarchy-install-docker-dbs"},
+    ],
+    "Servicios y Media": [
+        {"id": "svc-spotify", "name": "Spotify", "desc": "Música y podcasts sin límites.", "icon": "spotify", "cmd": "omarchy-install-service-spotify"},
+        {"id": "svc-1password", "name": "1Password", "desc": "Gestor seguro y profesional de contraseñas.", "icon": "dialog-password", "cmd": "omarchy-install-service-1password"},
+        {"id": "svc-dropbox", "name": "Dropbox", "desc": "Sincronización de archivos en la nube.", "icon": "dropbox", "cmd": "omarchy-install-service-dropbox"},
+        {"id": "svc-tailscale", "name": "Tailscale", "desc": "VPN Mesh privada y sin configuración.", "icon": "network-vpn", "cmd": "omarchy-install-service-tailscale"},
+    ]
+}
+
+class AppCard(Gtk.Box):
+    def __init__(self, item):
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        self.set_css_classes(["card", "app-card"])
+        self.set_margin_start(10)
+        self.set_margin_end(10)
+        self.set_margin_top(10)
+        self.set_margin_bottom(10)
+        
+        self.item = item
+        
+        # Icon
+        icon_name = item.get("icon", "application-x-executable")
+        icon = Gtk.Image.new_from_icon_name(icon_name)
+        icon.set_pixel_size(64)
+        icon.set_margin_top(15)
+        self.append(icon)
+        
+        # Name
+        name_label = Gtk.Label(label=item["name"])
+        name_label.set_css_classes(["title-4"])
+        name_label.set_wrap(True)
+        name_label.set_justify(Gtk.Justification.CENTER)
+        self.append(name_label)
+        
+        # Description
+        desc_label = Gtk.Label(label=item["desc"])
+        desc_label.set_css_classes(["body", "dim-label"])
+        desc_label.set_wrap(True)
+        desc_label.set_justify(Gtk.Justification.CENTER)
+        desc_label.set_lines(2)
+        desc_label.set_vexpand(True)
+        self.append(desc_label)
+        
+        # Install Button
+        install_btn = Gtk.Button(label="Instalar")
+        install_btn.set_css_classes(["suggested-action", "pill"])
+        install_btn.set_margin_bottom(15)
+        install_btn.set_margin_start(15)
+        install_btn.set_margin_end(15)
+        install_btn.connect("clicked", self.on_install_clicked)
+        self.append(install_btn)
+        
+    def on_install_clicked(self, btn):
+        cmd = self.item["cmd"]
+        # Execute the wrapper command which will open the terminal presentation
+        wrapper = f"omarchy-launch-floating-terminal-with-presentation '{cmd}'"
+        subprocess.Popen(wrapper, shell=True)
+
+class BoutiqueWindow(Gtk.ApplicationWindow):
+    def __init__(self, app):
+        super().__init__(application=app, title="X64 Software Boutique")
+        self.set_default_size(900, 650)
+        
+        # Apply CSS
+        css_provider = Gtk.CssProvider()
+        css = b"""
+        .app-card {
+            background-color: @window_bg_color;
+            border-radius: 12px;
+            padding: 10px;
+        }
+        """
+        css_provider.load_from_data(css)
+        Gtk.StyleContext.add_provider_for_display(
+            Gdk.Display.get_default(), 
+            css_provider, 
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+
+        # HeaderBar
+        header = Gtk.HeaderBar()
+        self.set_titlebar(header)
+        
+        # Setup layout
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.set_child(hbox)
+        
+        # Stack for categories
+        self.stack = Gtk.Stack()
+        self.stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
+        
+        # Sidebar
+        sidebar = Gtk.StackSidebar()
+        sidebar.set_stack(self.stack)
+        sidebar.set_size_request(200, -1)
+        hbox.append(sidebar)
+        
+        # Separator
+        hbox.append(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL))
+        
+        # Main content area
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_hexpand(True)
+        scroll.set_vexpand(True)
+        scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        scroll.set_child(self.stack)
+        hbox.append(scroll)
+        
+        self.populate_catalog()
+
+    def populate_catalog(self):
+        for category, items in CATALOG.items():
+            # FlowBox for the grid of cards
+            flowbox = Gtk.FlowBox()
+            flowbox.set_valign(Gtk.Align.START)
+            flowbox.set_max_children_per_line(4)
+            flowbox.set_min_children_per_line(1)
+            flowbox.set_selection_mode(Gtk.SelectionMode.NONE)
+            flowbox.set_margin_top(20)
+            flowbox.set_margin_bottom(20)
+            flowbox.set_margin_start(20)
+            flowbox.set_margin_end(20)
+            flowbox.set_column_spacing(20)
+            flowbox.set_row_spacing(20)
+            
+            for item in items:
+                card = AppCard(item)
+                # Ensure uniform size for cards
+                card.set_size_request(200, 250)
+                flowbox.append(card)
+                
+            self.stack.add_titled(flowbox, category, category)
+
+class X64SoftwareBoutiqueApp(Gtk.Application):
+    def __init__(self):
+        super().__init__(application_id="org.x64.softwareboutique", flags=Gio.ApplicationFlags.FLAGS_NONE)
+
+    def do_activate(self):
+        win = self.props.active_window
+        if not win:
+            win = BoutiqueWindow(self)
+        win.present()
+
+if __name__ == '__main__':
+    app = X64SoftwareBoutiqueApp()
+    app.run(sys.argv)
