@@ -22,7 +22,7 @@ Ui.OverlayWindow {
 
   function close() {
     root.shown = false
-    shell.closePluginOverlay("x64.theme-creator")
+    shell.hide("x64.theme-creator")
   }
 
   // Interacción con el script backend
