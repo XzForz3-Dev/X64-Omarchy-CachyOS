@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "x64.theme-creator",
+  "name": "X64 Theme Creator",
+  "version": "1.0.0",
+  "author": "X64 Studios",
+  "description": "Graphical tool for creating and managing X64 LIOS themes",
+  "kinds": [
+    "overlay"
+  ],
+  "keepLoaded": false,
+  "entryPoints": {
+    "overlay": "ThemeCreator.qml"
+  }
+}
