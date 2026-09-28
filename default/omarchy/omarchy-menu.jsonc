@@ -21,8 +21,8 @@
   //                  installed instead of vanishing from the list.
 
   // Root Menu
-    "x64": {"icon":"󰌨","label":"X64 Tools","title":"Herramientas exclusivas"},
 "apps": {"icon":"󰀻","label":"Apps","aliases":["app","applications"],"provider":"apps"},
+  "x64": {"icon":"󰌨","label":"X64 LIOS Tools","title":"Herramientas exclusivas"},
   "learn": {"icon":"󰧑","label":"Learn"},
   "trigger": {"icon":"󱓞","label":"Trigger"},
   "style": {"icon":"","label":"Style"},
