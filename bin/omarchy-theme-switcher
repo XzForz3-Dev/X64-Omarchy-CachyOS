@@ -12,6 +12,8 @@ if [[ $1 == "--print-rows" ]]; then
 fi
 
 USER_THEMES_PATH="$HOME/.config/omarchy/themes"
+PUBLIC_THEMES_PATH="$HOME/Temas"
+PUBLIC_THEMES_PATH="$HOME/Temas"
 OMARCHY_THEMES_PATH="$OMARCHY_PATH/themes"
 CACHE_PATH="${XDG_CACHE_HOME:-$HOME/.cache}/omarchy/theme-selector"
 preview_dir="$CACHE_PATH/previews"
