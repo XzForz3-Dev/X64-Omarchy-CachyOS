@@ -46,16 +46,16 @@ Ui.OverlayWindow {
             if (currentAction === "save") {
               statusText.text = res.message
               statusText.color = "#00ff55"
-            } else if (currentAction === "read") {
+            } else if (currentAction === "read" || currentAction === "extract") {
               accentInput.text = res.data.accent
               bgInput.text = res.data.background
               fgInput.text = res.data.foreground
-              statusText.text = "Tema cargado correctamente."
+              statusText.text = currentAction === "extract" ? "Colores extraídos de la imagen." : "Tema cargado correctamente."
               statusText.color = "#00ff55"
             } else if (currentAction === "list") {
               themeDropdown.options = res.themes || []
-              statusText.text = "Lista de temas actualizada."
-              statusText.color = "#00ff55"
+              statusText.text = "Listo. Crea, edita o extrae desde imagen."
+              statusText.color = Color.foreground
             }
           } else {
             statusText.text = res.message || "Error desconocido"
@@ -86,13 +86,26 @@ Ui.OverlayWindow {
   }
 
   function loadTheme() {
-    if (nameInput.text.trim() === "") {
-      return
-    }
+    if (nameInput.text.trim() === "") return
     statusText.text = "Cargando..."
     statusText.color = Color.foreground
     backendProcess.currentAction = "read"
     backendProcess.command = ["python3", Quickshell.env("OMARCHY_PATH") + "/bin/x64-theme-creator-backend", "read", nameInput.text]
+    backendProcess.running = true
+  }
+
+  function extractColors() {
+    if (imgInput.text.trim() === "") {
+      statusText.text = "Error: Pega la ruta de una imagen"
+      statusText.color = "#ff5555"
+      return
+    }
+    // Removemos comillas si el usuario arrastró un archivo con comillas
+    var p = imgInput.text.replace(/^"|"$/g, '').replace(/^'|'$/g, '').replace(/^file:\/\//, '').trim()
+    statusText.text = "Extrayendo colores mágicamente..."
+    statusText.color = Color.foreground
+    backendProcess.currentAction = "extract"
+    backendProcess.command = ["python3", Quickshell.env("OMARCHY_PATH") + "/bin/x64-theme-creator-backend", "extract", p]
     backendProcess.running = true
   }
 
@@ -112,7 +125,6 @@ Ui.OverlayWindow {
     
     MouseArea {
       anchors.fill: parent
-      // Atrapa clics para que no cierren el overlay si se clica dentro
       onClicked: {}
     }
 
@@ -127,11 +139,7 @@ Ui.OverlayWindow {
       RowLayout {
         Layout.fillWidth: true
         Layout.bottomMargin: 5
-
-        Item {
-          Layout.fillWidth: true
-        }
-
+        Item { Layout.fillWidth: true }
         Text {
           text: "X64 Theme Creator"
           color: Color.foreground
@@ -139,11 +147,7 @@ Ui.OverlayWindow {
           font.bold: true
           Layout.alignment: Qt.AlignHCenter
         }
-
-        Item {
-          Layout.fillWidth: true
-        }
-
+        Item { Layout.fillWidth: true }
         Ui.Button {
           text: "✕"
           onClicked: root.close()
@@ -158,7 +162,7 @@ Ui.OverlayWindow {
         Ui.SearchableDropdown {
           id: themeDropdown
           Layout.fillWidth: true
-          placeholderText: "Selecciona un tema para editarlo..."
+          placeholderText: "Selecciona un tema..."
           onChanged: function(val) {
             nameInput.text = val;
             loadTheme();
@@ -169,11 +173,33 @@ Ui.OverlayWindow {
       RowLayout {
         Layout.fillWidth: true
         spacing: 10
-        Text { text: "Nombre:"; color: Color.foreground; Layout.preferredWidth: 80 }
+        Text { text: "Desde\nImagen:"; color: Color.foreground; Layout.preferredWidth: 80 }
+        Ui.TextField {
+          id: imgInput
+          Layout.fillWidth: true
+          placeholderText: "Arrastra o pega la ruta de la imagen"
+        }
+        Ui.Button {
+          text: "Extraer"
+          onClicked: extractColors()
+        }
+      }
+      
+      Rectangle {
+        Layout.fillWidth: true
+        height: 1
+        color: Color.muted
+        opacity: 0.3
+      }
+
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: 10
+        Text { text: "Guardar\nComo:"; color: Color.foreground; Layout.preferredWidth: 80 }
         Ui.TextField {
           id: nameInput
           Layout.fillWidth: true
-          placeholderText: "Ej. Goku, Vaporwave..."
+          placeholderText: "Nombre de tu tema"
         }
       }
 
@@ -230,11 +256,13 @@ Ui.OverlayWindow {
 
       Text {
         id: statusText
-        text: "Listo. Crea o edita un tema."
+        text: "Listo. Crea, edita o extrae desde imagen."
         color: Color.muted
         font.pixelSize: 12
         Layout.alignment: Qt.AlignHCenter
         Layout.topMargin: 5
+        wrapMode: Text.Wrap
+        Layout.maximumWidth: 400
       }
 
       RowLayout {
