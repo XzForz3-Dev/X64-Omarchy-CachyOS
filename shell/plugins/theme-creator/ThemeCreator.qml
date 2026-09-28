@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Window
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Io
@@ -7,14 +8,19 @@ import qs.Commons
 import qs.Ui as Ui
 import QtQuick.Dialogs
 
-Ui.OverlayWindow {
+Window {
   id: root
   objectName: "x64-theme-creator-overlay"
-  shownKeyboardFocus: WlrKeyboardFocus.Exclusive
+  title: "X64 Theme Creator"
+  color: "transparent"
+  flags: Qt.FramelessWindowHint | Qt.Window
+  
+  width: 450
+  height: layout.implicitHeight + 40
 
   function open(payloadJson) {
-    root.shown = true
-    root.targetScreen = Quickshell.screens[0]
+    root.visible = true
+    root.requestActivate()
     
     // Cargar lista de temas
     backendProcess.currentAction = "list"
@@ -23,8 +29,7 @@ Ui.OverlayWindow {
   }
 
   function close() {
-    root.shown = false
-    shell.hide("x64.theme-creator")
+    root.visible = false
   }
 
   // Interacción con el script backend
@@ -98,11 +103,10 @@ Ui.OverlayWindow {
 
   function extractColors() {
     if (imgInput.text.trim() === "") {
-      statusText.text = "Error: Pega la ruta de una imagen"
+      statusText.text = "Error: Selecciona una imagen"
       statusText.color = "#ff5555"
       return
     }
-    // Removemos comillas si el usuario arrastró un archivo con comillas
     var p = imgInput.text.replace(/^"|"$/g, '').replace(/^'|'$/g, '').replace(/^file:\/\//, '').trim()
     statusText.text = "Extrayendo colores mágicamente..."
     statusText.color = Color.foreground
@@ -121,32 +125,12 @@ Ui.OverlayWindow {
     }
   }
 
-  MouseArea {
-    anchors.fill: parent
-    // No cerrar al hacer clic afuera
-  }
-
   Rectangle {
-    anchors.centerIn: parent
-    width: 450
-    height: layout.implicitHeight + 40
+    anchors.fill: parent
     color: Color.background
     radius: Style.cornerRadius
     border.color: Color.accent
     border.width: 2
-    focus: true
-    Keys.onEscapePressed: root.close()
-    Keys.onPressed: function(event) {
-      if ((event.modifiers & Qt.MetaModifier) && (event.key === Qt.Key_W || event.key === Qt.Key_Q || event.key === Qt.Key_C)) {
-        root.close();
-        event.accepted = true;
-      }
-    }
-    
-    MouseArea {
-      anchors.fill: parent
-      onClicked: {}
-    }
 
     ColumnLayout {
       id: layout
@@ -197,7 +181,7 @@ Ui.OverlayWindow {
         Ui.TextField {
           id: imgInput
           Layout.fillWidth: true
-          placeholderText: "Arrastra o pega la ruta de la imagen"
+          placeholderText: "Ruta de la imagen"
         }
         Ui.Button {
           text: "Buscar..."
