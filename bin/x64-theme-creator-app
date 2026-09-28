@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+import sys
+import os
+import json
+import subprocess
+from PyQt6.QtGui import QGuiApplication
+from PyQt6.QtQml import QQmlApplicationEngine
+from PyQt6.QtCore import QObject, pyqtSlot, pyqtProperty, pyqtSignal
+
+class Backend(QObject):
+    themeLoaded = pyqtSignal(dict)
+    themesListed = pyqtSignal(list)
+    statusUpdated = pyqtSignal(str, str)
+    
+    def __init__(self):
+        super().__init__()
+        self.script_path = os.path.join(os.environ.get("OMARCHY_PATH", "/usr/share/omarchy"), "bin", "x64-theme-creator-backend")
+
+    @pyqtSlot()
+    def listThemes(self):
+        try:
+            res = subprocess.check_output(["python3", self.script_path, "list"], text=True)
+            data = json.loads(res)
+            if data.get("status") == "success":
+                self.themesListed.emit(data.get("themes", []))
+        except Exception as e:
+            print(f"Error listing themes: {e}")
+
+    @pyqtSlot(str)
+    def loadTheme(self, name):
+        try:
+            res = subprocess.check_output(["python3", self.script_path, "read", name], text=True)
+            data = json.loads(res)
+            if data.get("status") == "success":
+                self.themeLoaded.emit(data.get("data", {}))
+                self.statusUpdated.emit("Tema cargado correctamente.", "#00ff55")
+            else:
+                self.statusUpdated.emit(data.get("message", "Error"), "#ff5555")
+        except Exception as e:
+            self.statusUpdated.emit("Error de ejecución", "#ff5555")
+
+    @pyqtSlot(str, str, str, str)
+    def saveTheme(self, name, accent, fg, bg):
+        if not name.strip():
+            self.statusUpdated.emit("Error: Escribe un nombre", "#ff5555")
+            return
+        try:
+            res = subprocess.check_output(["python3", self.script_path, "save", name, accent, fg, bg], text=True)
+            data = json.loads(res)
+            if data.get("status") == "success":
+                self.statusUpdated.emit(data.get("message", "Tema guardado"), "#00ff55")
+            else:
+                self.statusUpdated.emit(data.get("message", "Error"), "#ff5555")
+        except Exception as e:
+            self.statusUpdated.emit("Error de ejecución", "#ff5555")
+
+    @pyqtSlot(str)
+    def extractColors(self, img_path):
+        if not img_path.strip():
+            self.statusUpdated.emit("Error: Pega una ruta de imagen", "#ff5555")
+            return
+        path = img_path.strip().strip("'").strip('"').replace("file://", "")
+        try:
+            res = subprocess.check_output(["python3", self.script_path, "extract", path], text=True)
+            data = json.loads(res)
+            if data.get("status") == "success":
+                self.themeLoaded.emit(data.get("data", {}))
+                self.statusUpdated.emit("Colores extraídos.", "#00ff55")
+            else:
+                self.statusUpdated.emit(data.get("message", "Error"), "#ff5555")
+        except Exception as e:
+            self.statusUpdated.emit("Error de ejecución", "#ff5555")
+
+def get_current_theme_colors():
+    state_path = os.path.expanduser("~/.local/state/omarchy/current/theme")
+    if os.path.islink(state_path):
+        target = os.readlink(state_path)
+    else:
+        target = "/usr/share/omarchy/themes/monochrome"
+    
+    toml = os.path.join(target, "colors.toml")
+    colors = {"background": "#101315", "foreground": "#cacccc", "accent": "#cacccc", "muted": "#707880"}
+    if os.path.exists(toml):
+        with open(toml) as f:
+            for line in f:
+                if "=" in line:
+                    k, v = line.split("=", 1)
+                    k = k.strip()
+                    v = v.strip().strip('"').strip("'")
+                    if k in colors:
+                        colors[k] = v
+    return colors
+
+app = QGuiApplication(sys.argv)
+
+colors = get_current_theme_colors()
+
+# We set environment variable for QT to use wayland
+os.environ["QT_QPA_PLATFORM"] = "wayland;xcb"
+
+engine = QQmlApplicationEngine()
+backend = Backend()
+engine.rootContext().setContextProperty("Backend", backend)
+engine.rootContext().setContextProperty("SysTheme", colors)
+
+qml_file = os.path.join(os.environ.get("OMARCHY_PATH", "/usr/share/omarchy"), "shell", "plugins", "theme-creator", "App.qml")
+
+engine.load(qml_file)
+
+if not engine.rootObjects():
+    sys.exit(-1)
+    
+sys.exit(app.exec())
