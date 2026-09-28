@@ -37,29 +37,29 @@ Ui.OverlayWindow {
           if (res.status === "success") {
             if (currentAction === "save") {
               statusText.text = res.message
-              statusText.color = Color.green
+              statusText.color = "#00ff55"
             } else if (currentAction === "read") {
               accentInput.text = res.data.accent
               bgInput.text = res.data.background
               fgInput.text = res.data.foreground
               statusText.text = "Tema cargado correctamente."
-              statusText.color = Color.green
+              statusText.color = "#00ff55"
             } else if (currentAction === "list") {
               themeDropdown.options = res.themes || []
               statusText.text = "Lista de temas actualizada."
-              statusText.color = Color.green
+              statusText.color = "#00ff55"
             }
           } else {
             statusText.text = res.message || "Error desconocido"
-            statusText.color = Color.red
+            statusText.color = "#ff5555"
           }
         } catch(e) {
           statusText.text = "Error al procesar respuesta"
-          statusText.color = Color.red
+          statusText.color = "#ff5555"
         }
       } else {
         statusText.text = "Error de ejecución: " + stderr
-        statusText.color = Color.red
+        statusText.color = "#ff5555"
       }
     }
   }
@@ -67,7 +67,7 @@ Ui.OverlayWindow {
   function saveTheme() {
     if (nameInput.text.trim() === "") {
       statusText.text = "Error: Escribe un nombre para el tema"
-      statusText.color = Color.red
+      statusText.color = "#ff5555"
       return
     }
     statusText.text = "Guardando..."
@@ -182,7 +182,7 @@ Ui.OverlayWindow {
         Rectangle {
           width: 24; height: 24; radius: 12
           color: accentInput.text.length >= 4 ? accentInput.text : "transparent"
-          border.color: Color.border
+          border.color: Color.accent
         }
       }
 
@@ -199,7 +199,7 @@ Ui.OverlayWindow {
         Rectangle {
           width: 24; height: 24; radius: 12
           color: bgInput.text.length >= 4 ? bgInput.text : "transparent"
-          border.color: Color.border
+          border.color: Color.accent
         }
       }
 
@@ -216,7 +216,7 @@ Ui.OverlayWindow {
         Rectangle {
           width: 24; height: 24; radius: 12
           color: fgInput.text.length >= 4 ? fgInput.text : "transparent"
-          border.color: Color.border
+          border.color: Color.accent
         }
       }
 
