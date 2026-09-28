@@ -108,19 +108,12 @@ def read_theme(name):
 def list_themes():
     home = os.path.expanduser("~")
     user_themes = os.path.join(home, "Temas")
-    sys_themes = "/usr/share/omarchy/themes"
     
     themes = []
     if os.path.exists(user_themes):
         for d in os.listdir(user_themes):
             if os.path.isdir(os.path.join(user_themes, d)):
                 themes.append(d)
-                
-    if os.path.exists(sys_themes):
-        for d in os.listdir(sys_themes):
-            if os.path.isdir(os.path.join(sys_themes, d)):
-                if d not in themes:
-                    themes.append(d)
                     
     print(json.dumps({"status": "success", "themes": sorted(themes)}))
 
