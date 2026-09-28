@@ -83,16 +83,16 @@ Ui.OverlayWindow {
 
   MouseArea {
     anchors.fill: parent
-    onClicked: root.close()
+    // onClicked: root.close()
   }
 
   Rectangle {
     anchors.centerIn: parent
     width: 450
     height: layout.implicitHeight + 40
-    color: Color.popups.surface
+    color: Color.background
     radius: Style.cornerRadius
-    border.color: Color.popups.border
+    border.color: Color.border
 
     MouseArea {
       anchors.fill: parent
