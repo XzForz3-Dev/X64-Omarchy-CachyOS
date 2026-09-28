@@ -13,6 +13,11 @@ Ui.OverlayWindow {
   function open(payloadJson) {
     root.shown = true
     root.targetScreen = Quickshell.screens[0]
+    
+    // Cargar lista de temas
+    backendProcess.currentAction = "list"
+    backendProcess.command = ["python3", Quickshell.env("OMARCHY_PATH") + "/bin/x64-theme-creator-backend", "list"]
+    backendProcess.running = true
   }
 
   function close() {
@@ -38,6 +43,10 @@ Ui.OverlayWindow {
               bgInput.text = res.data.background
               fgInput.text = res.data.foreground
               statusText.text = "Tema cargado correctamente."
+              statusText.color = Color.green
+            } else if (currentAction === "list") {
+              themeDropdown.options = res.themes || []
+              statusText.text = "Lista de temas actualizada."
               statusText.color = Color.green
             }
           } else {
@@ -70,8 +79,6 @@ Ui.OverlayWindow {
 
   function loadTheme() {
     if (nameInput.text.trim() === "") {
-      statusText.text = "Error: Escribe el nombre del tema a cargar"
-      statusText.color = Color.red
       return
     }
     statusText.text = "Cargando..."
@@ -83,7 +90,7 @@ Ui.OverlayWindow {
 
   MouseArea {
     anchors.fill: parent
-    // onClicked: root.close()
+    // No cerrar al hacer clic afuera
   }
 
   Rectangle {
@@ -94,7 +101,7 @@ Ui.OverlayWindow {
     radius: Style.cornerRadius
     border.color: Color.accent
     border.width: 2
-
+    
     MouseArea {
       anchors.fill: parent
       // Atrapa clics para que no cierren el overlay si se clica dentro
@@ -136,6 +143,20 @@ Ui.OverlayWindow {
         }
       }
       
+      RowLayout {
+        Layout.fillWidth: true
+        spacing: 10
+        Text { text: "Temas\nExistentes:"; color: Color.foreground; Layout.preferredWidth: 80 }
+        Ui.SearchableDropdown {
+          id: themeDropdown
+          Layout.fillWidth: true
+          placeholderText: "Selecciona un tema para editarlo..."
+          onChanged: function(val) {
+            nameInput.text = val;
+            loadTheme();
+          }
+        }
+      }
 
       RowLayout {
         Layout.fillWidth: true
@@ -161,8 +182,7 @@ Ui.OverlayWindow {
         Rectangle {
           width: 24; height: 24; radius: 12
           color: accentInput.text.length >= 4 ? accentInput.text : "transparent"
-          border.color: Color.accent
-    border.width: 2
+          border.color: Color.border
         }
       }
 
@@ -179,8 +199,7 @@ Ui.OverlayWindow {
         Rectangle {
           width: 24; height: 24; radius: 12
           color: bgInput.text.length >= 4 ? bgInput.text : "transparent"
-          border.color: Color.accent
-    border.width: 2
+          border.color: Color.border
         }
       }
 
@@ -197,8 +216,7 @@ Ui.OverlayWindow {
         Rectangle {
           width: 24; height: 24; radius: 12
           color: fgInput.text.length >= 4 ? fgInput.text : "transparent"
-          border.color: Color.accent
-    border.width: 2
+          border.color: Color.border
         }
       }
 
@@ -215,12 +233,6 @@ Ui.OverlayWindow {
         Layout.fillWidth: true
         Layout.topMargin: 10
         spacing: 15
-
-        Ui.Button {
-          Layout.fillWidth: true
-          text: "Cargar Existente"
-          onClicked: loadTheme()
-        }
 
         Ui.Button {
           Layout.fillWidth: true
