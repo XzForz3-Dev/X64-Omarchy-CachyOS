@@ -384,6 +384,6 @@
   "update.password.user": {"icon":"","label":"User","action":"omarchy-launch-floating-terminal-with-presentation passwd"},
   // X64 Tools
   "x64.themecreator": {"icon":"󰸌","label":"Creador de Temas","action":"x64-theme-creator"},
-  "x64.boutique": {"icon":"󰏓","label":"Software Boutique","action":"x64-launch-tiled-terminal \"cd $HOME/X64-Omarchy-CachyOS \&\& ./x64-install.sh\""},
+  "x64.boutique": {"icon":"󰏓","label":"Software Boutique","action":"x64-launch-tiled-terminal \"cd $HOME/X64-Omarchy-CachyOS && ./x64-install.sh\""},
 
 }
