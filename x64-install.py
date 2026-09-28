@@ -1204,6 +1204,7 @@ hl.config({
         run_cmd_live("sudo chmod +x /usr/share/omarchy/bin/* 2>/dev/null", check=False)
         run_cmd_live("sudo cp -r config/* /usr/share/omarchy/config/ 2>/dev/null", check=False)
         run_cmd_live("sudo cp -r config/* /etc/skel/.config/ 2>/dev/null", check=False)
+        run_cmd_live("sudo cp default/applications/*.desktop /usr/share/applications/ 2>/dev/null", check=False)
         
         progress.update(t_config, description="[yellow]Aplicando Diseño y Tema...", advance=20)
         if install_hyprland and user_choices["theme"] == "Tokyo Night":
