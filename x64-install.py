@@ -1337,8 +1337,8 @@ except Exception as e:
         run_cmd_live("mkdir -p \"$HOME/.config/omarchy/backgrounds/x64-lios-cyberpunk\"", check=False)
         run_cmd_live("mkdir -p \"$HOME/.config/omarchy/themes\"", check=False)
         
-        run_cmd_live("ln -s \"$HOME/.config/omarchy/backgrounds\" \"$HOME/Fondos\"", check=False)
-        run_cmd_live("ln -s \"$HOME/.config/omarchy/themes\" \"$HOME/Temas\"", check=False)
+        run_cmd_live("ln -sfn \"$HOME/.config/omarchy/backgrounds\" \"$HOME/Fondos\"", check=False)
+        run_cmd_live("ln -sfn \"$HOME/.config/omarchy/themes\" \"$HOME/Temas\"", check=False)
         # =====================================================
 
         run_cmd_live("if command -v limine-update >/dev/null; then echo '' | sudo limine-update 2>&1 | grep -ivE 'WARNING:( Possibly missing firmware| consolefont| This does not update Limine)'; fi", check=False)
