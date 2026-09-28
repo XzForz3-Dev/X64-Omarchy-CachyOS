@@ -2,7 +2,7 @@
 Name=X64 Theme Creator
 Comment=Herramienta visual para crear y editar temas de X64 LIOS
 Exec=/usr/share/omarchy/bin/x64-theme-creator
-Icon=preferences-desktop-appearance
+Icon=applications-graphics
 Terminal=false
 Type=Application
 Categories=Settings;DesktopSettings;
