@@ -8,19 +8,14 @@ import qs.Commons
 import qs.Ui as Ui
 import QtQuick.Dialogs
 
-Window {
+Ui.OverlayWindow {
   id: root
   objectName: "x64-theme-creator-overlay"
-  title: "X64 Theme Creator"
-  color: "transparent"
-  flags: Qt.FramelessWindowHint | Qt.Window
-  
-  width: 450
-  height: layout.implicitHeight + 40
+  shownKeyboardFocus: WlrKeyboardFocus.Exclusive
 
   function open(payloadJson) {
-    root.visible = true
-    root.requestActivate()
+    root.shown = true
+    root.targetScreen = Quickshell.screens[0]
     
     // Cargar lista de temas
     backendProcess.currentAction = "list"
@@ -29,7 +24,7 @@ Window {
   }
 
   function close() {
-    root.visible = false
+    root.shown = false
   }
 
   // Interacción con el script backend
@@ -125,12 +120,27 @@ Window {
     }
   }
 
-  Rectangle {
+  MouseArea {
     anchors.fill: parent
+  }
+
+  Rectangle {
+    anchors.centerIn: parent
+    width: 450
+    height: layout.implicitHeight + 40
     color: Color.background
     radius: Style.cornerRadius
     border.color: Color.accent
     border.width: 2
+    focus: true
+    
+    Keys.onEscapePressed: root.close()
+    Keys.onPressed: function(event) {
+      if ((event.modifiers & Qt.MetaModifier) && (event.key === Qt.Key_W || event.key === Qt.Key_Q || event.key === Qt.Key_C)) {
+        root.close();
+        event.accepted = true;
+      }
+    }
 
     ColumnLayout {
       id: layout
