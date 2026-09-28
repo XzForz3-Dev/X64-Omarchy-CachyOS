@@ -12,6 +12,7 @@ Ui.OverlayWindow {
 
   function open(payloadJson) {
     root.shown = true
+    root.targetScreen = Quickshell.screens[0]
   }
 
   function close() {
