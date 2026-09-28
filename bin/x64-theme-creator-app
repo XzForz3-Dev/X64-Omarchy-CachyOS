@@ -48,7 +48,7 @@ class ThemeCreatorApp(Gtk.Application):
 
         # Custom HeaderBar
         header = Gtk.HeaderBar()
-        header.set_title_widget(Gtk.Label(label="<b>X64 Theme Creator</b>", use_markup=True))
+        header.set_title_widget(Gtk.Label(label="<b>X64 LIOS Theme Creator</b>", use_markup=True))
         win.set_titlebar(header)
 
         # CSS
