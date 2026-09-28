@@ -10,7 +10,12 @@ Ui.OverlayWindow {
   id: root
   objectName: "x64-theme-creator-overlay"
 
+  function open(payloadJson) {
+    root.shown = true
+  }
+
   function close() {
+    root.shown = false
     shell.closePluginOverlay("x64.theme-creator")
   }
 
