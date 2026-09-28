@@ -101,7 +101,9 @@ Ui.OverlayWindow {
 
     ColumnLayout {
       id: layout
-      anchors.fill: parent
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.verticalCenter: parent.verticalCenter
       anchors.margins: 20
       spacing: 15
 
