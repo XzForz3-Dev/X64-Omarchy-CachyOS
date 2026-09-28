@@ -29,11 +29,19 @@ Ui.OverlayWindow {
   Process {
     id: backendProcess
     property string currentAction: ""
+    stdout: StdioCollector {
+      id: backendOut
+      waitForEnd: true
+    }
+    stderr: StdioCollector {
+      id: backendErr
+      waitForEnd: true
+    }
     
     onExited: {
       if (exitCode === 0) {
         try {
-          var res = JSON.parse(stdout)
+          var res = JSON.parse(backendOut.text)
           if (res.status === "success") {
             if (currentAction === "save") {
               statusText.text = res.message
@@ -58,7 +66,7 @@ Ui.OverlayWindow {
           statusText.color = "#ff5555"
         }
       } else {
-        statusText.text = "Error de ejecución: " + stderr
+        statusText.text = "Error de ejecución: " + backendErr.text
         statusText.color = "#ff5555"
       }
     }
