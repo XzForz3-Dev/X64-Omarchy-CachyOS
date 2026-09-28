@@ -1220,7 +1220,7 @@ Item {
             model: displayModel
             clip: true
             cellWidth: width / 4
-            cellHeight: root.rowHeightBase
+            cellHeight: root.baseRowHeight
                         boundsBehavior: Flickable.StopAtBounds
 
             delegate: BorderSurface {
