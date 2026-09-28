@@ -1164,14 +1164,6 @@ hl.config({
                 services_script += "    unzip -o videos.zip -d /usr/share/sddm/themes/x64-studios/videos/ || true\n"
                 services_script += "    rm -rf /tmp/sddm-videos\n"
                 services_script += "fi\n"
-                
-                services_script += "mkdir -p /etc/systemd/system/sddm.service.d\n"
-                services_script += "cat << 'EOF_SDDM' > /etc/systemd/system/sddm.service.d/override.conf\n"
-                services_script += "[Service]\n"
-                services_script += "ExecStartPre=+/bin/sh -c \"echo -e 'import QtQuick 2.15\\\\nItem { property string text: \\\\\"$(uname -r)\\\\\" }' > /usr/share/sddm/themes/x64-studios/KernelVersion.qml\"\n"
-                services_script += "EOF_SDDM\n"
-                services_script += "systemctl daemon-reload\n"
-
                 services_script += "echo -e \"[Theme]\\nCurrent=x64-studios\" > /etc/sddm.conf.d/x64-studios.conf\n"
                 services_script += f"echo -e \"[Last]\\nSession=/usr/share/wayland-sessions/omarchy.desktop\\nUser={actual_user}\" > /var/lib/sddm/state.conf\n"
                 services_script += "chown -R sddm:sddm /var/lib/sddm\n"
@@ -1338,6 +1330,16 @@ except Exception as e:
         run_cmd_live("sudo mkdir -p /etc/skel/.local/state/omarchy/migrations", check=False)
         run_cmd_live("if [ -d /usr/share/omarchy/migrations ]; then for m in /usr/share/omarchy/migrations/*.sh; do sudo touch \"/etc/skel/.local/state/omarchy/migrations/$(basename $m)\" 2>/dev/null; done; fi", check=False)
         # ===============================================
+
+        # ================= UX FONDOS Y TEMAS =================
+        log_lines.append("[yellow]Creando accesos directos visibles para personalización...[/yellow]")
+        run_cmd_live("mkdir -p \"$HOME/.config/omarchy/backgrounds/x64-lios-crimson\"", check=False)
+        run_cmd_live("mkdir -p \"$HOME/.config/omarchy/backgrounds/x64-lios-cyberpunk\"", check=False)
+        run_cmd_live("mkdir -p \"$HOME/.config/omarchy/themes\"", check=False)
+        
+        run_cmd_live("ln -s \"$HOME/.config/omarchy/backgrounds\" \"$HOME/Fondos\"", check=False)
+        run_cmd_live("ln -s \"$HOME/.config/omarchy/themes\" \"$HOME/Temas\"", check=False)
+        # =====================================================
 
         run_cmd_live("if command -v limine-update >/dev/null; then echo '' | sudo limine-update 2>&1 | grep -ivE 'WARNING:( Possibly missing firmware| consolefont| This does not update Limine)'; fi", check=False)
         # ================================================

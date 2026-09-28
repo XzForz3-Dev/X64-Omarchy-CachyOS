@@ -165,10 +165,12 @@ Item {
   }
 
   function openSelector() {
+    console.log("openSelector called. bgSwitchProc.running =", bgSwitchProc.running)
     if (!bgSwitchProc.running) bgSwitchProc.running = true
   }
 
   function openThemeSwitcher() {
+    console.log("openThemeSwitcher called.")
     var payload = JSON.stringify({ source: "themes" })
 
     // A cloned background may not summon the picker in-process, so it takes
@@ -180,7 +182,10 @@ Item {
   Process {
     id: bgSwitchProc
     command: ["bash", "-c", "background=$(omarchy-theme-bg-switcher); [[ -n $background ]] && omarchy-theme-bg-set \"$background\""]
-    onExited: root.refreshBackground()
+    onExited: {
+      console.log("bgSwitchProc exited!")
+      root.refreshBackground()
+    }
   }
 
   Process {
@@ -286,7 +291,7 @@ Item {
         id: remapGuard
         window: panel
       }
-      color: "transparent"
+      color: "#01000000"
       // Keep render updates enabled. The background layer has been observed to
       // lose its committed buffer while parked with updatesEnabled=false,
       // leaving a black desktop until omarchy-shell is restarted. A still
@@ -327,7 +332,7 @@ Item {
       }
 
       WlrLayershell.namespace: "omarchy-background"
-      WlrLayershell.layer: WlrLayer.Background
+      WlrLayershell.layer: WlrLayer.Bottom
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
       exclusionMode: ExclusionMode.Ignore
 
@@ -437,7 +442,13 @@ Item {
       MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+        Rectangle {
+          anchors.fill: parent
+          color: "black"
+          opacity: 0.01
+        }
         onDoubleClicked: function(mouse) {
+          console.log("BACKGROUND DOUBLE CLICKED! Button:", mouse.button)
           if (mouse.button === Qt.RightButton) root.openThemeSwitcher()
           else root.openSelector()
           mouse.accepted = true
