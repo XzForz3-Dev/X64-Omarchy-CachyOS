@@ -689,7 +689,7 @@ Item {
   // hidden row peeking past the cursor in the direction of travel.
   function revealCursor() {
     if (displayModel.count === 0) return
-    resultList.positionViewAtIndex(root.selectedIndex, ListView.Contain)
+    resultList.positionViewAtIndex(root.selectedIndex, GridView.Contain)
 
     var item = resultList.itemAtIndex(root.selectedIndex)
     if (!item) return
@@ -1299,7 +1299,6 @@ Item {
                 font.pixelSize: Style.font.iconLarge
                 width: Style.space(36)
                 horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: Style.space(25)
                 font.pixelSize: Style.font.iconLarge * 2
