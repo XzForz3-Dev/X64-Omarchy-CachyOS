@@ -1340,8 +1340,6 @@ except Exception as e:
         # Fondos como directorio real con enlaces estéticos
         run_cmd_live("rm -f \"$HOME/Fondos\"", check=False)
         run_cmd_live("mkdir -p \"$HOME/Fondos\"", check=False)
-        run_cmd_live("ln -sfn \"$HOME/.config/omarchy/backgrounds/x64-lios-crimson\" \"$HOME/Fondos/Crimson\"", check=False)
-        run_cmd_live("ln -sfn \"$HOME/.config/omarchy/backgrounds/x64-lios-cyberpunk\" \"$HOME/Fondos/Cyberpunk\"", check=False)
         run_cmd_live("ln -sfn \"$HOME/.config/omarchy/themes\" \"$HOME/Temas\"", check=False)
         # =====================================================
 
