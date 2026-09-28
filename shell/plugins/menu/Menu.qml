@@ -108,7 +108,7 @@ Item {
   property int dividerHeight: Style.space(17)
   property bool searchDivider: false
   property int layoutSerial: 0
-  property int cardWidth: Math.min(root.dmenuActive ? Style.space(root.dmenuWidth) : ((root.activeMenu === "trigger.capture.screenrecord" || root.activeMenu === "style.font") ? Style.space(520) : Style.space(300)), panel.width - Style.gapsOut * 2)
+  property int cardWidth: Math.min(Style.space(800), panel.width - Style.gapsOut * 2)
   property int visibleRowsHeight: root.dmenuActive ? dmenuRowListHeight(layoutSerial, displayModel.count, filterText) : rowListHeight(layoutSerial, displayModel.count, filterText, searchDivider)
   property int cardHeight: root.dmenuActive
     ? Math.min(contentMargin * 2 + headerHeight + (mode === "input" ? 0 : contentSpacing + visibleRowsHeight), panel.height - Style.gapsOut * 2)
@@ -190,9 +190,9 @@ Item {
 
     for (var i = 0; i < displayModel.count; i++) {
       var row = displayModel.get(i)
-      if (i > 0) total += root.rowSpacing
+      if (i > 0 && i % 4 === 0) total += root.rowSpacing
       if (row.section === "drilldown" && previousSection !== "drilldown") total += root.dividerHeight
-      total += root.rowHeightForDetail(row.detail)
+      if (i % 4 === 0) total += root.rowHeightForDetail(row.detail)
       previousSection = row.section
       totals.push(total)
     }
@@ -210,7 +210,7 @@ Item {
     var totals = []
     var total = 0
     for (var i = 0; i < displayModel.count; i++) {
-      if (i > 0) total += root.rowSpacing
+      if (i > 0 && i % 4 === 0) total += root.rowSpacing
       total += root.rowHeightForDetail(displayModel.get(i).detail)
       totals.push(total)
     }
@@ -1216,20 +1216,22 @@ Item {
           width: parent.width
           height: root.visibleRowsHeight
 
-          ListView {
+          GridView {
             id: resultList
             anchors.fill: parent
             model: displayModel
             clip: true
-            spacing: root.rowSpacing
-            boundsBehavior: Flickable.StopAtBounds
+            cellWidth: width / 4
+            cellHeight: root.rowHeightBase
+                        boundsBehavior: Flickable.StopAtBounds
 
             section.property: "section"
             section.criteria: ViewSection.FullString
             section.delegate: Item {
               required property string section
 
-              width: ListView.view.width
+              width: GridView.view.cellWidth - Style.space(10)
+              x: Style.space(5)
               height: section === "drilldown" ? root.dividerHeight : 0
               visible: section === "drilldown"
 
@@ -1265,8 +1267,10 @@ Item {
               readonly property bool isApp: row.kind === "app"
               readonly property bool hasIcon: row.icon.length > 0 || row.isApp
 
-              width: ListView.view.width
-              height: root.rowHeightForDetail(row.detail)
+              width: GridView.view.cellWidth - Style.space(10)
+              x: Style.space(5)
+              height: GridView.view.cellHeight - Style.space(10)
+              y: Style.space(5)
               // Faded: the row is here to say the software is already
               // installed, not to be picked.
               opacity: row.disabled ? 0.4 : 1
@@ -1296,9 +1300,9 @@ Item {
                 width: Style.space(36)
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                anchors.left: parent.left
-                anchors.leftMargin: root.rowReservedBorderLeft + Style.space(8)
-                y: contentColumn.y + labelText.y + (labelText.height - height) / 2
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: Style.space(25)
+                font.pixelSize: Style.font.iconLarge * 2
               }
 
               Image {
@@ -1313,24 +1317,26 @@ Item {
                 sourceSize.height: height * Screen.devicePixelRatio
                 source: row.isApp && root.appLibrary ? root.appLibrary.iconSource(row.appIcon) : ""
                 asynchronous: true
-                anchors.left: parent.left
-                anchors.leftMargin: root.rowReservedBorderLeft + Style.space(8) + (Style.space(36) - width) / 2
-                y: contentColumn.y + labelText.y + (labelText.height - height) / 2
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: Style.space(20)
+                width: Style.font.iconLarge * 2
+                height: Style.font.iconLarge * 2
               }
 
               Column {
                 id: contentColumn
-                anchors.left: row.hasIcon ? iconText.right : parent.left
-                anchors.leftMargin: row.hasIcon ? Style.space(6) : root.rowReservedBorderLeft + Style.space(18)
-                anchors.right: trail.left
-                anchors.rightMargin: Style.space(6)
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.top: row.isApp ? appIconImage.bottom : iconText.bottom
+                anchors.topMargin: Style.space(10)
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.horizontalCenter: parent.horizontalCenter
                 spacing: Style.space(3)
 
                 Text {
                   id: labelText
                   textFormat: Text.PlainText
                   width: parent.width
+                  horizontalAlignment: Text.AlignHCenter
                   text: row.label
                   color: row.hasCursor ? root.selectedText : root.foreground
                   font.family: root.fontFamily
@@ -1342,6 +1348,7 @@ Item {
                 Text {
                   textFormat: Text.PlainText
                   width: parent.width
+                  horizontalAlignment: Text.AlignHCenter
                   text: row.detail
                   visible: (root.filterText || row.kind === "dmenu") && row.detail.length > 0
                   color: root.foreground
