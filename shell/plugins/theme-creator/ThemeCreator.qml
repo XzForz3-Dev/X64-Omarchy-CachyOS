@@ -78,10 +78,13 @@ Ui.OverlayWindow {
     backendProcess.running = true
   }
 
-  Ui.PopupCard {
+  Rectangle {
     anchors.centerIn: parent
     width: 450
-    implicitHeight: layout.implicitHeight + 40
+    height: layout.implicitHeight + 40
+    color: Color.popups.surface
+    radius: Style.cornerRadius
+    border.color: Color.popups.border
 
     ColumnLayout {
       id: layout
