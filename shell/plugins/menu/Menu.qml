@@ -1199,8 +1199,6 @@ Item {
 
           Text {
             textFormat: Text.PlainText
-            anchors.left: parent.left
-            anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             text: root.filterText || (root.dmenuActive ? (root.dmenuPrompt + "…") : ((root.item(root.activeMenu) ? (root.item(root.activeMenu).title || root.item(root.activeMenu).label) : "Go") + "…"))
             color: root.foreground
@@ -1246,9 +1244,9 @@ Item {
               readonly property bool isApp: row.kind === "app"
               readonly property bool hasIcon: row.icon.length > 0 || row.isApp
 
-              width: GridView.view.cellWidth - Style.space(10)
+              width: resultList.cellWidth - Style.space(10)
               x: Style.space(5)
-              height: GridView.view.cellHeight - Style.space(10)
+              height: resultList.cellHeight - Style.space(10)
               y: Style.space(5)
               // Faded: the row is here to say the software is already
               // installed, not to be picked.
@@ -1263,7 +1261,6 @@ Item {
                 height: parent.height - Style.space(18)
                 radius: Math.min(root.cornerRadius, Style.space(4))
                 color: root.selectedBackground
-                anchors.left: parent.left
                 anchors.leftMargin: root.rowReservedBorderLeft + Style.space(8)
                 anchors.verticalCenter: parent.verticalCenter
               }
@@ -1303,8 +1300,6 @@ Item {
                 id: contentColumn
                 anchors.top: row.isApp ? appIconImage.bottom : iconText.bottom
                 anchors.topMargin: Style.space(10)
-                anchors.left: parent.left
-                anchors.right: parent.right
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: Style.space(3)
 
@@ -1338,7 +1333,6 @@ Item {
               Row {
                 id: trail
                 width: Style.space(14)
-                anchors.right: parent.right
                 anchors.rightMargin: root.rowReservedBorderRight + Style.space(8)
                 y: contentColumn.y + labelText.y + (labelText.height - height) / 2
                 spacing: 0
@@ -1395,8 +1389,6 @@ Item {
           // animating on a clock, so a programmatic jump — wrapping from the
           // last row back to the first — lands with the fade already applied.
           Rectangle {
-            anchors.left: parent.left
-            anchors.right: parent.right
             anchors.top: parent.top
             height: Math.min(Style.space(28), parent.height / 2)
             visible: opacity > 0
@@ -1410,8 +1402,6 @@ Item {
           }
 
           Rectangle {
-            anchors.left: parent.left
-            anchors.right: parent.right
             anchors.bottom: parent.bottom
             height: Math.min(Style.space(28), parent.height / 2)
             visible: opacity > 0
