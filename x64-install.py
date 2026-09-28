@@ -1337,7 +1337,11 @@ except Exception as e:
         run_cmd_live("mkdir -p \"$HOME/.config/omarchy/backgrounds/x64-lios-cyberpunk\"", check=False)
         run_cmd_live("mkdir -p \"$HOME/.config/omarchy/themes\"", check=False)
         
-        run_cmd_live("ln -sfn \"$HOME/.config/omarchy/backgrounds\" \"$HOME/Fondos\"", check=False)
+        # Fondos como directorio real con enlaces estéticos
+        run_cmd_live("rm -f \"$HOME/Fondos\"", check=False)
+        run_cmd_live("mkdir -p \"$HOME/Fondos\"", check=False)
+        run_cmd_live("ln -sfn \"$HOME/.config/omarchy/backgrounds/x64-lios-crimson\" \"$HOME/Fondos/Crimson\"", check=False)
+        run_cmd_live("ln -sfn \"$HOME/.config/omarchy/backgrounds/x64-lios-cyberpunk\" \"$HOME/Fondos/Cyberpunk\"", check=False)
         run_cmd_live("ln -sfn \"$HOME/.config/omarchy/themes\" \"$HOME/Temas\"", check=False)
         # =====================================================
 
