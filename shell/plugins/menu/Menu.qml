@@ -1301,6 +1301,7 @@ Item {
                 anchors.top: row.isApp ? appIconImage.bottom : iconText.bottom
                 anchors.topMargin: Style.space(10)
                 anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width
                 spacing: Style.space(3)
 
                 Text {
