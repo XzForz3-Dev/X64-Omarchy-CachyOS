@@ -382,6 +382,6 @@
   "update.password.drive": {"icon":"","label":"Drive Encryption","action":"omarchy-launch-floating-terminal-with-presentation omarchy-drive-password"},
   "update.password.user": {"icon":"","label":"User","action":"omarchy-launch-floating-terminal-with-presentation passwd"},
   // X64 Tools
-  "x64.themecreator": {"icon":"󰸌","label":"Creador de Temas","action":"python /usr/share/omarchy/bin/x64-theme-creator.py"},
+  "x64.themecreator": {"icon":"󰸌","label":"Creador de Temas","action":"x64-theme-creator"},
 
 }
