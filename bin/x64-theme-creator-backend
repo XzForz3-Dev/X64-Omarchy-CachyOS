@@ -124,6 +124,28 @@ def list_themes():
                     
     print(json.dumps({"status": "success", "themes": sorted(themes)}))
 
+def extract_colors_from_image(img_path):
+    if not os.path.exists(img_path):
+        print(json.dumps({"status": "error", "message": "Imagen no encontrada"}))
+        return
+        
+    # Extraer el color promedio (Fondo)
+    bg_cmd = f"magick '{img_path}' -resize 1x1\! -format '%[hex:u.p{{0,0}}]' info:"
+    bg_hex = os.popen(bg_cmd).read().strip()
+    if not bg_hex: bg_hex = "000000"
+    
+    # Extraer un color vibrante para el acento
+    # Reducimos a 5 colores, ordenamos por saturación o tomamos el segundo/tercero
+    ac_cmd = f"magick '{img_path}' -colorspace HSL -channel S -separate +channel -format '%[fx:mean]' info:"
+    # Una forma más sencilla para el acento: difuminar y aumentar saturación
+    acc_cmd = f"magick '{img_path}' -resize 1x1\! -modulate 100,200 -format '%[hex:u.p{{0,0}}]' info:"
+    acc_hex = os.popen(acc_cmd).read().strip()
+    if not acc_hex: acc_hex = "ffffff"
+    
+    # El texto Foreground puede ser blanco o negro dependiendo de si el fondo es claro u oscuro
+    fg_hex = "ffffff" # Por defecto texto blanco para la estética X64
+    print(json.dumps({"status": "success", "data": {"background": f"#{bg_hex[:6]}", "accent": f"#{acc_hex[:6]}", "foreground": f"#{fg_hex}"}}))
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         sys.exit(1)
@@ -135,6 +157,8 @@ if __name__ == "__main__":
         read_theme(sys.argv[2])
     elif cmd == "list":
         list_themes()
+    elif cmd == "extract" and len(sys.argv) == 3:
+        extract_colors_from_image(sys.argv[2])
     else:
         print(json.dumps({"status": "error", "message": "Invalid arguments"}))
 
