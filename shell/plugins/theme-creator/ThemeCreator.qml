@@ -92,7 +92,8 @@ Ui.OverlayWindow {
     height: layout.implicitHeight + 40
     color: Color.background
     radius: Style.cornerRadius
-    border.color: Color.border
+    border.color: Color.accent
+    border.width: 2
 
     MouseArea {
       anchors.fill: parent
@@ -160,7 +161,8 @@ Ui.OverlayWindow {
         Rectangle {
           width: 24; height: 24; radius: 12
           color: accentInput.text.length >= 4 ? accentInput.text : "transparent"
-          border.color: Color.border
+          border.color: Color.accent
+    border.width: 2
         }
       }
 
@@ -177,7 +179,8 @@ Ui.OverlayWindow {
         Rectangle {
           width: 24; height: 24; radius: 12
           color: bgInput.text.length >= 4 ? bgInput.text : "transparent"
-          border.color: Color.border
+          border.color: Color.accent
+    border.width: 2
         }
       }
 
@@ -194,7 +197,8 @@ Ui.OverlayWindow {
         Rectangle {
           width: 24; height: 24; radius: 12
           color: fgInput.text.length >= 4 ? fgInput.text : "transparent"
-          border.color: Color.border
+          border.color: Color.accent
+    border.width: 2
         }
       }
 
