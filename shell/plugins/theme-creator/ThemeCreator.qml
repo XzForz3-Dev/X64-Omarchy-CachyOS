@@ -5,6 +5,7 @@ import Quickshell.Wayland
 import Quickshell.Io
 import qs.Commons
 import qs.Ui as Ui
+import QtQuick.Dialogs
 
 Ui.OverlayWindow {
   id: root
@@ -109,6 +110,16 @@ Ui.OverlayWindow {
     backendProcess.running = true
   }
 
+  FileDialog {
+    id: fileDialog
+    title: "Selecciona una imagen para extraer colores"
+    nameFilters: ["Imágenes (*.png *.jpg *.jpeg *.webp)"]
+    onAccepted: {
+      imgInput.text = fileDialog.selectedFile.toString().replace("file://", "");
+      extractColors();
+    }
+  }
+
   MouseArea {
     anchors.fill: parent
     // No cerrar al hacer clic afuera
@@ -178,6 +189,10 @@ Ui.OverlayWindow {
           id: imgInput
           Layout.fillWidth: true
           placeholderText: "Arrastra o pega la ruta de la imagen"
+        }
+        Ui.Button {
+          text: "Buscar..."
+          onClicked: fileDialog.open()
         }
         Ui.Button {
           text: "Extraer"
