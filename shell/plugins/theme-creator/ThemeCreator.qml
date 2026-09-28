@@ -108,14 +108,33 @@ Ui.OverlayWindow {
       anchors.margins: 20
       spacing: 15
 
-      Text {
-        text: "X64 Theme Creator"
-        color: Color.foreground
-        font.pixelSize: 24
-        font.bold: true
-        Layout.alignment: Qt.AlignHCenter
-        Layout.bottomMargin: 10
+      RowLayout {
+        Layout.fillWidth: true
+        Layout.bottomMargin: 5
+
+        Item {
+          Layout.fillWidth: true
+        }
+
+        Text {
+          text: "X64 Theme Creator"
+          color: Color.foreground
+          font.pixelSize: 24
+          font.bold: true
+          Layout.alignment: Qt.AlignHCenter
+        }
+
+        Item {
+          Layout.fillWidth: true
+        }
+
+        Ui.Button {
+          text: "✕"
+          onClicked: root.close()
+          Layout.alignment: Qt.AlignRight
+        }
       }
+      
 
       RowLayout {
         Layout.fillWidth: true
