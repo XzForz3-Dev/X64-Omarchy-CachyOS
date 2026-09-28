@@ -1296,8 +1296,7 @@ Item {
                 text: row.icon
                 color: row.hasCursor ? root.selectedText : root.foreground
                 font.family: row.iconFont.length > 0 ? row.iconFont : root.fontFamily
-                font.pixelSize: Style.font.iconLarge
-                width: Style.space(36)
+                                width: Style.space(36)
                 horizontalAlignment: Text.AlignHCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: Style.space(25)
@@ -1307,8 +1306,7 @@ Item {
               Image {
                 id: appIconImage
                 visible: row.isApp
-                width: Style.font.iconLarge
-                height: Style.font.iconLarge
+                
                 fillMode: Image.PreserveAspectFit
                 // Decode at physical pixels — a logical-size decode leaves
                 // PNG icons upscaled and blurry on HiDPI displays.
