@@ -9,9 +9,6 @@ import qs.Ui as Ui
 Ui.OverlayWindow {
   id: root
   objectName: "x64-theme-creator-overlay"
-  clearFocusOnPressOutside: true
-  // Al presionar fuera se cierra el overlay
-  onPressedOutside: shell.closePluginOverlay("x64.theme-creator")
 
   function close() {
     shell.closePluginOverlay("x64.theme-creator")
@@ -78,6 +75,11 @@ Ui.OverlayWindow {
     backendProcess.running = true
   }
 
+  MouseArea {
+    anchors.fill: parent
+    onClicked: root.close()
+  }
+
   Rectangle {
     anchors.centerIn: parent
     width: 450
@@ -85,6 +87,12 @@ Ui.OverlayWindow {
     color: Color.popups.surface
     radius: Style.cornerRadius
     border.color: Color.popups.border
+
+    MouseArea {
+      anchors.fill: parent
+      // Atrapa clics para que no cierren el overlay si se clica dentro
+      onClicked: {}
+    }
 
     ColumnLayout {
       id: layout
