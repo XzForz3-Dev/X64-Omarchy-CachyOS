@@ -99,7 +99,7 @@ Item {
   property int contentMargin: Style.spacing.panelPadding
   property int headerHeight: Math.max(Style.space(34), Style.font.title + Style.spacing.controlPaddingY * 2)
   property int contentSpacing: Style.spacing.md
-  property int baseRowHeight: Style.space(120)
+  property int baseRowHeight: Style.space(160)
   property int detailRowHeight: Math.max(Style.space(58), Style.font.body + Style.font.caption + Style.spacing.rowPaddingX * 2)
   // How much of the first hidden row stays visible at the fold — enough to
   // read as a cut-off row rather than a bottom border.
@@ -108,7 +108,7 @@ Item {
   property int dividerHeight: Style.space(17)
   property bool searchDivider: false
   property int layoutSerial: 0
-  property int cardWidth: Math.min(Style.space(800), panel.width - Style.gapsOut * 2)
+  property int cardWidth: Math.min(Style.space(1000), panel.width - Style.gapsOut * 2)
   property int visibleRowsHeight: root.dmenuActive ? dmenuRowListHeight(layoutSerial, displayModel.count, filterText) : rowListHeight(layoutSerial, displayModel.count, filterText, searchDivider)
   property int cardHeight: root.dmenuActive
     ? Math.min(contentMargin * 2 + headerHeight + (mode === "input" ? 0 : contentSpacing + visibleRowsHeight), panel.height - Style.gapsOut * 2)
@@ -1204,7 +1204,7 @@ Item {
             color: root.foreground
             opacity: root.filterText ? 1 : 0.58
             font.family: root.fontFamily
-            font.pixelSize: Style.font.heading
+            font.pixelSize: Style.font.heading * 1.3
             elide: Text.ElideRight
           }
 
@@ -1276,7 +1276,7 @@ Item {
                 horizontalAlignment: Text.AlignHCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: Style.space(25)
-                font.pixelSize: Style.font.iconLarge * 2
+                font.pixelSize: Style.font.iconLarge * 3
               }
 
               Image {
@@ -1292,8 +1292,8 @@ Item {
                 asynchronous: true
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: Style.space(20)
-                width: Style.font.iconLarge * 2
-                height: Style.font.iconLarge * 2
+                width: Style.font.iconLarge * 3
+                height: Style.font.iconLarge * 3
               }
 
               Column {
@@ -1312,7 +1312,7 @@ Item {
                   text: row.label
                   color: row.hasCursor ? root.selectedText : root.foreground
                   font.family: root.fontFamily
-                  font.pixelSize: Style.font.heading
+                  font.pixelSize: Style.font.heading * 1.3
                   font.weight: Font.Medium
                   elide: Text.ElideRight
                 }
@@ -1355,7 +1355,7 @@ Item {
                   color: row.hasCursor ? root.selectedText : root.foreground
                   opacity: row.kind === "menu" || row.kind === "link" ? 0.36 : 0
                   font.family: root.fontFamily
-                  font.pixelSize: Style.font.heading
+                  font.pixelSize: Style.font.heading * 1.3
                   font.weight: Font.Normal
                   anchors.verticalCenter: parent.verticalCenter
                 }
