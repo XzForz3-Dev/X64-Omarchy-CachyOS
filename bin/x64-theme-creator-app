@@ -24,6 +24,18 @@ def get_current_theme_colors():
                         colors[k] = v
     return colors
 
+def rgba_to_hex(rgba):
+    r = int(rgba.red * 255)
+    g = int(rgba.green * 255)
+    b = int(rgba.blue * 255)
+    return f"#{r:02x}{g:02x}{b:02x}"
+
+def hex_to_rgba(hex_str):
+    rgba = Gdk.RGBA()
+    if rgba.parse(hex_str):
+        return rgba
+    return Gdk.RGBA()
+
 class ThemeCreatorApp(Gtk.Application):
     def __init__(self):
         super().__init__(application_id="x64.theme.creator", flags=Gio.ApplicationFlags.FLAGS_NONE)
@@ -31,10 +43,15 @@ class ThemeCreatorApp(Gtk.Application):
         self.colors = get_current_theme_colors()
 
     def do_activate(self):
-        win = Gtk.ApplicationWindow(application=self, title="X64 Theme Creator")
-        win.set_default_size(500, 650)
+        win = Gtk.ApplicationWindow(application=self)
+        win.set_default_size(500, 750)
 
-        # Apply CSS for colors and layout
+        # Custom HeaderBar
+        header = Gtk.HeaderBar()
+        header.set_title_widget(Gtk.Label(label="<b>X64 Theme Creator</b>", use_markup=True))
+        win.set_titlebar(header)
+
+        # CSS
         css_provider = Gtk.CssProvider()
         css = f"""
         window {{
@@ -44,192 +61,179 @@ class ThemeCreatorApp(Gtk.Application):
         label {{
             color: {self.colors['foreground']};
         }}
-        .header-title {{
-            font-size: 24pt;
-            font-weight: 800;
-        }}
-        .header-subtitle {{
+        .muted-text {{
             color: {self.colors['muted']};
-            font-size: 11pt;
-            margin-bottom: 20px;
+            font-size: 10pt;
         }}
-        .section-card {{
-            background-color: alpha({self.colors['foreground']}, 0.05);
-            border: 1px solid alpha({self.colors['muted']}, 0.3);
+        .card {{
+            background-color: alpha({self.colors['foreground']}, 0.04);
+            border: 1px solid alpha({self.colors['muted']}, 0.2);
             border-radius: 12px;
-            padding: 20px;
+            padding: 18px;
             margin-bottom: 20px;
         }}
         .section-title {{
             font-weight: bold;
-            font-size: 13pt;
-            margin-bottom: 15px;
+            font-size: 14pt;
             color: {self.colors['accent']};
+            margin-bottom: 6px;
         }}
-        button {{
-            background-color: alpha({self.colors['foreground']}, 0.1);
-            border: 1px solid alpha({self.colors['muted']}, 0.4);
-            border-radius: 8px;
-            color: {self.colors['foreground']};
-            padding: 8px 16px;
-            font-weight: bold;
-            transition: all 200ms ease;
-        }}
-        button:hover {{
-            background-color: alpha({self.colors['foreground']}, 0.2);
-        }}
-        button.suggested-action {{
+        button.action-btn {{
             background-color: {self.colors['accent']};
             color: {self.colors['background']};
-            border: none;
-            padding: 12px;
-            font-size: 12pt;
+            border-radius: 8px;
+            font-weight: bold;
+            padding: 10px;
         }}
-        button.suggested-action:hover {{
+        button.action-btn:hover {{
             background-color: alpha({self.colors['accent']}, 0.8);
         }}
+        button.big-btn {{
+            background-color: alpha({self.colors['foreground']}, 0.08);
+            border-radius: 8px;
+            padding: 12px;
+        }}
+        button.big-btn:hover {{
+            background-color: alpha({self.colors['foreground']}, 0.12);
+        }}
         entry, drop-down {{
-            background-color: alpha({self.colors['background']}, 0.5);
+            background-color: alpha({self.colors['background']}, 0.7);
             color: {self.colors['foreground']};
             border: 1px solid alpha({self.colors['muted']}, 0.5);
-            border-radius: 8px;
-            padding: 8px;
-        }}
-        entry:focus {{
-            border-color: {self.colors['accent']};
-        }}
-        .color-preview {{
-            border-radius: 16px;
-            border: 2px solid alpha({self.colors['foreground']}, 0.2);
-            min-width: 32px;
-            min-height: 32px;
+            border-radius: 6px;
         }}
         """
         css_provider.load_from_data(css.encode('utf-8'))
         Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-        # Main scrollable window (in case of small screens)
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         win.set_child(scrolled)
 
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        main_box.set_margin_top(30)
-        main_box.set_margin_bottom(30)
-        main_box.set_margin_start(35)
-        main_box.set_margin_end(35)
+        main_box.set_margin_top(20)
+        main_box.set_margin_bottom(20)
+        main_box.set_margin_start(30)
+        main_box.set_margin_end(30)
         scrolled.set_child(main_box)
 
-        # Header
-        lbl_title = Gtk.Label(label="X64 LIOS Themes", xalign=0)
-        lbl_title.add_css_class("header-title")
-        main_box.append(lbl_title)
-        
-        lbl_sub = Gtk.Label(label="Personaliza el entorno visual de tu sistema", xalign=0)
-        lbl_sub.add_css_class("header-subtitle")
-        main_box.append(lbl_sub)
-
         # ---- Section 1: Magic Extractor ----
-        sec1 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        sec1.add_css_class("section-card")
+        sec1 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        sec1.add_css_class("card")
         
-        sec1_title = Gtk.Label(label="✨ Inteligencia Visual (Extracción)", xalign=0)
-        sec1_title.add_css_class("section-title")
-        sec1.append(sec1_title)
+        lbl_sec1 = Gtk.Label(label="✨ Inteligencia Visual", xalign=0)
+        lbl_sec1.add_css_class("section-title")
+        sec1.append(lbl_sec1)
         
-        row_img = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        self.img_input = Gtk.Entry(placeholder_text="Ruta del fondo de pantalla", hexpand=True)
-        row_img.append(self.img_input)
+        desc1 = Gtk.Label(label="Extrae automáticamente una paleta de colores perfecta a partir de cualquier fondo de pantalla.", xalign=0)
+        desc1.add_css_class("muted-text")
+        desc1.set_wrap(True)
+        sec1.append(desc1)
+
+        row_browse = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        row_browse.set_margin_top(10)
         
-        btn_browse = Gtk.Button(icon_name="folder-open-symbolic")
-        btn_browse.connect("clicked", self.on_browse)
-        row_img.append(btn_browse)
+        self.btn_browse = Gtk.Button(label="🖼️ Seleccionar Imagen de Fondo...")
+        self.btn_browse.add_css_class("big-btn")
+        self.btn_browse.set_hexpand(True)
+        self.btn_browse.connect("clicked", self.on_browse)
+        row_browse.append(self.btn_browse)
         
         btn_extract = Gtk.Button(label="Extraer Colores")
+        btn_extract.add_css_class("action-btn")
         btn_extract.connect("clicked", self.on_extract)
-        row_img.append(btn_extract)
-        sec1.append(row_img)
+        row_browse.append(btn_extract)
         
+        sec1.append(row_browse)
+        self.img_path = ""
         main_box.append(sec1)
 
         # ---- Section 2: Editor ----
-        sec2 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
-        sec2.add_css_class("section-card")
+        sec2 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        sec2.add_css_class("card")
         
-        sec2_title = Gtk.Label(label="🎨 Editor de Tema", xalign=0)
-        sec2_title.add_css_class("section-title")
-        sec2.append(sec2_title)
+        lbl_sec2 = Gtk.Label(label="🎨 Diseño de Tema", xalign=0)
+        lbl_sec2.add_css_class("section-title")
+        sec2.append(lbl_sec2)
+        
+        desc2 = Gtk.Label(label="Ajusta manualmente los colores usando los selectores gráficos o carga un tema existente para modificarlo.", xalign=0)
+        desc2.add_css_class("muted-text")
+        desc2.set_wrap(True)
+        sec2.append(desc2)
         
         # Load existing
         row_load = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=15)
-        lbl_load = Gtk.Label(label="Editar Existente:", xalign=0)
-        lbl_load.set_size_request(120, -1)
+        row_load.set_margin_top(10)
+        lbl_load = Gtk.Label(label="Tema Base:", xalign=0)
+        lbl_load.set_size_request(100, -1)
         row_load.append(lbl_load)
         self.theme_dropdown = Gtk.DropDown(hexpand=True)
         row_load.append(self.theme_dropdown)
         sec2.append(row_load)
-        
-        # Separator
-        sep = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
-        sep.set_margin_top(5)
-        sep.set_margin_bottom(5)
-        sec2.append(sep)
 
         # Name
         row_name = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=15)
         lbl_name = Gtk.Label(label="Nombre:", xalign=0)
-        lbl_name.set_size_request(120, -1)
+        lbl_name.set_size_request(100, -1)
         row_name.append(lbl_name)
         self.name_input = Gtk.Entry(placeholder_text="ej: mi-tema-oscuro", hexpand=True)
         row_name.append(self.name_input)
         sec2.append(row_name)
 
-        def create_color_row(label_text, default_color):
-            row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=15)
+        # Colors Grid
+        color_grid = Gtk.Grid(column_spacing=15, row_spacing=15)
+        color_grid.set_margin_top(10)
+        
+        def create_color_picker(row, label_text, default_hex):
             lbl = Gtk.Label(label=label_text, xalign=0)
-            lbl.set_size_request(120, -1)
-            row.append(lbl)
+            color_grid.attach(lbl, 0, row, 1, 1)
             
-            entry = Gtk.Entry(text=default_color, hexpand=True)
-            row.append(entry)
+            entry = Gtk.Entry(text=default_hex, hexpand=True)
+            color_grid.attach(entry, 1, row, 1, 1)
             
-            preview = Gtk.Box()
-            preview.add_css_class("color-preview")
+            try:
+                dialog = Gtk.ColorDialog.new()
+                btn = Gtk.ColorDialogButton.new(dialog)
+            except AttributeError:
+                btn = Gtk.ColorButton()
             
-            # Use standard CSS to set the preview background
-            def update_preview(*args):
-                color = entry.get_text().strip()
-                if len(color) >= 4 and color.startswith("#"):
-                    css = f".color-preview {{ background-color: {color}; }}"
-                    provider = Gtk.CssProvider()
-                    provider.load_from_data(css.encode('utf-8'))
-                    preview.get_style_context().add_provider(provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
+            btn.set_rgba(hex_to_rgba(default_hex))
+            color_grid.attach(btn, 2, row, 1, 1)
             
-            entry.connect("changed", update_preview)
-            update_preview()
-            row.append(preview)
-            return row, entry
+            # Sync Entry -> Button
+            def on_entry_changed(e):
+                val = e.get_text().strip()
+                if len(val) >= 4 and val.startswith("#"):
+                    btn.set_rgba(hex_to_rgba(val))
+            entry.connect("changed", on_entry_changed)
+            
+            # Sync Button -> Entry
+            def on_btn_notify(b, param):
+                rgba = b.get_rgba()
+                hex_val = rgba_to_hex(rgba)
+                if entry.get_text() != hex_val:
+                    entry.set_text(hex_val)
+            btn.connect("notify::rgba", on_btn_notify)
+            
+            return entry, btn
 
-        row_acc, self.accent_input = create_color_row("Color de Acento:", "#00ccff")
-        sec2.append(row_acc)
+        self.accent_entry, self.accent_btn = create_color_picker(0, "Acento:", "#00ccff")
+        self.bg_entry, self.bg_btn = create_color_picker(1, "Fondo:", "#0a0a0f")
+        self.fg_entry, self.fg_btn = create_color_picker(2, "Texto:", "#e0e0e0")
         
-        row_bg, self.bg_input = create_color_row("Fondo Base:", "#0a0a0f")
-        sec2.append(row_bg)
-        
-        row_fg, self.fg_input = create_color_row("Texto y Líneas:", "#e0e0e0")
-        sec2.append(row_fg)
-
+        sec2.append(color_grid)
         main_box.append(sec2)
 
         # Status Label
         self.status_label = Gtk.Label(label="", xalign=0)
-        self.status_label.set_margin_bottom(10)
+        self.status_label.set_margin_bottom(15)
         self.status_label.set_ellipsize(Pango.EllipsizeMode.END)
         main_box.append(self.status_label)
 
         # Save Action
-        btn_save = Gtk.Button(label="Guardar e Instalar Tema")
-        btn_save.add_css_class("suggested-action")
+        btn_save = Gtk.Button(label="💾 Guardar y Aplicar Tema")
+        btn_save.add_css_class("action-btn")
+        btn_save.set_size_request(-1, 50)
         btn_save.connect("clicked", self.on_save)
         main_box.append(btn_save)
 
@@ -242,7 +246,7 @@ class ThemeCreatorApp(Gtk.Application):
 
     def show_status(self, text, is_error=False):
         color = "#ff5555" if is_error else self.colors['accent']
-        markup = f"<span color='{color}'>{text}</span>"
+        markup = f"<span color='{color}'><b>{text}</b></span>"
         self.status_label.set_markup(markup)
         
     def update_themes(self):
@@ -269,9 +273,9 @@ class ThemeCreatorApp(Gtk.Application):
                 data = json.loads(res)
                 if data.get("status") == "success":
                     d = data.get("data", {})
-                    self.accent_input.set_text(d.get("accent", ""))
-                    self.bg_input.set_text(d.get("background", ""))
-                    self.fg_input.set_text(d.get("foreground", ""))
+                    self.accent_entry.set_text(d.get("accent", ""))
+                    self.bg_entry.set_text(d.get("background", ""))
+                    self.fg_entry.set_text(d.get("foreground", ""))
                     self.show_status("Tema cargado para edición.")
             except Exception:
                 pass
@@ -281,7 +285,9 @@ class ThemeCreatorApp(Gtk.Application):
             if response == Gtk.ResponseType.ACCEPT:
                 file = dialog.get_file()
                 if file:
-                    self.img_input.set_text(file.get_path())
+                    self.img_path = file.get_path()
+                    filename = os.path.basename(self.img_path)
+                    self.btn_browse.set_label(f"🖼️ {filename}")
                     self.on_extract(None)
             dialog.destroy()
             
@@ -296,20 +302,19 @@ class ThemeCreatorApp(Gtk.Application):
         dialog.show()
 
     def on_extract(self, btn):
-        path = self.img_input.get_text().strip()
-        if not path:
+        if not self.img_path:
             self.show_status("Selecciona una ruta primero.", True)
             return
-        self.show_status("Analizando colores...")
+        self.show_status("Analizando colores con ImageMagick...")
         def finish_extract():
             try:
-                res = subprocess.check_output(["python3", self.script_path, "extract", path], text=True)
+                res = subprocess.check_output(["python3", self.script_path, "extract", self.img_path], text=True)
                 data = json.loads(res)
                 if data.get("status") == "success":
                     d = data.get("data", {})
-                    self.accent_input.set_text(d.get("accent", ""))
-                    self.bg_input.set_text(d.get("background", ""))
-                    self.fg_input.set_text(d.get("foreground", ""))
+                    self.accent_entry.set_text(d.get("accent", ""))
+                    self.bg_entry.set_text(d.get("background", ""))
+                    self.fg_entry.set_text(d.get("foreground", ""))
                     self.show_status("¡Colores extraídos mágicamente!")
                 else:
                     self.show_status(data.get("message", "Error de extracción."), True)
@@ -324,7 +329,7 @@ class ThemeCreatorApp(Gtk.Application):
             self.show_status("Debes darle un nombre a tu tema.", True)
             return
         try:
-            res = subprocess.check_output(["python3", self.script_path, "save", name, self.accent_input.get_text(), self.fg_input.get_text(), self.bg_input.get_text()], text=True)
+            res = subprocess.check_output(["python3", self.script_path, "save", name, self.accent_entry.get_text(), self.fg_entry.get_text(), self.bg_entry.get_text()], text=True)
             data = json.loads(res)
             if data.get("status") == "success":
                 self.show_status(f"¡Tema '{name}' guardado correctamente!")
