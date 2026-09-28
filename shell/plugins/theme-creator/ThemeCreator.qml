@@ -10,6 +10,7 @@ import QtQuick.Dialogs
 Ui.OverlayWindow {
   id: root
   objectName: "x64-theme-creator-overlay"
+  shownKeyboardFocus: WlrKeyboardFocus.Exclusive
 
   function open(payloadJson) {
     root.shown = true
@@ -133,6 +134,14 @@ Ui.OverlayWindow {
     radius: Style.cornerRadius
     border.color: Color.accent
     border.width: 2
+    focus: true
+    Keys.onEscapePressed: root.close()
+    Keys.onPressed: function(event) {
+      if ((event.modifiers & Qt.MetaModifier) && (event.key === Qt.Key_W || event.key === Qt.Key_Q || event.key === Qt.Key_C)) {
+        root.close();
+        event.accepted = true;
+      }
+    }
     
     MouseArea {
       anchors.fill: parent
