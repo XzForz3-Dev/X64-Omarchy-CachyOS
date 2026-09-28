@@ -1224,6 +1224,26 @@ Item {
             cellWidth: width / 4
             cellHeight: root.rowHeightBase
                         boundsBehavior: Flickable.StopAtBounds
+
+            section.property: "section"
+            section.criteria: ViewSection.FullString
+            section.delegate: Item {
+              required property string section
+
+              width: GridView.view.cellWidth - Style.space(10)
+              x: Style.space(5)
+              height: section === "drilldown" ? root.dividerHeight : 0
+              visible: section === "drilldown"
+
+              Rectangle {
+                anchors.left: parent.left
+                anchors.leftMargin: Style.space(4)
+                anchors.right: parent.right
+                anchors.rightMargin: Style.space(4)
+                anchors.verticalCenter: parent.verticalCenter
+                height: Style.spacing.hairline
+                color: Util.alpha(root.foreground, 0.2)
+              }
             }
 
             delegate: BorderSurface {
