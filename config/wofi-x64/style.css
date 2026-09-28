@@ -2,7 +2,7 @@
     font-family: "Inter", "JetBrainsMono Nerd Font", sans-serif;
     font-size: 16px;
     font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: all 0.2s ease-in-out;
 }
 
 window {
@@ -36,7 +36,7 @@ window {
 }
 
 #scroll {
-    margin: 0px 5px 20px 20px; /* Reduced right margin to make room for scrollbar */
+    margin: 0px 5px 30px 30px; /* Reduced right margin to make room for scrollbar */
     background-color: transparent;
 }
 
@@ -71,15 +71,15 @@ scrollbar slider:active {
 }
 
 #text {
-    margin: 5px 20px;
+    margin: 5px 15px;
     color: #94a3b8;
-    font-size: 17px; /* Slightly larger text */
+    font-size: 18px; /* Slightly larger text */
 }
 
 #entry {
-    padding: 14px 18px; /* More breathing room */
-    margin: 6px 12px;
-    border-radius: 18px; /* Rounder edges for cards */
+    padding: 18px 20px; /* More breathing room */
+    margin: 8px 15px;
+    border-radius: 20px; /* Rounder edges for cards */
     background-color: transparent;
     border: 1px solid transparent;
     border-left: 4px solid transparent; 
