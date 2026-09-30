@@ -623,8 +623,10 @@ def installer_worker():
         install_hyprland = "hyprland" in user_choices["packages"]
         if not install_hyprland:
             user_choices["theme"] = "CachyOS Nativo"
-        is_wayland_env = any(pkg in user_choices["packages"] for pkg in ["hyprland", "plasma-meta", "niri", "cinnamon"])
-        force_tty = is_legacy_nvidia and is_wayland_env
+        
+        # Para usuarios Legacy NVIDIA, forzamos SIEMPRE el selector TTY para protegerlos de crashes de SDDM con Wayland
+        force_tty = is_legacy_nvidia
+        
         progress.update(t_health, description="[yellow]Verificando Red...", advance=30)
         run_cmd_live("curl -s -I https://archlinux.org >/dev/null")
         progress.update(t_health, description="[yellow]Verificando Espacio en Disco...", advance=30)
