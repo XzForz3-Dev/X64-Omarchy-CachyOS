@@ -1,5 +1,2 @@
-echo "Install Hype, the Markdown presentation app"
+echo "Skipping Hype install in X64 LIOS"
 
-if [[ ! -f $HOME/.local/state/omarchy/preinstalls-removed ]]; then
-  omarchy-pkg-add hype
-fi
