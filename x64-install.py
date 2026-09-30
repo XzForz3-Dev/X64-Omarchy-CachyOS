@@ -1347,6 +1347,11 @@ except Exception as e:
                 # Ensure splash is present for X64 LIOS kernels
                 run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *kernel_cmdline/ {{ /splash/! s/$/ splash/ }}\" {lpath}' 2>/dev/null", check=False)
                 run_cmd_live(f"sudo bash -c 'grep -q \"splash\" {lpath} || sudo sed -i -E \"/^ *cmdline/ {{ /splash/! s/$/ splash/ }}\" {lpath}' 2>/dev/null", check=False)
+                
+                if has_nvidia:
+                    run_cmd_live("sudo bash -c 'grep -q \"nvidia-drm.modeset=1\" /etc/default/limine || sudo sed -i -E \"/^ *KERNEL_CMDLINE/ { /nvidia-drm/! s/\\\"$/ nvidia-drm.modeset=1\\\"/ }\" /etc/default/limine' 2>/dev/null", check=False)
+                    run_cmd_live(f"sudo bash -c 'grep -q \"nvidia-drm.modeset=1\" {lpath} || sudo sed -i -E \"/^ *kernel_cmdline/ {{ /nvidia-drm/! s/$/ nvidia-drm.modeset=1/ }}\" {lpath}' 2>/dev/null", check=False)
+                    run_cmd_live(f"sudo bash -c 'grep -q \"nvidia-drm.modeset=1\" {lpath} || sudo sed -i -E \"/^ *cmdline/ {{ /nvidia-drm/! s/$/ nvidia-drm.modeset=1/ }}\" {lpath}' 2>/dev/null", check=False)
                 break
 
         # === SILENCIADOR DE MIGRACIONES HISTÓRICAS ===
