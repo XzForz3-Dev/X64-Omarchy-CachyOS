@@ -653,7 +653,7 @@ def installer_worker():
         
         if install_hyprland:
             progress.update(t_repo, description="[yellow]Purgando dependencias en conflicto pre-existentes...", advance=10)
-            run_cmd_live("for pkg in quickshell noctalia-qs noctalia-shell polkit-kde-agent polkit-gnome lxqt-policykit; do sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rdd --noconfirm $pkg 2>/dev/null; done", check=False)
+            run_cmd_live("for pkg in quickshell noctalia-qs noctalia-shell polkit-gnome lxqt-policykit; do sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rdd --noconfirm $pkg 2>/dev/null; done", check=False)
             progress.update(t_repo, description="[yellow]Inyectando repo Omarchy...", advance=10)
             # Ensure omarchy repo is injected with high priority (before cachyos and core)
             inject_script = """
@@ -740,6 +740,10 @@ if '[omarchy]' not in conf:
         # Protegemos los paquetes que SÍ fueron seleccionados (ej: 'kitty' es compartido entre Niri y Cinnamon)
         env_pkgs_to_remove = set(env_pkgs_to_remove) - set(user_choices["packages"])
         
+        # Protegemos dependencias vitales compartidas con el sistema anfitrión (KDE/CachyOS)
+        vital_whitelist = {"sddm", "polkit-kde-agent", "nautilus", "kitty", "xorg-server", "xorg-xinit", "xf86-input-libinput", "gnome-text-editor", "loupe", "evince", "file-roller"}
+        env_pkgs_to_remove = env_pkgs_to_remove - vital_whitelist
+        
         # Quitamos de la lista a instalar los paquetes de los entornos NO seleccionados
         # (Esto previene que se instalen aunque vengan hardcodeados en el omarchy-base.packages original)
         pkgs = list(set(pkgs) - env_pkgs_to_remove)
@@ -756,7 +760,7 @@ if '[omarchy]' not in conf:
             missing_pkgs = [p for p in chk.stdout.splitlines()]
             progress.update(t_pkg, description="[cyan]Descargando e Instalando Paquetes (Puede tardar varios minutos)...", advance=40)
             run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rdd --noconfirm jack2 2>/dev/null", check=False)
-            run_cmd_live("for pkg in noctalia-shell noctalia-qs quickshell polkit-kde-agent polkit-gnome lxqt-policykit; do sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rdd --noconfirm $pkg 2>/dev/null; done", check=False)
+            run_cmd_live("for pkg in noctalia-shell noctalia-qs quickshell polkit-gnome lxqt-policykit; do sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rdd --noconfirm $pkg 2>/dev/null; done", check=False)
 
             run_cmd_live(f"sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -S --noconfirm --needed --overwrite '*' --assume-installed linux-omarchy=99.9 --assume-installed linux-omarchy-headers=99.9 {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
