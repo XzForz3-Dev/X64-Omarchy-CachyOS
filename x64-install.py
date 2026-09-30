@@ -855,6 +855,7 @@ done
         else:
             log_lines.append("[yellow]Limpiando rastros de Omarchy para mantener el entorno puro...[/yellow]")
             run_cmd_live("rm -rf ~/.local/state/omarchy ~/.config/omarchy ~/Fondos ~/Temas", check=False)
+            run_cmd_live("rm -f ~/.local/bin/omarchy* ~/.local/bin/omacut* ~/.local/bin/x64*", check=False)
             run_cmd_live("sudo rm -rf /etc/skel/.local/state/omarchy /usr/share/omarchy /usr/local/bin/omarchy*", check=False)
             run_cmd_live("sudo rm -f /etc/profile.d/omarchy.sh", check=False)
         has_cachyos_settings = any("cachyos-" in pkg and "-settings" in pkg for pkg in pkgs)
