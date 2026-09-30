@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Omarchy (Hyprland uwsm)
+Name=X64 LIOS (Hyprland uwsm)
 Comment=Omarchy Hyprland session managed by uwsm
 Exec=uwsm start -g -1 -e -D Hyprland hyprland.desktop
 TryExec=uwsm

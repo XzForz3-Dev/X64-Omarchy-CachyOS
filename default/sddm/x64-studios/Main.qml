@@ -50,7 +50,7 @@ Rectangle {
       
       var parts = s.split("/");
       var filename = parts[parts.length - 1].replace(".desktop", "").replace(".Desktop", "");
-      if (filename.toLowerCase() === "omarchy") return "Omarchy (Hyprland uwsm)";
+      if (filename.toLowerCase() === "omarchy") return "X64 LIOS (Hyprland uwsm)";
       if (filename.toLowerCase() === "hyprland-uwsm") return "Hyprland (UWSM)";
       
       return filename.charAt(0).toUpperCase() + filename.slice(1);
@@ -233,7 +233,7 @@ Rectangle {
               Row {
                   spacing: 12
                   Text { width: 22; text: "󰞷"; color: "#ffaa00"; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font"; horizontalAlignment: Text.AlignHCenter; anchors.verticalCenter: parent.verticalCenter }
-                  Text { text: "DE: Omarchy Desktop"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
+                  Text { text: "DE: X64 LIOS Desktop"; color: "#ffffff"; font.pixelSize: 15; font.family: "JetBrainsMono Nerd Font"; font.weight: Font.Bold; anchors.verticalCenter: parent.verticalCenter }
               }
               Row {
                   spacing: 12
