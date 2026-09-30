@@ -968,9 +968,15 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
 
                     elif "KDE" in label:
                         fish_selector += """        if type -q startplasma-wayland
-                echo " [$idx] KDE Plasma"
+                echo " [$idx] KDE Plasma (Wayland)"
                 set -a options $idx
                 set -a cmds "exec dbus-run-session startplasma-wayland"
+                set idx (math $idx + 1)
+            end
+        if type -q startplasma-x11
+                echo " [$idx] KDE Plasma (X11 Failsafe)"
+                set -a options $idx
+                set -a cmds "exec dbus-run-session startplasma-x11"
                 set idx (math $idx + 1)
             end\n"""
 
