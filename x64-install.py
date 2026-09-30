@@ -867,7 +867,7 @@ done
             run_cmd_live("sudo rm -f /etc/profile.d/omarchy.sh", check=False)
             
             # Purga atómica de dependencias GUI y WebApps de Omarchy
-            omarchy_bloat = "omacalc omacut omasnap omawrite owe owe-lockfeed omarchy-nvim herdr quickshell ttfx tobi-try foot imv waypaper wofi localsend obsidian gpu-screen-recorder hyprpicker hyprsunset kdenlive obs-studio libreoffice-fresh nautilus evince pinta xournalpp moonlight-qt aether cliamp"
+            omarchy_bloat = "chromium aether cliamp kdenlive obs-studio libreoffice-fresh nautilus gnome-disk-utility obsidian moonlight-qt pinta xournalpp imv mpv evince sushi udiskie fcitx5 fcitx5-gtk fcitx5-qt hyprland hyprland-guiutils hyprland-preview-share-picker hyprpicker hyprsunset quickshell waybar swaybg wofi wlogout swaync grim slurp wtype wl-clipboard xdg-desktop-portal-hyprland uwsm waypaper wayfreeze nwg-displays omacalc omacut omawrite omasnap owe owe-lockfeed omarchy-nvim herdr ttfx tobi-try gpu-screen-recorder localsend xdg-terminal-exec yaru-icon-theme ttf-ia-writer woff2-font-awesome tzupdate ufw-docker lazydocker lazygit mise-bin neovim nvim tmux zoxide starship dua-cli eza fastfetch fd fzf gum jq plocate ripgrep tldr"
             run_cmd_live(f"sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 bash -c 'installed=$(pacman -Qq {omarchy_bloat} 2>/dev/null); if [ -n \"$installed\" ]; then for pkg in $installed; do pacman -Rns --noconfirm $pkg 2>/dev/null || pacman -R --noconfirm $pkg 2>/dev/null; done; fi'", check=False)
             run_cmd_live("rm -f ~/.local/share/applications/*.desktop 2>/dev/null || true", check=False)
         has_cachyos_settings = any("cachyos-" in pkg and "-settings" in pkg for pkg in pkgs)
