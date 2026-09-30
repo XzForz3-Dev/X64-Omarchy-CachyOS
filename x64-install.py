@@ -1009,7 +1009,7 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
         if type -q cinnamon-session-cinnamon
                 echo " [$idx] Cinnamon (Wayland Experimental)"
                 set -a options $idx
-                set -a cmds "exec dbus-run-session cinnamon-session-cinnamon --wayland"
+                set -a cmds "set -x XDG_SESSION_TYPE wayland; set -x XDG_CURRENT_DESKTOP X-Cinnamon; set -x XDG_SESSION_DESKTOP cinnamon-wayland; exec dbus-run-session cinnamon-session-cinnamon --wayland"
                 set idx (math $idx + 1)
             end\n"""
 
