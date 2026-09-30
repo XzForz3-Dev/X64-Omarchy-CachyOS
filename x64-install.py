@@ -969,7 +969,7 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
             for item in menu_data[0]["items"]:
                 if item.get("selected"):
                     label = item["label"]
-                    if "X64 LIOS Oficial" in label:
+                    if "Hyprland" in label:
                         fish_selector += """        if type -q Hyprland
                 echo " [$idx] Hyprland (X64 LIOS Oficial)"
                 set -a options $idx
