@@ -1601,16 +1601,26 @@ if not install_error:
         fcntl.fcntl(fd, fcntl.F_SETFL, fl)
     except Exception:
         pass
+    def force_logout():
+        os.system("clear")
+        print("\n\n\033[1;32m[!] INSTALACIÓN / PURGA FINALIZADA CON ÉXITO\033[0m")
+        print("\033[1;33m[!] IMPORTANTE: Los binarios del sistema han cambiado drásticamente.\033[0m")
+        print("\033[1;33m[!] Para evitar errores fantasma en la terminal, se cerrará esta sesión.\033[0m")
+        print("\033[1;31m[!] CERRANDO SESIÓN POR SEGURIDAD. POR FAVOR VUELVE A INICIAR SESIÓN O REINICIA.\033[0m\n\n")
+        time.sleep(3)
+        os.system("pkill -9 -t $(tty | sed 's|/dev/||') 2>/dev/null || kill -9 $(ps -o ppid= -p $PPID) 2>/dev/null")
+
     try:
         ans = Prompt.ask("\n¿Deseas reiniciar el sistema ahora?", choices=["Si", "No"], default="Si")
     except KeyboardInterrupt:
-        print("\nInstalación finalizada. Puedes reiniciar manualmente más tarde.")
+        force_logout()
         sys.exit(0)
     
     if ans == "Si":
         os.system("sudo reboot")
     else:
-        print("\n[!] Puedes reiniciar más tarde ejecutando 'reboot'.\n")
+        force_logout()
+        sys.exit(0)
 else:
     console.print(Panel(f"[bold red]La instalación fue abortada: {install_error}[/bold red]", expand=False))
 
