@@ -971,7 +971,7 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
                     label = item["label"]
                     if "Hyprland" in label:
                         fish_selector += """        if type -q Hyprland
-                echo " [$idx] Hyprland (X64 LIOS Oficial)"
+                echo " [$idx] Hyprland (X64 LIOS Oficial) (Omarchy)"
                 set -a options $idx
                 set -a cmds "exec Hyprland"
                 set idx (math $idx + 1)

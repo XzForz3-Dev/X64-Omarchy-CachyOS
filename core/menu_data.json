@@ -3,7 +3,7 @@
         "cat": "1. Entornos (Desktop)",
         "items": [
             {
-                "label": "Hyprland (Omarchy Oficial)",
+                "label": "Hyprland (X64 LIOS Oficial) (Omarchy)",
                 "type": "toggle",
                 "selected": true,
                 "pkg": [
@@ -69,7 +69,6 @@
                 "pkg": [
                     "cinnamon",
                     "xorg-server",
-                    "xorg-xinit",
                     "gnome-terminal",
                     "kitty",
                     "nemo-fileroller",
