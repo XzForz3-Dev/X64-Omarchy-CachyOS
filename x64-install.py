@@ -673,7 +673,7 @@ if '[omarchy]' not in conf:
         new_conf = conf[:idx] + '[omarchy]\\nSigLevel = Optional TrustAll\\nServer = https://pkgs.omarchy.org/\\$arch/\\n\\n' + conf[idx:]
         open('/etc/pacman.conf', 'w').write(new_conf)
 """
-            run_cmd_live(f"sudo python -c \"{inject_script}\"")
+            run_cmd_live(f"sudo /usr/bin/python3 -c \"{inject_script}\"")
         
         progress.update(t_repo, description="[green]Repositorios Listos", completed=100)
 
@@ -763,7 +763,7 @@ if '[omarchy]' not in conf:
 
         # === INSTALACIÓN DE DEPENDENCIAS HUÉRFANAS PARA EFECTOS VISUALES ===
         progress.update(t_pkg, description="[yellow]Instalando motor de animaciones (tte) para salvapantallas...", advance=0)
-        run_cmd_live("sudo pacman -S --noconfirm python-pip 2>/dev/null", check=False)
+        run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -S --noconfirm python-pip 2>/dev/null", check=False)
         run_cmd_live("sudo pip install terminaltexteffects --break-system-packages 2>/dev/null || true", check=False)
         # ===================================================================
 
@@ -970,9 +970,9 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
             for item in menu_data[0]["items"]:
                 if item.get("selected"):
                     label = item["label"]
-                    if "Omarchy Oficial" in label:
+                    if "X64 LIOS Oficial" in label:
                         fish_selector += """        if type -q Hyprland
-                echo " [$idx] Hyprland (Omarchy Oficial)"
+                echo " [$idx] Hyprland (X64 LIOS Oficial)"
                 set -a options $idx
                 set -a cmds "exec Hyprland"
                 set idx (math $idx + 1)
@@ -1006,10 +1006,10 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
                 set -a cmds "exec dbus-run-session startx /usr/bin/cinnamon-session"
                 set idx (math $idx + 1)
             end
-        if type -q cinnamon-session-wayland
+        if type -q cinnamon-session-cinnamon
                 echo " [$idx] Cinnamon (Wayland Experimental)"
                 set -a options $idx
-                set -a cmds "exec dbus-run-session cinnamon-session-wayland"
+                set -a cmds "exec dbus-run-session cinnamon-session-cinnamon --wayland"
                 set idx (math $idx + 1)
             end\n"""
 
@@ -1172,7 +1172,7 @@ hl.config({
         
         is_omarchy_oficial = False
         for item in menu_data[0]["items"]:
-            if item.get("selected") and "Omarchy Oficial" in item["label"]:
+            if item.get("selected") and "X64 LIOS Oficial" in item["label"]:
                 is_omarchy_oficial = True
                 break
 
@@ -1269,7 +1269,7 @@ except:
 '''
         with open("/tmp/clean_pacman.py", "w") as f:
             f.write(clean_pacman_script)
-        run_cmd_live("sudo python3 /tmp/clean_pacman.py", check=False)
+        run_cmd_live("sudo /usr/bin/python3 /tmp/clean_pacman.py", check=False)
         log_lines.append("[yellow]Creando hook guardián de auto-defensa para Limine...[/yellow]")
         hook_content = '''[Trigger]
 Operation = Install
@@ -1338,7 +1338,7 @@ except Exception as e:
                 with open("/tmp/clean_limine.py", "w") as f:
                     f.write(clean_script)
                 
-                run_cmd_live(f"sudo python3 /tmp/clean_limine.py {lpath}", check=False)
+                run_cmd_live(f"sudo /usr/bin/python3 /tmp/clean_limine.py {lpath}", check=False)
                 
                 # Renombrar Omarchy a X64 LIOS en Limine
                 run_cmd_live(f"sudo sed -i 's@/+Omarchy@/+X64 LIOS@g' {lpath} 2>/dev/null", check=False)
@@ -1384,7 +1384,7 @@ except Exception as e:
 
 
 with open(LOG_FILE, "w") as f:
-    f.write("=== Inicio de Instalación X64-Omarchy (Mega Dashboard) ===\n")
+    f.write("=== Inicio de Instalación X64 LIOS (Mega Dashboard) ===\n")
 
 live_instance = None
 
@@ -1509,7 +1509,7 @@ try:
                 live.update(update_ui())
                 live.refresh()
                 time.sleep(0.7)
-                transition_text = "Desplegando Motor X64-Omarchy..."
+                transition_text = "Desplegando Motor X64 LIOS..."
                 live.update(update_ui())
                 live.refresh()
                 time.sleep(0.8)
