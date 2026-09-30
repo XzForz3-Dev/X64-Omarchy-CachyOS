@@ -720,7 +720,7 @@ if '[omarchy]' not in conf:
             "tuxedo-drivers-nocompatcheck-dkms", "yt6801-dkms", "apple-bcm-firmware", "apple-t2-audio-config",
             "t2fanrd", "qmk-hid", "dell-xps-touchpad-haptics", "dell-xps13-sidecar-amps",
             "vulkan-intel", "vulkan-radeon", "vulkan-asahi", "yay-debug", "btrfs-progs", "sof-firmware",
-            "base", "base-devel", "dkms", "asusctl"
+            "base", "base-devel", "dkms", "asusctl", "xorg-server", "xorg-xinit"
         }
         pkgs = [p for p in pkgs if p and not p.startswith('#') and p not in blacklisted_pkgs]
 
@@ -987,7 +987,7 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
         if type -q startplasma-x11
                 echo " [$idx] KDE Plasma (X11 Failsafe)"
                 set -a options $idx
-                set -a cmds "exec dbus-run-session startplasma-x11"
+                set -a cmds "exec startx /usr/bin/startplasma-x11"
                 set idx (math $idx + 1)
             end\n"""
 
@@ -1002,7 +1002,7 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
                         fish_selector += """        if type -q cinnamon-session
                 echo " [$idx] Cinnamon (X11 Failsafe)"
                 set -a options $idx
-                set -a cmds "exec dbus-run-session startx /usr/bin/cinnamon-session"
+                set -a cmds "exec startx /usr/bin/cinnamon-session"
                 set idx (math $idx + 1)
             end
         if type -q cinnamon-session-cinnamon
