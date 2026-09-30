@@ -334,7 +334,7 @@ progress = Progress(
 t_health = progress.add_task("[white]Health Check del Sistema...", total=100)
 t_repo = progress.add_task("[white]Preparando Repositorios...", total=100)
 t_sync = progress.add_task("[white]Sincronizando Sistema...", total=100)
-t_pkg = progress.add_task("[white]Instalando X64-Omarchy...", total=100)
+t_pkg = progress.add_task("[white]Instalando Entorno (X64 LIOS)...", total=100)
 t_backup = progress.add_task("[white]Creando Respaldo...", total=100)
 t_config = progress.add_task("[white]Aplicando Configuración...", total=100)
 t_final = progress.add_task("[white]Finalizando Instalación...", total=100)
@@ -612,6 +612,14 @@ def setup_plymouth_bootloader(has_nvidia_gpu=False, theme_name="omarchy"):
 def installer_worker():
     global install_error, install_done, current_state
     try:
+        selected_env = "Entorno"
+        for c in menu_data:
+            if "Entornos" in c["cat"]:
+                for i in c["items"]:
+                    if i.get("selected"):
+                        selected_env = i["label"].split(" ")[0]
+                        break
+        progress.update(t_pkg, description=f"[white]Instalando {selected_env} (X64 LIOS)...")
         install_hyprland = "hyprland" in user_choices["packages"]
         if not install_hyprland:
             user_choices["theme"] = "CachyOS Nativo"
