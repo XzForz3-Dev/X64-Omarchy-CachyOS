@@ -1014,6 +1014,7 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
             echo " [N] Diagnóstico de Red"
             echo " [E] Escáner de Errores (Health Check)"
             echo " [K] Reparar Pacman (Llaves/Mirrors)"
+            echo " [S] Habilitar Acceso Remoto (SSH)"
             echo ""
             echo " [R] Reiniciar el Sistema"
             echo " [A] Apagar el Sistema"
@@ -1090,6 +1091,18 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
                         rate-mirrors arch | sudo tee /etc/pacman.d/mirrorlist
                     end
                     echo -e "\\n\\e[1;32mReparación completada. Presiona Enter para volver.\\e[0m"
+                    read
+                    exec fish -l
+                else if test "$choice" = "S" -o "$choice" = "s"
+                    clear
+                    echo -e "\\e[1;36mConfigurando Acceso Remoto Seguro (SSH)...\\e[0m"
+                    sudo systemctl enable --now sshd
+                    sudo ufw allow ssh
+                    sudo ufw reload
+                    set ip_addr (ip -4 addr show | grep -oP '(?<=inet\\s)\\d+(\\.\\d+){3}' | grep -v '127.0.0.1' | head -n 1)
+                    echo -e "\\e[1;32mSSH Activado y Firewall Configurado.\\e[0m"
+                    echo -e "\\e[1;33mTu IP local es: \\e[1;37m$ip_addr\\e[0m"
+                    echo -e "\\n\\e[1;36mPresiona Enter para volver al menú.\\e[0m"
                     read
                     exec fish -l
                 end
