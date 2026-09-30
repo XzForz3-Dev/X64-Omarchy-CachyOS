@@ -865,6 +865,11 @@ done
             run_cmd_live("sed -i 's|XDG_PUBLICSHARE_DIR=\"$HOME/\"|XDG_PUBLICSHARE_DIR=\"$HOME/Público\"|' ~/.config/user-dirs.dirs 2>/dev/null || true", check=False)
             run_cmd_live("sudo rm -rf /etc/skel/.local/state/omarchy /usr/share/omarchy /usr/local/bin/omarchy*", check=False)
             run_cmd_live("sudo rm -f /etc/profile.d/omarchy.sh", check=False)
+            
+            # Purga atómica de dependencias GUI y WebApps de Omarchy
+            omarchy_bloat = "omacalc omacut omasnap omawrite owe owe-lockfeed omarchy-nvim herdr quickshell ttfx tobi-try foot imv waypaper wofi localsend obsidian gpu-screen-recorder hyprpicker hyprsunset kdenlive obs-studio libreoffice-fresh nautilus evince pinta xournalpp moonlight-qt aether cliamp"
+            run_cmd_live(f"sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 bash -c 'installed=$(pacman -Qq {omarchy_bloat} 2>/dev/null); if [ -n \"$installed\" ]; then for pkg in $installed; do pacman -Rns --noconfirm $pkg 2>/dev/null || pacman -R --noconfirm $pkg 2>/dev/null; done; fi'", check=False)
+            run_cmd_live("rm -f ~/.local/share/applications/*.desktop 2>/dev/null || true", check=False)
         has_cachyos_settings = any("cachyos-" in pkg and "-settings" in pkg for pkg in pkgs)
         if has_cachyos_settings:
             log_lines.append("[yellow]Aplicando estética de CachyOS desde /etc/skel...[/yellow]")
