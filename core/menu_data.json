@@ -69,6 +69,7 @@
                 "pkg": [
                     "cinnamon",
                     "xorg-server",
+                    "xorg-xinit",
                     "gnome-terminal",
                     "kitty",
                     "nemo-fileroller",
