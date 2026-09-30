@@ -27,7 +27,7 @@ STATE_FILE="$HOME/.local/state/omarchy/lang_es_ES"
 echo ">> Preparando el sistema de traducción en $UI_DIR..."
 
 SUDO=""
-if [[ ! -w "$UI_DIR" ]]; then
+if [[ ! -w "$UI_DIR/shell/shell.qml" ]]; then
     echo ">> Se requieren permisos de administrador para modificar $UI_DIR"
     SUDO="sudo"
     # Aseguramos que el usuario tiene caché de sudo activa para que pida clave una sola vez si es necesario
