@@ -83,7 +83,7 @@ if [[ "$LANG_CODE" == "es_ES" ]]; then
 fi
 
 echo ">> Inyectando traducciones al vuelo en los archivos base ($UI_DIR)..."
-$SUDO python3 -c "
+$SUDO /usr/bin/python3 -c "
 import json, os
 with open('$LANG_FILE', 'r') as f:
     dic = json.load(f)
@@ -116,7 +116,7 @@ for root, _, files in os.walk('$UI_DIR'):
 "
 
 echo ">> Inyectando traducciones al vuelo en los archivos de usuario..."
-python3 -c "
+/usr/bin/python3 -c "
 import json, os
 with open('$LANG_FILE', 'r') as f:
     dic = json.load(f)
