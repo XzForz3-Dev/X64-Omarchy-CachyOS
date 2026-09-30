@@ -915,9 +915,8 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
             run_cmd_live("sudo mv /tmp/issue.conf /etc/systemd/system/getty@tty1.service.d/issue.conf", check=False)
             run_cmd_live("sudo systemctl daemon-reload", check=False)
 
-            # 2. Selector Interactivo de Entornos para Fish (Después de Loguearse)
             fish_selector = """if status is-login
-        if test (tty) = /dev/tty1
+        if test (tty) = /dev/tty1 -a "$XDG_SESSION_TYPE" != "wayland"
             set border_color "\\e[38;2;0;255;255m"
             set text_color "\\e[38;2;0;230;255m"
             set bat_path (ls /sys/class/power_supply/BAT* 2>/dev/null | head -n 1)
