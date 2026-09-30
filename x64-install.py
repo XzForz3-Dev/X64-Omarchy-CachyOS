@@ -1345,25 +1345,26 @@ except Exception as e:
                 break
 
         # === SILENCIADOR DE MIGRACIONES HISTÓRICAS ===
-        log_lines.append("[yellow]Marcando historial de migraciones de Omarchy como completado...[/yellow]")
-        run_cmd_live("mkdir -p ~/.local/state/omarchy/migrations", check=False)
-        run_cmd_live("if [ -d /usr/share/omarchy/migrations ]; then for m in /usr/share/omarchy/migrations/*.sh; do touch \"$HOME/.local/state/omarchy/migrations/$(basename $m)\" 2>/dev/null; done; fi", check=False)
-        run_cmd_live("sudo mkdir -p /etc/skel/.local/state/omarchy/migrations", check=False)
-        run_cmd_live("if [ -d /usr/share/omarchy/migrations ]; then for m in /usr/share/omarchy/migrations/*.sh; do sudo touch \"/etc/skel/.local/state/omarchy/migrations/$(basename $m)\" 2>/dev/null; done; fi", check=False)
-        # ===============================================
+        if install_hyprland:
+            log_lines.append("[yellow]Marcando historial de migraciones de Omarchy como completado...[/yellow]")
+            run_cmd_live("mkdir -p ~/.local/state/omarchy/migrations", check=False)
+            run_cmd_live("if [ -d /usr/share/omarchy/migrations ]; then for m in /usr/share/omarchy/migrations/*.sh; do touch \"$HOME/.local/state/omarchy/migrations/$(basename $m)\" 2>/dev/null; done; fi", check=False)
+            run_cmd_live("sudo mkdir -p /etc/skel/.local/state/omarchy/migrations", check=False)
+            run_cmd_live("if [ -d /usr/share/omarchy/migrations ]; then for m in /usr/share/omarchy/migrations/*.sh; do sudo touch \"/etc/skel/.local/state/omarchy/migrations/$(basename $m)\" 2>/dev/null; done; fi", check=False)
+            # ===============================================
 
-        # ================= UX FONDOS Y TEMAS =================
-        log_lines.append("[yellow]Creando accesos directos visibles para personalización...[/yellow]")
-        run_cmd_live("mkdir -p \"$HOME/.config/omarchy/backgrounds/x64-lios-crimson\"", check=False)
-        run_cmd_live("mkdir -p \"$HOME/.config/omarchy/backgrounds/x64-lios-cyberpunk\"", check=False)
-        run_cmd_live("mkdir -p \"$HOME/.config/omarchy/themes\"", check=False)
-        
-        # Fondos como directorio real con enlaces estéticos
-        run_cmd_live("rm -f \"$HOME/Fondos\"", check=False)
-        run_cmd_live("mkdir -p \"$HOME/Fondos\"", check=False)
-        run_cmd_live("rm -f \"$HOME/Temas\"", check=False)
-        run_cmd_live("mkdir -p \"$HOME/Temas\"", check=False)
-        # =====================================================
+            # ================= UX FONDOS Y TEMAS =================
+            log_lines.append("[yellow]Creando accesos directos visibles para personalización...[/yellow]")
+            run_cmd_live("mkdir -p \"$HOME/.config/omarchy/backgrounds/x64-lios-crimson\"", check=False)
+            run_cmd_live("mkdir -p \"$HOME/.config/omarchy/backgrounds/x64-lios-cyberpunk\"", check=False)
+            run_cmd_live("mkdir -p \"$HOME/.config/omarchy/themes\"", check=False)
+            
+            # Fondos como directorio real con enlaces estéticos
+            run_cmd_live("rm -f \"$HOME/Fondos\"", check=False)
+            run_cmd_live("mkdir -p \"$HOME/Fondos\"", check=False)
+            run_cmd_live("rm -f \"$HOME/Temas\"", check=False)
+            run_cmd_live("mkdir -p \"$HOME/Temas\"", check=False)
+            # =====================================================
 
         run_cmd_live("if command -v limine-update >/dev/null; then echo '' | sudo limine-update 2>&1 | grep -ivE 'WARNING:( Possibly missing firmware| consolefont| This does not update Limine)'; fi", check=False)
         # ================================================
