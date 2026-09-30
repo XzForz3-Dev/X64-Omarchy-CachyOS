@@ -758,7 +758,7 @@ if '[omarchy]' not in conf:
             run_cmd_live("sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rdd --noconfirm jack2 2>/dev/null", check=False)
             run_cmd_live("for pkg in noctalia-shell noctalia-qs quickshell polkit-kde-agent polkit-gnome lxqt-policykit; do sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -Rdd --noconfirm $pkg 2>/dev/null; done", check=False)
 
-            run_cmd_live(f"sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -S --noconfirm --needed --assume-installed linux-omarchy=99.9 --assume-installed linux-omarchy-headers=99.9 {' '.join(missing_pkgs)}")
+            run_cmd_live(f"sudo env OMARCHY_ALLOW_DIRECT_PACMAN=1 pacman -S --noconfirm --needed --overwrite '*' --assume-installed linux-omarchy=99.9 --assume-installed linux-omarchy-headers=99.9 {' '.join(missing_pkgs)}")
         progress.update(t_pkg, description="[green]Paquetes Instalados", completed=100)
 
         # === INSTALACIÓN DE DEPENDENCIAS HUÉRFANAS PARA EFECTOS VISUALES ===
