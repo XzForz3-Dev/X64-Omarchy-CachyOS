@@ -989,9 +989,15 @@ lanzar tus escritorios (Hyprland, KDE, etc.) o usar herramientas avanzadas de di
             end\n"""
                     elif "Cinnamon" in label:
                         fish_selector += """        if type -q cinnamon-session
-                echo " [$idx] Cinnamon"
+                echo " [$idx] Cinnamon (X11 Failsafe)"
                 set -a options $idx
                 set -a cmds "exec dbus-run-session startx /usr/bin/cinnamon-session"
+                set idx (math $idx + 1)
+            end
+        if type -q cinnamon-session-wayland
+                echo " [$idx] Cinnamon (Wayland Experimental)"
+                set -a options $idx
+                set -a cmds "exec dbus-run-session cinnamon-session-wayland"
                 set idx (math $idx + 1)
             end\n"""
 
